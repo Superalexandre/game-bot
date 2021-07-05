@@ -1,0 +1,20 @@
+{
+	"error": {
+		"missingTranslation": "Une erreur de traduction est servenue !",
+		"errorOccured": "Une erreur inconnu est survenue\n```{{error}}```",
+		"%s missingUserPermission": {
+			"one": "Pour executer cette commande il vous manque la permission :",
+			"other": "Pour executer cette commande il vous manque les permissions :\n"
+		},
+		"%s missingBotPermission": {
+			"one": "Pour executer cette commande il me manque la permission :",
+			"other": "Pour executer cette commande il me manque les permissions :\n"
+		}
+	},
+	"discord": {
+		"mentionned": "Bonjour je serais ravis de vous aidez ! Mon prefix est `{{prefix}}`",
+		"no_desc_provided": "Aucune description fourni",
+		"no_use_provided": "Aucun usage fourni",
+		"no_example_provided": "Aucun exemple fourni"
+	}
+}

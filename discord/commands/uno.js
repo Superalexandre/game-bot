@@ -1,0 +1,528 @@
+const Command = require("../structures/Command")
+const { MessageButton, MessageActionRow } = require("discord-buttons")
+
+module.exports = class Uno extends Command {
+    constructor(client) {
+        super(client, {
+            name: "uno",
+            //desc: (i18n) => i18n.__("discord.help.desc"),
+            directory: __dirname,
+            //use: (i18n) => i18n.__("discord.help.use"),
+            //example:(i18n) => i18n.__("discord.help.example"),
+        })
+    }
+
+    async run({ client, message, args, i18n, data, userData, util }) {
+        let cards = {
+            blue: {
+                0: 1,
+                1: 2,
+                2: 2,
+                3: 2,
+                4: 2,
+                5: 2,
+                6: 2,
+                7: 2,
+                8: 2,
+                9: 2,
+                "skip": 2,
+                "switch": 2,
+                "addTwo": 2
+            },
+            red: {
+                0: 1,
+                1: 2,
+                2: 2,
+                3: 2,
+                4: 2,
+                5: 2,
+                6: 2,
+                7: 2,
+                8: 2,
+                9: 2,
+                "skip": 2,
+                "switch": 2,
+                "addTwo": 2
+            },
+            yellow: {
+                0: 1,
+                1: 2,
+                2: 2,
+                3: 2,
+                4: 2,
+                5: 2,
+                6: 2,
+                7: 2,
+                8: 2,
+                9: 2,
+                "skip": 2,
+                "switch": 2,
+                "addTwo": 2
+            },
+            green: {
+                0: 1,
+                1: 2,
+                2: 2,
+                3: 2,
+                4: 2,
+                5: 2,
+                6: 2,
+                7: 2,
+                8: 2,
+                9: 2,
+                "skip": 2,
+                "switch": 2,
+                "addTwo": 2
+            },
+            special: {
+                "addFour": 4,
+                "newcolor": 4
+            }
+        }
+
+        let players = [message.author]
+
+        if (!message.mentions.members.first()) return message.channel.send("Veuillez mentionner au moins une personne avec qui jouer")
+
+        await message.mentions.members.forEach(member => {
+            if (member.id === message.author.id) return message.channel.send(`Ne t'inquiete pas ${message.author.username}, tu es deja dans la partie pas besoin de te mentionner`)
+        
+            if (!member) return message.channel.send(`Aie le membre ${member.user.username} est invalide :(`)
+        
+            if (players.includes(member.user.id)) return message.channel.send(`Le membre ${member.user.username} est deja dans la partie O_o`)
+        
+            if (member.user.bot) return message.channel.send(`Eh ! c'est pas drole de jouer ${member.user.username}, parce que c'est un bot`)
+        
+            players.push(member.user)
+        })
+
+        
+        if (players.length < 1) return message.channel.send("Ouh la la je ne sais pas comment vous avez fait pour être seul mais merci de contacter le support au plus vite !")
+
+        if (players.length > 10) return message.channel.send("Aie aie aie, les parties de uno sont limiter a 10 joueurs")
+
+        let msg = await message.channel.send(`Création de la partie avec ${players.length} joueurs\n${players.map(user => "• " + user.username).join("\n")}`)
+
+        allPlayersReady({ client, message, msg, cards, players })
+    }
+
+    async playCard({ client, gameID, button }) {
+        const game = client.games.uno.get(gameID)
+        
+        const userTurn = (number) => playersData[Object.keys(playersData)[number]]
+        const switchTurn = (turn, sign) => playersData[Object.keys(playersData)[turn + 1]] ? turn + 1 : 0
+    
+        let { message, msg, cards, players, playersData, turn, actualCard } = game
+    
+        if (!playersData[button.clicker.user.id].isTurn) return await button.reply.send(`Désolé mais ce n'est pas encore votre tour`, true)
+    
+        const id = button.id.split("_")
+
+        const user = userTurn(turn)
+
+        const seen_card = new MessageButton()
+            .setStyle("blurple")
+            .setLabel("Voir mes cartes")
+            .setID(`game_uno_${message.author.id}_${gameID}_seenCard`)
+        
+        if (id[id.length - 1] === "draw") {
+            const drawCard = await genCard({ cards })
+            
+            user.cards.push(drawCard.generatedCard)
+    
+            const genButton = genButtons({ message, playersData, button, gameID })
+    
+            await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !", {
+                components: makeRows(genButton.buttons),
+                ephemeral: true
+            })
+        
+            turn = switchTurn(turn)
+            user.isTurn = false
+    
+            const newTurn = userTurn(turn)
+            newTurn.isTurn = true
+    
+            await button.reply.defer()
+    
+            await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
+                buttons: [ seen_card ]
+            })
+    
+            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+        }
+    
+        const cardColor = id[id.length - 2]
+        const cardNumber = id[id.length - 1] 
+
+        const actualCardID = actualCard.split("_")
+        const actualCardColor = actualCardID[0]
+        const actualCardNumber = actualCardID[1]
+
+        //Color for color switch
+        if (cardNumber === "newColor" && cardColor !== "special") {
+            actualCard = cardColor
+
+            turn = switchTurn(turn)
+            user.isTurn = false
+    
+            const newTurn = userTurn(turn)
+            newTurn.isTurn = true
+    
+            const genButton = genButtons({ message, playersData, button })
+
+            await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
+                components: makeRows(genButton.buttons),
+                ephemeral: true
+            })
+
+            await button.reply.defer()
+
+            await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
+                buttons: [ seen_card ]
+            })
+
+            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+        //Add four card, skip and color switch
+        } else if (cardNumber === "addFour" && cardColor !== "special") {
+
+        //New color
+        } else if (cardColor === "special" && cardNumber === "newcolor") {
+            const red = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Rouge")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_red_newColor`)
+
+            const green = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Vert")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_green_newColor`)
+
+            const blue = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Bleu")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_blue_newColor`)
+            
+            const yellow = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Jaune")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_yellow_newColor`)
+
+            const color = new MessageActionRow()
+                .addComponents([ red, green, blue, yellow ])
+
+            let filtered = false
+            user.cards = user.cards.filter(card => {
+                if (card !== cardColor + "_" + cardNumber) return true
+                
+                if (!filtered && card === cardColor + "_" + cardNumber) {
+                    filtered = true
+                
+                    return false
+                }
+                
+                return true
+            })
+
+            const genButton = genButtons({ message, playersData, button })
+
+            const editButtons = []
+
+            for (const button of genButton.buttons) {
+                const editButton = new MessageButton(button).setDisabled()
+                
+                
+                editButtons.push(editButton)
+            }
+
+            const rows = makeRows(editButtons)
+
+            rows.push(color)
+
+            await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
+                components: rows,
+                ephemeral: true
+            })
+
+            await msg.edit(`Au tour de ${user.user.username}\n${user.user.username} choisis la couleur qu'il veut...`, {
+                buttons: [ seen_card ]
+            })
+
+            await button.reply.defer()
+
+            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+        //Add four
+        } else if (cardColor === "special" && cardNumber === "addFour") {
+            const red = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Rouge")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_red_addFour`)
+
+            const green = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Vert")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_green_addFour`)
+
+            const blue = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Bleu")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_blue_addFour`)
+        
+            const yellow = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Jaune")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_yellow_addFour`)
+
+            const color = new MessageActionRow()
+                .addComponents([ red, green, blue, yellow ])
+
+            user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
+
+            const genButton = genButtons({ message, playersData, button })
+
+            const editButtons = []
+
+            for (const button of genButton.buttons) {
+                const editButton = new MessageButton(button).setDisabled()
+                
+                
+                editButtons.push(editButton)
+            }
+
+            const rows = makeRows(editButtons)
+
+            rows.push(color)
+            
+            await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
+                components: rows,
+                ephemeral: true
+            })
+
+            await msg.edit(`Au tour de ${user.user.username}\n${user.user.username} choisis la couleur qu'il veut...`, {
+                buttons: [ seen_card ]
+            })
+
+            await button.reply.defer()
+
+            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+        }
+
+        //other card
+
+        //same color
+            // functionPlayNormalCard
+        //else if same number 
+            // functionPlayNormalCard
+        //else
+            // return message
+
+        await msg.edit("Une erreur est survenue...")
+
+        client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+    }
+}
+
+async function allPlayersReady({ client, message, msg, cards, players }) {
+    const gameID = "1"
+
+    client.games.uno.set(gameID, { message, msg, cards, players })
+
+    startGame({ client, gameID })
+}
+
+async function startGame({ client, gameID }) {
+    const game = client.games.uno.get(gameID)
+    
+    let { message, msg, cards, players } = game
+
+    let playersData = {}
+    let turn = 0
+    const userTurn = (number) => playersData[Object.keys(playersData)[number]]
+
+    for (let i = 0; i < players.length; i++) {
+        let playerCards = []
+
+        for (let i = 1; i < 9; i++) {
+            const card = await genCard({ cards })
+
+            playerCards.push(card.generatedCard)
+        }
+
+        playersData[players[i].id] = {
+            id: players[i].id,
+            user: players[i],
+            turn: i,
+            isTurn: i === turn ? true : false,
+            cards: playerCards,
+            reply: null,
+            optionalReply: null,
+            lastcard: ""
+        }
+    }
+
+    let { generatedCard: actualCard } = await genCard({ cards })
+
+    const seen_card = new MessageButton()
+        .setStyle("blurple")
+        .setLabel("Voir mes cartes")
+        .setID(`game_uno_${message.author.id}_${gameID}_seenCard`)
+
+    msg.edit(`Au tour de ${userTurn(turn).user.username}\n${actualCard}`, {
+        buttons: [ seen_card ]
+    })
+
+    const collector = msg.createButtonCollector((button) => button)
+
+    collector.on("collect", async(button) => {
+        if (!button.clicker || !button.clicker.user || !button.clicker.user.id) await button.clicker.fetch()
+
+        if (!Object.keys(playersData).includes(button.clicker.user.id)) return await button.reply.send(`Désolé mais ce n'est pas votre partie, pour en lancer une faites !uno @Joueur`, true)
+    
+        if (button.id.endsWith("seenCard")) {
+            const { buttons } = genButtons({ message, playersData, button, gameID })
+
+            let reply = await button.reply.send("Voici vos cartes, faites gaffe a bien garder ce message !", {
+                components: makeRows(buttons),
+                ephemeral: true
+            })
+
+            playersData[button.clicker.user.id].reply = reply
+
+            return true
+        }
+    })
+
+    client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+}
+
+function removeCard(cards, toRemove) {
+    let filtered = false
+
+    const card = cards.filter(card => {
+        if (card !== toRemove) return true
+
+        if (!filtered && card === toRemove) {
+            filtered = true
+        
+            return false
+        }
+
+        return true
+    })
+
+    console.log(card)
+
+    return card
+}
+
+function makeRows(buttonsData) {
+    function splitIntoChunk(arr, chunk) {
+        let arrays = []
+
+        for (let i= 0; i < arr.length; i += chunk) {
+            let tempArray;
+            tempArray = arr.slice(i, i + chunk);
+            arrays.push(tempArray)
+        }
+
+        return arrays
+
+    }
+
+    let arrays = splitIntoChunk(buttonsData, 5);
+
+    if (arrays.length !== 1) {
+        let ActionRow = []
+
+        for (const buttons of arrays) {
+            let row = new MessageActionRow()
+
+            for (const button of  buttons) {
+                row.addComponent(button)
+            }
+            ActionRow.push(row)
+        }
+
+        return ActionRow
+    } else {
+        const compenantButtons = new MessageActionRow()
+        
+        for (const button of buttonsData) {
+            compenantButtons.addComponent(button)
+        }
+
+        return [compenantButtons]
+    }
+}
+
+function genCard({ cards }) {
+    let generatedCard = ""
+
+    let typeColor = ["blue", "red", "yellow", "green", "special"]
+    let color = typeColor[Math.floor(Math.random() * typeColor.length)]
+
+    generatedCard += color + "_"
+
+    let typeNumber = color === "special" ? ["addFour", "newcolor"] : ["1", "2", "3", "4", "5", "6", "7", "8", "9", "skip", "switch", "addTwo"]
+    let number = typeNumber[Math.floor(Math.random() * typeNumber.length)]
+
+    generatedCard += number
+
+    if (!cards?.[color]?.[number] || (cards[color][number] - 1) <= 0) return genCard({ cards })
+
+    cards[color][number] = cards[color][number] - 1
+
+    return { cards, generatedCard }
+}
+
+function genButtons({ message, playersData, button, gameID }) {
+    const draw = new MessageButton()
+        .setStyle("red")
+        .setLabel("Piocher")
+        .setID(`game_uno_${message.author.id}_${gameID}_playCard_ephemeral_draw`)
+
+    const buttons = []
+
+    for (let i = 0; i < playersData[button.clicker.user.id].cards.length; i++) {
+        const buttonCard = new MessageButton()
+            .setStyle("blurple")
+            .setLabel(playersData[button.clicker.user.id].cards[i])
+            .setID(`game_uno_${message.author.id}_${gameID}_playCard_ephemeral_${playersData[button.clicker.user.id].cards[i]}`)
+
+        buttons.push(buttonCard)
+    }
+
+    buttons.push(draw)
+
+    return { buttons }
+}
+
+/*
+const playersData = {
+    "1": {},
+    "2": {}
+}
+//const switchTurn = (turn, toAdd, sign) => playersData[Object.keys(playersData)[eval(turn + sign + toAdd)]] ? eval(turn + sign + toAdd) : 0
+
+function switchTurn(turn, toAdd, sign) {
+    //let number = eval(turn + sign + toAdd)
+    let object = Object.keys(playersData)
+
+    if (sign.sing === "-" && !sign.reversed) object.reverse()
+
+    let number = turn + toAdd
+    sign.reversed = true
+
+    for (let i = 0; i < number; i++) {
+        console.log(1)
+
+        if (!object[i]) return switchTurn(turn, toAdd - i, sign)
+    }
+
+    console.log(0, number)
+
+    return object[number]
+}
+
+console.log(switchTurn(1, 1, { sign: "-" }))
+*/
