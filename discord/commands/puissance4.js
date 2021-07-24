@@ -135,7 +135,6 @@ async function whoStart({ i18n, message, msg, opponent, client, userData, oppone
 
         if (button.clicker.user.id !== chooser.id) return await button.reply.send(`Désolé mais ce n'est pas votre partie, pour en lancer une faites !puissance4 @Joueur`, true)
 
-        //Todo
         if (button.id.endsWith("opponent")) {
             opponent.turn = chooser === message.author ? true : false
         } else if (button.id.endsWith("user")) {
@@ -239,7 +238,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
             winner.win = numberWin + 1
             looser.loose = numberLoose + 1
 
-            await msg.edit(`Wow bien joué ${winner.username} (${winner.emoji}) qui a gagné contre ${looser.username} (${looser.emoji})\n` + formatedBoard.string, null)
+            await msg.edit(`**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\nWow bien joué ${winner.username} (${winner.emoji}) qui a gagné contre ${looser.username} (${looser.emoji})\n` + formatedBoard.string, null)
             return restart({ i18n, message, msg, opponent, client, userData, opponentData })
         }
 
@@ -247,7 +246,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
             await collector.stop()
             await msg.reactions.removeAll()
 
-            await msg.edit(`${userData.username} (${userData.emoji}) et ${opponentData.username} (${opponentData.emoji}) finissent sur une égalité :(\n` + formatedBoard.string, null)
+            await msg.edit(`**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) et ${opponentData.username} (${opponentData.emoji}) finissent sur une égalité :(\n` + formatedBoard.string, null)
             return restart({ i18n, message, msg, opponent, client, userData, opponentData })
         }
 
