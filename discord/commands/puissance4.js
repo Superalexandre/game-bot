@@ -423,3 +423,11 @@ async function restart({ i18n, message, msg, opponent, client, userData, opponen
         }
     })
 }
+
+function makeGif({ gameData }) {
+
+    //https://github.com/Mr-KayJayDee/discord-image-generation/blob/main/src/module/gif/blink.js
+
+    //https://www.npmjs.com/package/gifencoder
+
+}
