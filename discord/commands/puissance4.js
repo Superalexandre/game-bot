@@ -177,6 +177,12 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         winEmoji: "<a:Sudref_Yellow_White:723485311954452501>"
     }
 
+    const gameData = {
+        date: Date.now(),
+        players: [userData, opponentData],
+        actions: []
+    }
+
     await msg.edit("Veuillez patienter quelque seconde, le temps de la mise en place des réactions", null)
 
     const emoteNumber = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]
@@ -225,6 +231,8 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
 
         const formatedBoard = genBoard({ board, userData, opponentData })
 
+        gameData.actions.push(board)
+
         if (formatedBoard.win) {
             await collector.stop()
             await msg.reactions.removeAll()
@@ -238,8 +246,8 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
             winner.win = numberWin + 1
             looser.loose = numberLoose + 1
 
-            await msg.edit(`**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\nWow bien joué ${winner.username} (${winner.emoji}) qui a gagné contre ${looser.username} (${looser.emoji})\n` + formatedBoard.string, null)
-            return restart({ i18n, message, msg, opponent, client, userData, opponentData })
+            await msg.edit(`**${userData?.win ? userData.win : 0}** ${userData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\nWow bien joué ${winner.username} (${winner.emoji}) qui a gagné contre ${looser.username} (${looser.emoji})\n` + formatedBoard.string, null)
+            return restart({ i18n, message, msg, opponent, client, userData, opponentData, gameData })
         }
 
         if (formatedBoard.allFill) {
@@ -247,7 +255,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
             await msg.reactions.removeAll()
 
             await msg.edit(`**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) et ${opponentData.username} (${opponentData.emoji}) finissent sur une égalité :(\n` + formatedBoard.string, null)
-            return restart({ i18n, message, msg, opponent, client, userData, opponentData })
+            return restart({ i18n, message, msg, opponent, client, userData, opponentData, gameData })
         }
 
         await msg.edit(text(userData, opponentData) + formatedBoard.string, null)
@@ -386,14 +394,22 @@ function add({ board, emoji, row }) {
     return { board, string }
 }
 
-async function restart({ i18n, message, msg, opponent, client, userData, opponentData }) {
+async function restart({ i18n, message, msg, opponent, client, userData, opponentData, gameData }) {
     await msg.react("🔄")
+    await msg.react("📥")
 
-    const collector = msg.createReactionCollector((reaction, user) => [userData.id, opponentData.id].includes(user.id) && reaction.emoji.name === "🔄", { dispose: true })
+    const collector = msg.createReactionCollector((reaction, user) => [userData.id, opponentData.id].includes(user.id) && ["🔄", "📥"].includes(reaction.emoji.name), { dispose: true })
 
     let numberReady = 0
 
     collector.on("collect", async(reaction, user) => {
+        if (reaction.emoji.name === "📥") {
+            await collector.stop()
+            await msg.reactions.removeAll()
+
+            return makeGif({ message, gameData })
+        }
+
         const activeUser = user.id === userData.id ? userData : opponentData
 
         activeUser.readyRestart = true 
@@ -424,7 +440,50 @@ async function restart({ i18n, message, msg, opponent, client, userData, opponen
     })
 }
 
-function makeGif({ gameData }) {
+const Canvas = require("canvas")
+const gifencoder = require("gifencoder")
+const { MessageAttachment } = require("discord.js")
+
+async function makeGif({ message, gameData }) {
+
+    const actions = gameData.actions.reverse()[0]
+
+    const width = 200
+    const height = 200
+
+    const centerX = width / 2
+    const centerY = height / 2
+
+    const canvas = Canvas.createCanvas(width, height)
+    const ctx = canvas.getContext("2d")
+
+    for (let i = 0; i < actions.length; i++) {
+        for (let j = 0; j < actions[i].length; j++) {
+            const widthX = actions[i].length * 15
+            const widthY = actions.length * 15
+
+            const x = width - widthX
+            const y = height - widthY
+
+            const image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/26aa.png")
+
+            console.log(i, j, x, y)
+
+            ctx.drawImage(image, x + (j * 15), y + (i * 15), width / 10, height / 10)
+        }
+    }
+
+    message.channel.send({
+        files: [ canvas.toBuffer() ]
+    })
+
+    //const interval = 1000
+    //const gif = new gifencoder(500, 500)
+    //
+    //gif.start()
+    //gif.setRepeat(0)
+    //gif.setDelay(interval)
+    //gif.setTransparent()
 
     //https://github.com/Mr-KayJayDee/discord-image-generation/blob/main/src/module/gif/blink.js
 
