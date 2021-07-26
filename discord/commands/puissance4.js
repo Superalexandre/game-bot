@@ -446,6 +446,8 @@ const { MessageAttachment } = require("discord.js")
 
 async function makeGif({ message, gameData }) {
 
+    console.log(gameData)
+
     const actions = gameData.actions.reverse()[0]
 
     const width = 200
@@ -457,19 +459,23 @@ async function makeGif({ message, gameData }) {
     const canvas = Canvas.createCanvas(width, height)
     const ctx = canvas.getContext("2d")
 
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, width, height);
+
     for (let i = 0; i < actions.length; i++) {
         for (let j = 0; j < actions[i].length; j++) {
-            const widthX = actions[i].length * 15
-            const widthY = actions.length * 15
+            //const widthX = actions[i].length
+            //const widthY = actions.length
 
-            const x = width - widthX
-            const y = height - widthY
+            //const x = width - widthX
+            //const y = height - widthY
 
             const image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/26aa.png")
 
-            console.log(i, j, x, y)
+            //console.log(i, j, x, y)
 
-            ctx.drawImage(image, x + (j * 15), y + (i * 15), width / 10, height / 10)
+            console.log(i, j)
+            ctx.drawImage(image, 100, 100, width / 10, height / 10)
         }
     }
 
@@ -489,4 +495,8 @@ async function makeGif({ message, gameData }) {
 
     //https://www.npmjs.com/package/gifencoder
 
+}
+
+module.exports = {
+    makeGif
 }
