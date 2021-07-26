@@ -218,7 +218,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         const emoteNumber = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]
         const playRow = emoteNumber.indexOf(reaction.emoji.name)
 
-        const added = add({ board, emoji: activeUser.emoji, row: playRow })
+        const added = add({ board, emoji: activeUser.emoji, row: playRow, gameData })
 
         await reaction.users.remove(user.id)
 
@@ -232,8 +232,6 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         opposite.turn = true
 
         const formatedBoard = genBoard({ board, userData, opponentData })
-
-        gameData.actions.push(board)
 
         if (formatedBoard.win) {
             await collector.stop()
@@ -268,7 +266,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
             opposite.turn = false
 
             const rowToPlay = await botPlay({ board, emoji: opposite.emoji })
-            const added = add({ board, emoji: opposite.emoji, row: rowToPlay })
+            const added = add({ board, emoji: opposite.emoji, row: rowToPlay, gameData })
 
             if (added && added.error) {
                 if (added.error === "row_full") return await msg.edit(text(userData, opponentData, "Vous ne pouvez pas jouer ici !") + added.string, null)
@@ -363,7 +361,7 @@ function genBoard({ board, userData, opponentData }) {
     return { string, win, winner, allFill, winnerUser }
 }
 
-function add({ board, emoji, row }) {
+function add({ board, emoji, row, gameData }) {
     let placed = false
     let string = ""
     const emoteNumber = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]
@@ -391,9 +389,9 @@ function add({ board, emoji, row }) {
         string += "\n"
     }
 
-    if (!placed) return { error: "row_full", board, string }
+    if (!placed) return { error: "row_full", board, string, gameData }
 
-    return { board, string }
+    return { board, string, gameData }
 }
 
 async function restart({ i18n, message, msg, opponent, client, userData, opponentData, gameData }) {
@@ -409,7 +407,7 @@ async function restart({ i18n, message, msg, opponent, client, userData, opponen
             await collector.stop()
             await msg.reactions.removeAll()
 
-            return makeGif({ message, gameData })
+            return makeGif({ client, message, gameData })
         }
 
         const activeUser = user.id === userData.id ? userData : opponentData
@@ -422,7 +420,6 @@ async function restart({ i18n, message, msg, opponent, client, userData, opponen
             await msg.reactions.removeAll()
 
             opponentData.choose = opponentData?.choose ? false : true
-            //userData.choose = uopponentData?.choose ? true : false
 
             return whoStart({ i18n, message, msg, opponent, client, userData, opponentData })
         }
@@ -444,9 +441,10 @@ async function restart({ i18n, message, msg, opponent, client, userData, opponen
 
 const Canvas = require("canvas")
 const gifencoder = require("gifencoder")
-const { MessageAttachment } = require("discord.js")
 
-async function makeGif({ message, gameData }) {
+async function makeGif({ client, message, gameData }) {
+
+    //console.log(gameData.actions[0].board)
 
     if (!gameData) {
         gameData = {
@@ -530,31 +528,49 @@ async function makeGif({ message, gameData }) {
         }
     }
 
-    const actions = gameData.actions[0]
+    const actions = gameData.actions.reverse()[0]
 
     const width = 500
     const height = 500
+    const interval = 1000
 
+    //Gif
+    const gif = new gifencoder(width, height)
+    
+    gif.start()
+    gif.setRepeat(0)
+    gif.setDelay(interval)
+    gif.setTransparent()
+
+    //Canvas
     const canvas = Canvas.createCanvas(width, height)
     const ctx = canvas.getContext("2d")
 
+    //Background
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, width, height)
 
-    const text = `Replay de ${gameData.players[0].username} contre ${gameData.players[1].username}`
-    const fontSize = 10
-
+    //Text
     ctx.fillStyle = "#FFFFFF"
-    ctx.font = `${fontSize}px Arial`
-    ctx.fillText(text, width - text.length * fontSize, 50)
+    ctx.font = "20px Arial"
+    const text = `Replay de ${gameData.players[0].username} contre ${gameData.players[1].username}`
+    const textWidth = ctx.measureText(text).width
+
+    ctx.fillText(text, (canvas.width/2) - (textWidth / 2), 50)
+
+    //Credit
+    ctx.font = "18px Arial"
+    ctx.fillText(`Replay par ${client.user.username}`, width / 20, height - 20)
 
     for (let i = 0; i < actions.length; i++) {
         for (let j = 0; j < actions[i].length; j++) {
-            const image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/26aa.png")
+            //console.log(actions[i][j])
 
+            let image
 
-            //https://images.emojiterra.com/twitter/v13.0/512px/1f534.png ROUGE
-            //https://images.emojiterra.com/twitter/v13.0/512px/1f7e1.png JAUNE
+            if (["🔴", "<a:Sudref_Red_White:723485311467913239>"].includes(actions[i][j])) image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/1f534.png")
+            if (["🟡", "<a:Sudref_Yellow_White:723485311954452501>"].includes(actions[i][j])) image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/1f7e1.png")
+            if (!image) image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/26aa.png")
 
             const widthImage = width / 10
             const heightImage = height / 10
@@ -567,26 +583,22 @@ async function makeGif({ message, gameData }) {
 
             ctx.drawImage(image, x + j * widthImage, y + i * heightImage, widthImage, heightImage)
         }
+
+        gif.addFrame(ctx)
     }
 
-    message.channel.send({
-        files: [ canvas.toBuffer() ]
-    })
+    gif.finish()
 
-    //const interval = 1000
-    //const gif = new gifencoder(500, 500)
-    //
-    //gif.start()
-    //gif.setRepeat(0)
-    //gif.setDelay(interval)
-    //gif.setTransparent()
+    console.log(gif)
+
+    message.channel.send("good")
+
+    //message.channel.send({
+    //    files: [ canvas.toBuffer() ]
+    //})
 
     //https://github.com/Mr-KayJayDee/discord-image-generation/blob/main/src/module/gif/blink.js
 
     //https://www.npmjs.com/package/gifencoder
 
 }
-
-//module.exports = {
-//    makeGif
-//}
