@@ -9,7 +9,7 @@ module.exports = class Eval extends Command {
             //use: (i18n) => i18n.__("discord.eval.use"),
             //example: (i18n) => i18n.__("discord.eval.example"),
             aliases: ["e"],
-            ownerOnly: true
+            //ownerOnly: true
         })
     }
 
