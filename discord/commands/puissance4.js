@@ -36,6 +36,8 @@ module.exports = class Puissance4 extends Command {
 
         return opponentReady({ i18n, message, msg, opponent, client })
     }
+
+    makeGif = makeGif
 }
 
 async function playWithBot({ i18n, message, client }) {
@@ -446,36 +448,124 @@ const { MessageAttachment } = require("discord.js")
 
 async function makeGif({ message, gameData }) {
 
-    console.log(gameData)
+    if (!gameData) {
+        gameData = {
+            date: 1627310718650,
+            players: [
+                {
+                    id: '253569074431262720',
+                    username: 'Superalexandre',
+                    turn: false,
+                    emoji: '🔴',
+                    winEmoji: '<a:Sudref_Red_White:723485311467913239>',
+                    win: 1
+                },
+                {
+                    id: '749931469681459251',
+                    username: 'Rudiger',
+                    turn: true,
+                    emoji: '🟡' ,
+                    winEmoji: '<a:Sudref_Yellow_White:723485311954452501>',
+                    loose: 1
+                }
+            ],
+            actions: [
+                [
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                ],
+                [
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                ],
+                [
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                ],
+                [
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                ],
+                [
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                ],
+                [
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                ],
+                [
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                ]
+            ]
+        }
+    }
 
-    const actions = gameData.actions.reverse()[0]
+    const actions = gameData.actions[0]
 
-    const width = 200
-    const height = 200
-
-    const centerX = width / 2
-    const centerY = height / 2
+    const width = 500
+    const height = 500
 
     const canvas = Canvas.createCanvas(width, height)
     const ctx = canvas.getContext("2d")
 
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = "black"
+    ctx.fillRect(0, 0, width, height)
+
+    const text = `Replay de ${gameData.players[0].username} contre ${gameData.players[1].username}`
+    const fontSize = 10
+
+    ctx.fillStyle = "#FFFFFF"
+    ctx.font = `${fontSize}px Arial`
+    ctx.fillText(text, width - text.length * fontSize, 50)
 
     for (let i = 0; i < actions.length; i++) {
         for (let j = 0; j < actions[i].length; j++) {
-            //const widthX = actions[i].length
-            //const widthY = actions.length
-
-            //const x = width - widthX
-            //const y = height - widthY
-
             const image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/26aa.png")
 
-            //console.log(i, j, x, y)
 
-            console.log(i, j)
-            ctx.drawImage(image, 100, 100, width / 10, height / 10)
+            //https://images.emojiterra.com/twitter/v13.0/512px/1f534.png ROUGE
+            //https://images.emojiterra.com/twitter/v13.0/512px/1f7e1.png JAUNE
+
+            const widthImage = width / 10
+            const heightImage = height / 10
+
+            const jLength = actions[i].length
+            const iLength = actions.length
+
+            const x = (width - (jLength * widthImage)) / 2
+            const y  = (height - (iLength * heightImage)) / 2
+
+            ctx.drawImage(image, x + j * widthImage, y + i * heightImage, widthImage, heightImage)
         }
     }
 
@@ -497,6 +587,6 @@ async function makeGif({ message, gameData }) {
 
 }
 
-module.exports = {
-    makeGif
-}
+//module.exports = {
+//    makeGif
+//}
