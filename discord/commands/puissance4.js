@@ -536,23 +536,19 @@ async function makeGif({ client, message, gameData }) {
 
     const width = 500
     const height = 500
-    const interval = 1000
 
     //Gif
     const gif = new gifencoder(width, height)
     
     gif.start()
     gif.setRepeat(0)
-    gif.setDelay(interval)
+    gif.setDelay(1000)
+    gif.setQuality(0)
     gif.setTransparent()
 
     //Canvas
     const canvas = Canvas.createCanvas(width, height)
     const ctx = canvas.getContext("2d")
-
-    //Background
-    ctx.fillStyle = "black"
-    ctx.fillRect(0, 0, width, height)
 
     //Text
     ctx.fillStyle = "#FFFFFF"
@@ -566,25 +562,28 @@ async function makeGif({ client, message, gameData }) {
     ctx.font = "18px Arial"
     ctx.fillText(`Replay par ${client.user.username}`, width / 20, height - 20)
 
+    const emotes = {
+        "🔴": await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/1f534.png"),
+        "🟡": await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/1f7e1.png"),
+        "⚪": await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/26aa.png")
+    }
 
-    for (let i = 0; i < actions.length; i++) {
-        for (let j = 0; j < actions[i].length; j++) {
-            let image
+    for (let i = 0; i < actions.length; i++) { //k
+        for (let j = 0; j < actions[i].length; j++) { //i
+            for (let k = 0; k < actions[i][j].length; k++) { //j
+                const widthImage = width / 10
+                const heightImage = height / 10
 
-            if (["🔴", "<a:Sudref_Red_White:723485311467913239>"].includes(actions[i][j])) image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/1f534.png")
-            if (["🟡", "<a:Sudref_Yellow_White:723485311954452501>"].includes(actions[i][j])) image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/1f7e1.png")
-            if (!image) image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/26aa.png")
+                const jLength = actions[i][j].length
+                const iLength = actions[i].length
 
-            const widthImage = width / 10
-            const heightImage = height / 10
+                const x = (width - (jLength * widthImage)) / 2
+                const y  = (height - (iLength * heightImage)) / 2
 
-            const jLength = actions[i].length
-            const iLength = actions.length
+                const emote = await emotes[actions[i][j][k]]
 
-            const x = (width - (jLength * widthImage)) / 2
-            const y  = (height - (iLength * heightImage)) / 2
-
-            ctx.drawImage(image, x + j * widthImage, y + i * heightImage, widthImage, heightImage)
+                ctx.drawImage(emote, x + k * widthImage, y + j * heightImage, widthImage, heightImage)
+            }
         }
 
         gif.addFrame(ctx)
@@ -598,13 +597,4 @@ async function makeGif({ client, message, gameData }) {
             name: "replay.gif"
         }]
     })
-
-    //message.channel.send({
-    //    files: [ canvas.toBuffer() ]
-    //})
-
-    //https://github.com/Mr-KayJayDee/discord-image-generation/blob/main/src/module/gif/blink.js
-
-    //https://www.npmjs.com/package/gifencoder
-
 }
