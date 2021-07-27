@@ -149,11 +149,15 @@ async function whoStart({ i18n, message, msg, opponent, client, userData, oppone
     
         await collector.stop()
         await button.reply.defer()
-        return startGame({ i18n, message, msg, opponent, client, userData, opponentData })
+        return startGame({ i18n, message, msg, opponent, client, userData, opponentData, gameData })
     })
 }
 
-async function startGame({ i18n, message, msg, opponent, client, userData, opponentData }) {
+let gameData = {
+    actions: []
+}
+
+async function startGame({ i18n, message, msg, opponent, client, userData, opponentData, gameData }) {
     let board = [
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
@@ -178,12 +182,9 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         emoji: "🟡",
         winEmoji: "<a:Sudref_Yellow_White:723485311954452501>"
     }
-
-    const gameData = {
-        date: Date.now(),
-        players: [userData, opponentData],
-        actions: {}
-    }
+    
+    gameData.date = Date.now()
+    gameData.players = [userData, opponentData]
 
     await msg.edit("Veuillez patienter quelque seconde, le temps de la mise en place des réactions", null)
 
@@ -222,6 +223,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
 
         await reaction.users.remove(user.id)
 
+        gameData.actions.push([...added.board])
 
         if (added && added.error) {
             if (added.error === "row_full") return await msg.edit(text(userData, opponentData, "Vous ne pouvez pas jouer ici !") + added.string, null)
@@ -448,7 +450,7 @@ const gifencoder = require("gifencoder")
 
 async function makeGif({ client, message, gameData }) {
 
-    gameData = undefined
+    console.log(gameData.actions)
 
     if (!gameData) {
         gameData = {
