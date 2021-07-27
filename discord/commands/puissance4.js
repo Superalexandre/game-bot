@@ -182,7 +182,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
     const gameData = {
         date: Date.now(),
         players: [userData, opponentData],
-        actions: []
+        actions: {}
     }
 
     await msg.edit("Veuillez patienter quelque seconde, le temps de la mise en place des réactions", null)
@@ -200,7 +200,6 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         return `Revanche n°${userWin + opponentWin} : **${userWin}** ${user.username} - **${opponentWin}** ${opponent.username}\n`
     }
 
-
     const text = (user, opponent, error) => `${revangeText(user, opponent)}Tour de : ${user.turn ? user.username : opponent.username} (${user.turn ? user.emoji : opponent.emoji}) ${error ? "\n" + error : ""}\n\n`
 
     const formatedBoard = genBoard({ board, userData, opponentData })
@@ -208,7 +207,8 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
     await msg.edit(text(userData, opponentData) + formatedBoard.string, null)
 
     const collector = msg.createReactionCollector((reaction, user) => [userData.id, opponentData.id].includes(user.id) && emoteNumber.includes(reaction.emoji.name))
-
+    
+    let actionsNumber = 0
     collector.on("collect", async(reaction, user) => {
         const activeUser = userData.id === user.id ? userData : opponentData
         const opposite = userData.id === user.id ? opponentData : userData
@@ -218,9 +218,10 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         const emoteNumber = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]
         const playRow = emoteNumber.indexOf(reaction.emoji.name)
 
-        const added = add({ board, emoji: activeUser.emoji, row: playRow, gameData })
+        const added = add({ board, emoji: activeUser.emoji, row: playRow })
 
         await reaction.users.remove(user.id)
+
 
         if (added && added.error) {
             if (added.error === "row_full") return await msg.edit(text(userData, opponentData, "Vous ne pouvez pas jouer ici !") + added.string, null)
@@ -230,6 +231,8 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
 
         activeUser.turn = false
         opposite.turn = true
+
+        actionsNumber = actionsNumber + 1
 
         const formatedBoard = genBoard({ board, userData, opponentData })
 
@@ -266,7 +269,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
             opposite.turn = false
 
             const rowToPlay = await botPlay({ board, emoji: opposite.emoji })
-            const added = add({ board, emoji: opposite.emoji, row: rowToPlay, gameData })
+            const added = add({ board, emoji: opposite.emoji, row: rowToPlay })
 
             if (added && added.error) {
                 if (added.error === "row_full") return await msg.edit(text(userData, opponentData, "Vous ne pouvez pas jouer ici !") + added.string, null)
@@ -361,7 +364,7 @@ function genBoard({ board, userData, opponentData }) {
     return { string, win, winner, allFill, winnerUser }
 }
 
-function add({ board, emoji, row, gameData }) {
+function add({ board, emoji, row }) {
     let placed = false
     let string = ""
     const emoteNumber = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]
@@ -389,9 +392,10 @@ function add({ board, emoji, row, gameData }) {
         string += "\n"
     }
 
-    if (!placed) return { error: "row_full", board, string, gameData }
 
-    return { board, string, gameData }
+    if (!placed) return { error: "row_full", board, string }
+
+    return { board, string }
 }
 
 async function restart({ i18n, message, msg, opponent, client, userData, opponentData, gameData }) {
@@ -444,7 +448,7 @@ const gifencoder = require("gifencoder")
 
 async function makeGif({ client, message, gameData }) {
 
-    //console.log(gameData.actions[0].board)
+    gameData = undefined
 
     if (!gameData) {
         gameData = {
@@ -471,64 +475,64 @@ async function makeGif({ client, message, gameData }) {
                 [
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
                 ],
                 [
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
                 ],
                 [
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
                 ],
                 [
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
                 ],
                 [
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
                 ],
                 [
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
                 ],
                 [
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
                     ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "<a:Sudref_Red_White:723485311467913239>"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
                 ]
             ]
         }
     }
 
-    const actions = gameData.actions.reverse()[0]
+    const actions = gameData.actions.reverse()
 
     const width = 500
     const height = 500
@@ -562,10 +566,9 @@ async function makeGif({ client, message, gameData }) {
     ctx.font = "18px Arial"
     ctx.fillText(`Replay par ${client.user.username}`, width / 20, height - 20)
 
+
     for (let i = 0; i < actions.length; i++) {
         for (let j = 0; j < actions[i].length; j++) {
-            //console.log(actions[i][j])
-
             let image
 
             if (["🔴", "<a:Sudref_Red_White:723485311467913239>"].includes(actions[i][j])) image = await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/1f534.png")
@@ -589,9 +592,12 @@ async function makeGif({ client, message, gameData }) {
 
     gif.finish()
 
-    console.log(gif)
-
-    message.channel.send("good")
+    message.channel.send({
+        files: [{
+            attachment: gif.out.getData(),
+            name: "replay.gif"
+        }]
+    })
 
     //message.channel.send({
     //    files: [ canvas.toBuffer() ]
