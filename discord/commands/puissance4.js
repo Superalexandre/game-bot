@@ -149,23 +149,23 @@ async function whoStart({ i18n, message, msg, opponent, client, userData, oppone
     
         await collector.stop()
         await button.reply.defer()
-        return startGame({ i18n, message, msg, opponent, client, userData, opponentData, gameData })
+        return startGame({ i18n, message, msg, opponent, client, userData, opponentData })
     })
 }
 
-let gameData = {
-    actions: []
-}
+const actions = []
+const boardModel = [
+    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+]
 
-async function startGame({ i18n, message, msg, opponent, client, userData, opponentData, gameData }) {
-    let board = [
-        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-    ]
+async function startGame({ i18n, message, msg, opponent, client, userData, opponentData }) {
+    let gameData = {}
+    let board = boardModel.slice()
 
     userData = userData ? userData : {
         id: message.author.id,
@@ -223,7 +223,9 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
 
         await reaction.users.remove(user.id)
 
-        gameData.actions.push([...added.board])
+        actions.push(board.slice())
+
+        console.log(actions, boardModel)
 
         if (added && added.error) {
             if (added.error === "row_full") return await msg.edit(text(userData, opponentData, "Vous ne pouvez pas jouer ici !") + added.string, null)
@@ -266,6 +268,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         await msg.edit(text(userData, opponentData) + formatedBoard.string, null)
 
         //Bot
+        //Todo
         if (opponentData.id === client.user.id) {
             type.turn = true
             opposite.turn = false
