@@ -36,8 +36,6 @@ module.exports = class Puissance4 extends Command {
 
         return opponentReady({ i18n, message, msg, opponent, client })
     }
-
-    makeGif = makeGif
 }
 
 async function playWithBot({ i18n, message, client }) {
@@ -153,19 +151,14 @@ async function whoStart({ i18n, message, msg, opponent, client, userData, oppone
     })
 }
 
-const actions = []
-const boardModel = [
-    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-]
-
 async function startGame({ i18n, message, msg, opponent, client, userData, opponentData }) {
-    let gameData = {}
-    let board = boardModel.slice()
+    let board = [
+        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+    ]
 
     userData = userData ? userData : {
         id: message.author.id,
@@ -182,15 +175,20 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         emoji: "🟡",
         winEmoji: "<a:Sudref_Yellow_White:723485311954452501>"
     }
-    
-    gameData.date = Date.now()
-    gameData.players = [userData, opponentData]
+
+    const gameData = {
+        date: Date.now(),
+        players: [userData, opponentData],
+        actions: []
+    }
 
     await msg.edit("Veuillez patienter quelque seconde, le temps de la mise en place des réactions", null)
 
     const emoteNumber = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]
 
     for (let i = 0; i < emoteNumber.length; i++) await msg.react(emoteNumber[i])
+
+    const copyArray = (array) => JSON.parse(JSON.stringify(array))
 
     const revangeText = (user, opponent) => {
         if (!user.win && !opponent.win) return ""
@@ -223,9 +221,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
 
         await reaction.users.remove(user.id)
 
-        actions.push(board.slice())
-
-        console.log(actions, boardModel)
+        gameData.actions.push(copyArray(added.board))
 
         if (added && added.error) {
             if (added.error === "row_full") return await msg.edit(text(userData, opponentData, "Vous ne pouvez pas jouer ici !") + added.string, null)
@@ -452,92 +448,7 @@ const Canvas = require("canvas")
 const gifencoder = require("gifencoder")
 
 async function makeGif({ client, message, gameData }) {
-
-    console.log(gameData.actions)
-
-    if (!gameData) {
-        gameData = {
-            date: 1627310718650,
-            players: [
-                {
-                    id: '253569074431262720',
-                    username: 'Superalexandre',
-                    turn: false,
-                    emoji: '🔴',
-                    winEmoji: '<a:Sudref_Red_White:723485311467913239>',
-                    win: 1
-                },
-                {
-                    id: '749931469681459251',
-                    username: 'Rudiger',
-                    turn: true,
-                    emoji: '🟡' ,
-                    winEmoji: '<a:Sudref_Yellow_White:723485311954452501>',
-                    loose: 1
-                }
-            ],
-            actions: [
-                [
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                ],
-                [
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                ],
-                [
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                ],
-                [
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                ],
-                [
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                ],
-                [
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["🟡", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                ],
-                [
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-                    ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "🔴"],
-                ]
-            ]
-        }
-    }
-
-    const actions = gameData.actions.reverse()
+    const actions = gameData.actions
 
     const width = 500
     const height = 500
@@ -547,8 +458,8 @@ async function makeGif({ client, message, gameData }) {
     
     gif.start()
     gif.setRepeat(0)
-    gif.setDelay(1000)
-    gif.setQuality(0)
+    gif.setDelay(1500)
+    gif.setQuality(1)
     gif.setTransparent()
 
     //Canvas
