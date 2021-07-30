@@ -1,5 +1,7 @@
 const Command = require("../structures/Command")
 const { MessageButton, MessageActionRow } = require("discord-buttons")
+const Canvas = require("canvas")
+const fs = require("fs")
 
 module.exports = class Puissance4 extends Command {
     constructor(client) {
@@ -444,7 +446,6 @@ async function restart({ i18n, message, msg, opponent, client, userData, opponen
     })
 }
 
-const Canvas = require("canvas")
 const gifencoder = require("gif-encoder-2")
 
 async function makeGif({ client, message, gameData }) {
@@ -458,7 +459,7 @@ async function makeGif({ client, message, gameData }) {
     gif.setRepeat(0)
     gif.setDelay(1500)
     gif.setQuality(1)
-    //gif.setTransparent()
+    gif.setTransparent()
 
     //Canvas
     const canvas = Canvas.createCanvas(width, height)
