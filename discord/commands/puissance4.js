@@ -445,11 +445,9 @@ async function restart({ i18n, message, msg, opponent, client, userData, opponen
 }
 
 const Canvas = require("canvas")
-const gifencoder = require("gifencoder")
+const gifencoder = require("gif-encoder-2")
 
 async function makeGif({ client, message, gameData }) {
-    const actions = gameData.actions
-
     const width = 500
     const height = 500
 
@@ -460,7 +458,7 @@ async function makeGif({ client, message, gameData }) {
     gif.setRepeat(0)
     gif.setDelay(1500)
     gif.setQuality(1)
-    gif.setTransparent()
+    //gif.setTransparent()
 
     //Canvas
     const canvas = Canvas.createCanvas(width, height)
@@ -468,14 +466,14 @@ async function makeGif({ client, message, gameData }) {
 
     //Text
     ctx.fillStyle = "#FFFFFF"
-    ctx.font = "20px Arial"
+    ctx.font = "20px 'Arial'"
     const text = `Replay de ${gameData.players[0].username} contre ${gameData.players[1].username}`
     const textWidth = ctx.measureText(text).width
 
     ctx.fillText(text, (canvas.width/2) - (textWidth / 2), 50)
 
     //Credit
-    ctx.font = "18px Arial"
+    ctx.font = "18px 'Arial'"
     ctx.fillText(`Replay par ${client.user.username}`, width / 20, height - 20)
 
     const emotes = {
@@ -484,19 +482,19 @@ async function makeGif({ client, message, gameData }) {
         "⚪": await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/26aa.png")
     }
 
-    for (let i = 0; i < actions.length; i++) { //k
-        for (let j = 0; j < actions[i].length; j++) { //i
-            for (let k = 0; k < actions[i][j].length; k++) { //j
+    for (let i = 0; i < gameData.actions.length; i++) { //k
+        for (let j = 0; j < gameData.actions[i].length; j++) { //i
+            for (let k = 0; k < gameData.actions[i][j].length; k++) { //j
                 const widthImage = width / 10
                 const heightImage = height / 10
 
-                const jLength = actions[i][j].length
-                const iLength = actions[i].length
+                const jLength = gameData.actions[i][j].length
+                const iLength = gameData.actions[i].length
 
                 const x = (width - (jLength * widthImage)) / 2
                 const y  = (height - (iLength * heightImage)) / 2
 
-                const emote = await emotes[actions[i][j][k]]
+                const emote = await emotes[gameData.actions[i][j][k]]
 
                 ctx.drawImage(emote, x + k * widthImage, y + j * heightImage, widthImage, heightImage)
             }
@@ -507,7 +505,7 @@ async function makeGif({ client, message, gameData }) {
 
     gif.finish()
 
-    message.channel.send({
+    await message.channel.send({
         files: [{
             attachment: gif.out.getData(),
             name: "replay.gif"

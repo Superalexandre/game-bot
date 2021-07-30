@@ -14,7 +14,9 @@
     "discord-reply": "^0.1.2",
     "discord.js": "^12.5.3",
     "enmap": "^5.8.5",
+    "gif-encoder-2": "^1.0.5",
     "gifencoder": "^2.0.1",
+    "gifencoder-forced-color": "^2.1.0",
     "grapheme-splitter": "^1.0.4",
     "i18n": "^0.13.3",
     "pathfinding": "^0.4.18"
