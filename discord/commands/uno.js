@@ -163,7 +163,7 @@ module.exports = class Uno extends Command {
             
             user.cards.push(drawCard.generatedCard)
     
-            const genButton = genButtons({ message, playersData, button, gameID })
+            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
     
             await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !", {
                 components: makeRows(genButton.buttons),
@@ -202,7 +202,7 @@ module.exports = class Uno extends Command {
             const newTurn = userTurn(turn)
             newTurn.isTurn = true
     
-            const genButton = genButtons({ message, playersData, button, gameID })
+            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
             await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
                 components: makeRows(genButton.buttons),
@@ -227,12 +227,14 @@ module.exports = class Uno extends Command {
                 drawerData.cards.push(drawCard.generatedCard)   
             }
 
+            const drawerButton = genButtons({ message, playersData, })
+
             turn = switchTurn(turn, 1, clockwise)
             
             const newTurn = userTurn(turn)
             newTurn.isTurn = true
 
-            const genButton = genButtons({ message, playersData, button, gameId })
+            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameId })
             
             console.log(true)
 
@@ -249,7 +251,7 @@ module.exports = class Uno extends Command {
         } else if (cardColor === "special" && cardNumber === "newcolor") {
             user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
 
-            const genButton = genButtons({ message, playersData, button, gameID })
+            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
             const editButtons = []
 
@@ -276,7 +278,7 @@ module.exports = class Uno extends Command {
         } else if (cardColor === "special" && cardNumber === "addFour") {
             user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
 
-            const genButton = genButtons({ message, playersData, button, gameID })
+            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
             const editButtons = []
 
@@ -378,7 +380,7 @@ async function startGame({ client, gameID }) {
         if (!Object.keys(playersData).includes(button.clicker.user.id)) return await button.reply.send(`Désolé mais ce n'est pas votre partie, pour en lancer une faites !uno @Joueur`, true)
     
         if (button.id.endsWith("seenCard")) {
-            const { buttons } = genButtons({ message, playersData, button, gameID })
+            const { buttons } = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
             let reply = await button.reply.send("Voici vos cartes, faites gaffe a bien garder ce message !", {
                 components: makeRows(buttons),
@@ -472,7 +474,7 @@ function genCard({ cards }) {
     return { cards, generatedCard }
 }
 
-function genButtons({ message, playersData, button, gameID }) {
+function genButtons({ message, playersData, userID, gameID }) {
     const draw = new MessageButton()
         .setStyle("red")
         .setLabel("Piocher")
@@ -480,11 +482,11 @@ function genButtons({ message, playersData, button, gameID }) {
 
     const buttons = []
 
-    for (let i = 0; i < playersData[button.clicker.user.id].cards.length; i++) {
+    for (let i = 0; i < playersData[userID].cards.length; i++) {
         const buttonCard = new MessageButton()
             .setStyle("blurple")
-            .setLabel(playersData[button.clicker.user.id].cards[i])
-            .setID(`game_uno_${message.author.id}_${gameID}_playCard_ephemeral_${playersData[button.clicker.user.id].cards[i]}`)
+            .setLabel(playersData[userID].cards[i])
+            .setID(`game_uno_${message.author.id}_${gameID}_playCard_ephemeral_${playersData[userID].cards[i]}`)
 
         buttons.push(buttonCard)
     }
