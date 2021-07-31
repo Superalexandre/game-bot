@@ -125,6 +125,29 @@ module.exports = class Uno extends Command {
             .setLabel("Voir mes cartes")
             .setID(`game_uno_${message.author.id}_${gameID}_seenCard`)
         
+            const red = new MessageButton()
+            .setStyle("blurple")
+            .setLabel("Rouge")
+            .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_red_addFour`)
+
+        const green = new MessageButton()
+            .setStyle("blurple")
+            .setLabel("Vert")
+            .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_green_addFour`)
+
+        const blue = new MessageButton()
+            .setStyle("blurple")
+            .setLabel("Bleu")
+            .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_blue_addFour`)
+    
+        const yellow = new MessageButton()
+            .setStyle("blurple")
+            .setLabel("Jaune")
+            .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_yellow_addFour`)
+
+        const colors = new MessageActionRow()
+            .addComponents([ red, green, blue, yellow ])
+
         if (id[id.length - 1] === "draw") {
             const drawCard = await genCard({ cards })
             
@@ -188,29 +211,6 @@ module.exports = class Uno extends Command {
 
         //New color
         } else if (cardColor === "special" && cardNumber === "newcolor") {
-            const red = new MessageButton()
-                .setStyle("blurple")
-                .setLabel("Rouge")
-                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_red_newColor`)
-
-            const green = new MessageButton()
-                .setStyle("blurple")
-                .setLabel("Vert")
-                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_green_newColor`)
-
-            const blue = new MessageButton()
-                .setStyle("blurple")
-                .setLabel("Bleu")
-                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_blue_newColor`)
-            
-            const yellow = new MessageButton()
-                .setStyle("blurple")
-                .setLabel("Jaune")
-                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_yellow_newColor`)
-
-            const color = new MessageActionRow()
-                .addComponents([ red, green, blue, yellow ])
-
             let filtered = false
             user.cards = user.cards.filter(card => {
                 if (card !== cardColor + "_" + cardNumber) return true
@@ -237,7 +237,7 @@ module.exports = class Uno extends Command {
 
             const rows = makeRows(editButtons)
 
-            rows.push(color)
+            rows.push(colors)
 
             await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
                 components: rows,
@@ -253,29 +253,6 @@ module.exports = class Uno extends Command {
             return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
         //Add four
         } else if (cardColor === "special" && cardNumber === "addFour") {
-            const red = new MessageButton()
-                .setStyle("blurple")
-                .setLabel("Rouge")
-                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_red_addFour`)
-
-            const green = new MessageButton()
-                .setStyle("blurple")
-                .setLabel("Vert")
-                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_green_addFour`)
-
-            const blue = new MessageButton()
-                .setStyle("blurple")
-                .setLabel("Bleu")
-                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_blue_addFour`)
-        
-            const yellow = new MessageButton()
-                .setStyle("blurple")
-                .setLabel("Jaune")
-                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_yellow_addFour`)
-
-            const color = new MessageActionRow()
-                .addComponents([ red, green, blue, yellow ])
-
             user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
 
             const genButton = genButtons({ message, playersData, button })
@@ -291,7 +268,7 @@ module.exports = class Uno extends Command {
 
             const rows = makeRows(editButtons)
 
-            rows.push(color)
+            rows.push(colors)
             
             await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
                 components: rows,
