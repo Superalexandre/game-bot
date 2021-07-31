@@ -124,6 +124,19 @@ module.exports = class Uno extends Command {
             return switchTurn(turn, toAdd - (players.length - turn), playersData, true)    
         }
     
+        /*
+        const switchTurn = (turn, toAdd, clockwise) => {
+            const players = Object.keys(playersData)
+
+            if (!clockwise) toAdd = players.length - toAdd
+
+            if (players[turn + toAdd]) return turn + toAdd
+
+            return players[toAdd - (players.length - turn)]
+            //return switchTurn(turn, toAdd - (players.length - turn), playersData, true)    
+        }
+        */
+
         if (!playersData[button.clicker.user.id].isTurn) return await button.reply.send(`Désolé mais ce n'est pas encore votre tour`, true)
     
         const id = button.id.split("_")
@@ -221,20 +234,22 @@ module.exports = class Uno extends Command {
     
             const drawerData = userTurn(turn)
             
+            console.log(userTurn(turn))
+
             for (let i = 0; i < 4; i++) {
                 const drawCard = await genCard({ cards })
 
                 drawerData.cards.push(drawCard.generatedCard)   
             }
 
-            const drawerButton = genButtons({ message, playersData, })
+            const drawerButton = genButtons({ message, playersData, userID: drawerData.user.id, gameID })
 
             turn = switchTurn(turn, 1, clockwise)
             
             const newTurn = userTurn(turn)
             newTurn.isTurn = true
 
-            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameId })
+            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
             
             console.log(true)
 
