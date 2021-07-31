@@ -89,7 +89,7 @@ module.exports = class Uno extends Command {
         
             if (!member) return message.channel.send(`Aie le membre ${member.user.username} est invalide :(`)
         
-            if (players.includes(member.user.id)) return message.channel.send(`Le membre ${member.user.username} est deja dans la partie O_o`)
+            if (players.includes(member.user.id)) return message.channel.send(`Le membre ${member.user.username} est deja dans la partie`)
         
             if (member.user.bot) return message.channel.send(`Eh ! c'est pas drole de jouer ${member.user.username}, parce que c'est un bot`)
         
@@ -110,9 +110,17 @@ module.exports = class Uno extends Command {
         const game = client.games.uno.get(gameID)
         
         const userTurn = (number) => playersData[Object.keys(playersData)[number]]
-        const switchTurn = (turn, sign) => playersData[Object.keys(playersData)[turn + 1]] ? turn + 1 : 0
+        const switchTurn = (turn, toAdd, playersData, clockwise) => {
+            const players = Object.keys(playersData)
+        
+            if (!clockwise) toAdd = players.length - toAdd
+        
+            if (players[turn + toAdd]) return turn + toAdd
+        
+            return newTurn(turn, toAdd - (players.length - turn), playersData, true)    
+        }
     
-        let { message, msg, cards, players, playersData, turn, actualCard } = game
+        let { message, msg, cards, players, playersData, turn, actualCard, clockwise } = game
     
         if (!playersData[button.clicker.user.id].isTurn) return await button.reply.send(`Désolé mais ce n'est pas encore votre tour`, true)
     
@@ -172,7 +180,7 @@ module.exports = class Uno extends Command {
                 buttons: [ seen_card ]
             })
     
-            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
         }
     
         const cardColor = id[id.length - 2]
@@ -182,7 +190,7 @@ module.exports = class Uno extends Command {
         const actualCardColor = actualCardID[0]
         const actualCardNumber = actualCardID[1]
 
-        //Color for color switch
+        //New color, color selected
         if (cardNumber === "newColor" && cardColor !== "special") {
             actualCard = cardColor
 
@@ -205,32 +213,23 @@ module.exports = class Uno extends Command {
                 buttons: [ seen_card ]
             })
 
-            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
         //Add four card, skip and color switch
         } else if (cardNumber === "addFour" && cardColor !== "special") {
+            
+            //TODO ADD FOUR CARD
 
-        //New color
+        //New color, color selector
         } else if (cardColor === "special" && cardNumber === "newcolor") {
-            let filtered = false
-            user.cards = user.cards.filter(card => {
-                if (card !== cardColor + "_" + cardNumber) return true
-                
-                if (!filtered && card === cardColor + "_" + cardNumber) {
-                    filtered = true
-                
-                    return false
-                }
-                
-                return true
-            })
+            user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
 
             const genButton = genButtons({ message, playersData, button })
 
             const editButtons = []
 
+            //Disable all buttons
             for (const button of genButton.buttons) {
                 const editButton = new MessageButton(button).setDisabled()
-                
                 
                 editButtons.push(editButton)
             }
@@ -250,8 +249,8 @@ module.exports = class Uno extends Command {
 
             await button.reply.defer()
 
-            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
-        //Add four
+            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
+        //Add four, color selector
         } else if (cardColor === "special" && cardNumber === "addFour") {
             user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
 
@@ -259,9 +258,9 @@ module.exports = class Uno extends Command {
 
             const editButtons = []
 
+            //Disable all buttons
             for (const button of genButton.buttons) {
                 const editButton = new MessageButton(button).setDisabled()
-                
                 
                 editButtons.push(editButton)
             }
@@ -278,28 +277,29 @@ module.exports = class Uno extends Command {
             await msg.edit(`Au tour de ${user.user.username}\n${user.user.username} choisis la couleur qu'il veut...`, {
                 buttons: [ seen_card ]
             })
+        } else {
+        
+            //other card
 
-            await button.reply.defer()
-
-            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+            //same color
+                // functionPlayNormalCard
+            //else if same number 
+                // functionPlayNormalCard
+            //else
+                // return message
+        
+            await msg.edit("Une erreur est survenue... " + button.id)
         }
 
-        //other card
+        await button.reply.defer()
 
-        //same color
-            // functionPlayNormalCard
-        //else if same number 
-            // functionPlayNormalCard
-        //else
-            // return message
-
-        await msg.edit("Une erreur est survenue...")
-
-        client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+        client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
     }
 }
 
 async function allPlayersReady({ client, message, msg, cards, players }) {
+    //Todo gameID
+
     const gameID = "1"
 
     client.games.uno.set(gameID, { message, msg, cards, players })
@@ -369,7 +369,7 @@ async function startGame({ client, gameID }) {
         }
     })
 
-    client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard })
+    client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise: true })
 }
 
 function removeCard(cards, toRemove) {
@@ -386,8 +386,6 @@ function removeCard(cards, toRemove) {
 
         return true
     })
-
-    console.log(card)
 
     return card
 }
@@ -502,4 +500,26 @@ function switchTurn(turn, toAdd, sign) {
 }
 
 console.log(switchTurn(1, 1, { sign: "-" }))
+*/
+
+/*
+
+Card points
+function cardScore(num) {
+  let points;
+  switch (num % 14) {
+    case 10: //Skip
+    case 11: //Reverse
+    case 12: //Draw 2
+      points = 20;
+      break;
+    case 13: //Wild or Wild Draw 4
+      points = 50;
+      break;
+    default:
+      points = num % 14;
+      break;
+  }
+  return points;
+}
 */
