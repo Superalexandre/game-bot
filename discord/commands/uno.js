@@ -109,6 +109,8 @@ module.exports = class Uno extends Command {
     async playCard({ client, gameID, button }) {
         const game = client.games.uno.get(gameID)
         
+        if (!game) return console.log(false)
+
         let { message, msg, cards, players, playersData, turn, actualCard, clockwise } = game
 
         const userTurn = (number) => playersData[Object.keys(playersData)[number]]
@@ -119,7 +121,7 @@ module.exports = class Uno extends Command {
         
             if (players[turn + toAdd]) return turn + toAdd
         
-            return newTurn(turn, toAdd - (players.length - turn), playersData, true)    
+            return switchTurn(turn, toAdd - (players.length - turn), playersData, true)    
         }
     
         if (!playersData[button.clicker.user.id].isTurn) return await button.reply.send(`Désolé mais ce n'est pas encore votre tour`, true)
@@ -200,7 +202,7 @@ module.exports = class Uno extends Command {
             const newTurn = userTurn(turn)
             newTurn.isTurn = true
     
-            const genButton = genButtons({ message, playersData, button })
+            const genButton = genButtons({ message, playersData, button, gameID })
 
             await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
                 components: makeRows(genButton.buttons),
@@ -212,26 +214,28 @@ module.exports = class Uno extends Command {
             })
         //Add four card, skip and color switch
         } else if (cardNumber === "addFour" && cardColor !== "special") {
-            //TODO
-
             actualCard = cardColor
 
-            const drawer = switchTurn(turn, 1, clockwise)
+            turn = switchTurn(turn, 1, clockwise)
             user.isTurn = false
     
-            const drawerData = userTurn(drawer)
+            const drawerData = userTurn(turn)
             
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 4; i++) {
                 const drawCard = await genCard({ cards })
 
                 drawerData.cards.push(drawCard.generatedCard)   
             }
 
-            let newTurn = switchTurn(turn, 1, clockwise)
+            turn = switchTurn(turn, 1, clockwise)
+            
+            const newTurn = userTurn(turn)
             newTurn.isTurn = true
 
-            const genButton = genButtons({ message, playersData, button })
+            const genButton = genButtons({ message, playersData, button, gameId })
             
+            console.log(true)
+
             await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
                 components: makeRows(genButton.buttons),
                 ephemeral: true
@@ -245,7 +249,7 @@ module.exports = class Uno extends Command {
         } else if (cardColor === "special" && cardNumber === "newcolor") {
             user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
 
-            const genButton = genButtons({ message, playersData, button })
+            const genButton = genButtons({ message, playersData, button, gameID })
 
             const editButtons = []
 
@@ -272,7 +276,7 @@ module.exports = class Uno extends Command {
         } else if (cardColor === "special" && cardNumber === "addFour") {
             user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
 
-            const genButton = genButtons({ message, playersData, button })
+            const genButton = genButtons({ message, playersData, button, gameID })
 
             const editButtons = []
 
