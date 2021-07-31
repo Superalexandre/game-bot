@@ -109,8 +109,10 @@ module.exports = class Uno extends Command {
     async playCard({ client, gameID, button }) {
         const game = client.games.uno.get(gameID)
         
+        let { message, msg, cards, players, playersData, turn, actualCard, clockwise } = game
+
         const userTurn = (number) => playersData[Object.keys(playersData)[number]]
-        const switchTurn = (turn, toAdd, playersData, clockwise) => {
+        const switchTurn = (turn, toAdd, clockwise) => {
             const players = Object.keys(playersData)
         
             if (!clockwise) toAdd = players.length - toAdd
@@ -119,8 +121,6 @@ module.exports = class Uno extends Command {
         
             return newTurn(turn, toAdd - (players.length - turn), playersData, true)    
         }
-    
-        let { message, msg, cards, players, playersData, turn, actualCard, clockwise } = game
     
         if (!playersData[button.clicker.user.id].isTurn) return await button.reply.send(`Désolé mais ce n'est pas encore votre tour`, true)
     
@@ -168,7 +168,7 @@ module.exports = class Uno extends Command {
                 ephemeral: true
             })
         
-            turn = switchTurn(turn)
+            turn = switchTurn(turn, 1, clockwise)
             user.isTurn = false
     
             const newTurn = userTurn(turn)
@@ -194,7 +194,7 @@ module.exports = class Uno extends Command {
         if (cardNumber === "newColor" && cardColor !== "special") {
             actualCard = cardColor
 
-            turn = switchTurn(turn)
+            turn = switchTurn(turn, 1, clockwise)
             user.isTurn = false
     
             const newTurn = userTurn(turn)
@@ -207,17 +207,39 @@ module.exports = class Uno extends Command {
                 ephemeral: true
             })
 
-            await button.reply.defer()
+            await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
+                buttons: [ seen_card ]
+            })
+        //Add four card, skip and color switch
+        } else if (cardNumber === "addFour" && cardColor !== "special") {
+            //TODO
+
+            actualCard = cardColor
+
+            const drawer = switchTurn(turn, 1, clockwise)
+            user.isTurn = false
+    
+            const drawerData = userTurn(drawer)
+            
+            for (let i = 0; i < 3; i++) {
+                const drawCard = await genCard({ cards })
+
+                drawerData.cards.push(drawCard.generatedCard)   
+            }
+
+            let newTurn = switchTurn(turn, 1, clockwise)
+            newTurn.isTurn = true
+
+            const genButton = genButtons({ message, playersData, button })
+            
+            await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
+                components: makeRows(genButton.buttons),
+                ephemeral: true
+            })
 
             await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
                 buttons: [ seen_card ]
             })
-
-            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
-        //Add four card, skip and color switch
-        } else if (cardNumber === "addFour" && cardColor !== "special") {
-            
-            //TODO ADD FOUR CARD
 
         //New color, color selector
         } else if (cardColor === "special" && cardNumber === "newcolor") {
@@ -246,10 +268,6 @@ module.exports = class Uno extends Command {
             await msg.edit(`Au tour de ${user.user.username}\n${user.user.username} choisis la couleur qu'il veut...`, {
                 buttons: [ seen_card ]
             })
-
-            await button.reply.defer()
-
-            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
         //Add four, color selector
         } else if (cardColor === "special" && cardNumber === "addFour") {
             user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
