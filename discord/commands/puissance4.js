@@ -1,7 +1,7 @@
 const Command = require("../structures/Command")
 const { MessageButton, MessageActionRow } = require("discord-buttons")
 const Canvas = require("canvas")
-const fs = require("fs")
+const gifencoder = require("gifencoder")
 
 module.exports = class Puissance4 extends Command {
     constructor(client) {
@@ -139,12 +139,15 @@ async function whoStart({ i18n, message, msg, opponent, client, userData, oppone
 
         if (button.id.endsWith("opponent")) {
             opponent.turn = chooser === message.author ? true : false
+            opponent.random = false
         } else if (button.id.endsWith("user")) {
             opponent.turn = chooser === message.author ? false : true
+            opponent.random = false
         } else if (button.id.endsWith("random")) {
             const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1
 
             opponent.turn = random === 1 ? true : false
+            opponent.random = true
         } else return msg.edit("Erreur inconnue")
     
         await collector.stop()
@@ -166,6 +169,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         id: message.author.id,
         username: message.author.username,
         turn: opponent.turn ? false : true,
+        random: opponent.random,
         emoji: "🔴",
         winEmoji: "<a:Sudref_Red_White:723485311467913239>"
     }
@@ -174,6 +178,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         id: opponent.id,
         username: opponent.username,
         turn: opponent.turn,
+        random: opponent.random,
         emoji: "🟡",
         winEmoji: "<a:Sudref_Yellow_White:723485311954452501>"
     }
@@ -184,7 +189,7 @@ async function startGame({ i18n, message, msg, opponent, client, userData, oppon
         actions: []
     }
 
-    await msg.edit("Veuillez patienter quelque seconde, le temps de la mise en place des réactions", null)
+    await msg.edit(`${userData.turn ? userData.username : opponentData.username} va commencer (${userData.random ? "Aléatoire" : "Choix"})\nVeuillez patienter quelque seconde, le temps de la mise en place des réactions`, null)
 
     const emoteNumber = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]
 
@@ -446,11 +451,9 @@ async function restart({ i18n, message, msg, opponent, client, userData, opponen
     })
 }
 
-const gifencoder = require("gif-encoder-2")
-
 async function makeGif({ client, message, gameData }) {
-    const width = 500
-    const height = 500
+    const width = 1000
+    const height = 1000
 
     //Gif
     const gif = new gifencoder(width, height)
@@ -465,23 +468,19 @@ async function makeGif({ client, message, gameData }) {
     const canvas = Canvas.createCanvas(width, height)
     const ctx = canvas.getContext("2d")
 
+    const fontSize = width / 25
+
     //Text
     ctx.fillStyle = "#FFFFFF"
-    ctx.font = "20px 'Arial'"
+    ctx.font = `${fontSize}px 'Arial'`
     const text = `Replay de ${gameData.players[0].username} contre ${gameData.players[1].username}`
     const textWidth = ctx.measureText(text).width
 
     ctx.fillText(text, (canvas.width/2) - (textWidth / 2), 50)
 
     //Credit
-    ctx.font = "18px 'Arial'"
+    ctx.font = `${fontSize - 2}px 'Arial'`
     ctx.fillText(`Replay par ${client.user.username}`, width / 20, height - 20)
-
-    const emotes = {
-        "🔴": await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/1f534.png"),
-        "🟡": await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/1f7e1.png"),
-        "⚪": await Canvas.loadImage("https://images.emojiterra.com/twitter/v13.0/512px/26aa.png")
-    }
 
     for (let i = 0; i < gameData.actions.length; i++) { //k
         for (let j = 0; j < gameData.actions[i].length; j++) { //i
@@ -494,10 +493,12 @@ async function makeGif({ client, message, gameData }) {
 
                 const x = (width - (jLength * widthImage)) / 2
                 const y  = (height - (iLength * heightImage)) / 2
+            
+                ctx.beginPath()
+                ctx.arc(x + k * widthImage, y + j * heightImage, (height / 10) / 2, 0, Math.PI * 2, true)
+                ctx.fillStyle = gameData.actions[i][j][k] === "🔴" ? "#DD2E44" : gameData.actions[i][j][k] === "🟡" ? "#FDCB58" : "#FFFFFF"
+                ctx.fill()
 
-                const emote = await emotes[gameData.actions[i][j][k]]
-
-                ctx.drawImage(emote, x + k * widthImage, y + j * heightImage, widthImage, heightImage)
             }
         }
 
