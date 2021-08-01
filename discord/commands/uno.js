@@ -116,12 +116,12 @@ module.exports = class Uno extends Command {
         const userTurn = (number) => playersData[Object.keys(playersData)[number]]
         const switchTurn = (turn, toAdd, clockwise) => {
             const players = Object.keys(playersData)
-        
+                
             if (!clockwise) toAdd = players.length - toAdd
-        
+                
             if (players[turn + toAdd]) return turn + toAdd
-        
-            return switchTurn(turn, toAdd - (players.length - turn), playersData, true)    
+            
+            return switchTurn(turn - (players.length - toAdd), toAdd - (players.length - turn), playersData, true)    
         }
     
         /*
@@ -234,8 +234,6 @@ module.exports = class Uno extends Command {
     
             const drawerData = userTurn(turn)
             
-            console.log(userTurn(turn))
-
             for (let i = 0; i < 4; i++) {
                 const drawCard = await genCard({ cards })
 
@@ -244,14 +242,17 @@ module.exports = class Uno extends Command {
 
             const drawerButton = genButtons({ message, playersData, userID: drawerData.user.id, gameID })
 
+            await drawerData.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !", {
+                components: makeRows(drawerButton.buttons),
+                ephemeral: true
+            })
+
             turn = switchTurn(turn, 1, clockwise)
             
             const newTurn = userTurn(turn)
             newTurn.isTurn = true
 
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
-            
-            console.log(true)
 
             await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
                 components: makeRows(genButton.buttons),
