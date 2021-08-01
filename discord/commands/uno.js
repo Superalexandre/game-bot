@@ -1,6 +1,8 @@
 const Command = require("../structures/Command")
 const { MessageButton, MessageActionRow } = require("discord-buttons")
 
+
+
 module.exports = class Uno extends Command {
     constructor(client) {
         super(client, {
@@ -76,7 +78,7 @@ module.exports = class Uno extends Command {
             },
             special: {
                 "addFour": 4,
-                "newcolor": 4
+                "newColor": 4
             }
         }
 
@@ -148,29 +150,33 @@ module.exports = class Uno extends Command {
             .setLabel("Voir mes cartes")
             .setID(`game_uno_${message.author.id}_${gameID}_seenCard`)
         
+        const genColorsButtons = (type) => {
             const red = new MessageButton()
-            .setStyle("blurple")
-            .setLabel("Rouge")
-            .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_red_addFour`)
+                .setStyle("blurple")
+                .setLabel("Rouge")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_red_${type}`)
 
-        const green = new MessageButton()
-            .setStyle("blurple")
-            .setLabel("Vert")
-            .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_green_addFour`)
+            const green = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Vert")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_green_${type}`)
 
-        const blue = new MessageButton()
-            .setStyle("blurple")
-            .setLabel("Bleu")
-            .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_blue_addFour`)
-    
-        const yellow = new MessageButton()
-            .setStyle("blurple")
-            .setLabel("Jaune")
-            .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_yellow_addFour`)
+            const blue = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Bleu")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_blue_${type}`)
+        
+            const yellow = new MessageButton()
+                .setStyle("blurple")
+                .setLabel("Jaune")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_yellow_${type}`)
 
-        const colors = new MessageActionRow()
-            .addComponents([ red, green, blue, yellow ])
-
+            const colors = new MessageActionRow()
+                .addComponents([ red, green, blue, yellow ])
+        
+            return colors
+        }
+            
         if (id[id.length - 1] === "draw") {
             const drawCard = await genCard({ cards })
             
@@ -217,7 +223,7 @@ module.exports = class Uno extends Command {
     
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
-            await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
+            await user.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
                 components: makeRows(genButton.buttons),
                 ephemeral: true
             })
@@ -242,7 +248,7 @@ module.exports = class Uno extends Command {
 
             const drawerButton = genButtons({ message, playersData, userID: drawerData.user.id, gameID })
 
-            await drawerData.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !", {
+            await drawerData.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
                 components: makeRows(drawerButton.buttons),
                 ephemeral: true
             })
@@ -254,7 +260,7 @@ module.exports = class Uno extends Command {
 
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
-            await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
+            await user.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
                 components: makeRows(genButton.buttons),
                 ephemeral: true
             })
@@ -262,9 +268,8 @@ module.exports = class Uno extends Command {
             await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
                 buttons: [ seen_card ]
             })
-
         //New color, color selector
-        } else if (cardColor === "special" && cardNumber === "newcolor") {
+        } else if (cardColor === "special" && cardNumber === "newColor") {
             user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
 
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
@@ -280,9 +285,11 @@ module.exports = class Uno extends Command {
 
             const rows = makeRows(editButtons)
 
+            const colors = genColorsButtons("newColor")
+
             rows.push(colors)
 
-            await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
+            await user.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\nMerci de choisir votre couleur", {
                 components: rows,
                 ephemeral: true
             })
@@ -306,10 +313,12 @@ module.exports = class Uno extends Command {
             }
 
             const rows = makeRows(editButtons)
+            
+            const colors = genColorsButtons("addFour")
 
             rows.push(colors)
             
-            await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !\nMerci de choisir votre couleur", {
+            await user.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\nMerci de choisir votre couleur", {
                 components: rows,
                 ephemeral: true
             })
@@ -319,16 +328,39 @@ module.exports = class Uno extends Command {
             })
         } else {
         
+            /*
+                const cardColor = id[id.length - 2]
+                const cardNumber = id[id.length - 1] 
+                const actualCardID = actualCard.split("_")
+                const actualCardColor = actualCardID[0]
+                const actualCardNumber = actualCardID[1]
+            */
+
             //other card
 
-            //same color
-                // functionPlayNormalCard
-            //else if same number 
-                // functionPlayNormalCard
-            //else
-                // return message
-        
-            await msg.edit("Une erreur est survenue... " + button.id)
+            console.log(cardColor, cardNumber, actualCardColor, actualCardNumber)
+
+            if (cardColor === actualCardColor || cardNumber === actualCardNumber) {
+                user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
+
+                turn = switchTurn(turn, 1, clockwise)
+            
+                const newTurn = userTurn(turn)
+                newTurn.isTurn = true
+
+                const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+
+                await user.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
+                    components: makeRows(genButton.buttons),
+                    ephemeral: true
+                })
+
+                await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
+                    buttons: [ seen_card ]
+                })
+            } else {
+                await msg.edit(`${button.clicker.user.username} A joué une mauvaise carte !`)
+            }
         }
 
         await button.reply.defer()
@@ -478,7 +510,7 @@ function genCard({ cards }) {
 
     generatedCard += color + "_"
 
-    let typeNumber = color === "special" ? ["addFour", "newcolor"] : ["1", "2", "3", "4", "5", "6", "7", "8", "9", "skip", "switch", "addTwo"]
+    let typeNumber = color === "special" ? ["addFour", "newColor"] : ["1", "2", "3", "4", "5", "6", "7", "8", "9", "skip", "switch", "addTwo"]
     let number = typeNumber[Math.floor(Math.random() * typeNumber.length)]
 
     generatedCard += number
