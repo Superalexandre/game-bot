@@ -1,7 +1,15 @@
 const Command = require("../structures/Command")
 const { MessageButton, MessageActionRow } = require("discord-buttons")
 
+/*
 
+    TODO :
+        - Faire une sécurité pour le +4
+            => Si carte peut etre jouer -> Empecher
+        - Faire une sécurité pour piocher (un avertissement simple)
+            => Si une carte peut etre jouer -> Attention vous avez une carte que vous pouvez jouer voulez vous continuer ?
+        - Si trop de carte faire deux, trois pages
+*/
 
 module.exports = class Uno extends Command {
     constructor(client) {
