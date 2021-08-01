@@ -4,11 +4,13 @@ const { MessageButton, MessageActionRow } = require("discord-buttons")
 /*
 
     TODO :
-        - Faire une sécurité pour le +4
-            => Si carte peut etre jouer -> Empecher
-        - Faire une sécurité pour piocher (un avertissement simple)
-            => Si une carte peut etre jouer -> Attention vous avez une carte que vous pouvez jouer voulez vous continuer ?
-        - Si trop de carte faire deux, trois pages
+        #1 - Distribution des cartes pas spéciales, pas +2 (Ou sinon faire un truc)
+        #2 - Faire une sécurité pour le +4
+                => Si carte peut etre jouer -> Empecher
+        #3 - Faire une sécurité pour piocher (un avertissement simple)
+                => Si une carte peut etre jouer -> Attention vous avez une carte que vous pouvez jouer voulez vous continuer ?
+        #4 - Si trop de carte faire deux, trois pages
+        #5 - Piocher si tu peux jouer la carte piocher jouer sinon skip
 */
 
 module.exports = class Uno extends Command {
@@ -130,8 +132,8 @@ module.exports = class Uno extends Command {
             if (!clockwise) toAdd = players.length - toAdd
                 
             if (players[turn + toAdd]) return turn + toAdd
-            
-            return switchTurn(turn - (players.length - toAdd), toAdd - (players.length - turn), playersData, true)    
+        
+            return (turn - players.length) + toAdd
         }
     
         /*
@@ -192,7 +194,7 @@ module.exports = class Uno extends Command {
     
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
     
-            await user.reply.edit("Voici vos cartes, faites gaffe a bien garder ce message !", {
+            await user?.reply?.edit("Voici vos cartes, faites gaffe a bien garder ce message !", {
                 components: makeRows(genButton.buttons),
                 ephemeral: true
             })
@@ -231,7 +233,7 @@ module.exports = class Uno extends Command {
     
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
-            await user.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
+            await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
                 components: makeRows(genButton.buttons),
                 ephemeral: true
             })
@@ -239,7 +241,7 @@ module.exports = class Uno extends Command {
             await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
                 buttons: [ seen_card ]
             })
-        //Add four card, skip and color switch
+        //Add four card, color selected
         } else if (cardNumber === "addFour" && cardColor !== "special") {
             actualCard = cardColor
 
@@ -256,7 +258,7 @@ module.exports = class Uno extends Command {
 
             const drawerButton = genButtons({ message, playersData, userID: drawerData.user.id, gameID })
 
-            await drawerData.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
+            await drawerData?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
                 components: makeRows(drawerButton.buttons),
                 ephemeral: true
             })
@@ -268,7 +270,7 @@ module.exports = class Uno extends Command {
 
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
-            await user.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
+            await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
                 components: makeRows(genButton.buttons),
                 ephemeral: true
             })
@@ -297,7 +299,7 @@ module.exports = class Uno extends Command {
 
             rows.push(colors)
 
-            await user.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\nMerci de choisir votre couleur", {
+            await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\nMerci de choisir votre couleur", {
                 components: rows,
                 ephemeral: true
             })
@@ -326,7 +328,7 @@ module.exports = class Uno extends Command {
 
             rows.push(colors)
             
-            await user.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\nMerci de choisir votre couleur", {
+            await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\nMerci de choisir votre couleur", {
                 components: rows,
                 ephemeral: true
             })
@@ -349,16 +351,41 @@ module.exports = class Uno extends Command {
             console.log(cardColor, cardNumber, actualCardColor, actualCardNumber)
 
             if (cardColor === actualCardColor || cardNumber === actualCardNumber) {
+                actualCard = `${cardColor}_${cardNumber}`
+
                 user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
 
-                turn = switchTurn(turn, 1, clockwise)
+                if (cardNumber === "switch") clockwise = false
+
+                if (cardNumber === "addTwo") {
+                    turn = switchTurn(turn, 1, clockwise)
             
+                    const drawerData = userTurn(turn)
+
+                    for (let i = 0; i < 2; i++) {
+                        const drawCard = await genCard({ cards })
+        
+                        drawerData.cards.push(drawCard.generatedCard)   
+                    }
+
+                    const drawerButton = genButtons({ message, playersData, userID: drawerData.user.id, gameID })
+
+                    await drawerData?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
+                        components: makeRows(drawerButton.buttons),
+                        ephemeral: true
+                    })
+                }
+
+                if (cardNumber === "skip") turn = switchTurn(turn, 1, clockwise)
+
+                turn = switchTurn(turn, 1, clockwise)
+
                 const newTurn = userTurn(turn)
                 newTurn.isTurn = true
 
                 const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
-                await user.reply.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
+                await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
                     components: makeRows(genButton.buttons),
                     ephemeral: true
                 })
@@ -399,7 +426,7 @@ async function startGame({ client, gameID }) {
     for (let i = 0; i < players.length; i++) {
         let playerCards = []
 
-        for (let i = 1; i < 9; i++) {
+        for (let i = 0; i < 7; i++) {
             const card = await genCard({ cards })
 
             playerCards.push(card.generatedCard)
@@ -418,6 +445,8 @@ async function startGame({ client, gameID }) {
     }
 
     let { generatedCard: actualCard } = await genCard({ cards })
+
+    //Todo #1
 
     const seen_card = new MessageButton()
         .setStyle("blurple")
@@ -438,7 +467,7 @@ async function startGame({ client, gameID }) {
         if (button.id.endsWith("seenCard")) {
             const { buttons } = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
-            let reply = await button.reply.send("Voici vos cartes, faites gaffe a bien garder ce message !", {
+            let reply = await button.reply.send("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
                 components: makeRows(buttons),
                 ephemeral: true
             })
