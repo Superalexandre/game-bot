@@ -136,6 +136,8 @@ module.exports = class Uno extends Command {
             return (turn - players.length) + toAdd
         }
     
+        const mainText = (playersData, newTurn, actualCard) => `${Object.values(playersData).map(user => `${user.user.username} ${user.cards.length === 1 ? "Uno !" : user.cards.length}`).join("\n")}\nAu tour de ${newTurn.user.username}\n${getEmojiCard(actualCard)}`
+
         /*
         const switchTurn = (turn, toAdd, clockwise) => {
             const players = Object.keys(playersData)
@@ -207,7 +209,7 @@ module.exports = class Uno extends Command {
     
             await button.reply.defer()
     
-            await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
+            await msg.edit(mainText(playersData, newTurn, actualCard), {
                 buttons: [ seen_card ]
             })
     
@@ -238,7 +240,7 @@ module.exports = class Uno extends Command {
                 ephemeral: true
             })
 
-            await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
+            await msg.edit(mainText(playersData, newTurn, actualCard), {
                 buttons: [ seen_card ]
             })
         //Add four card, color selected
@@ -275,7 +277,7 @@ module.exports = class Uno extends Command {
                 ephemeral: true
             })
 
-            await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
+            await msg.edit(mainText(playersData, newTurn, actualCard), {
                 buttons: [ seen_card ]
             })
         //New color, color selector
@@ -337,25 +339,12 @@ module.exports = class Uno extends Command {
                 buttons: [ seen_card ]
             })
         } else {
-        
-            /*
-                const cardColor = id[id.length - 2]
-                const cardNumber = id[id.length - 1] 
-                const actualCardID = actualCard.split("_")
-                const actualCardColor = actualCardID[0]
-                const actualCardNumber = actualCardID[1]
-            */
-
-            //other card
-
-            console.log(cardColor, cardNumber, actualCardColor, actualCardNumber)
-
             if (cardColor === actualCardColor || cardNumber === actualCardNumber) {
                 actualCard = `${cardColor}_${cardNumber}`
 
                 user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
 
-                if (cardNumber === "switch") clockwise = false
+                if (cardNumber === "switch") clockwise = clockwise ? false : true
 
                 if (cardNumber === "addTwo") {
                     turn = switchTurn(turn, 1, clockwise)
@@ -390,11 +379,16 @@ module.exports = class Uno extends Command {
                     ephemeral: true
                 })
 
-                await msg.edit(`Au tour de ${newTurn.user.username}\n${actualCard}`, {
+                await msg.edit(mainText(playersData, newTurn, actualCard), {
                     buttons: [ seen_card ]
                 })
             } else {
-                await msg.edit(`${button.clicker.user.username} A joué une mauvaise carte !`)
+                const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+
+                await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\n⚠️ La carte que vous avez essayer de jouer n'est pas valide", {
+                    components: makeRows(genButton.buttons),
+                    ephemeral: true
+                })
             }
         }
 
@@ -453,7 +447,7 @@ async function startGame({ client, gameID }) {
         .setLabel("Voir mes cartes")
         .setID(`game_uno_${message.author.id}_${gameID}_seenCard`)
 
-    msg.edit(`Au tour de ${userTurn(turn).user.username}\n${actualCard}`, {
+    msg.edit(`${Object.values(playersData).map(user => `${user.user.username} ${user.cards.length === 1 ? "Uno !" : user.cards.length + " cartes"}`).join("\n")}\n\nAu tour de ${userTurn(turn).user.username}\nCarte actuelle : ${getEmojiCard(actualCard)}`, {
         buttons: [ seen_card ]
     })
 
@@ -570,8 +564,15 @@ function genButtons({ message, playersData, userID, gameID }) {
     for (let i = 0; i < playersData[userID].cards.length; i++) {
         const buttonCard = new MessageButton()
             .setStyle("blurple")
-            .setLabel(playersData[userID].cards[i])
             .setID(`game_uno_${message.author.id}_${gameID}_playCard_ephemeral_${playersData[userID].cards[i]}`)
+
+        const emoji = getEmojiCard(playersData[userID].cards[i])
+
+        if (emoji !== playersData[userID].cards[i]) {
+            buttonCard.setEmoji(emoji)
+        } else {
+            buttonCard.setLabel(playersData[userID].cards[i])
+        }
 
         buttons.push(buttonCard)
     }
@@ -579,6 +580,28 @@ function genButtons({ message, playersData, userID, gameID }) {
     buttons.push(draw)
 
     return { buttons }
+}
+
+function getEmojiCard(cardID) {
+
+    cardID = cardID
+        .replace(/special_switchColor/g, "<:change_couleur:705426943612551200>")
+
+        .replace("red_0", "705423600483696660")
+        .replace("red_1", "705423703697129572")
+        .replace("red_2", "705423728431071243")
+        .replace("red_3", "705423756536971335")
+        .replace("red_4", "705426943998427277")
+        .replace("red_5", "705426943646105682")
+        .replace("red_6", "705426943692111894")
+        .replace("red_7", "705426943868403722")
+        .replace("red_8", "705426943780323428")
+        .replace("red_9", "705426943855558746")
+        .replace("red_addTwo", "705426943771672697")
+        .replace("red_skip", "705426943872598046")
+        .replace("red_switch", "705426943499305011")
+
+    return cardID
 }
 
 /*
