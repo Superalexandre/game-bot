@@ -536,12 +536,12 @@ function makeRows(buttonsData) {
 function genCard({ cards }) {
     let generatedCard = ""
 
-    let typeColor = ["blue", "red", "yellow", "green", "special"]
+    let typeColor = [/*"blue", */"red"/*, "yellow", "green", "special"*/]
     let color = typeColor[Math.floor(Math.random() * typeColor.length)]
 
     generatedCard += color + "_"
 
-    let typeNumber = color === "special" ? ["addFour", "newColor"] : ["1", "2", "3", "4", "5", "6", "7", "8", "9", "skip", "switch", "addTwo"]
+    let typeNumber = color === "special" ? ["addFour", "newColor"] : [/*"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "skip", */"switch"/*, "addTwo"*/]
     let number = typeNumber[Math.floor(Math.random() * typeNumber.length)]
 
     generatedCard += number
@@ -585,9 +585,12 @@ function genButtons({ message, playersData, userID, gameID }) {
 function getEmojiCard(cardID) {
 
     cardID = cardID
-        .replace(/special_switchColor/g, "<:change_couleur:705426943612551200>")
+        .replace(/special_switchColor/g, "705426943612551200")
 
-        .replace("red_0", "705423600483696660")
+        //<:0_Rouge:872151040433225808>
+
+
+        .replace("red_0", "872151906955452507")
         .replace("red_1", "705423703697129572")
         .replace("red_2", "705423728431071243")
         .replace("red_3", "705423756536971335")
@@ -597,9 +600,9 @@ function getEmojiCard(cardID) {
         .replace("red_7", "705426943868403722")
         .replace("red_8", "705426943780323428")
         .replace("red_9", "705426943855558746")
-        .replace("red_addTwo", "705426943771672697")
+        .replace("red_addTwo", "872152299592626246")
         .replace("red_skip", "705426943872598046")
-        .replace("red_switch", "705426943499305011")
+        .replace("red_switch", "872159675825676378")
 
     return cardID
 }
