@@ -5,6 +5,7 @@ A fun discord bot
 
 
 ### Global
+- [ ] Refaire les commandes en /
 - [ ] Event message
 - [ ] Traduction
 - [ ] Logger
@@ -21,6 +22,7 @@ A fun discord bot
     - [ ] Pouvoir buffler au +4
 - [ ] Si piocher et qu'une carte peut etre jouer envoyer un avertissement
 - [ ] Gerer le end game
+- [ ] Pouvoir personnalisé sa config (/config uno)
 
 ### Puissance 4 
 - [ ] Jouer contre le bot
