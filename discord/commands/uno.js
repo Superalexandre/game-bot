@@ -607,17 +607,19 @@ function genButtons({ message, playersData, userID, gameID }) {
 
     const buttons = []
 
-    for (let i = 0; i < playersData[userID].cards.length; i++) {
+    const cards = sortCard(playersData[userID].cards)
+
+    for (let i = 0; i < cards.length; i++) {
         const buttonCard = new MessageButton()
             .setStyle("blurple")
-            .setID(`game_uno_${message.author.id}_${gameID}_playCard_ephemeral_${playersData[userID].cards[i]}`)
+            .setID(`game_uno_${message.author.id}_${gameID}_playCard_ephemeral_${cards[i]}`)
 
-        const emoji = getEmojiCard(playersData[userID].cards[i])
+        const emoji = getEmojiCard(cards[i])
 
-        if (emoji !== playersData[userID].cards[i]) {
+        if (emoji !== cards[i]) {
             buttonCard.setEmoji(emoji.emojiID)
         } else {
-            buttonCard.setLabel(playersData[userID].cards[i])
+            buttonCard.setLabel(cards[i])
         }
 
         buttons.push(buttonCard)
@@ -626,6 +628,34 @@ function genButtons({ message, playersData, userID, gameID }) {
     buttons.push(draw)
 
     return { buttons }
+}
+
+function sortCard(cards) {
+    function sortCard(a, b) {
+    
+        const colorA = a.split("_")[0]
+        const colorB = b.split("_")[0]
+    
+        if (priority[colorA] > priority[colorB]) {
+            return 1
+        } else if (priority[colorA] < priority[colorB]) {
+            return -1
+        } else return 0
+    }
+
+    const colorCard = cards.map(card => card.split("_")[0])
+
+    const priority = {
+        special: Infinity, 
+        red: colorCard.filter(x => x === "red").length,
+        blue: colorCard.filter(x => x === "blue").length,
+        green: colorCard.filter(x => x === "green").length,
+        yellow: colorCard.filter(x => x === "yellow").length,
+    }
+
+    const sort = cards.sort(sortCard).reverse()
+
+    return sort
 }
 
 function getEmojiCard(cardID) {
