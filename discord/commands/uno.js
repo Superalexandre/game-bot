@@ -115,7 +115,18 @@ module.exports = class Uno extends Command {
 
         let msg = await message.channel.send(`Création de la partie avec ${players.length} joueurs\n${players.map(user => "• " + user.username).join("\n")}`)
 
-        allPlayersReady({ client, message, msg, cards, players })
+        const gameData = {
+            config: {
+                firstSpecialCard: true,
+                multipleCard: true,
+                outbid: true,
+                bluffing: true
+            },
+            card: cards,
+            players: players
+        }
+
+        allPlayersReady({ client, message, msg, gameData, cards, players })
     }
 
     async playCard({ client, gameID, button }) {
@@ -123,7 +134,7 @@ module.exports = class Uno extends Command {
         
         if (!game) return console.log(false)
 
-        let { message, msg, cards, players, playersData, turn, actualCard, clockwise } = game
+        let { message, msg, gameData, cards, players, playersData, turn, actualCard, clockwise } = game
 
         const userTurn = (number) => playersData[Object.keys(playersData)[number]]
         const switchTurn = (turn, toAdd, clockwise) => {
@@ -440,20 +451,20 @@ module.exports = class Uno extends Command {
     }
 }
 
-async function allPlayersReady({ client, message, msg, cards, players }) {
+async function allPlayersReady({ client, message, msg, gameData, cards, players }) {
     //Todo gameID
 
     const gameID = "1"
 
-    client.games.uno.set(gameID, { message, msg, cards, players })
+    client.games.uno.set(gameID, { message, msg, gameData, cards, players })
 
-    startGame({ client, gameID })
+    startGame({ client, gameID, gameData })
 }
 
-async function startGame({ client, gameID }) {
+async function startGame({ client, gameID, gameData }) {
     const game = client.games.uno.get(gameID)
     
-    let { message, msg, cards, players } = game
+    let { message, msg, gameData, cards, players } = game
 
     let playersData = {}
     let turn = 0
@@ -481,8 +492,6 @@ async function startGame({ client, gameID }) {
     }
 
     let { generatedCard: actualCard } = await genCard({ cards })
-
-    //Todo #1
 
     const seen_card = new MessageButton()
         .setStyle("blurple")
@@ -514,7 +523,7 @@ async function startGame({ client, gameID }) {
         }
     })
 
-    client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise: true })
+    client.games.uno.set(gameID, { message, msg, gameData, cards, players, playersData, turn, actualCard, clockwise: true })
 }
 
 function removeCard(cardsConfig, userCards, cardToRemove) {
@@ -579,7 +588,7 @@ function makeRows(buttonsData) {
     }
 }
 
-function genCard({ cards }) {
+function genCard({ cards, filter }) {
     let generatedCard = ""
 
     let typeColor = ["blue", "red", "yellow", "green", "special"]
