@@ -9,7 +9,7 @@ A fun discord bot
 
 ### Uno
 - [X] RemoveCard function ré ajouter dans la config
-- [ ] Pouvoir faire un retour (cartes spéciales)
+- [X] Pouvoir faire un retour (cartes spéciales)
 - [ ] Pouvoir jouer plusieurs carte
 - [ ] Pouvoir "surencherir" a un +4 ou un +2
 - [ ] Distribution des cartes pas spéciales, pas +2 (Ou sinon faire un truc)
