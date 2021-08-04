@@ -13,7 +13,7 @@ A fun discord bot
 ### Uno
 - [X] RemoveCard function ré ajouter dans la config
 - [X] Pouvoir faire un retour (cartes spéciales)
-- [ ] Pouvoir jouer la carte piocher après avoir piocher
+- [X] Pouvoir jouer la carte piocher après avoir piocher
 - [ ] Si trop de carte faire deux, trois pages
 - [ ] GameData
     - [ ] Pouvoir jouer plusieurs cartes
