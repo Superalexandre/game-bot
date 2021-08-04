@@ -282,7 +282,7 @@ module.exports = class Uno extends Command {
             })
         //New color, color selector
         } else if (cardColor === "special" && cardNumber === "newColor") {
-            user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
+            user.cards = removeCard(cards, user.cards, cardColor + "_" + cardNumber)
 
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
@@ -311,7 +311,7 @@ module.exports = class Uno extends Command {
             })
         //Add four, color selector
         } else if (cardColor === "special" && cardNumber === "addFour") {
-            user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
+            user.cards = removeCard(cards, user.cards, cardColor + "_" + cardNumber)
 
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
@@ -342,7 +342,7 @@ module.exports = class Uno extends Command {
             if (cardColor === actualCardColor || cardNumber === actualCardNumber) {
                 actualCard = `${cardColor}_${cardNumber}`
 
-                user.cards = removeCard(user.cards, cardColor + "_" + cardNumber)
+                user.cards = removeCard(cards, user.cards, cardColor + "_" + cardNumber)
 
                 if (cardNumber === "switch") clockwise = clockwise ? false : true
 
@@ -475,13 +475,13 @@ async function startGame({ client, gameID }) {
     client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise: true })
 }
 
-function removeCard(cards, toRemove) {
+function removeCard(cardsConfig, userCards, cardToRemove) {
     let filtered = false
 
-    const card = cards.filter(card => {
-        if (card !== toRemove) return true
+    const card = userCards.filter(card => {
+        if (card !== cardToRemove) return true
 
-        if (!filtered && card === toRemove) {
+        if (!filtered && card === cardToRemove) {
             filtered = true
         
             return false
@@ -489,6 +489,10 @@ function removeCard(cards, toRemove) {
 
         return true
     })
+
+    const cardInfo = cardToRemove.split("_")
+
+    cardsConfig[cardInfo[0]][cardInfo[1]] = cardsConfig[cardInfo[0]][cardInfo[1]] + 1
 
     return card
 }
@@ -568,8 +572,6 @@ function genButtons({ message, playersData, userID, gameID }) {
 
         const emoji = getEmojiCard(playersData[userID].cards[i])
 
-        console.log(emoji)
-
         if (emoji !== playersData[userID].cards[i]) {
             buttonCard.setEmoji(emoji.emojiID)
         } else {
@@ -647,8 +649,6 @@ function getEmojiCard(cardID) {
 
     const regex = new RegExp(/<:((?:[a-zA-Z]+)?(?:[0-9]+)?(?:[a-zA-Z]+)?(?:[0-9])?):([0-9]+)>/g)
     const splittedEmoji = fullEmoji.split(regex).filter((str) => /\S/.test(str))
-
-    console.log(splittedEmoji, fullEmoji)
 
     const emojiID = splittedEmoji[1]
     const emojiName = splittedEmoji[0]
