@@ -8,7 +8,7 @@ A fun discord bot
 - [ ] Traduction
 
 ### Uno
-- [ ] RemoveCard function ré ajouter dans la config
+- [X] RemoveCard function ré ajouter dans la config
 - [ ] Pouvoir faire un retour (cartes spéciales)
 - [ ] Pouvoir jouer plusieurs carte
 - [ ] Pouvoir "surencherir" a un +4 ou un +2
