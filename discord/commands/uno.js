@@ -699,7 +699,7 @@ function sortCard(cards) {
         const colorA = a.split("_")[0]
         const colorB = b.split("_")[0]
     
-        if (priority[colorA] === priority[colorB]) priority[colorA] = priority[colorA] + 1
+        if (priority[colorA] === priority[colorB]) priority[colorA] = priority[colorA] + 1 //Doesn't work
 
         if (priority[colorA] > priority[colorB]) {
             return 1
