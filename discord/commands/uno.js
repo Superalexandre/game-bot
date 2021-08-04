@@ -148,18 +148,6 @@ module.exports = class Uno extends Command {
         }
     
         const mainText = (playersData, userData, actualCard) => `${Object.values(playersData).map(user => `${user.user.username} ${user.cards.length === 1 ? "Uno !" : user.cards.length + " cartes"}`).join("\n")}\n\nAu tour de ${userData.user.username}\nCarte actuelle : ${getEmojiCard(actualCard).fullEmoji}`
-        /*
-        const switchTurn = (turn, toAdd, clockwise) => {
-            const players = Object.keys(playersData)
-
-            if (!clockwise) toAdd = players.length - toAdd
-
-            if (players[turn + toAdd]) return turn + toAdd
-
-            return players[toAdd - (players.length - turn)]
-            //return switchTurn(turn, toAdd - (players.length - turn), playersData, true)    
-        }
-        */
 
         if (!playersData[button.clicker.user.id].isTurn) return await button.reply.send(`Désolé mais ce n'est pas encore votre tour`, true)
     
@@ -172,6 +160,7 @@ module.exports = class Uno extends Command {
             .setLabel("Voir mes cartes")
             .setID(`game_uno_${message.author.id}_${gameID}_seenCard`)
         
+        //Buttons for +4 and switch color
         const genColorsButtons = (type) => {
             const red = new MessageButton()
                 .setStyle("blurple")
@@ -207,28 +196,66 @@ module.exports = class Uno extends Command {
         if (id[id.length - 1] === "draw") {
             const drawCard = await genCard({ cards })
             
-            user.cards.push(drawCard.generatedCard)
+            user.drawCard = drawCard.generatedCard
     
-            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
-    
-            await user?.reply?.edit("Voici vos cartes, faites gaffe a bien garder ce message !", {
-                components: makeRows(genButton.buttons),
+            const play = new MessageButton()
+                .setStyle("green")
+                .setLabel("Jouer")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_drawAction_play`)
+
+            const skip = new MessageButton()
+                .setStyle("red")
+                .setLabel("Passer son tour")
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_drawAction_skip`)
+
+            const actions = new MessageActionRow()
+                .addComponents([ play, skip ])
+
+            await user?.reply?.edit(`Vous avez piocher ${getEmojiCard(drawCard.generatedCard).fullEmoji}`, {
+                components: actions,
                 ephemeral: true
             })
-        
-            turn = switchTurn(turn, 1, clockwise)
-            user.isTurn = false
-    
-            const newTurn = userTurn(turn)
-            newTurn.isTurn = true
-    
+
             await button.reply.defer()
     
-            await msg.edit(mainText(playersData, newTurn, actualCard), {
+            await msg.edit(mainText(playersData, user, actualCard), {
                 buttons: [ seen_card ]
             })
     
             return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
+        //Draw card
+        } else if (id[id.length - 2] === "drawAction") {
+            //Play drawed card
+            if (id[id.length - 1] === "play") {
+                const cardID = user.drawCard.split("_")
+
+                id[id.length - 2] = cardID[0]
+                id[id.length - 1] = cardID[1]
+            //Skip
+            } else if (id[id.length - 1] === "skip") {
+                turn = switchTurn(turn, 1, clockwise)
+                user.isTurn = false
+    
+                const newTurn = userTurn(turn)
+                newTurn.isTurn = true
+
+                user.cards.push(user.drawCard)
+
+                user.drawCard = false
+
+                const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+
+                await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
+                    components: makeRows(genButton.buttons),
+                    ephemeral: true
+                })
+    
+                await button.reply.defer()
+        
+                await msg.edit(mainText(playersData, newTurn, actualCard), {
+                    buttons: [ seen_card ]
+                })
+            }
         }
     
         const cardColor = id[id.length - 2]
@@ -260,6 +287,8 @@ module.exports = class Uno extends Command {
                 })
             }
 
+            user.cards = removeCard(cards, user.cards, "special_newColor")
+
             actualCard = cardColor
 
             turn = switchTurn(turn, 1, clockwise)
@@ -275,7 +304,7 @@ module.exports = class Uno extends Command {
                 ephemeral: true
             })
 
-            await msg.edit(mainText(playersData, user, actualCard), {
+            await msg.edit(mainText(playersData, newTurn, actualCard), {
                 buttons: [ seen_card ]
             })
         //Add four card, color selected
@@ -300,7 +329,7 @@ module.exports = class Uno extends Command {
                 })
             }
 
-            user.cards = removeCard(cards, user.cards, cardColor + "_" + cardNumber)
+            user.cards = removeCard(cards, user.cards, "special_addFour")
 
             actualCard = cardColor
 
@@ -334,7 +363,7 @@ module.exports = class Uno extends Command {
                 ephemeral: true
             })
 
-            await msg.edit(mainText(playersData, user, actualCard), {
+            await msg.edit(mainText(playersData, newTurn, actualCard), {
                 buttons: [ seen_card ]
             })
         //New color, color selector
@@ -391,19 +420,24 @@ module.exports = class Uno extends Command {
             await msg.edit(mainText(playersData, user, actualCard), {
                 buttons: [ seen_card ]
             })
+        //Not +4 and switch color
         } else {
+            //Check if card is valid
             if (cardColor === actualCardColor || cardNumber === actualCardNumber) {
                 actualCard = `${cardColor}_${cardNumber}`
 
                 user.cards = removeCard(cards, user.cards, cardColor + "_" + cardNumber)
 
+                //Switch card
                 if (cardNumber === "switch") clockwise = clockwise ? false : true
 
+                //Add two
                 if (cardNumber === "addTwo") {
                     turn = switchTurn(turn, 1, clockwise)
             
                     const drawerData = userTurn(turn)
 
+                    //Add two card to drawer
                     for (let i = 0; i < 2; i++) {
                         const drawCard = await genCard({ cards })
         
@@ -418,6 +452,7 @@ module.exports = class Uno extends Command {
                     })
                 }
 
+                //Skip card
                 if (cardNumber === "skip") turn = switchTurn(turn, 1, clockwise)
 
                 turn = switchTurn(turn, 1, clockwise)
@@ -436,6 +471,25 @@ module.exports = class Uno extends Command {
                     buttons: [ seen_card ]
                 })
             } else {
+                //If the players is in draw and play an invalid card
+                if (user.drawCard) {
+                    
+                    user.cards.push(user.drawCard)
+
+                    user.drawCard = false
+
+                    turn = switchTurn(turn, 1, clockwise)
+                    user.isTurn = false
+    
+                    const newTurn = userTurn(turn)
+                    newTurn.isTurn = true
+    
+                    await msg.edit(mainText(playersData, newTurn, actualCard), {
+                        buttons: [ seen_card ]
+                    })
+                }
+
+                //Invalid card
                 const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
                 await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\n⚠️ La carte que vous avez essayer de jouer n'est pas valide", {
@@ -461,7 +515,7 @@ async function allPlayersReady({ client, message, msg, gameData, cards, players 
     startGame({ client, gameID, gameData })
 }
 
-async function startGame({ client, gameID, gameData }) {
+async function startGame({ client, gameID }) {
     const game = client.games.uno.get(gameID)
     
     let { message, msg, gameData, cards, players } = game
@@ -529,7 +583,7 @@ async function startGame({ client, gameID, gameData }) {
 function removeCard(cardsConfig, userCards, cardToRemove) {
     let filtered = false
 
-    const card = userCards.filter(card => {
+    const cards = userCards.filter(card => {
         if (card !== cardToRemove) return true
 
         if (!filtered && card === cardToRemove) {
@@ -545,7 +599,7 @@ function removeCard(cardsConfig, userCards, cardToRemove) {
 
     cardsConfig[cardInfo[0]][cardInfo[1]] = cardsConfig[cardInfo[0]][cardInfo[1]] + 1
 
-    return card
+    return cards
 }
 
 function makeRows(buttonsData) {
@@ -608,7 +662,7 @@ function genCard({ cards, filter }) {
     return { cards, generatedCard }
 }
 
-function genButtons({ message, playersData, userID, gameID }) {
+function genButtons({ message, playersData, userID, gameID, activeCard }) {
     const draw = new MessageButton()
         .setStyle("red")
         .setLabel("Piocher")
@@ -645,6 +699,8 @@ function sortCard(cards) {
         const colorA = a.split("_")[0]
         const colorB = b.split("_")[0]
     
+        if (priority[colorA] === priority[colorB]) priority[colorA] = priority[colorA] + 1
+
         if (priority[colorA] > priority[colorB]) {
             return 1
         } else if (priority[colorA] < priority[colorB]) {
@@ -685,6 +741,7 @@ function getEmojiCard(cardID) {
         .replace("blue_addTwo", "<:Plus2Bleu:872421153891815465>")
         .replace("blue_skip", "<:PassetourBleu:872424902471331870>")
         .replace("blue_switch", "<:ChangesensBleu:872421154105724970>")
+        .replace("blue", "<:Bleu:872567867625861121>")
         
         .replace("yellow_0", "<:0Jaune:872421154218987530>")
         .replace("yellow_1", "<:1Jaune:872421154252529664>")
@@ -699,6 +756,7 @@ function getEmojiCard(cardID) {
         .replace("yellow_addTwo", "<:Plus2Jaune:872421154340626442>")
         .replace("yellow_skip", "<:PassetourJaune:872421154365767690>")
         .replace("yellow_switch", "<:ChangesensJaune:872421154147672095>")
+        .replace("yellow", "<:Jaune:872567868062072842>")
         
         .replace("red_0", "<:0Rouge:872421154189606962>")
         .replace("red_1", "<:1Rouge:872421153791168513>")
@@ -713,6 +771,7 @@ function getEmojiCard(cardID) {
         .replace("red_addTwo", "<:Plus2Rouge:872421154281898024>")
         .replace("red_skip", "<:PassetourRouge:872424902056099871>")
         .replace("red_switch", "<:ChangesensRouge:872421154252533811>")
+        .replace("red", "<:Rouge:872567867902685224>")
 
         .replace("green_0", "<:0Vert:872421154223194172>")
         .replace("green_1", "<:1Vert:872421153879236639>")
@@ -727,7 +786,8 @@ function getEmojiCard(cardID) {
         .replace("green_addTwo", "<:Plus2Vert:872421154206416916>")
         .replace("green_skip", "<:PassetourVert:872421154151874591>")
         .replace("green_switch", "<:ChangesensVert:872421154378362900>")
-
+        .replace("green", "<:Vert:872567867713925222>")
+        
     const regex = new RegExp(/<:((?:[a-zA-Z]+)?(?:[0-9]+)?(?:[a-zA-Z]+)?(?:[0-9])?):([0-9]+)>/g)
     const splittedEmoji = fullEmoji.split(regex).filter((str) => /\S/.test(str))
 
