@@ -136,7 +136,7 @@ module.exports = class Uno extends Command {
             return (turn - players.length) + toAdd
         }
     
-        const mainText = (playersData, newTurn, actualCard) => `${Object.values(playersData).map(user => `${user.user.username} ${user.cards.length === 1 ? "Uno !" : user.cards.length}`).join("\n")}\nAu tour de ${newTurn.user.username}\n${getEmojiCard(actualCard)}`
+        const mainText = (playersData, newTurn, actualCard) => `${Object.values(playersData).map(user => `${user.user.username} ${user.cards.length === 1 ? "Uno !" : user.cards.length}`).join("\n")}\nAu tour de ${newTurn.user.username}\n${getEmojiCard(actualCard).fullEmoji}`
 
         /*
         const switchTurn = (turn, toAdd, clockwise) => {
@@ -447,7 +447,7 @@ async function startGame({ client, gameID }) {
         .setLabel("Voir mes cartes")
         .setID(`game_uno_${message.author.id}_${gameID}_seenCard`)
 
-    msg.edit(`${Object.values(playersData).map(user => `${user.user.username} ${user.cards.length === 1 ? "Uno !" : user.cards.length + " cartes"}`).join("\n")}\n\nAu tour de ${userTurn(turn).user.username}\nCarte actuelle : ${getEmojiCard(actualCard)}`, {
+    msg.edit(`${Object.values(playersData).map(user => `${user.user.username} ${user.cards.length === 1 ? "Uno !" : user.cards.length + " cartes"}`).join("\n")}\n\nAu tour de ${userTurn(turn).user.username}\nCarte actuelle : ${getEmojiCard(actualCard).fullEmoji}`, {
         buttons: [ seen_card ]
     })
 
@@ -536,12 +536,12 @@ function makeRows(buttonsData) {
 function genCard({ cards }) {
     let generatedCard = ""
 
-    let typeColor = [/*"blue", */"red"/*, "yellow", "green", "special"*/]
+    let typeColor = ["blue", "red", "yellow", "green", "special"]
     let color = typeColor[Math.floor(Math.random() * typeColor.length)]
 
     generatedCard += color + "_"
 
-    let typeNumber = color === "special" ? ["addFour", "newColor"] : [/*"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "skip", */"switch"/*, "addTwo"*/]
+    let typeNumber = color === "special" ? ["addFour", "newColor"] : ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "skip", "switch", "addTwo"]
     let number = typeNumber[Math.floor(Math.random() * typeNumber.length)]
 
     generatedCard += number
@@ -568,8 +568,10 @@ function genButtons({ message, playersData, userID, gameID }) {
 
         const emoji = getEmojiCard(playersData[userID].cards[i])
 
+        console.log(emoji)
+
         if (emoji !== playersData[userID].cards[i]) {
-            buttonCard.setEmoji(emoji)
+            buttonCard.setEmoji(emoji.emojiID)
         } else {
             buttonCard.setLabel(playersData[userID].cards[i])
         }
@@ -583,28 +585,75 @@ function genButtons({ message, playersData, userID, gameID }) {
 }
 
 function getEmojiCard(cardID) {
+    const fullEmoji = cardID
+        .replace("special_newColor", "<:Changecouleur:872421154126725161>")
+        .replace("special_addFour", "<:Plus4:872421153916985375>")
 
-    cardID = cardID
-        .replace(/special_switchColor/g, "705426943612551200")
+        .replace("blue_0", "<:0Bleu:872421154218979379>")
+        .replace("blue_1", "<:1Bleu:872421154315460629>")
+        .replace("blue_2", "<:2Bleu:872421154239967242>")
+        .replace("blue_3", "<:3Bleu:872421153866678273>")
+        .replace("blue_4", "<:4Bleu:872421154298675200>")
+        .replace("blue_5", "<:5Bleu:872421154273517638>")
+        .replace("blue_6", "<:6Bleu:872421154260918282>")
+        .replace("blue_7", "<:7Bleu:872421154273505290>")
+        .replace("blue_8", "<:8Bleu:872421154336436245>")
+        .replace("blue_9", "<:9Bleu:872424902601371659>")
+        .replace("blue_addTwo", "<:Plus2Bleu:872421153891815465>")
+        .replace("blue_skip", "<:PassetourBleu:872424902471331870>")
+        .replace("blue_switch", "<:ChangesensBleu:872421154105724970>")
+        
+        .replace("yellow_0", "<:0Jaune:872421154218987530>")
+        .replace("yellow_1", "<:1Jaune:872421154252529664>")
+        .replace("yellow_2", "<:2Jaune:872421154218975253>")
+        .replace("yellow_3", "<:3Jaune:872421154349015070>")
+        .replace("yellow_4", "<:4Jaune:872421154244149318>")
+        .replace("yellow_5", "<:5Jaune:872421154386739220>")
+        .replace("yellow_6", "<:6Jaune:872421153912811551>")
+        .replace("yellow_7", "<:7Jaune:872421154164469812>")
+        .replace("yellow_8", "<:8Jaune:872421154147667989>")
+        .replace("yellow_9", "<:9Jaune:872421154353201192>")
+        .replace("yellow_addTwo", "<:Plus2Jaune:872421154340626442>")
+        .replace("yellow_skip", "<:PassetourJaune:872421154365767690>")
+        .replace("yellow_switch", "<:ChangesensJaune:872421154147672095>")
+        
+        .replace("red_0", "<:0Rouge:872421154189606962>")
+        .replace("red_1", "<:1Rouge:872421153791168513>")
+        .replace("red_2", "<:2Rouge:872421154344820786>")
+        .replace("red_3", "<:3Rouge:872421154239963177>")
+        .replace("red_4", "<:4Rouge:872424902517481552>")
+        .replace("red_5", "<:5Rouge:872421154273505300>")
+        .replace("red_6", "<:6Rouge:872421154311270470>")
+        .replace("red_7", "<:7Rouge:872421154420326410>")
+        .replace("red_8", "<:8Rouge:872421154034417715>")
+        .replace("red_9", "<:9Rouge:872421154361581598>")
+        .replace("red_addTwo", "<:Plus2Rouge:872421154281898024>")
+        .replace("red_skip", "<:PassetourRouge:872424902056099871>")
+        .replace("red_switch", "<:ChangesensRouge:872421154252533811>")
 
-        //<:0_Rouge:872151040433225808>
+        .replace("green_0", "<:0Vert:872421154223194172>")
+        .replace("green_1", "<:1Vert:872421153879236639>")
+        .replace("green_2", "<:2Vert:872421154336423987>")
+        .replace("green_3", "<:3Vert:872421154143481967>")
+        .replace("green_4", "<:4Vert:872421154328023040>")
+        .replace("green_5", "<:5Vert:872421154265120798>")
+        .replace("green_6", "<:6Vert:872421154290298891>")
+        .replace("green_7", "<:7Vert:872421154059616328>")
+        .replace("green_8", "<:8Vert:872421154399326218>")
+        .replace("green_9", "<:9Vert:872421154181251103>")
+        .replace("green_addTwo", "<:Plus2Vert:872421154206416916>")
+        .replace("green_skip", "<:PassetourVert:872421154151874591>")
+        .replace("green_switch", "<:ChangesensVert:872421154378362900>")
 
+    const regex = new RegExp(/<:((?:[a-zA-Z]+)?(?:[0-9]+)?(?:[a-zA-Z]+)?(?:[0-9])?):([0-9]+)>/g)
+    const splittedEmoji = fullEmoji.split(regex).filter((str) => /\S/.test(str))
 
-        .replace("red_0", "872151906955452507")
-        .replace("red_1", "705423703697129572")
-        .replace("red_2", "705423728431071243")
-        .replace("red_3", "705423756536971335")
-        .replace("red_4", "705426943998427277")
-        .replace("red_5", "705426943646105682")
-        .replace("red_6", "705426943692111894")
-        .replace("red_7", "705426943868403722")
-        .replace("red_8", "705426943780323428")
-        .replace("red_9", "705426943855558746")
-        .replace("red_addTwo", "872152299592626246")
-        .replace("red_skip", "705426943872598046")
-        .replace("red_switch", "872159675825676378")
+    console.log(splittedEmoji, fullEmoji)
 
-    return cardID
+    const emojiID = splittedEmoji[1]
+    const emojiName = splittedEmoji[0]
+
+    return { cardID, emojiID, emojiName, fullEmoji }
 }
 
 /*
