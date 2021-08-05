@@ -14,7 +14,7 @@ A fun discord bot
 - [X] RemoveCard function ré ajouter dans la config
 - [X] Pouvoir faire un retour (cartes spéciales)
 - [X] Pouvoir jouer la carte piocher après avoir piocher
-- [ ] Si trop de carte faire deux, trois pages
+- [X] Si trop de carte faire deux, trois pages
 - [ ] GameData
     - [ ] Pouvoir jouer plusieurs cartes
     - [ ] Pouvoir "surencherir"
