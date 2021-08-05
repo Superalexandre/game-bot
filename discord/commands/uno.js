@@ -181,6 +181,15 @@ module.exports = class Uno extends Command {
             return colors
         }
             
+        if (id[id.length - 2] === "page") {
+            //Page
+            const number = id[id.length - 1]
+        
+            //.slice(25 * page, 25 * (page + 1))
+
+            return console.log(number)
+        }
+
         if (id[id.length - 1] === "draw") {
             const drawCard = await genCard({ cards })
             
@@ -234,7 +243,7 @@ module.exports = class Uno extends Command {
                 const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
                 await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                    components: makeRows(genButton.buttons),
+                    components: makeRows({ buttonsData: genButton.buttons, page: user.page, message, gameID }),
                     ephemeral: true
                 })
     
@@ -269,7 +278,7 @@ module.exports = class Uno extends Command {
                     editButtons.push(editButton)
                 }
 
-                const rows = makeRows(editButtons)
+                const rows = makeRows({ buttonsData: editButtons, page: user.page, message, gameID })
 
                 return await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
                     components: rows,
@@ -290,7 +299,7 @@ module.exports = class Uno extends Command {
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
             await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                components: makeRows(genButton.buttons),
+                components: makeRows({ buttonsData: genButton.buttons, page: user.page, message, gameID }),
                 ephemeral: true
             })
 
@@ -311,7 +320,7 @@ module.exports = class Uno extends Command {
                     editButtons.push(editButton)
                 }
 
-                const rows = makeRows(editButtons)
+                const rows = makeRows({ buttonsData: editButtons, page: user.page, message, gameID })
 
                 return await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
                     components: rows,
@@ -337,7 +346,7 @@ module.exports = class Uno extends Command {
             const drawerButton = genButtons({ message, playersData, userID: drawerData.user.id, gameID })
 
             await drawerData?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                components: makeRows(drawerButton.buttons),
+                components: makeRows({ buttonsData: drawerButton.buttons, page: drawerData.page, message, gameID }),
                 ephemeral: true
             })
 
@@ -349,7 +358,7 @@ module.exports = class Uno extends Command {
             const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
             await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                components: makeRows(genButton.buttons),
+                components: makeRows({ buttonsData: genButton.buttons, page: user.page, message, gameID }),
                 ephemeral: true
             })
 
@@ -369,7 +378,7 @@ module.exports = class Uno extends Command {
                 editButtons.push(editButton)
             }
 
-            const rows = makeRows(editButtons)
+            const rows = makeRows({ buttonsData: editButtons, page: user.page, message, gameID })
 
             const colors = genColorsButtons("newColor")
 
@@ -396,7 +405,7 @@ module.exports = class Uno extends Command {
                 editButtons.push(editButton)
             }
 
-            const rows = makeRows(editButtons)
+            const rows = makeRows({ buttonsData: editButtons, page: user.page, message, gameID })
             
             const colors = genColorsButtons("addFour")
 
@@ -437,7 +446,7 @@ module.exports = class Uno extends Command {
                     const drawerButton = genButtons({ message, playersData, userID: drawerData.user.id, gameID })
 
                     await drawerData?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                        components: makeRows(drawerButton.buttons),
+                        components: makeRows({ buttonsData: drawerButton.buttons, page: drawerData.page, message, gameID }),
                         ephemeral: true
                     })
                 }
@@ -453,7 +462,7 @@ module.exports = class Uno extends Command {
                 const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
                 await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                    components: makeRows(genButton.buttons),
+                    components: makeRows({ buttonsData: genButton.buttons, page: user.page, message, gameID }),
                     ephemeral: true
                 })
 
@@ -483,7 +492,7 @@ module.exports = class Uno extends Command {
                 const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
                 await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\n⚠️ La carte que vous avez essayer de jouer n'est pas valide", {
-                    components: makeRows(genButton.buttons),
+                    components: makeRows({ buttonsData: genButton.buttons, page: user.page, message, gameID }),
                     ephemeral: true
                 })
             }
@@ -517,7 +526,7 @@ async function startGame({ client, gameID }) {
     for (let i = 0; i < players.length; i++) {
         let playerCards = []
 
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 25; i++) {
             const card = await genCard({ cards })
 
             playerCards.push(card.generatedCard)
@@ -531,7 +540,8 @@ async function startGame({ client, gameID }) {
             cards: playerCards,
             reply: null,
             optionalReply: null,
-            lastcard: ""
+            lastcard: "",
+            page: 0
         }
     }
 
@@ -557,7 +567,7 @@ async function startGame({ client, gameID }) {
             const { buttons } = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
 
             let reply = await button.reply.send("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                components: makeRows(buttons),
+                components: makeRows({ buttonsData: buttons, page: playersData[button.clicker.user.id].page, message, gameID }),
                 ephemeral: true
             })
 
@@ -593,33 +603,70 @@ function removeCard(cardsConfig, userCards, cardToRemove) {
     return cards
 }
 
-function makeRows(buttonsData) {
+function makeRows({ buttonsData, page, message, gameID }) {
+    const max = 3
+
+    const draw = new MessageButton()
+        .setStyle("red")
+        .setLabel("Piocher")
+        .setID(`game_uno_${message.author.id}_${gameID}_playCard_ephemeral_draw`)
+
+    buttonsData.slice((5 * max) * page, (5 * max) * (page + 1))
+
     function splitIntoChunk(arr, chunk) {
         let arrays = []
 
-        for (let i= 0; i < arr.length; i += chunk) {
+        for (let i = 0; i < arr.length; i += chunk) {
             let tempArray;
             tempArray = arr.slice(i, i + chunk);
             arrays.push(tempArray)
         }
 
         return arrays
-
     }
 
     let arrays = splitIntoChunk(buttonsData, 5);
 
     if (arrays.length !== 1) {
+        let i = 0
         let ActionRow = []
 
         for (const buttons of arrays) {
+            if (i >= max) break
+            
             let row = new MessageActionRow()
 
-            for (const button of  buttons) {
+            for (const button of buttons) {
                 row.addComponent(button)
             }
+
             ActionRow.push(row)
+            i++
         }
+
+        let arrowsComponent = false
+        if (i >= max) {
+            const arrowsLeftButtons = new MessageButton()
+                .setEmoji("◀️")
+                .setStyle("gray")
+                .setID(`game_uno_${message.author.id}_${gameID}_page_${page - 1}`)
+
+            const arrowsRightButtons = new MessageButton()
+                .setEmoji("▶️")
+                .setStyle("gray")
+                .setID(`game_uno_${message.author.id}_${gameID}_page_${page + 1}`)
+
+    
+            arrowsComponent = new MessageActionRow()
+                .addComponents([arrowsLeftButtons, arrowsRightButtons, draw])
+
+            ActionRow.push(arrowsComponent)
+        }
+
+        const drawComponent = new MessageActionRow()
+            .addComponent(draw)
+
+        if (!arrowsComponent) ActionRow.push(drawComponent)
 
         return ActionRow
     } else {
@@ -628,6 +675,8 @@ function makeRows(buttonsData) {
         for (const button of buttonsData) {
             compenantButtons.addComponent(button)
         }
+
+        //Todo add draw ?
 
         return [compenantButtons]
     }
@@ -654,11 +703,6 @@ function genCard({ cards, filter }) {
 }
 
 function genButtons({ message, playersData, userID, gameID, activeCard }) {
-    const draw = new MessageButton()
-        .setStyle("red")
-        .setLabel("Piocher")
-        .setID(`game_uno_${message.author.id}_${gameID}_playCard_ephemeral_draw`)
-
     const buttons = []
 
     const cards = sortCard(playersData[userID].cards)
@@ -678,8 +722,6 @@ function genButtons({ message, playersData, userID, gameID, activeCard }) {
 
         buttons.push(buttonCard)
     }
-
-    buttons.push(draw)
 
     return { buttons }
 }
