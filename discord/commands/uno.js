@@ -136,10 +136,28 @@ module.exports = class Uno extends Command {
         }
     
         const mainText = (playersData, userData, actualCard) => `${Object.values(playersData).map(user => `${user.user.username} ${user.cards.length === 1 ? "Uno !" : user.cards.length + " cartes"}`).join("\n")}\n\nAu tour de ${userData.user.username}\nCarte actuelle : ${getEmojiCard(actualCard).fullEmoji}`
+        
+        const id = button.id.split("_")
+        
+        if (id[id.length - 2] === "page") {
+            const number = parseInt(id[id.length - 1])
+            const pageUser = playersData[button.clicker.user.id]
+
+            pageUser.page = number
+            
+            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+            
+            await pageUser?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
+                components: makeRows({ buttonsData: genButton.buttons, page: pageUser.page, message, gameID }),
+                ephemeral: true
+            })
+
+            await button.reply.defer()
+            
+            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
+        }
 
         if (!playersData[button.clicker.user.id].isTurn) return await button.reply.send(`Désolé mais ce n'est pas encore votre tour`, true)
-    
-        const id = button.id.split("_")
 
         const user = userTurn(turn)
 
@@ -179,15 +197,6 @@ module.exports = class Uno extends Command {
                 .addComponents([ red, green, blue, yellow, back ])
         
             return colors
-        }
-            
-        if (id[id.length - 2] === "page") {
-            //Page
-            const number = id[id.length - 1]
-        
-            //.slice(25 * page, 25 * (page + 1))
-
-            return console.log(number)
         }
 
         if (id[id.length - 1] === "draw") {
@@ -526,7 +535,7 @@ async function startGame({ client, gameID }) {
     for (let i = 0; i < players.length; i++) {
         let playerCards = []
 
-        for (let i = 0; i < 25; i++) {
+        for (let i = 0; i < 4; i++) {
             const card = await genCard({ cards })
 
             playerCards.push(card.generatedCard)
@@ -605,13 +614,16 @@ function removeCard(cardsConfig, userCards, cardToRemove) {
 
 function makeRows({ buttonsData, page, message, gameID }) {
     const max = 3
+    const maxPage = Math.round(buttonsData.length / 15) - 1
 
     const draw = new MessageButton()
         .setStyle("red")
         .setLabel("Piocher")
         .setID(`game_uno_${message.author.id}_${gameID}_playCard_ephemeral_draw`)
 
-    buttonsData.slice((5 * max) * page, (5 * max) * (page + 1))
+    if (page > maxPage) page = 0
+
+    if (buttonsData.slice((5 * max) * page, (5 * max) * (page + 1)).length > 0) buttonsData = buttonsData.slice((5 * max) * page, (5 * max) * (page + 1))
 
     function splitIntoChunk(arr, chunk) {
         let arrays = []
@@ -645,17 +657,18 @@ function makeRows({ buttonsData, page, message, gameID }) {
         }
 
         let arrowsComponent = false
-        if (i >= max) {
+        if (i >= max || page !== 0) {
             const arrowsLeftButtons = new MessageButton()
                 .setEmoji("◀️")
                 .setStyle("gray")
-                .setID(`game_uno_${message.author.id}_${gameID}_page_${page - 1}`)
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_page_${page - 1}`)
+                .setDisabled(page - 1 < 0)
 
             const arrowsRightButtons = new MessageButton()
                 .setEmoji("▶️")
                 .setStyle("gray")
-                .setID(`game_uno_${message.author.id}_${gameID}_page_${page + 1}`)
-
+                .setID(`game_uno_${message.author.id}_${gameID}_ephemeral_page_${page + 1}`)
+                .setDisabled(page + 1 > maxPage)
     
             arrowsComponent = new MessageActionRow()
                 .addComponents([arrowsLeftButtons, arrowsRightButtons, draw])
@@ -670,15 +683,23 @@ function makeRows({ buttonsData, page, message, gameID }) {
 
         return ActionRow
     } else {
-        const compenantButtons = new MessageActionRow()
-        
+        const componentButtons = new MessageActionRow()
+        let compenentDraw = false
+
         for (const button of buttonsData) {
-            compenantButtons.addComponent(button)
+            componentButtons.addComponent(button)
         }
 
-        //Todo add draw ?
+        if (buttonsData.length === 5) {
+            compenentDraw = new MessageActionRow()
+                .addComponents(draw)
+        } else componentButtons.addComponent(draw)
 
-        return [compenantButtons]
+        const components = [componentButtons]
+
+        if (compenentDraw) components.push(compenentDraw)
+
+        return components
     }
 }
 
