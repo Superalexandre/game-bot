@@ -1,18 +1,6 @@
 const Command = require("../structures/Command")
 const { MessageButton, MessageActionRow } = require("discord-buttons")
 
-/*
-
-    TODO :
-        #1 - Distribution des cartes pas spéciales, pas +2 (Ou sinon faire un truc)
-        #2 - Faire une sécurité pour le +4
-                => Si carte peut etre jouer -> Empecher
-        #3 - Faire une sécurité pour piocher (un avertissement simple)
-                => Si une carte peut etre jouer -> Attention vous avez une carte que vous pouvez jouer voulez vous continuer ?
-        #4 - Si trop de carte faire deux, trois pages
-        #5 - Piocher si tu peux jouer la carte piocher jouer sinon skip
-*/
-
 module.exports = class Uno extends Command {
     constructor(client) {
         super(client, {
@@ -255,6 +243,8 @@ module.exports = class Uno extends Command {
                 await msg.edit(mainText(playersData, newTurn, actualCard), {
                     buttons: [ seen_card ]
                 })
+
+                return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
             }
         }
     
@@ -597,6 +587,7 @@ function removeCard(cardsConfig, userCards, cardToRemove) {
 
     const cardInfo = cardToRemove.split("_")
 
+    //Il trouve pas le "skip" pour re add dans la config
     cardsConfig[cardInfo[0]][cardInfo[1]] = cardsConfig[cardInfo[0]][cardInfo[1]] + 1
 
     return cards
