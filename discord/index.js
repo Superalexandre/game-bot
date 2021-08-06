@@ -1,13 +1,7 @@
 const Client = require("./structures/Client") 
-const client = new Client()
+const {Intents} = require("discord.js")
+const client = new Client({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES,Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] })
 const { readdir } = require("fs")
-
-require("discord-reply")
-
-const discordButtons = require('discord-buttons')
-discordButtons(client)
-
-client.buttons = discordButtons
 
 module.exports.load = async(data, functions, logger) => {
     client.functions = functions

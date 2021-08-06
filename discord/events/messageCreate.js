@@ -1,11 +1,15 @@
 const i18n = require("i18n")
 
-module.exports = class Message {
+module.exports = class messageCreate {
     constructor(client) {
         this.client = client
     }
 
     async run(message) {
+        return console.log(message)
+
+        //https://discordjs.guide/additional-info/changes-in-v13.html#replies-message-reply
+
         const client = this.client
         const prefix = client.config.discord.prefix
         const data = client.data

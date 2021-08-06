@@ -1,5 +1,5 @@
 const Command = require("../structures/Command")
-const { MessageButton, MessageActionRow, MessageMenu, MessageMenuOption } = require("discord-buttons")
+const { MessageButton, MessageActionRow } = require("discord.js")
 
 module.exports = class Pendu extends Command {
     constructor(client) {

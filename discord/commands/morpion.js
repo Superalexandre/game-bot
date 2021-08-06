@@ -1,5 +1,5 @@
 const Command = require("../structures/Command")
-const { MessageButton, MessageActionRow } = require("discord-buttons")
+const { MessageButton, MessageActionRow } = require("discord.js")
 
 module.exports = class Morpion extends Command {
     constructor(client) {

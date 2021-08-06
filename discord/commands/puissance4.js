@@ -1,5 +1,5 @@
 const Command = require("../structures/Command")
-const { MessageButton, MessageActionRow } = require("discord-buttons")
+const { MessageButton, MessageActionRow } = require("discord.js")
 const Canvas = require("canvas")
 const gifencoder = require("gifencoder")
 

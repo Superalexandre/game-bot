@@ -1,5 +1,5 @@
 const Command = require("../structures/Command")
-const { MessageButton, MessageActionRow } = require("discord-buttons")
+const { MessageButton, MessageActionRow } = require("discord.js")
 
 module.exports = class Uno extends Command {
     constructor(client) {
@@ -522,8 +522,6 @@ async function allPlayersReady({ client, message, msg, gameData, cards, players 
 
     startGame({ client, gameID, gameData })
 }
-
-//Test
 
 async function startGame({ client, gameID }) {
     const game = client.games.uno.get(gameID)
