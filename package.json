@@ -12,7 +12,7 @@
     "canvas": "^2.8.0",
     "discord-buttons": "^4.0.0",
     "discord-reply": "^0.1.2",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.0.0",
     "enmap": "^5.8.5",
     "gif-encoder-2": "^1.0.5",
     "gif.js": "^0.2.0",
