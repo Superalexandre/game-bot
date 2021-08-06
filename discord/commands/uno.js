@@ -523,6 +523,8 @@ async function allPlayersReady({ client, message, msg, gameData, cards, players 
     startGame({ client, gameID, gameData })
 }
 
+//Test
+
 async function startGame({ client, gameID }) {
     const game = client.games.uno.get(gameID)
     
