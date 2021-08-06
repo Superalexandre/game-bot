@@ -23,14 +23,14 @@ module.exports = class Puissance4 extends Command {
         if (opponent.bot || opponent.id === message.author.id) return message.channel.send("Merci de saisir un adversaire valide !")
 
         const ready = new MessageButton()
-            .setStyle("green")
+            .setStyle("SUCCESS")
             .setLabel("Oui")
-            .setID(`game_puissance4_${message.author.id}_${opponent.id}_ready`)
+            .setCustomId(`game_puissance4_${message.author.id}_${opponent.id}_ready`)
     
         const notReady = new MessageButton()
-            .setStyle("red")
+            .setStyle("DANGER")
             .setLabel("Non")
-            .setID(`game_puissance4_${message.author.id}_${opponent.id}_notready`)
+            .setCustomId(`game_puissance4_${message.author.id}_${opponent.id}_notready`)
 
         const msg = await message.channel.send(`${opponent.username} est-vous prêt(e) ?`, {
             buttons: [ready, notReady]
@@ -42,38 +42,45 @@ module.exports = class Puissance4 extends Command {
 
 async function playWithBot({ i18n, message, client }) {
     const yes = new MessageButton()
-        .setStyle("green")
+        .setStyle("SUCCESS")
         .setLabel("Oui")
-        .setID(`game_puissance4_${message.author.id}_yes`)
+        .setCustomId(`game_puissance4_${message.author.id}_yes`)
 
     const no = new MessageButton()
-        .setStyle("red")
+        .setStyle("DANGER")
         .setLabel("Non")
-        .setID(`game_puissance4_${message.author.id}_no`)
+        .setCustomId(`game_puissance4_${message.author.id}_no`)
 
     const row = new MessageActionRow()
-        .addComponent(yes)
-        .addComponent(no)
+        .addComponents(yes, no)
 
-    const msg = await message.channel.send(`Vous n'avez pas saisi d'adversaire voulez vous jouer contre moi ?`, {
-        components: [row]
+    const msg = await message.reply({
+        content: `Vous n'avez pas saisi d'adversaire voulez vous jouer contre moi ?`,
+        components: [row], 
+        allowedMentions: { repliedUser: false }
     })
 
-    const collector = msg.createButtonCollector((button) => button)
+    const collector = msg.channel.createMessageComponentCollector()
 
     collector.on("collect", async(button) => {
-        if (!button.clicker || !button.clicker.user || !button.clicker.user.id) await button.clicker.fetch()
+        if (!button.user) await button.user.fetch()
 
-        if (button.clicker.user.id !== message.author.id) return await button.reply.send(`Désolé mais ce n'est pas votre partie, pour en lancer une faites !puissance4 @Joueur`, true)
+        if (button.user.id !== message.author.id) return await button.reply({
+            content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !puissance4 @Joueur`,
+            ephemeral: true
+        })
 
-        if (button.id.endsWith("no")) {
+        if (button.customId .endsWith("no")) {
             await collector.stop()
-            await button.reply.defer()
 
-            return msg.edit(`${message.author.username} ne veut pas jouer contre moi :(`, null)
+            return msg.edit({
+                content: `${message.author.username} ne veut pas jouer contre moi :(`,
+                components: [],
+                allowedMentions: { repliedUser: false }
+            })
         } else {
             await collector.stop()
-            await button.reply.defer()
+            await button.deferReply()
 
             return startGame({ i18n, message, msg, opponent: client.user, client })
         }
@@ -107,24 +114,22 @@ async function whoStart({ i18n, message, msg, opponent, client, userData, oppone
     const opposite = opponentData?.choose ? message.author : opponent
 
     const userStart = new MessageButton()
-        .setStyle("blurple")
+        .setStyle("PRIMARY")
         .setLabel("Vous (" + chooser.username + ")")
-        .setID(`game_puissance4_${message.author.id}_${opponent.id}_user`)
+        .setCustomId(`game_puissance4_${message.author.id}_${opponent.id}_user`)
 
     const opponentStart = new MessageButton()
-        .setStyle("blurple")
+        .setStyle("PRIMARY")
         .setLabel(opposite.username)
-        .setID(`game_puissance4_${message.author.id}_${opponent.id}_opponent`)
+        .setCustomId(`game_puissance4_${message.author.id}_${opponent.id}_opponent`)
 
     const random = new MessageButton()
-        .setStyle("blurple")
+        .setStyle("PRIMARY")
         .setLabel("Aléatoire")
-        .setID(`game_puissance4_${message.author.id}_${opponent.id}_random`)
+        .setCustomId(`game_puissance4_${message.author.id}_${opponent.id}_random`)
 
     const row = new MessageActionRow()
-        .addComponent(userStart)
-        .addComponent(opponentStart)
-        .addComponent(random)
+        .addComponents(userStart, opponentStart, random)
 
     await msg.edit(`${chooser.username}, Qui doit commencer ?`, {
         components: [row]

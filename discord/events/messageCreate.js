@@ -6,8 +6,6 @@ module.exports = class messageCreate {
     }
 
     async run(message) {
-        return console.log(message)
-
         //https://discordjs.guide/additional-info/changes-in-v13.html#replies-message-reply
 
         const client = this.client
@@ -47,7 +45,7 @@ module.exports = class messageCreate {
         if (mentionned && !message.reference) {
             const messageTime = (Date.now() - start) / 1000
 
-            message.lineReplyNoMention(i18n.__("discord.mentionned", { prefix: prefix }))
+            message.reply({ content: i18n.__("discord.mentionned", { prefix: prefix }), allowedMentions: { repliedUser: false } })
 
             return client.logger.commandLog({ message: "Mention" } /*message, prefix, "mention", messageTime, ((Date.now() - start) / 1000) - messageTime*/)
         }
@@ -73,7 +71,7 @@ module.exports = class messageCreate {
             }
 
             if (neededPermission.length > 0) {
-                return message.lineReplyNoMention(i18n.__n("error.%s missingBotPermission", neededPermission.length) + `\n\`\`\`${neededPermission.map((p) => p).join("\n")}\`\`\``)
+                return message.reply({ content: i18n.__n("error.%s missingBotPermission", neededPermission.length) + `\n\`\`\`${neededPermission.map((p) => p).join("\n")}\`\`\``, allowedMentions: { repliedUser: false } })
             }
 
         }
@@ -89,7 +87,7 @@ module.exports = class messageCreate {
             }
             
             if (neededPermission.length > 0) {
-                return message.lineReplyNoMention(i18n.__n("error.%s missingUserPermission", neededPermission.length) + `\n\`\`\`${neededPermission.map((p) => p).join("\n")}\`\`\``)
+                return message.reply({ content: i18n.__n("error.%s missingUserPermission", neededPermission.length) + `\n\`\`\`${neededPermission.map((p) => p).join("\n")}\`\`\``, allowedMentions: { repliedUser: false } })
             }
         }
 
@@ -113,12 +111,12 @@ module.exports = class messageCreate {
             }).then(result => {
                 client.logger.commandLog({ message: cmd.help.name } /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/)
             }).catch(error => {
-                message.lineReplyNoMention(i18n.__("error.errorOccured", { error: error.toString() }))
+                message.reply({ content: i18n.__("error.errorOccured", { error: error.toString() }), allowedMentions: { repliedUser: false } })
 
                 client.logger.error({ message: error })
             })
         } catch(error) {
-            message.lineReplyNoMention(i18n.__("error.errorOccured", { error: error.toString() }))
+            message.reply({ content: i18n.__("error.errorOccured", { error: error.toString() }), allowedMentions: { repliedUser: false } })
 
             client.logger.error({ message: error })
         }
