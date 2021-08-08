@@ -12,87 +12,100 @@ module.exports = class Morpion extends Command {
         })
     }
 
-    async run({ client, message, args, i18n, data, userData, util }) {
-        const opponent = message.mentions.users.first()
+    async run({ client, interaction, options, i18n, data, userData, util }) {
+        const opponent = options.getUser("adversaire")
 
-        if (!opponent) return playWithBot({ i18n, message, client })
+        if (!opponent || opponent.id === client.user.id) return playWithBot({ i18n, interaction, client })
 
-        if (opponent.bot || opponent.id === message.author.id) return message.channel.send("Merci de saisir un adversaire valide !")
-
-        const ready = new MessageButton()
-            .setStyle("green")
-            .setLabel("Oui")
-            .setID(`game_morpion_${message.author.id}_${opponent.id}_ready`)
-    
-        const notReady = new MessageButton()
-            .setStyle("red")
-            .setLabel("Non")
-            .setID(`game_morpion_${message.author.id}_${opponent.id}_notready`)
-
-        const msg = await message.channel.send(`${opponent.username} est-vous prêt(e) ?`, {
-            buttons: [ready, notReady]
+        if (opponent.bot || opponent.id === interaction.user.id) return interaction.reply({
+            content: "Merci de saisir un adversaire valide !",
         })
 
-        return opponentReady({ i18n, message, msg, opponent, client })
+        const ready = new MessageButton()
+            .setStyle("SUCCESS")
+            .setLabel("Oui")
+            .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_ready`)
+    
+        const notReady = new MessageButton()
+            .setStyle("DANGER")
+            .setLabel("Non")
+            .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_notready`)
+
+        const readyComponents = new MessageActionRow().addComponents(ready, notReady)
+
+        await interaction.reply({
+            content: `${opponent} est-vous prêt(e) ?`,
+            components: [ readyComponents ]
+        })
+
+        return opponentReady({ i18n, interaction, opponent, client })
     }
 }
 
-async function playWithBot({ i18n, message, client }) {
+async function playWithBot({ i18n, interaction, client }) {
     const yes = new MessageButton()
-        .setStyle("green")
+        .setStyle("SUCCESS")
         .setLabel("Oui")
-        .setID(`game_morpion_${message.author.id}_yes`)
+        .setCustomId(`game_morpion_${interaction.user.id}_yes`)
 
     const no = new MessageButton()
-        .setStyle("red")
+        .setStyle("DANGER")
         .setLabel("Non")
-        .setID(`game_morpion_${message.author.id}_no`)
+        .setCustomId(`game_morpion_${interaction.user.id}_no`)
 
-    const row = new MessageActionRow()
-        .addComponent(yes)
-        .addComponent(no)
+    const row = new MessageActionRow().addComponents(yes, no)
 
-    const msg = await message.channel.send(`Vous n'avez pas saisi d'adversaire voulez vous jouer contre moi ?`, {
+    await interaction.reply({
+        content: `Vous n'avez pas saisi d'adversaire voulez vous jouer contre moi ?`,
         components: [row]
     })
 
-    const collector = msg.createButtonCollector((button) => button)
+    const collector = interaction.createButtonCollector()
 
     collector.on("collect", async(button) => {
-        if (!button.clicker || !button.clicker.user || !button.clicker.user.id) await button.clicker.fetch()
+        if (!button.user) await button.user.fetch()
 
-        if (button.clicker.user.id !== message.author.id) return await button.reply.send(`Désolé mais ce n'est pas votre partie, pour en lancer une faites !morpion @Joueur`, true)
+        if (button.user.id !== interaction.user.id) return await button.reply({
+            content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !morpion @Joueur`,
+            ephemeral: true
+        })
 
         if (button.id.endsWith("no")) {
             await collector.stop()
-            await button.defer()
 
-            return msg.edit(`${message.author.username} ne veut pas jouer contre moi :(`, null)
+            return interaction.editReply({
+                content: `${interaction.user.username} ne veut pas jouer contre moi :(`,
+                components: []
+            })
         } else {
             await collector.stop()
-            await button.defer()
+            await button?.deferUpdate()
 
-            return startGame({ i18n, message, msg, opponent: client.user, client })
+            return startGame({ i18n, interaction, opponent: client.user, client })
         }
     })
 }
 
-async function opponentReady({ i18n, message, msg, opponent, client }) {
-    const collector = msg.createButtonCollector((button) => button)
+async function opponentReady({ i18n, interaction, opponent, client }) {
+    const collector = interaction.createButtonCollector()
 
     collector.on("collect", async(button) => {
-        if (!button.clicker || !button.clicker.user || !button.clicker.user.id) await button.clicker.fetch()
+        if (!button.user) await button.user.fetch()
 
-        if (button.clicker.user.id !== opponent.id) return await button.reply.send(`Désolé mais ce n'est pas votre partie, pour en lancer une faites !morpion @Joueur`, true)
+        if (button.user.id !== opponent.id) return await button.reply({
+            content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !morpion @Joueur`
+        })
 
-        if (button.id.endsWith("notready")) {
+        if (button.customId.endsWith("notready")) {
             await collector.stop()
-            await button.defer()
 
-            return msg.edit(`${opponent.username} n'est pas prêt`, null)
+            return interaction.editReply({
+                content: `${opponent.username} n'est pas prêt`,
+                components: []
+            })
         } else {
             await collector.stop()
-            await button.defer()
+            await button?.deferUpdate()
 
             return whoStart({ i18n, message, msg, opponent, client })
         }
@@ -101,56 +114,57 @@ async function opponentReady({ i18n, message, msg, opponent, client }) {
 
 async function whoStart({ i18n, message, msg, opponent, client }) {
     const userStart = new MessageButton()
-        .setStyle("blurple")
+        .setStyle("PRIMARY")
         .setLabel("Vous (" + message.author.username + ")")
-        .setID(`game_morpion_${message.author.id}_${opponent.id}_user`)
+        .setCustomId(`game_morpion_${message.author.id}_${opponent.id}_user`)
 
     const opponentStart = new MessageButton()
-        .setStyle("blurple")
+        .setStyle("PRIMARY")
         .setLabel(opponent.username)
-        .setID(`game_morpion_${message.author.id}_${opponent.id}_opponent`)
+        .setCustomId(`game_morpion_${message.author.id}_${opponent.id}_opponent`)
 
     const random = new MessageButton()
-        .setStyle("blurple")
+        .setStyle("PRIMARY")
         .setLabel("Aléatoire")
-        .setID(`game_morpion_${message.author.id}_${opponent.id}_random`)
+        .setCustomId(`game_morpion_${message.author.id}_${opponent.id}_random`)
 
-    const row = new MessageActionRow()
-        .addComponent(userStart)
-        .addComponent(opponentStart)
-        .addComponent(random)
+    const row = new MessageActionRow().addComponents(userStart, opponentStart, random) 
 
-    await msg.edit(`${message.author.username}, Qui doit commencer ?`, {
-        components: [row]
+    await interaction.editReply({
+        content: `${message.author.username}, Qui doit commencer ?`,
+        components: [ row ]
     })
 
-    const collector = msg.createButtonCollector((button) => button)
+    const collector = interaction.createButtonCollector()
 
     collector.on("collect", async(button) => {
-        if (!button.clicker || !button.clicker.user || !button.clicker.user.id) await button.clicker.fetch()
+        if (!button.user) await button.user.fetch()
 
-        if (button.clicker.user.id !== message.author.id) return await button.reply.send(`Désolé mais ce n'est pas votre partie, pour en lancer une faites !morpion @Joueur`, true)
+        if (button.user.id !== interaction.user.id) return await button.reply({
+            content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !morpion @Joueur`,
+            ephemeral: true
+        })
 
-        if (button.id.endsWith("opponent")) {
+        if (button.customId.endsWith("opponent")) {
             opponent.turn = true
-        } else if (button.id.endsWith("user")) {
+        } else if (button.customId.endsWith("user")) {
             opponent.turn = false
-        } else if (button.id.endsWith("random")) {
+        } else if (button.customId.endsWith("random")) {
             const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1
 
             opponent.turn = random === 1 ? true : false
-        } else return msg.edit("Erreur inconnue")
+        } else return button.reply({ content: "Erreur inconnue" })
     
         await collector.stop()
-        await button.defer()
-        return startGame({ i18n, message, msg, opponent, client })
+        await button?.deferUpdate()
+        return startGame({ i18n, interaction, opponent, client })
     })
 }
 
-async function startGame({ i18n, message, msg, opponent, client }) {
+async function startGame({ i18n, interaction, opponent, client }) {
     let userData = {
-        id: message.author.id,
-        username: message.author.username,
+        id: interaction.user.id,
+        username: interaction.user.username,
         turn: opponent.turn ? false : true,
         emoji: "❌",
         customEmote: "855726987183915008",
@@ -176,20 +190,28 @@ async function startGame({ i18n, message, msg, opponent, client }) {
     
     const genBoard = genButtons({ board, userID: userData.id, opponentID: opponentData.id })
     
-    await msg.edit(text(userData, opponentData), {
+    await interaction.editReply({
+        content: text(userData, opponentData),
         components: genBoard.row
     })
 
-    const collector = msg.createButtonCollector((button) => button)
+    const collector = interaction.createButtonCollector()
 
     collector.on("collect", async(button) => {
-        if (!button.clicker || !button.clicker.user || !button.clicker.user.id) await button.clicker.fetch()
-        if (button.clicker.user.id !== userData.id && button.clicker.user.id !== opponentData.id) return await button.reply.send(`Désolé mais ce n'est pas votre partie, pour en lancer une faites !morpion @Joueur`, true)
+        if (!button.user) await button.user.fetch()
+
+        if (button.user.id !== userData.id && button.user.id !== opponentData.id) return await button.reply({
+            content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !morpion @Joueur`,
+            ephemeral: true
+        })
     
         const type = button.clicker.user.id === userData.id ? userData : opponentData
         const opposite = button.clicker.user.id === userData.id ? opponentData : userData
 
-        if (!type.turn) return await button.reply.send("Désolé ce n'est pas encore a vous de jouer", true)
+        if (!type.turn) return await button.reply({
+            content: "Désolé ce n'est pas encore a vous de jouer", 
+            ephemeral: true
+        })
 
         const id = button.id.split("_")
         const line = id[id.length - 2]
@@ -199,14 +221,15 @@ async function startGame({ i18n, message, msg, opponent, client }) {
         type.turn = false
         opposite.turn = true
 
-        await button.defer()
+        await button?.deferUpdate()
 
         const genBoard = genButtons({ board, userID: userData.id, opponentID: opponentData.id })
 
         if (!genBoard.win && genBoard.allFill) {
             await collector.stop()
 
-            return msg.edit(`Wow égalité bien joué a vous deux ${userData.username} et ${opponentData.username}`, {
+            return interaction.editReply({
+                content: `Wow égalité bien joué a vous deux ${userData.username} et ${opponentData.username}`, 
                 components: genBoard.row
             })
         }
@@ -214,12 +237,14 @@ async function startGame({ i18n, message, msg, opponent, client }) {
         if (genBoard.win) {
             await collector.stop()
 
-            return msg.edit(`Wow bien joué a ${genBoard.winner === userData.emoji ? userData.username : opponentData.username} (${genBoard.winner}) il a gagné !`, {
+            return interaction.editReply({
+                content: `Wow bien joué a ${genBoard.winner === userData.emoji ? userData.username : opponentData.username} (${genBoard.winner}) il a gagné !`,
                 components: genBoard.row
             })
         }
 
-        await msg.edit(text(userData, opponentData), {
+        await interaction.editReply({
+            content: text(userData, opponentData), 
             components: genBoard.row
         })
 
@@ -233,19 +258,22 @@ async function startGame({ i18n, message, msg, opponent, client }) {
 
             if (!genBoard.win && genBoard.allFill) {
                 await collector.stop()
-                return msg.edit(`Wow égalité bien joué a vous deux ${userData.username} et ${opponentData.username}`, {
+                return interaction.editReply({
+                    content: `Wow égalité bien joué a vous deux ${userData.username} et ${opponentData.username}`,
                     components: genBoard.row
                 })
             }
 
             if (genBoard.win) {
                 await collector.stop()
-                return msg.edit(`Wow bien joué a ${genBoard.winner === userData.emoji ? userData.username : opponentData.username} (${genBoard.winner}) il a gagné !`, {
+                return interaction.editReply({
+                    content: `Wow bien joué a ${genBoard.winner === userData.emoji ? userData.username : opponentData.username} (${genBoard.winner}) il a gagné !`,
                     components: genBoard.row
                 })
             }
 
-            await msg.edit(text(userData, opponentData), {
+            await interaction.editReply({
+                content: text(userData, opponentData),
                 components: genBoard.row
             })
         }
@@ -313,8 +341,8 @@ function genButtons({ board, userID, opponentID }) {
             }
     
             const button = new MessageButton()
-                .setStyle("blurple")
-                .setID(`game_morpion_${userID}_${opponentID}_${i}_${j}`)
+                .setStyle("PRIMARY")
+                .setCustomId(`game_morpion_${userID}_${opponentID}_${i}_${j}`)
 
             const customEmoji = board[i][j] === "" ? "855364971910397973" : emoji[board[i][j]]
             const disabled = board[i][j] === "" ? false : true
@@ -322,7 +350,7 @@ function genButtons({ board, userID, opponentID }) {
             button.setEmoji(customEmoji)
                 .setDisabled(disabled)
 
-            row[i].addComponent(button)
+            row[i].addComponents(button)
         }
     }
 

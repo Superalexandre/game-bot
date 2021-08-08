@@ -192,7 +192,8 @@ async function startGame({ interaction, i18n, word }) {
 		content: `Votre partie est prête, pour arreter celle-ci vous pouvez dire \`stop\`, le mot qu'on cherche n'a pas d'accent !\nBon courage !\n\n\n${genText(word, lettersSaid, error, errorText)}`
 	})
 	
-	const collector = await interaction.channel.createMessageCollector((m) => m.author.id === interaction.user.id)
+	const filter = (message) => message.author.id === interaction.user.id
+	const collector = await interaction.channel.createMessageCollector({ filter })
 
 	collector.on("collect", async(m) => {
 		m.content = m.content.toLowerCase()

@@ -27,7 +27,7 @@ module.exports = class interactionCreate {
         try {
             const messageTime = (Date.now() - start) / 1000
         
-            cmd.run({
+            return cmd.run({
                 client: client,
                 interaction: interaction,
                 options: interaction.options,
