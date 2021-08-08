@@ -5,8 +5,9 @@ A fun discord bot
 
 
 ### Global
-- [ ] ⚠️ Urgent ⚠️ Mise a jour v13 discord.js
-- [ ] Refaire les commandes en /
+- [X] Mise a jour v13 discord.js
+- [ ] Unknown interaction bug
+- [ ] [En cours] Refaire les commandes en /
 - [ ] Event message
 - [ ] Traduction
 - [ ] Logger
