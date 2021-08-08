@@ -15,61 +15,63 @@ module.exports = class Puissance4 extends Command {
         })
     }
 
-    async run({ client, message, args, i18n, data, userData, util }) {
-        const opponent = message.mentions.users.first()
+    async run({ client, interaction, options, i18n, data, userData, util }) {
+        const opponent = options.getUser("adversaire")
 
-        if (!opponent) return playWithBot({ i18n, message, client })
+        if (!opponent || opponent.id === client.user.id) return playWithBot({ i18n, interaction, client })
 
-        if (opponent.bot || opponent.id === message.author.id) return message.channel.send("Merci de saisir un adversaire valide !")
+        if (opponent.bot || opponent.id === interaction.user.id) return interaction.reply({
+            content: "Merci de saisir un adversaire valide !",
+            ephemeral: true
+        })
 
         const ready = new MessageButton()
             .setStyle("SUCCESS")
             .setLabel("Oui")
-            .setCustomId(`game_puissance4_${message.author.id}_${opponent.id}_ready`)
+            .setCustomId(`game_puissance4_${interaction.user.id}_${opponent.id}_ready`)
     
         const notReady = new MessageButton()
             .setStyle("DANGER")
             .setLabel("Non")
-            .setCustomId(`game_puissance4_${message.author.id}_${opponent.id}_notready`)
+            .setCustomId(`game_puissance4_${interaction.user.id}_${opponent.id}_notready`)
 
-        const readyButtons = new MessageActionRow()
-            .addComponents(ready, notReady)
+        const readyButtons = new MessageActionRow().addComponents(ready, notReady)
 
-        const msg = await message.channel.send({
-            content:`${opponent.username} est-vous prêt(e) ?`,
+        await interaction.reply({
+            content:`${opponent} est-vous prêt(e) ?`,
             components: [readyButtons]
         })
 
-        return opponentReady({ i18n, message, msg, opponent, client })
+        return opponentReady({ i18n, interaction, opponent, client })
     }
 }
 
-async function playWithBot({ i18n, message, client }) {
+async function playWithBot({ i18n, interaction, client }) {
     const yes = new MessageButton()
         .setStyle("SUCCESS")
         .setLabel("Oui")
-        .setCustomId(`game_puissance4_${message.author.id}_yes`)
+        .setCustomId(`game_puissance4_${interaction.user.id}_yes`)
 
     const no = new MessageButton()
         .setStyle("DANGER")
         .setLabel("Non")
-        .setCustomId(`game_puissance4_${message.author.id}_no`)
+        .setCustomId(`game_puissance4_${interaction.user.id}_no`)
 
     const row = new MessageActionRow()
         .addComponents(yes, no)
 
-    const msg = await message.reply({
+    let reply = await interaction.reply({
         content: `Vous n'avez pas saisi d'adversaire voulez vous jouer contre moi ?`,
         components: [row], 
         allowedMentions: { repliedUser: false }
     })
 
-    const collector = await msg.channel.createMessageComponentCollector()
+    const collector = await reply.createMessageComponentCollector()
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
 
-        if (button.user.id !== message.author.id) return await button.reply({
+        if (button.user.id !== interaction.user.id) return await button.reply({
             content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !puissance4 @Joueur`,
             ephemeral: true
         })
@@ -77,21 +79,21 @@ async function playWithBot({ i18n, message, client }) {
         if (button.customId.endsWith("no")) {
             await collector.stop()
 
-            return msg.edit({
-                content: `${message.author.username} ne veut pas jouer contre moi :(`,
+            return interaction.editReply({
+                content: `${interaction.user.username} ne veut pas jouer contre moi :(`,
                 components: [],
                 allowedMentions: { repliedUser: false }
             })
         } else {
             await collector.stop()
 
-            return startGame({ i18n, message, msg, opponent: client.user, client })
+            return startGame({ i18n, interaction, button, opponent: client.user, client, userData, opponentData })
         }
     })
 }
 
-async function opponentReady({ i18n, message, msg, opponent, client }) {
-    const collector = await msg.createMessageComponentCollector()
+async function opponentReady({ i18n, interaction, opponent, client }) {
+    const collector = await interaction.channel.createMessageComponentCollector()
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
@@ -112,42 +114,41 @@ async function opponentReady({ i18n, message, msg, opponent, client }) {
         } else {
             await collector.stop()
 
-            return whoStart({ i18n, message, msg, button, opponent, client })
+            return whoStart({ i18n, interaction, button, opponent, client })
         }
     })
 }
 
-async function whoStart({ i18n, message, msg, button, opponent, client, userData, opponentData }) {
-    const chooser = opponentData?.choose ? opponentData : message.author
-    const opposite = opponentData?.choose ? message.author : opponent
+async function whoStart({ i18n, interaction, button, opponent, client, userData, opponentData }) {
+    const chooser = opponentData?.choose ? opponentData : interaction.user
+    const opposite = opponentData?.choose ? interaction.user : opponent
 
     const userStart = new MessageButton()
         .setStyle("PRIMARY")
         .setLabel("Vous (" + chooser.username + ")")
-        .setCustomId(`game_puissance4_${message.author.id}_${opponent.id}_user`)
+        .setCustomId(`game_puissance4_${interaction.user.id}_${opponent.id}_user`)
 
     const opponentStart = new MessageButton()
         .setStyle("PRIMARY")
         .setLabel(opposite.username)
-        .setCustomId(`game_puissance4_${message.author.id}_${opponent.id}_opponent`)
+        .setCustomId(`game_puissance4_${interaction.user.id}_${opponent.id}_opponent`)
 
     const random = new MessageButton()
         .setStyle("PRIMARY")
         .setLabel("Aléatoire")
-        .setCustomId(`game_puissance4_${message.author.id}_${opponent.id}_random`)
+        .setCustomId(`game_puissance4_${interaction.user.id}_${opponent.id}_random`)
 
-    const row = new MessageActionRow()
-        .addComponents(userStart, opponentStart, random)
+    const row = new MessageActionRow().addComponents(userStart, opponentStart, random)
 
-    if (button) await button.deferUpdate()
+    await button?.deferUpdate()
 
-    await msg.edit({
+    await interaction.editReply({
         content: `${chooser.username}, Qui doit commencer ?`,
         components: [row],
         allowedMentions: { repliedUser: false }
     })
 
-    const collector = await msg.createMessageComponentCollector()
+    const collector = await interaction.channel.createMessageComponentCollector()
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
@@ -158,28 +159,29 @@ async function whoStart({ i18n, message, msg, button, opponent, client, userData
         })
 
         if (button.customId.endsWith("opponent")) {
-            opponent.turn = chooser === message.author ? true : false
+            opponent.turn = chooser === interaction.user ? true : false
             opponent.random = false
         } else if (button.customId.endsWith("user")) {
-            opponent.turn = chooser === message.author ? false : true
+            opponent.turn = chooser === interaction.user ? false : true
             opponent.random = false
         } else if (button.customId.endsWith("random")) {
             const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1
 
             opponent.turn = random === 1 ? true : false
             opponent.random = true
-        } else return button.update({
+        } else return interaction.editReply({
             content: "Erreur inconnue", 
             components: []
         })
     
         await collector.stop()
+        await button?.deferUpdate()
         //await button.reply.defer()
-        return startGame({ i18n, message, msg, button, opponent, client, userData, opponentData })
+        return startGame({ i18n, interaction, button, opponent, client, userData, opponentData })
     })
 }
 
-async function startGame({ i18n, message, msg, button, opponent, client, userData, opponentData }) {
+async function startGame({ i18n, interaction, button, opponent, client, userData, opponentData }) {
     let board = [
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
@@ -189,8 +191,8 @@ async function startGame({ i18n, message, msg, button, opponent, client, userDat
     ]
 
     userData = userData ? userData : {
-        id: message.author.id,
-        username: message.author.username,
+        id: interaction.user.id,
+        username: interaction.user.username,
         turn: opponent.turn ? false : true,
         random: opponent.random,
         emoji: "🔴",
@@ -212,14 +214,14 @@ async function startGame({ i18n, message, msg, button, opponent, client, userDat
         actions: []
     }
 
-    await msg.edit({
+    let reply = await interaction.editReply({
         content: `${userData.turn ? userData.username : opponentData.username} va commencer (${userData.random ? "Aléatoire" : "Choix"})\nVeuillez patienter quelque seconde, le temps de la mise en place des réactions`,
         components: []
     })
 
     const emoteNumber = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]
 
-    for (let i = 0; i < emoteNumber.length; i++) await msg.react(emoteNumber[i])
+    for (let i = 0; i < emoteNumber.length; i++) await reply.react(emoteNumber[i])
 
     const copyArray = (array) => JSON.parse(JSON.stringify(array))
 
@@ -236,12 +238,13 @@ async function startGame({ i18n, message, msg, button, opponent, client, userDat
 
     const formatedBoard = genBoard({ board, userData, opponentData })
 
-    await msg.edit({
+    await interaction.editReply({
         content: text(userData, opponentData) + formatedBoard.string, 
         components: []
     })
 
-    const collector = await msg.createReactionCollector((reaction, user) => [userData.id, opponentData.id].includes(user.id) && emoteNumber.includes(reaction.emoji.name))
+    const filter = (reaction, user) => [userData.id, opponentData.id].includes(user.id) && emoteNumber.includes(reaction.emoji.name)
+    const collector = await reply.createReactionCollector({ filter })
     
     let actionsNumber = 0
     collector.on("collect", async(reaction, user) => {
@@ -260,12 +263,12 @@ async function startGame({ i18n, message, msg, button, opponent, client, userDat
         gameData.actions.push(copyArray(added.board))
 
         if (added && added.error) {
-            if (added.error === "row_full") return await msg.edit({
+            if (added.error === "row_full") return await interaction.editReply({
                 content: text(userData, opponentData, "Vous ne pouvez pas jouer ici !") + added.string,
                 components: []
             })
 
-            return await msg.edit({ 
+            return await interaction.editReply({ 
                 content: text(userData, opponentData, "Une erreur inconnu est survenue") + added.string, 
                 components: []
             })
@@ -280,7 +283,7 @@ async function startGame({ i18n, message, msg, button, opponent, client, userDat
 
         if (formatedBoard.win) {
             await collector.stop()
-            await msg.reactions.removeAll()
+            await reply.reactions.removeAll()
 
             const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
             const looser = formatedBoard.winnerUser.id === userData.id ? opponentData : userData
@@ -291,27 +294,27 @@ async function startGame({ i18n, message, msg, button, opponent, client, userDat
             winner.win = numberWin + 1
             looser.loose = numberLoose + 1
 
-            await msg.edit({
+            await interaction.editReply({
                 content: `**${userData?.win ? userData.win : 0}** ${userData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\nWow bien joué ${winner.username} (${winner.emoji}) qui a gagné contre ${looser.username} (${looser.emoji})\n` + formatedBoard.string,
                 components: []
             })
 
-            return restart({ i18n, message, msg, button, opponent, client, userData, opponentData, gameData })
+            return restart({ i18n, interaction, reply, button, opponent, client, userData, opponentData, gameData })
         }
 
         if (formatedBoard.allFill) {
             await collector.stop()
-            await msg.reactions.removeAll()
+            await reply.reactions.removeAll()
 
-            await msg.edit({
+            await interaction.editReply({
                 content: `**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) et ${opponentData.username} (${opponentData.emoji}) finissent sur une égalité :(\n` + formatedBoard.string,
                 components: []
             })
 
-            return restart({ i18n, message, msg, button, opponent, client, userData, opponentData, gameData })
+            return restart({ i18n, interaction, reply, button, opponent, client, userData, opponentData, gameData })
         }
 
-        await msg.edit({ 
+        await interaction.editReply({ 
             content: text(userData, opponentData) + formatedBoard.string,
             components: []
         })
@@ -326,9 +329,12 @@ async function startGame({ i18n, message, msg, button, opponent, client, userDat
             const added = add({ board, emoji: opposite.emoji, row: rowToPlay })
 
             if (added && added.error) {
-                if (added.error === "row_full") return await msg.edit(text(userData, opponentData, "Vous ne pouvez pas jouer ici !") + added.string, null)
+                if (added.error === "row_full") return await interaction.editReply({
+                    content: text(userData, opponentData, "Vous ne pouvez pas jouer ici !") + added.string,
+                    components: []
+                })
                 
-                return await msg.editReply({
+                return await interaction.editReply({
                     content: text(userData, opponentData, "Une erreur inconnu est survenue") + added.string,
                     components: []
                 })
@@ -342,7 +348,7 @@ async function startGame({ i18n, message, msg, button, opponent, client, userDat
                 console.log("WIN")
             }
 
-            await msg.edit({
+            await interaction.editReply({
                 content: text(userData, opponentData) + formatedBoard.string,
                 components: []
             })
@@ -458,20 +464,21 @@ function add({ board, emoji, row }) {
     return { board, string }
 }
 
-async function restart({ i18n, message, msg, button, opponent, client, userData, opponentData, gameData }) {
-    await msg.react("🔄")
-    await msg.react("📥")
+async function restart({ i18n, interaction, reply, button, opponent, client, userData, opponentData, gameData }) {
+    await reply.react("🔄")
+    await reply.react("📥")
 
-    const collector = await msg.createReactionCollector((reaction, user) => [userData.id, opponentData.id].includes(user.id) && ["🔄", "📥"].includes(reaction.emoji.name), { dispose: true })
+    const filter = (reaction, user) => [userData.id, opponentData.id].includes(user.id) && ["🔄", "📥"].includes(reaction.emoji.name)
+    const collector = await reply.createReactionCollector({ filter, dispose: true })
 
     let numberReady = 0
 
     collector.on("collect", async(reaction, user) => {
         if (reaction.emoji.name === "📥") {
             await collector.stop()
-            await msg.reactions.removeAll()
+            await reply.reactions.removeAll()
 
-            return makeGif({ client, message, gameData })
+            return makeGif({ client, interaction, gameData })
         }
 
         const activeUser = user.id === userData.id ? userData : opponentData
@@ -481,14 +488,14 @@ async function restart({ i18n, message, msg, button, opponent, client, userData,
 
         if (numberReady === 2) {
             await collector.stop()
-            await msg.reactions.removeAll()
+            await reply.reactions.removeAll()
 
             opponentData.choose = opponentData?.choose ? false : true
 
-            return whoStart({ i18n, message, msg, button: null, opponent, client, userData, opponentData })
+            return whoStart({ i18n, interaction, button: null, opponent, client, userData, opponentData })
         }
         
-        await msg.edit({
+        await interaction.editReply({
             content: `${user.username} veut une revanche (${numberReady}/2)\n`,
             components: []
         })
@@ -499,9 +506,9 @@ async function restart({ i18n, message, msg, button, opponent, client, userData,
 
         if (numberReady === 0) {
             await collector.stop()
-            await msg.reactions.removeAll()
+            await reply.reactions.removeAll()
 
-            return await msg.edit({
+            return await interaction.editReply({
                 content: `${user.username} veut plus de revanche`,
                 components: []
             })
@@ -509,7 +516,7 @@ async function restart({ i18n, message, msg, button, opponent, client, userData,
     })
 }
 
-async function makeGif({ client, message, gameData }) {
+async function makeGif({ client, interaction, gameData }) {
     const width = 1000
     const height = 1000
 
@@ -565,7 +572,8 @@ async function makeGif({ client, message, gameData }) {
 
     gif.finish()
 
-    await message.channel.send({
+    await interaction.editReply({
+        content: "Replay de la partie :",
         files: [{
             attachment: gif.out.getData(),
             name: "replay.gif"
