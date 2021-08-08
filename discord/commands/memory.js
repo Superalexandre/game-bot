@@ -13,7 +13,7 @@ module.exports = class Memory extends Command {
         })
     }
 
-    async run({ client, message, args, i18n, data, userData, util }) {
+    async run({ client, interaction, options, i18n, data, userData, util }) {
         const emotes = ["🐶", "🔰", "⚜️", "🔱", "🐻", "🐨", "🐯", "🐷", "🦧", "🌺", "⭐", "🍏", "🍊", "🍉", "🍇", "🍓", "💵", "⚙️", "📕", "❤️", "💜", "🔵", "🟢", "🟧", "🟫", "🟨"]
 
         const difficultyType = {
@@ -37,36 +37,30 @@ module.exports = class Memory extends Command {
             }
         }
 
-        let config = {
+        startGame({
             i18n: i18n,
-            message: message,
+            interaction: interaction,
             emotes: emotes,
-            difficultyType: difficultyType
-        }
-
-        if (!args[0]) return selectDifficulty(config)
-
-        if (!Object.keys(difficultyType).includes(args[0].toLowerCase())) return selectDifficulty(config)
-
-        config.difficulty = args[0], 
-
-        startGame(config)
+            difficultyType: difficultyType,
+            difficulty: options.getString("difficulte")
+        })
     }
 }
 
+/*
 async function selectDifficulty({ i18n, difficultyType, emotes, message }) {
     const easyButton = new MessageButton()
-        .setStyle("green")
+        .setStyle("SUCCESS")
         .setLabel("Facile")
         .setID(`game_memorySelectDifficulty_${message.author.id}_easy`)
 
     const mediumButton = new MessageButton()
-        .setStyle("gray")
+        .setStyle("SECONDARY")
         .setLabel("Moyen")
         .setID(`game_memorySelectDifficulty_${message.author.id}_medium`)
 
     const hardButton = new MessageButton()
-        .setStyle("red")
+        .setStyle("PRIMARY")
         .setLabel("Difficile")
         .setID(`game_memorySelectDifficulty_${message.author.id}_hard`)
 
@@ -93,10 +87,9 @@ async function selectDifficulty({ i18n, difficultyType, emotes, message }) {
         return startGame({ i18n, difficultyType, difficulty: id[id.length - 1], emotes, message, referMsg: msg })
     })
 }
+*/
 
-async function startGame({ i18n, difficultyType, difficulty, emotes, message, referMsg }) {
-    if (!difficulty) return referMsg ? await referMsg.edit("Une erreur est survenue (pas de difficulté)") : await message.channel.send("Une erreur est survenue (pas de difficulté)")
-
+async function startGame({ i18n, interaction, emotes, difficultyType, difficulty }) {
     const row = difficultyType[difficulty].row
     const line = difficultyType[difficulty].line
     const timeSec = difficultyType[difficulty].time
@@ -139,10 +132,11 @@ async function startGame({ i18n, difficultyType, difficulty, emotes, message, re
     if (emojiMap.includes("⁉️")) return referMsg ? await referMsg.edit("Une erreur est survenue (emoji double)") : await message.channel.send("Une erreur est survenue (emoji double)")
 
     /* Randomize table */
-    const randomEmojiMap = shuffle(emojiMap.slice())
+    const randomEmojiMap = await shuffle(emojiMap.slice())
 
     let rowID = 1
     let j = 0
+
     for (let i = 0; i < randomEmojiMap.length; i++) {
         if (j === row) {
             rowID++
@@ -154,22 +148,20 @@ async function startGame({ i18n, difficultyType, difficulty, emotes, message, re
         const emote = randomEmojiMap[i]
 
         const button = new MessageButton()
-            .setStyle("blurple")
+            .setStyle("PRIMARY")
             .setEmoji(emote)
-            .setID(`game_memory_${message.author.id}_${emote}_${i}`)
-            .setDisabled()
+            .setCustomId(`game_memory_${interaction.user.id}_${emote}_${i}`)
+            .setDisabled(true)
 
-        rows[rowID]
-            .addComponent(button)
+        await rows[rowID].addComponents(button)
 
         const questionButton = new MessageButton()
-            .setStyle("blurple")
+            .setStyle("PRIMARY")
             .setEmoji("❓")
-            .setID(`game_memory_${message.author.id}_${emote}_${i}`)
+            .setCustomId(`game_memory_${interaction.user.id}_${emote}_${i}`)
             .setDisabled(false)
 
-        questionRows[rowID]
-            .addComponent(questionButton)
+        await questionRows[rowID].addComponents(questionButton)
 
         if (!activeRows.includes(rows[rowID])) {
             activeRows.push(rows[rowID])
@@ -179,17 +171,22 @@ async function startGame({ i18n, difficultyType, difficulty, emotes, message, re
         j++
     }
 
-    const content = `Vous avez ${timeSec} secondes pour tout retenir...`
-    let msg = referMsg ? await referMsg.edit(content, { components: activeRows }) : await message.channel.send(content, { components: activeRows })
+    await interaction.reply({
+        content: `Vous avez ${timeSec} secondes pour tout retenir...`,
+        components: activeRows,
+        //ephemeral: true
+    })
  
     setTimeout(async() => {
         let clickNumber = difficultyType[difficulty].clickNumber
 
-        await msg.edit(`Vous avez ${clickNumber} cliques`, {
-            components: activeQuestionRows
+        await interaction.editReply({
+            content: `Vous avez ${clickNumber} cliques`,
+            components: activeQuestionRows,
+            //ephemeral: true
         })
 
-        const collector = msg.createButtonCollector((button) => button)
+        const collector = interaction.channel.createMessageComponentCollector()
 
         let haveClick = {
             type: false,
@@ -200,13 +197,16 @@ async function startGame({ i18n, difficultyType, difficulty, emotes, message, re
 
         let findNumber = 0
         collector.on("collect", async(button) => {
-            if (!button.clicker || !button.clicker.user || !button.clicker.user.id) await button.clicker.fetch()
+            if (!button.user) await button.user.fetch()
 
-            if (button.clicker.user.id !== message.author.id) return await button.reply.send(`Désolé mais ce n'est pas votre partie, pour en lancer une faites !memory`, true)
+            if (button.user.id !== interaction.user.id) return await button.reply({
+                content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !memory`,
+                ephemeral: true
+            })
 
             clickNumber = clickNumber - 1
 
-            const info = button.id.split("_")
+            const info = button.customId.split("_")
             const updatedRows = {
                 "1": new MessageActionRow(),
                 "2": new MessageActionRow(),
@@ -230,36 +230,36 @@ async function startGame({ i18n, difficultyType, difficulty, emotes, message, re
                 for (let j = 0; j < buttons.length; j++) {
                     let lastTurn = clickNumber === 0
 
-                    const buttonInfo = buttons[j].custom_id.split("_")
+                    const buttonInfo = buttons[j].customId.split("_")
 
                     const button = new MessageButton()
-                        .setStyle(lastTurn ? "red" : "blurple")
+                        .setStyle(lastTurn ? "DANGER" : "PRIMARY")
                         .setEmoji(lastTurn ? buttonInfo[3] : "❓")
                         .setDisabled(lastTurn)
-                        .setID(buttons[j].custom_id)
+                        .setCustomId(buttons[j].customId)
                     
                     const findedButton = new MessageButton()
-                        .setStyle("green")
+                        .setStyle("SUCCESS")
                         .setEmoji(buttonInfo[3])
                         .setDisabled()
-                        .setID(buttonInfo[5] ? buttons[j].custom_id : buttons[j].custom_id + "_find")
+                        .setCustomId(buttonInfo[5] ? buttons[j].customId : buttons[j].customId + "_find")
 
                     if ((finded && haveClick.emoji === buttonInfo[3]) || (buttonInfo[5] && buttonInfo[5] === "find")) {
-                        updatedRows[i + 1].addComponent(findedButton)
+                        updatedRows[i + 1].addComponents(findedButton)
                         continue
                     }
 
                     if (buttonInfo[4] !== info[4]) {
-                        updatedRows[i + 1].addComponent(button)
+                        updatedRows[i + 1].addComponents(button)
                         continue
                     }
 
                     button
                         .setEmoji(buttonInfo[3])
-                        .setStyle("red")
+                        .setStyle("PRIMARY")
                         .setDisabled()
 
-                    updatedRows[i + 1].addComponent(button)
+                    updatedRows[i + 1].addComponents(button)
 
                     haveClick.type = true
                     haveClick.emoji = buttonInfo[3]
@@ -273,22 +273,26 @@ async function startGame({ i18n, difficultyType, difficulty, emotes, message, re
             if (win) {
                 await collector.stop()
 
-                await msg.edit(`Bien joué tu as gagner ! :tada:`, {
-                    components: activeUpdatedRows
+                return await button.update({
+                    content: `Bien joué tu as gagner ! :tada:`,
+                    components: activeUpdatedRows,
+                    //ephemeral: true
                 })
             } else if (clickNumber === 0) {
                 await collector.stop()
 
-                await msg.edit(`Désolé vous avez perdue !`, {
-                    components: activeUpdatedRows
+                return await button.update({
+                    content: `Désolé vous avez perdue !`,
+                    components: activeUpdatedRows,
+                    //ephemeral: true
                 })
             } else {
-                await msg.edit(`Vous avez ${clickNumber} cliques`, {
-                    components: activeUpdatedRows
+                return await button.update({
+                    content: `Vous avez ${clickNumber} cliques`,
+                    components: activeUpdatedRows,
+                    //ephemeral: true
                 })
             }
-
-            button.reply.defer()
         })
     }, timeSec * 1000)
 }
