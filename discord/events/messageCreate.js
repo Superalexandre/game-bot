@@ -6,6 +6,7 @@ module.exports = class messageCreate {
     }
 
     async run(message) {
+        /*
         //https://discordjs.guide/additional-info/changes-in-v13.html#replies-message-reply
 
         const client = this.client
@@ -22,7 +23,6 @@ module.exports = class messageCreate {
 
         if (message.guild && !message.member) await message.guild.members.fetch(message.author.id)
 
-        /*
         if (!data.users.find(user => user && user.discord && user.discord.id === message.author.id)) {
             client.logger.log(`Création d'un compte pour ${message.author.id} (${message.author.username})`)
 
@@ -36,7 +36,6 @@ module.exports = class messageCreate {
         
             message.author.accountID = accountID
         }
-        */
 
         const userData = await client.data.users.get(message.author.accountID)
 
@@ -47,7 +46,7 @@ module.exports = class messageCreate {
 
             message.reply({ content: i18n.__("discord.mentionned", { prefix: prefix }), allowedMentions: { repliedUser: false } })
 
-            return client.logger.commandLog({ message: "Mention" } /*message, prefix, "mention", messageTime, ((Date.now() - start) / 1000) - messageTime*/)
+            return client.logger.commandLog({ message: "Mention" } //message, prefix, "mention", messageTime, ((Date.now() - start) / 1000) - messageTime/)
         }
 
         const command = message.content.split(" ")[0].slice(prefix.length).toLowerCase()
@@ -56,7 +55,6 @@ module.exports = class messageCreate {
 
         if (!cmd) return
 
-        /* BOT */
         if (!message.channel.permissionsFor(message.guild.me).has("ADMINISTRATOR")) {
             let neededPermission = []
 
@@ -76,7 +74,6 @@ module.exports = class messageCreate {
 
         }
 
-        /* USER */
         if (!message.channel.permissionsFor(message.member).has("ADMINISTRATOR")) {
             let neededPermission = []
 
@@ -109,7 +106,7 @@ module.exports = class messageCreate {
                     startMessageProcessing: start
                 }
             }).then(result => {
-                client.logger.commandLog({ message: cmd.help.name } /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/)
+                client.logger.commandLog({ message: cmd.help.name } //message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime/)
             }).catch(error => {
                 message.reply({ content: i18n.__("error.errorOccured", { error: error.toString() }), allowedMentions: { repliedUser: false } })
 
@@ -120,5 +117,6 @@ module.exports = class messageCreate {
 
             client.logger.error({ message: error })
         }
+        */
     }
 }
