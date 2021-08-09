@@ -19,6 +19,7 @@ module.exports = class Morpion extends Command {
 
         if (opponent.bot || opponent.id === interaction.user.id) return interaction.reply({
             content: "Merci de saisir un adversaire valide !",
+            ephemeral: true
         })
 
         const ready = new MessageButton()
@@ -33,12 +34,12 @@ module.exports = class Morpion extends Command {
 
         const readyComponents = new MessageActionRow().addComponents(ready, notReady)
 
-        await interaction.reply({
+        const msg = await interaction.channel.send({
             content: `${opponent} est-vous prêt(e) ?`,
             components: [ readyComponents ]
         })
 
-        return opponentReady({ i18n, interaction, opponent, client })
+        return opponentReady({ i18n, interaction, msg, opponent, client })
     }
 }
 
@@ -55,12 +56,12 @@ async function playWithBot({ i18n, interaction, client }) {
 
     const row = new MessageActionRow().addComponents(yes, no)
 
-    await interaction.reply({
+    const msg = await interaction.channel.send({
         content: `Vous n'avez pas saisi d'adversaire voulez vous jouer contre moi ?`,
         components: [row]
     })
 
-    const collector = interaction.createButtonCollector()
+    const collector = await msg.createButtonCollector()
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
@@ -73,7 +74,7 @@ async function playWithBot({ i18n, interaction, client }) {
         if (button.id.endsWith("no")) {
             await collector.stop()
 
-            return interaction.editReply({
+            return await msg.edit({
                 content: `${interaction.user.username} ne veut pas jouer contre moi :(`,
                 components: []
             })
@@ -81,25 +82,26 @@ async function playWithBot({ i18n, interaction, client }) {
             await collector.stop()
             await button?.deferUpdate()
 
-            return startGame({ i18n, interaction, opponent: client.user, client })
+            return startGame({ i18n, interaction, msg, opponent: client.user, client })
         }
     })
 }
 
-async function opponentReady({ i18n, interaction, opponent, client }) {
-    const collector = interaction.createButtonCollector()
+async function opponentReady({ i18n, interaction, msg, opponent, client }) {
+    const collector = await interaction.createButtonCollector()
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== opponent.id) return await button.reply({
-            content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !morpion @Joueur`
+            content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !morpion @Joueur`,
+            ephemeral: true
         })
 
         if (button.customId.endsWith("notready")) {
             await collector.stop()
 
-            return interaction.editReply({
+            return await msg.edit({
                 content: `${opponent.username} n'est pas prêt`,
                 components: []
             })
@@ -107,35 +109,35 @@ async function opponentReady({ i18n, interaction, opponent, client }) {
             await collector.stop()
             await button?.deferUpdate()
 
-            return whoStart({ i18n, message, msg, opponent, client })
+            return whoStart({ i18n, interaction, msg, opponent, client })
         }
     })
 }
 
-async function whoStart({ i18n, message, msg, opponent, client }) {
+async function whoStart({ i18n, interaction, msg, opponent, client }) {
     const userStart = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel("Vous (" + message.author.username + ")")
-        .setCustomId(`game_morpion_${message.author.id}_${opponent.id}_user`)
+        .setLabel("Vous (" + interaction.user.username + ")")
+        .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_user`)
 
     const opponentStart = new MessageButton()
         .setStyle("PRIMARY")
         .setLabel(opponent.username)
-        .setCustomId(`game_morpion_${message.author.id}_${opponent.id}_opponent`)
+        .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_opponent`)
 
     const random = new MessageButton()
         .setStyle("PRIMARY")
         .setLabel("Aléatoire")
-        .setCustomId(`game_morpion_${message.author.id}_${opponent.id}_random`)
+        .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_random`)
 
     const row = new MessageActionRow().addComponents(userStart, opponentStart, random) 
 
-    await interaction.editReply({
-        content: `${message.author.username}, Qui doit commencer ?`,
+    await msg.edit({
+        content: `${interaction.user.username}, Qui doit commencer ?`,
         components: [ row ]
     })
 
-    const collector = interaction.createButtonCollector()
+    const collector = await interaction.createButtonCollector()
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
@@ -157,11 +159,11 @@ async function whoStart({ i18n, message, msg, opponent, client }) {
     
         await collector.stop()
         await button?.deferUpdate()
-        return startGame({ i18n, interaction, opponent, client })
+        return startGame({ i18n, interaction, msg, opponent, client })
     })
 }
 
-async function startGame({ i18n, interaction, opponent, client }) {
+async function startGame({ i18n, interaction, msg, opponent, client }) {
     let userData = {
         id: interaction.user.id,
         username: interaction.user.username,
@@ -190,12 +192,12 @@ async function startGame({ i18n, interaction, opponent, client }) {
     
     const genBoard = genButtons({ board, userID: userData.id, opponentID: opponentData.id })
     
-    await interaction.editReply({
+    await msg.edit({
         content: text(userData, opponentData),
         components: genBoard.row
     })
 
-    const collector = interaction.createButtonCollector()
+    const collector = await interaction.createButtonCollector()
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
@@ -228,7 +230,7 @@ async function startGame({ i18n, interaction, opponent, client }) {
         if (!genBoard.win && genBoard.allFill) {
             await collector.stop()
 
-            return interaction.editReply({
+            return await msg.edit({
                 content: `Wow égalité bien joué a vous deux ${userData.username} et ${opponentData.username}`, 
                 components: genBoard.row
             })
@@ -237,13 +239,13 @@ async function startGame({ i18n, interaction, opponent, client }) {
         if (genBoard.win) {
             await collector.stop()
 
-            return interaction.editReply({
+            return await msg.edit({
                 content: `Wow bien joué a ${genBoard.winner === userData.emoji ? userData.username : opponentData.username} (${genBoard.winner}) il a gagné !`,
                 components: genBoard.row
             })
         }
 
-        await interaction.editReply({
+        await msg.edit({
             content: text(userData, opponentData), 
             components: genBoard.row
         })
@@ -258,7 +260,7 @@ async function startGame({ i18n, interaction, opponent, client }) {
 
             if (!genBoard.win && genBoard.allFill) {
                 await collector.stop()
-                return interaction.editReply({
+                return await msg.edit({
                     content: `Wow égalité bien joué a vous deux ${userData.username} et ${opponentData.username}`,
                     components: genBoard.row
                 })
@@ -266,13 +268,13 @@ async function startGame({ i18n, interaction, opponent, client }) {
 
             if (genBoard.win) {
                 await collector.stop()
-                return interaction.editReply({
+                return await msg.edit({
                     content: `Wow bien joué a ${genBoard.winner === userData.emoji ? userData.username : opponentData.username} (${genBoard.winner}) il a gagné !`,
                     components: genBoard.row
                 })
             }
 
-            await interaction.editReply({
+            await msg.edit({
                 content: text(userData, opponentData),
                 components: genBoard.row
             })

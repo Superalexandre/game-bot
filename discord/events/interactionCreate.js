@@ -20,8 +20,12 @@ module.exports = class interactionCreate {
 
         if (!cmd) return interaction.reply({
             content: "Commande introuvable",
-            ephemeral: true, 
-            allowedMentions: { repliedUser: false }
+            ephemeral: true
+        })
+
+        await interaction.reply({
+            content: "Partie lancée ✅",
+            ephemeral: true
         })
 
         try {
