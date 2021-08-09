@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@androz2091/insta.js": "^1.6.1",
     "canvas": "^2.8.0",
     "discord-buttons": "^4.0.0",
     "discord-reply": "^0.1.2",
