@@ -17,6 +17,7 @@ client.on("messageCreate", async(message) => {
     if (message.author.id === client.user.id) return
 
     const args = message.content.split(/ +/g).slice(1)
+    const argsOptions = message.content.split(/--([a-z]+) ([a-z]+)/gm).slice(1)
 
     await message.markSeen()
 
@@ -42,13 +43,18 @@ client.on("messageCreate", async(message) => {
         return opponentReady({ message, opponent })    
     } else if (message.content.startsWith("!eval") && message.author.id === 18291915089) {
         if (!args[0]) return await message.chat.sendMessage("Veuillez saisir un argument")
+        let toExecute = message.content.split(" ").slice(1)
 
-        const content = message.content.split(" ").slice(1).join(" ")
+        if (argsOptions.length > 0) toExecute = toExecute.slice(0, toExecute.length - (argsOptions.length - 1))
+
+        const content = toExecute.join(" ")
         const result = new Promise((resolve) => resolve(eval(content)))
 
         return result.then(async(output) => {
             if (typeof output !== "string") output = require("util").inspect(output, { depth: 0 })
             
+            if (argsOptions[0] === "result" && !["yes", "true"].includes(argsOptions[1])) return 
+
             return await message.chat.sendMessage(output)
         }).catch(async(err) => {
             err = err.toString()
