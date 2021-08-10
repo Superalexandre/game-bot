@@ -1,4 +1,11 @@
 const Insta = require("@androz2091/insta.js")
+const LikeCollector = require("./LikeCollector")
+const Message = Insta.Message
+
+Message.prototype.createLikeCollector = (chat, options) => {
+    const collector = new LikeCollector(chat, options)
+    return collector
+}
 
 const client = new Insta.Client()
 
@@ -22,12 +29,6 @@ client.on("messageCreate", async(message) => {
             return await message.chat.sendMessage("Aucun utilisateur n'a été trouvé")
         }
 
-        //console.log(opponent.id)
-
-        //message.chat.users loop => id
-
-        //await client.fetchUser(args[0])
-
         if (!message.chat.isGroup) return await message.chat.sendMessage("Oh non vous devez être dans un groupe pour effectuer cette commande")
     
         if (message.author.id === opponent.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre vous meme !")
@@ -36,29 +37,43 @@ client.on("messageCreate", async(message) => {
     
         if (!message.chat.users.has(opponent.id)) return await message.chat.sendMessage("La personne doit être presente dans le groupe")
 
-        return opponentReady({ message, opponent, client })    
+        if (message.chat.puissance4) return await message.chat.sendMessage(`Désolé @${message.author.username} une partie est deja en cours`)
+
+        return opponentReady({ message, opponent })    
+    } else if (message.content.startsWith("!eval") && message.author.id === 18291915089) {
+        if (!args[0]) return await message.chat.sendMessage("Veuillez saisir un argument")
+
+        const content = message.content.split(" ").slice(1).join(" ")
+        const result = new Promise((resolve) => resolve(eval(content)))
+
+        return result.then(async(output) => {
+            if (typeof output !== "string") output = require("util").inspect(output, { depth: 0 })
+            
+            return await message.chat.sendMessage(output)
+        }).catch(async(err) => {
+            err = err.toString()
+            
+            return await message.chat.sendMessage(err)
+        })
     }
 })
 
-client.login("sudrefb", "sudrefb1234")
+async function opponentReady({ message, opponent }) {
+    await message.chat.sendMessage(`@${opponent.username} aimez ce message dès que vous êtes prêt(e)`)
 
+    const filter = (like) => like.id === opponent.id
+    const collector = message.createLikeCollector(message.chat, { filter })
 
-async function opponentReady({ message, opponent, client }) {
-    await message.chat.sendMessage(`@${opponent.username} été vous prêt(e) ?\nSi oui dites "oui" sinon dites "non"`)
-
-    const filter = (msg) => msg.author.id === opponent.id && ["oui", "non"].includes(msg.content.toLowerCase())
-    const collector = message.createMessageCollector({ filter })
-
-    collector.on("message", async(msg) => {
+    collector.on("likeAdded", async() => {
         await collector.end()
 
-        if (msg.content.toLowerCase() === "oui") return startGame({ message, opponent, client })
-
-        await message.chat.sendMessage(`@${opponent.username} ne veut pas jouer :(`)
+        return startGame({ message, opponent })
     })
 }
 
-async function startGame({ message, opponent, client }) {
+async function startGame({ message, opponent }) {
+    message.chat.puissance4 = true
+
     let board = [
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
@@ -111,6 +126,7 @@ async function startGame({ message, opponent, client }) {
         const formatedBoard = genBoard({ board, userData, opponentData })
 
         if (formatedBoard.win) {
+            message.chat.puissance4 = false
             await collector.end()
 
             const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
@@ -120,6 +136,7 @@ async function startGame({ message, opponent, client }) {
         }
 
         if (formatedBoard.allFill) {
+            message.chat.puissance4 = false
             await collector.end()
 
             return await message.chat.sendMessage(`${userData.username} (${userData.emoji}) et ${opponentData.username} (${opponentData.emoji}) finissent sur une égalité :(\n` + formatedBoard.string)
@@ -236,3 +253,5 @@ function add({ board, emoji, row }) {
 
     return { board, string }
 }
+
+client.login("sudrefb", "sudrefb1234")
