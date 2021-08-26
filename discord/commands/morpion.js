@@ -17,7 +17,7 @@ module.exports = class Morpion extends Command {
 
         if (!opponent || opponent.id === client.user.id) return playWithBot({ i18n, interaction, client })
 
-        if (opponent.bot || opponent.id === interaction.user.id) return interaction.reply({
+        if (opponent.bot || opponent.id === interaction.user.id) return await interaction.channel.send({
             content: "Merci de saisir un adversaire valide !",
             ephemeral: true
         })
@@ -88,7 +88,7 @@ async function playWithBot({ i18n, interaction, client }) {
 }
 
 async function opponentReady({ i18n, interaction, msg, opponent, client }) {
-    const collector = await interaction.createButtonCollector()
+    const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
@@ -137,7 +137,7 @@ async function whoStart({ i18n, interaction, msg, opponent, client }) {
         components: [ row ]
     })
 
-    const collector = await interaction.createButtonCollector()
+    const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
@@ -197,7 +197,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         components: genBoard.row
     })
 
-    const collector = await interaction.createButtonCollector()
+    const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
@@ -207,15 +207,15 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
             ephemeral: true
         })
     
-        const type = button.clicker.user.id === userData.id ? userData : opponentData
-        const opposite = button.clicker.user.id === userData.id ? opponentData : userData
+        const type = button.user.id === userData.id ? userData : opponentData
+        const opposite = button.user.id === userData.id ? opponentData : userData
 
         if (!type.turn) return await button.reply({
             content: "Désolé ce n'est pas encore a vous de jouer", 
             ephemeral: true
         })
 
-        const id = button.id.split("_")
+        const id = button.customId.split("_")
         const line = id[id.length - 2]
         const row = id[id.length - 1]
 
