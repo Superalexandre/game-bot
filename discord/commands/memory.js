@@ -5,8 +5,7 @@ module.exports = class Memory extends Command {
     constructor(client) {
         super(client, {
             name: "memory",
-            directory: __dirname,
-            aliases: ["mem", "memoire", "mémoire"]
+            directory: __dirname
         })
     }
 
@@ -75,9 +74,7 @@ module.exports = class Memory extends Command {
         }
 
         /* Check if emote is missing */
-
-        //TODO
-        if (emojiMap.includes("⁉️")) return referMsg ? await referMsg.edit("Une erreur est survenue (emoji double)") : await message.channel.send("Une erreur est survenue (emoji double)")
+        if (emojiMap.includes("⁉️")) return await interaction.channel.send("Une erreur est survenue (emoji double)")
 
         /* Randomize table */
         const randomEmojiMap = await shuffle(emojiMap.slice())
