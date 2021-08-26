@@ -5,10 +5,7 @@ module.exports = class Uno extends Command {
     constructor(client) {
         super(client, {
             name: "uno",
-            //desc: (i18n) => i18n.__("discord.help.desc"),
-            directory: __dirname,
-            //use: (i18n) => i18n.__("discord.help.use"),
-            //example:(i18n) => i18n.__("discord.help.example"),
+            directory: __dirname
         })
     }
 

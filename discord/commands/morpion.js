@@ -5,7 +5,7 @@ module.exports = class Morpion extends Command {
     constructor(client) {
         super(client, {
             name: "morpion",
-            directory: __dirname,
+            directory: __dirname
         })
     }
 

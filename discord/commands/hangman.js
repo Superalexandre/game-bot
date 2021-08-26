@@ -4,7 +4,7 @@ module.exports = class Pendu extends Command {
     constructor(client) {
         super(client, {
             name: "pendu",
-            directory: __dirname,
+            directory: __dirname
         });
     };
 

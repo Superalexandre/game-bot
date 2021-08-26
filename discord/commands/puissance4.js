@@ -7,7 +7,7 @@ module.exports = class Puissance4 extends Command {
     constructor(client) {
         super(client, {
             name: "puissance4",
-            directory: __dirname,
+            directory: __dirname
         })
     }
 
