@@ -2,8 +2,6 @@ const Insta = require("@androz2091/insta.js")
 const LikeCollector = require("./LikeCollector")
 const Message = Insta.Message
 
-//
-
 Message.prototype.createLikeCollector = (chat, options) => {
     const collector = new LikeCollector(chat, options)
     return collector
