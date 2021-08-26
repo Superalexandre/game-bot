@@ -5,10 +5,7 @@ module.exports = class Rockpaperscissors extends Command {
     constructor(client) {
         super(client, {
             name: "rockpaperscissors",
-            //desc: (i18n) => i18n.__("discord.help.desc"),
             directory: __dirname,
-            //use: (i18n) => i18n.__("discord.help.use"),
-            //example:(i18n) => i18n.__("discord.help.example"),
             aliases: ["rps"]
         })
     }
@@ -19,23 +16,23 @@ module.exports = class Rockpaperscissors extends Command {
         if (!opponent || opponent.id === client.user.id) return playWithBot({ i18n, interaction, client })
 
         if (opponent.bot || opponent.id === interaction.user.id) return await interaction.editReply({
-            content: "Merci de saisir un adversaire valide !"
+            content: i18n.__("error.invalidOpponent")
         })
 
         const ready = new MessageButton()
             .setStyle("SUCCESS")
-            .setLabel("Oui")
+            .setLabel(i18n.__("global.yes"))
             .setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_ready`)
     
         const notReady = new MessageButton()
             .setStyle("DANGER")
-            .setLabel("Non")
+            .setLabel(i18n.__("global.no"))
             .setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_notready`)
 
         const readyButtons = new MessageActionRow().addComponents(ready, notReady)
 
         const msg = await interaction.channel.send({
-            content: `${opponent.username} est-vous prêt(e) ?`,
+            content: i18n.__("global.opponentReady", { username: opponent.username }),
             components: [readyButtons]
         })
 
@@ -46,18 +43,18 @@ module.exports = class Rockpaperscissors extends Command {
 async function playWithBot({ i18n, interaction, client }) {
     const yes = new MessageButton()
         .setStyle("SUCCESS")
-        .setLabel("Oui")
+        .setLabel(i18n.__("global.yes"))
         .setCustomId(`game_rps_${interaction.user.id}_yes`)
 
     const no = new MessageButton()
         .setStyle("DANGER")
-        .setLabel("Non")
+        .setLabel(i18n.__("global.no"))
         .setCustomId(`game_rps_${interaction.user.id}_no`)
 
     const row = new MessageActionRow().addComponents(yes, no)
 
     const msg = await interaction.channel.send({
-        content: `Vous n'avez pas saisi d'adversaire voulez vous jouer contre moi ?`,
+        content: i18n.__("global.playWithBot"),
         components: [row]
     })
 
@@ -67,7 +64,7 @@ async function playWithBot({ i18n, interaction, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== interaction.user.id) return await button.reply({
-            content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites /rockpaperscissors @Joueur`,
+            content: i18n.__("global.notYourGame", { gameName: this.help.name }),
             ephemeral: true
         })
 
@@ -76,7 +73,7 @@ async function playWithBot({ i18n, interaction, client }) {
             await button?.deferUpdate()
 
             return await msg.edit({
-                content: `${interaction.user.username} ne veut pas jouer contre moi :(`,
+                content: i18n.__("global.noPlayWithBot", { username: interaction.user.username }),
                 components: []
             })
         } else {
@@ -95,7 +92,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== opponent.id) return await button.reply({
-            content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !rps @Joueur`, 
+            content: i18n.__("global.notYourGame", { gameName: this.help.name }), 
             ephemeral: true
         })
 
@@ -104,7 +101,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
             await button?.deferUpdate()
 
             return await msg.edit({
-                content: `${opponent.username} n'est pas prêt`,
+                content: i18n.__("global.oppponentNotReady", { username: opponent.username }),
                 components: []
             })
         } else {
@@ -141,25 +138,23 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
 
     const rock = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel("Pierre")
+        .setLabel(i18n.__("rockpaperscissors.sign.rock"))
         .setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_rock`)
 
     const paper = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel("Feuille")
+        .setLabel(i18n.__("rockpaperscissors.sign.paper"))
         .setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_paper`)
 
     const scissors = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel("Ciseaux")
+        .setLabel(i18n.__("rockpaperscissors.sign.scissors"))
         .setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_scissors`)
 
     const row = new MessageActionRow().addComponents(rock, paper, scissors)
 
-    const text = (user, opponent) => `C'est le moment des choix ! (Attention après vous ne pouvez pas changé)\n\n${user.username} ${user.choice ? "✅" : "❌"}\n${opponent.username} ${opponent.choice ? "✅" : "❌"}`
-
     await msg.edit({
-        content: text(userData, opponentData),
+        content: i18n.__("rockpaperscissors.mainText", { userUsername: userData.username, opponentUsername: opponentData.username, userChoice: userData.choice ? "✅" : "❌", opponentChoice: opponentData.choice ? "✅" : "❌" }),
         components: [row]
     })
 
@@ -169,7 +164,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         if (!button.user) await button.user.fetch()
 
         if (![interaction.user.id, opponent.id].includes(button.user.id)) return await button.reply({
-            content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !rps @Joueur`,
+            content: i18n.__("global.notYourGame", { gameName: this.help.name }),
             ephemeral: true
         })
 
@@ -185,7 +180,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         await button?.deferUpdate()
 
         await msg.edit({
-            content: text(userData, opponentData),
+            content: i18n.__("rockpaperscissors.mainText", { userUsername: userData.username, opponentUsername: opponentData.username, userChoice: userData.choice ? "✅" : "❌", opponentChoice: opponentData.choice ? "✅" : "❌" }),
             components: [row]
         })
 
@@ -193,24 +188,25 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
             await collector.stop()
 
             if (opponentData.choice === userData.choice) {
+                const userChoice = i18n.__(`rockpaperscissors.sign.${userData.choice}`)
+                const opponentChoice = i18n.__(`rockpaperscissors.sign.${opponentData.choice}`)
+
                 return await msg.edit({
-                    content: `**${userData.username}** contre **${opponentData.username}**\nRésultat : Egalité ! (Ils ont tout les deux fait __${opponentData.choice}__)`, 
+                    content: i18n.__("rockpaperscissors.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username, userChoice, opponentChoice }), 
                     components: [] 
                 })
-            } else if (win[opponentData.choice] === userData.choice) {
+            } else {
+                const winner = win[opponentData.choice] === userData.choice ? opponentData : userData
+                const looser = win[opponentData.choice] === userData.choice ? userData : opponentData
+
+                const winnerChoice = i18n.__(`rockpaperscissors.sign.${winner.choice}`)
+                const looserChoice = i18n.__(`rockpaperscissors.sign.${looser.choice}`)
+
                 return await msg.edit({
-                    content: `**${userData.username}** contre **${opponentData.username}**\nRésultat : **${opponentData.username}** a gagné avec __${opponentData.choice}__ ! (**${userData.username}** a fait __${userData.choice}__)`, 
+                    content: i18n.__("rockpaperscissors.result.win", { winnerUsername: winner.username, looserUsername: looser.username, winnerChoice, looserChoice }), 
                     components: [] 
                 })
-            } else if (win[userData.choice] === opponentData.choice) {
-                return await msg.edit({
-                    content: `**${userData.username}** contre **${opponentData.username}**\nRésultat : **${userData.username}** a gagné avec __${userData.choice}__ ! (**${opponentData.username}** a fait __${opponentData.choice}__)`, 
-                    components: [] 
-                })
-            } else return await msg.edit({
-                content: "Une erreur est survenue", 
-                components: [] 
-            })
+            }
         }
     })
 }

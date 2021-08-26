@@ -19,7 +19,7 @@ module.exports = class interactionCreate {
         const cmd = client.commands.get(interaction.commandName) || client.commands.get(client.aliases.get(interaction.commandName))
 
         if (!cmd) return interaction.reply({
-            content: "Commande introuvable",
+            content: i18n.__("error.unknowCommand"),
             ephemeral: true
         })
 
