@@ -23,15 +23,15 @@ module.exports = class interactionCreate {
             ephemeral: true
         })
 
-        await interaction.reply({
-            content: "Partie lancée ✅",
+        await interaction.deferReply({
+            //content: "Partie lancée ✅",
             ephemeral: true
         })
 
         try {
             const messageTime = (Date.now() - start) / 1000
         
-            return cmd.run({
+            return await cmd.run({
                 client: client,
                 interaction: interaction,
                 options: interaction.options,
