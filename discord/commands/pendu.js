@@ -4,11 +4,7 @@ module.exports = class Pendu extends Command {
     constructor(client) {
         super(client, {
             name: "pendu",
-            //desc: (lang) => lang.get("PENDU_DESCRIPTION"),
             directory: __dirname,
-            //use: (lang) => lang.get("PENDU_USAGE"),
-            //example: (lang) => lang.get("PENDU_EXAMPLE"),
-            aliases: ["hangman"]
         });
     };
 
@@ -31,11 +27,6 @@ async function startGame({ interaction, i18n, word }) {
 		content: "Une erreur est survenue aucun mot trouver",
 		ephemeral: true
 	})
-
-	//await interaction.editReply({
-	//	content: "Partie lancée ✅",
-	//	ephemeral: true
-	//})
 
 	let lettersSaid = []
 	let error = 0
