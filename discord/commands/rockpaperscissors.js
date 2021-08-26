@@ -31,7 +31,7 @@ module.exports = class Rockpaperscissors extends Command {
         const readyButtons = new MessageActionRow().addComponents(ready, notReady)
 
         const msg = await interaction.channel.send({
-            content: i18n.__("global.opponentReady", { username: opponent.username }),
+            content: i18n.__("global.opponentReady", { username: opponent }),
             components: [readyButtons]
         })
 
