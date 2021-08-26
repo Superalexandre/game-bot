@@ -1,14 +1,15 @@
-const { EventEmitter } = require('events')
+const { EventEmitter } = require("events")
 
-class LikeCollector extends EventEmitter {
-    constructor (chat, { filter, idle }) {
+module.exports = class LikeCollector extends EventEmitter {
+    constructor (message, { filter, idle }) {
         super()
 
-        this.client = chat.client
-        this.chat = chat
+        this.client = message.chat.client
+        this.message = message
+        this.chat = message.chat
         this.filter = filter || (() => true)
         this.idle = idle || 10000
-        if (idle) this._idleTimeout = setTimeout(() => this.end('idle'), this.idle)
+        if (idle) this._idleTimeout = setTimeout(() => this.end("idle"), this.idle)
 
         this.ended = false
 
@@ -16,30 +17,28 @@ class LikeCollector extends EventEmitter {
         this.client.on("likeAdd", this.handleLike)
     }
 
-    async handleLike (message) {
+    async handleLike (user, message) {
         if (this.ended) return
-        const valid = await this.filter(message)// && message.chatID === this.chat.id
+
+        const valid = await this.filter(user) && message.chatID === this.chat.id && this.message.id === message.id
+        
         if (valid) {
-            this.emit('likeAdded', message)
+            this.emit("likeAdded", user, message)
 
             if (this._idleTimeout && !this.ended) {
                 clearTimeout(this._idleTimeout)
-                this._idleTimeout = setTimeout(() => this.end('idle'), this.idle)
+                this._idleTimeout = setTimeout(() => this.end("idle"), this.idle)
             }
         }
     }
 
-    /**
-     * End the collector
-     * @param {string} reason The reason the collector ended
-     */
     async end (reason) {
         this.ended = true
-        if (this._idleTimeout) {
-            clearTimeout(this._idleTimeout)
-        }
-        this.client.removeListener('likeAdd', this.handleLike)
-        this.emit('end', reason)
+
+        if (this._idleTimeout) clearTimeout(this._idleTimeout)
+
+        this.client.removeListener("likeAdd", this.handleLike)
+        this.emit("end", reason)
     }
 
     toJSON () {
@@ -50,5 +49,3 @@ class LikeCollector extends EventEmitter {
         }
     }
 }
-
-module.exports = LikeCollector

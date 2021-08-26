@@ -2,10 +2,32 @@ const Insta = require("@androz2091/insta.js")
 const LikeCollector = require("./LikeCollector")
 const Message = Insta.Message
 
-Message.prototype.createLikeCollector = (chat, options) => {
-    const collector = new LikeCollector(chat, options)
+Message.prototype.createLikeCollector = (message, options) => {
+    const collector = new LikeCollector(message, options)
     return collector
 }
+
+/*
+_patch (data) {
+        /**
+          @typedef {object} MessageLike
+         
+          @property {string} userID The user who added the like to the message
+          @property {number} timestamp The time the user added the like
+         /
+        /**
+         * @type {MessageLike[]}
+         * The likes on this message
+         /
+         this.likes = 'reactions' in data ? data.reactions.likes.map((r) => {
+            return {
+                userID: r.sender_id,
+                timestamp: r.timestamp
+            }
+        }) : []
+    }
+
+*/
 
 const client = new Insta.Client()
 
@@ -65,10 +87,10 @@ client.on("messageCreate", async(message) => {
 })
 
 async function opponentReady({ message, opponent }) {
-    await message.chat.sendMessage(`@${opponent.username} aimez ce message dès que vous êtes prêt(e)`)
+    const msg = await message.chat.sendMessage(`@${opponent.username} aimez ce message dès que vous êtes prêt(e)`)
 
     const filter = (like) => like.id === opponent.id
-    const collector = message.createLikeCollector(message.chat, { filter })
+    const collector = message.createLikeCollector(msg, { filter })
 
     collector.on("likeAdded", async() => {
         await collector.end()
