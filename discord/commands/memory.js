@@ -5,10 +5,7 @@ module.exports = class Memory extends Command {
     constructor(client) {
         super(client, {
             name: "memory",
-            //desc: (i18n) => i18n.__("discord.help.desc"),
             directory: __dirname,
-            //use: (i18n) => i18n.__("discord.help.use"),
-            //example:(i18n) => i18n.__("discord.help.example"),
             aliases: ["mem", "memoire", "mémoire"]
         })
     }
@@ -78,6 +75,8 @@ module.exports = class Memory extends Command {
         }
 
         /* Check if emote is missing */
+
+        //TODO
         if (emojiMap.includes("⁉️")) return referMsg ? await referMsg.edit("Une erreur est survenue (emoji double)") : await message.channel.send("Une erreur est survenue (emoji double)")
 
         /* Randomize table */
@@ -121,7 +120,7 @@ module.exports = class Memory extends Command {
         }
 
         const msg = await interaction.channel.send({
-            content: `Partie de : ${interaction.user.username}\nVous avez ${timeSec} secondes pour tout retenir...`,
+            content: i18n.__("memory.remember", { username: interaction.user.username, seconds: timeSec }),
             components: activeRows,
             //ephemeral: true
         })
@@ -131,7 +130,7 @@ module.exports = class Memory extends Command {
         let clickNumber = difficultyType[difficulty].clickNumber
 
         await msg.edit({
-            content: `Partie de : ${interaction.user.username}\nVous avez ${clickNumber} cliques`,
+            content: i18n.__("memory.clickNumber", { username: interaction.user.username, clickNumber }),
             components: activeQuestionRows,
             //ephemeral: true
         })
@@ -151,7 +150,7 @@ module.exports = class Memory extends Command {
             if (!interaction.user) await interaction.user.fetch()
 
             if (button.user.id !== interaction.user.id) return await button.reply({
-                content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !memory`,
+                content: i18n.__("global.notYourGame", { gameName: this.help.name }),
                 ephemeral: true
             })
 
@@ -227,7 +226,7 @@ module.exports = class Memory extends Command {
                 await collector.stop()
 
                 return await msg.edit({
-                    content: `Bien joué ${interaction.user.username} tu as gagner ! :tada:`,
+                    content: i18n.__("memory.win", { username: interaction.user.username }),
                     components: activeUpdatedRows,
                     //ephemeral: true
                 })
@@ -235,13 +234,13 @@ module.exports = class Memory extends Command {
                 await collector.stop()
 
                 return await msg.edit({
-                    content: `Désolé ${interaction.user.username} vous avez perdue !`,
+                    content: i18n.__("memory.loose", { username: interaction.user.username }),
                     components: activeUpdatedRows,
                     //ephemeral: true
                 })
             } else {
                 return await msg.edit({
-                    content: `Partie de : ${interaction.user.username}\nVous avez ${clickNumber} cliques`,
+                    content: i18n.__("memory.clickNumber", { username: interaction.user.username, clickNumber }),
                     components: activeUpdatedRows,
                     //ephemeral: true
                 })
@@ -255,17 +254,16 @@ async function wait(ms) {
 }
 
 function shuffle(array) {
-    let currentIndex = array.length,
-        randomIndex;
+    let currentIndex = array.length, randomIndex
 
     while (0 !== currentIndex) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
+        randomIndex = Math.floor(Math.random() * currentIndex)
+        currentIndex--
 
         [array[currentIndex], array[randomIndex]] = [
             array[randomIndex], array[currentIndex]
         ]
     }
 
-    return array;
+    return array
 }
