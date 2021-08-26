@@ -1,8 +1,5 @@
 const Command = require("../structures/Command")
-const {
-    MessageButton,
-    MessageActionRow
-} = require("discord.js")
+const { MessageButton, MessageActionRow } = require("discord.js")
 
 module.exports = class Memory extends Command {
     constructor(client) {
@@ -124,23 +121,22 @@ module.exports = class Memory extends Command {
         }
 
         const msg = await interaction.channel.send({
-            content: `Vous avez ${timeSec} secondes pour tout retenir...`,
+            content: `Partie de : ${interaction.user.username}\nVous avez ${timeSec} secondes pour tout retenir...`,
             components: activeRows,
             //ephemeral: true
         })
 
-        //wait(timeSec * 1000)
+        await wait(timeSec * 1000)
 
         let clickNumber = difficultyType[difficulty].clickNumber
 
         await msg.edit({
-            content: `Vous avez ${clickNumber} cliques`,
+            content: `Partie de : ${interaction.user.username}\nVous avez ${clickNumber} cliques`,
             components: activeQuestionRows,
             //ephemeral: true
         })
 
-        const filter = (button) => button.user === interaction.user
-        const collector = await interaction.channel.createMessageComponentCollector({ filter })
+        const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
 
         let haveClick = {
             type: false,
@@ -154,10 +150,10 @@ module.exports = class Memory extends Command {
             if (!button.user) await button.user.fetch()
             if (!interaction.user) await interaction.user.fetch()
 
-            //if (button.user.id !== interaction.user.id) return await button.reply({
-            //    content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !memory`,
-            //    ephemeral: true
-            //})
+            if (button.user.id !== interaction.user.id) return await button.reply({
+                content: `Désolé mais ce n'est pas votre partie, pour en lancer une faites !memory`,
+                ephemeral: true
+            })
 
             clickNumber = clickNumber - 1
 
@@ -231,7 +227,7 @@ module.exports = class Memory extends Command {
                 await collector.stop()
 
                 return await msg.edit({
-                    content: `Bien joué tu as gagner ! :tada:`,
+                    content: `Bien joué ${interaction.user.username} tu as gagner ! :tada:`,
                     components: activeUpdatedRows,
                     //ephemeral: true
                 })
@@ -239,13 +235,13 @@ module.exports = class Memory extends Command {
                 await collector.stop()
 
                 return await msg.edit({
-                    content: `Désolé vous avez perdue !`,
+                    content: `Désolé ${interaction.user.username} vous avez perdue !`,
                     components: activeUpdatedRows,
                     //ephemeral: true
                 })
             } else {
                 return await msg.edit({
-                    content: `Vous avez ${clickNumber} cliques`,
+                    content: `Partie de : ${interaction.user.username}\nVous avez ${clickNumber} cliques`,
                     components: activeUpdatedRows,
                     //ephemeral: true
                 })
@@ -254,50 +250,8 @@ module.exports = class Memory extends Command {
     }
 }
 
-/*
-async function selectDifficulty({ i18n, difficultyType, emotes, message }) {
-    const easyButton = new MessageButton()
-        .setStyle("SUCCESS")
-        .setLabel("Facile")
-        .setID(`game_memorySelectDifficulty_${message.author.id}_easy`)
-
-    const mediumButton = new MessageButton()
-        .setStyle("SECONDARY")
-        .setLabel("Moyen")
-        .setID(`game_memorySelectDifficulty_${message.author.id}_medium`)
-
-    const hardButton = new MessageButton()
-        .setStyle("PRIMARY")
-        .setLabel("Difficile")
-        .setID(`game_memorySelectDifficulty_${message.author.id}_hard`)
-
-    const msg = await message.channel.send("Merci de selectionner votre difficulté", {
-        buttons: [easyButton, mediumButton, hardButton]
-    })
-
-    const collector = msg.createButtonCollector((button) => button)
-
-    collector.on("collect", async(button) => {
-        if (!button.clicker || !button.clicker.user || !button.clicker.user.id) await button.clicker.fetch()
-
-        if (button.clicker.user.id !== message.author.id) return await button.reply.send(`Désolé mais ce n'est pas votre partie, pour en lancer une faites !memory`, true)
-
-        const id = button.id.split("_")
-
-        if (!Object.keys(difficultyType).includes(id[id.length - 1])) return
-        
-        await collector.stop()
-        await button.reply.defer()
-        
-        //Todo check difficulty
-
-        return startGame({ i18n, difficultyType, difficulty: id[id.length - 1], emotes, message, referMsg: msg })
-    })
-}
-*/
-
-function wait(ms) {
-
+async function wait(ms) {
+    await new Promise(res => setTimeout(res, ms))
 }
 
 function shuffle(array) {
