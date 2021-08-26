@@ -27,10 +27,15 @@ module.exports = class Pendu extends Command {
 }
 
 async function startGame({ interaction, i18n, word }) {
-	if (!word) return await interaction.reply({
+	if (!word) return await interaction.editReply({
 		content: "Une erreur est survenue aucun mot trouver",
 		ephemeral: true
 	})
+
+	//await interaction.editReply({
+	//	content: "Partie lancée ✅",
+	//	ephemeral: true
+	//})
 
 	let lettersSaid = []
 	let error = 0
