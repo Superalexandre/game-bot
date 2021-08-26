@@ -259,6 +259,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
 
             if (!genBoard.win && genBoard.allFill) {
                 await collector.stop()
+                
                 return await msg.edit({
                     content: i18n.__("morpion.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username }),
                     components: genBoard.row
@@ -267,6 +268,9 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
 
             if (genBoard.win) {
                 await collector.stop()
+
+                const winner = genBoard.winner === userData.emoji ? userData : opponentData
+
                 return await msg.edit({
                     content: i18n.__("morpion.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji }),
                     components: genBoard.row
