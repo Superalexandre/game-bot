@@ -10,6 +10,7 @@ module.exports = class interactionCreate {
         const data = client.data
         const start = Date.now()
 
+        if (interaction.isButton()) await client.emit("clickButton", interaction)
         if (!interaction.isCommand()) return
 
         const userData = {} //await client.data.users.get(message.author.accountID)
