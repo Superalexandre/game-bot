@@ -6,13 +6,14 @@ A fun discord bot
 
 ### Global
 - [X] Mise a jour v13 discord.js
-- [ ] Unknown interaction bug
-- [ ] [En cours] Refaire les commandes en /
-- [ ] Event message
-- [ ] Traduction
+- [X] Unknown interaction bug
+- [X] [En cours] Refaire les commandes en /
+- [X] Event message
+- [X] Traduction
 - [ ] Logger
 
 ### Uno
+- [ ] Refaire en slash command
 - [X] RemoveCard function ré ajouter dans la config
 - [X] Pouvoir faire un retour (cartes spéciales)
 - [X] Pouvoir jouer la carte piocher après avoir piocher
