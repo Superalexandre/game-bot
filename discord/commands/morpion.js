@@ -17,7 +17,7 @@ module.exports = class Morpion extends Command {
 
         if (!opponent || opponent.id === client.user.id) return playWithBot({ i18n, interaction, client })
 
-        if (opponent.bot || opponent.id === interaction.user.id) return await interaction.channel.send({
+        if (opponent.bot || opponent.id === interaction.user.id) return await interaction.editReply({
             content: "Merci de saisir un adversaire valide !",
             ephemeral: true
         })
@@ -61,7 +61,7 @@ async function playWithBot({ i18n, interaction, client }) {
         components: [row]
     })
 
-    const collector = await msg.createButtonCollector()
+    const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
