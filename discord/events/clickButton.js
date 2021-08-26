@@ -4,8 +4,13 @@ module.exports = class clickButton {
     }
 
     async run(button) {
+        console.log(2)
+
         const client = this.client
-        const id = button.id.split("_")
+        const id = button.customId.split("_")
+
+        return true
+        //Error
 
         if (id[1] === "uno" && id.includes("ephemeral")) {
             const gameID = id[3]
