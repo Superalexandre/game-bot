@@ -5,8 +5,7 @@ module.exports = class Rockpaperscissors extends Command {
     constructor(client) {
         super(client, {
             name: "rockpaperscissors",
-            directory: __dirname,
-            aliases: ["rps"]
+            directory: __dirname
         })
     }
 
