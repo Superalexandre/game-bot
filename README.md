@@ -29,11 +29,11 @@ A fun discord bot
 ### Puissance 4 
 - [ ] Jouer contre le bot
 
-###
+### Release
 - [ ] Release
-
-### Monopoly
-- [ ] Todo complet
 
 ### Petit chevaux
 - [ ] Rework
+
+### Monopoly
+- [ ] Todo complet
