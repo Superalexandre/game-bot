@@ -19,9 +19,20 @@ A fun discord bot
 - [X] Si trop de carte faire deux, trois pages
 - [ ] GameData
     - [ ] Pouvoir jouer plusieurs cartes
-    - [ ] Pouvoir "surencherir"
-    - [ ] Distribution des cartes pas spéciales, pas +2 (Ou sinon faire un truc)
+        => playersData[ id ].activesCard = []
+        => Button click -> push id -> Green
+        => If already click -> remove id -> Red
+        => Play button -> remove card -> last card = active
+    - [ ] Pouvoir "surencherir" (+2, +4)
+        => Don't skip and disable color
+    - [ ] Distribution des cartes spéciales
+        => If +2 add to first player and skip
+        => If switch color first player select
     - [ ] Pouvoir buffler au +4
+        => If disable = Error message
+        => If enable ask if player bluff
+            -> Yes but no => +6
+            -> Yes and yes => User +4
 - [ ] Si piocher et qu'une carte peut etre jouer envoyer un avertissement
 - [ ] Gerer le end game
 - [ ] Pouvoir personnalisé sa config (/config uno)
