@@ -114,13 +114,16 @@ module.exports = class Uno extends Command {
     }
 
     async playCard({ client, gameID, button }) {
-        console.log(1)
-
         const game = client.games.uno.get(gameID)
         
         if (!game) return console.log(false)
 
-        let { message, msg, gameData, cards, players, playersData, turn, actualCard, clockwise } = game
+        let { interaction, msg, gameData, cards, players, playersData, turn, actualCard, clockwise } = game
+
+        if (!playersData[button.user.id]) return await button.reply({
+            content: "PAs votre partie dsl",
+            ephemeral: true
+        })
 
         const userTurn = (number) => playersData[Object.keys(playersData)[number]]
         const switchTurn = (turn, toAdd, clockwise) => {
@@ -135,68 +138,76 @@ module.exports = class Uno extends Command {
     
         const mainText = (playersData, userData, actualCard) => `${Object.values(playersData).map(user => `${user.user.username} ${user.cards.length === 1 ? "Uno !" : user.cards.length + " cartes"}`).join("\n")}\n\nAu tour de ${userData.user.username}\nCarte actuelle : ${getEmojiCard(actualCard).fullEmoji}`
         
-        const id = button.id.split("_")
+        const id = button.customId.split("_")
         
+        console.log(id)
+
         if (id[id.length - 2] === "page") {
             const number = parseInt(id[id.length - 1])
-            const pageUser = playersData[button.clicker.user.id]
+            const pageUser = playersData[button.user.id]
 
             pageUser.page = number
             
-            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+            const genButton = genButtons({ interaction, playersData, userID: button.user.id, gameID })
             
-            await pageUser?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                components: makeRows({ buttonsData: genButton.buttons, page: pageUser.page, message, gameID }),
+            await pageUser?.reply?.editReply({
+                content: "Voici vos cartes, faites gaffe a bien **garder** ce message !", 
+                components: makeRows({ buttonsData: genButton.buttons, page: pageUser.page, interaction, gameID }),
                 ephemeral: true
             })
 
-            await button.reply.defer()
+            await button.deferUpdate()
             
-            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
+            return client.games.uno.set(gameID, { interaction, msg, cards, players, playersData, turn, actualCard, clockwise })
         }
 
-        if (!playersData[button.clicker.user.id].isTurn) return await button.reply.send(`Désolé mais ce n'est pas encore votre tour`, true)
+        if (!playersData[button.user.id].isTurn) return await button.reply({
+            content: `Désolé mais ce n'est pas encore votre tour`,
+            ephemeral: true
+        })
 
         const user = userTurn(turn)
 
         const seen_card = new MessageButton()
             .setStyle("PRIMARY")
             .setLabel("Voir mes cartes")
-            .setCustomId(`game_uno_${message.author.id}_${gameID}_seenCard`)
+            .setCustomId(`game_uno_${interaction.user.id}_${gameID}_seenCard_0`)
         
+        const seenCardComponent = new MessageActionRow().addComponents(seen_card)
+
         //Buttons for +4 and switch color
         const genColorsButtons = (type) => {
             const red = new MessageButton()
                 .setStyle("PRIMARY")
                 .setLabel("Rouge")
-                .setCustomId(`game_uno_${message.author.id}_${gameID}_ephemeral_red_${type}`)
+                .setCustomId(`game_uno_${interaction.user.id}_${gameID}_ephemeral_red_${type}_0`)
 
             const green = new MessageButton()
                 .setStyle("PRIMARY")
                 .setLabel("Vert")
-                .setCustomId(`game_uno_${message.author.id}_${gameID}_ephemeral_green_${type}`)
+                .setCustomId(`game_uno_${interaction.user.id}_${gameID}_ephemeral_green_${type}_0`)
 
             const blue = new MessageButton()
                 .setStyle("PRIMARY")
                 .setLabel("Bleu")
-                .setCustomId(`game_uno_${message.author.id}_${gameID}_ephemeral_blue_${type}`)
+                .setCustomId(`game_uno_${interaction.user.id}_${gameID}_ephemeral_blue_${type}_0`)
         
             const yellow = new MessageButton()
                 .setStyle("PRIMARY")
                 .setLabel("Jaune")
-                .setCustomId(`game_uno_${message.author.id}_${gameID}_ephemeral_yellow_${type}`)
+                .setCustomId(`game_uno_${interaction.user.id}_${gameID}_ephemeral_yellow_${type}_0`)
 
             const back = new MessageButton()
                 .setStyle("DANGER")
                 .setLabel("Retour")
-                .setCustomId(`game_uno_${message.author.id}_${gameID}_ephemeral_back_${type}`)
+                .setCustomId(`game_uno_${interaction.user.id}_${gameID}_ephemeral_back_${type}_0`)
 
             const colors = new MessageActionRow().addComponents(red, green, blue, yellow, back)
         
             return colors
         }
 
-        if (id[id.length - 1] === "draw") {
+        if (id[id.length - 2] === "draw") {
             const drawCard = await genCard({ cards })
             
             user.drawCard = drawCard.generatedCard
@@ -204,27 +215,29 @@ module.exports = class Uno extends Command {
             const play = new MessageButton()
                 .setStyle("SUCCESS")
                 .setLabel("Jouer")
-                .setCustomId(`game_uno_${message.author.id}_${gameID}_ephemeral_drawAction_play`)
+                .setCustomId(`game_uno_${interaction.user.id}_${gameID}_ephemeral_drawAction_play`)
 
             const skip = new MessageButton()
                 .setStyle("DANGER")
                 .setLabel("Passer son tour")
-                .setCustomId(`game_uno_${message.author.id}_${gameID}_ephemeral_drawAction_skip`)
+                .setCustomId(`game_uno_${interaction.user.id}_${gameID}_ephemeral_drawAction_skip`)
 
             const actions = new MessageActionRow().addComponents(play, skip)
 
-            await user?.reply?.edit(`Vous avez piocher ${getEmojiCard(drawCard.generatedCard).fullEmoji}`, {
-                components: actions,
+            await user?.reply?.editReply({
+                content: `Vous avez piocher ${getEmojiCard(drawCard.generatedCard).fullEmoji}`, 
+                components: [ actions ],
                 ephemeral: true
             })
 
-            await button.reply.defer()
+            await button.deferUpdate()
     
-            await msg.edit(mainText(playersData, user, actualCard), {
-                buttons: [ seen_card ]
+            await msg.edit({
+                content: mainText(playersData, user, actualCard),
+                components: [ seenCardComponent ]
             })
     
-            return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
+            return client.games.uno.set(gameID, { interaction, msg, cards, players, playersData, turn, actualCard, clockwise })
         //Draw card
         } else if (id[id.length - 2] === "drawAction") {
             //Play drawed card
@@ -233,6 +246,7 @@ module.exports = class Uno extends Command {
 
                 id[id.length - 2] = cardID[0]
                 id[id.length - 1] = cardID[1]
+                id[id.length] = (user.cards.filter(card => card === user.drawCard).length + 1).toString()
             //Skip
             } else if (id[id.length - 1] === "skip") {
                 turn = switchTurn(turn, 1, clockwise)
@@ -245,25 +259,27 @@ module.exports = class Uno extends Command {
 
                 user.drawCard = false
 
-                const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+                const genButton = genButtons({ interaction, playersData, userID: button.user.id, gameID })
 
-                await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                    components: makeRows({ buttonsData: genButton.buttons, page: user.page, message, gameID }),
+                await user?.reply?.editReply({
+                    content: "Voici vos cartes, faites gaffe a bien **garder** ce message !",
+                    components: makeRows({ buttonsData: genButton.buttons, page: user.page, interaction, gameID }),
                     ephemeral: true
                 })
     
-                await button.reply.defer()
+                await button.deferUpdate()
         
-                await msg.edit(mainText(playersData, newTurn, actualCard), {
-                    buttons: [ seen_card ]
+                await msg.edit({
+                    content: mainText(playersData, newTurn, actualCard),
+                    components: [ seenCardComponent ]
                 })
 
-                return client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
+                return client.games.uno.set(gameID, { interaction, msg, cards, players, playersData, turn, actualCard, clockwise })
             }
         }
     
-        const cardColor = id[id.length - 2]
-        const cardNumber = id[id.length - 1] 
+        const cardColor = id[id.length - 3]
+        const cardNumber = id[id.length - 2] 
 
         const actualCardID = actualCard.split("_")
         const actualCardColor = actualCardID[0]
@@ -272,7 +288,7 @@ module.exports = class Uno extends Command {
         //New color, color selected
         if (cardNumber === "newColor" && cardColor !== "special") {
             if (cardColor === "back") {
-                const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+                const genButton = genButtons({ interaction, playersData, userID: button.user.id, gameID })
 
                 const editButtons = []
 
@@ -283,9 +299,10 @@ module.exports = class Uno extends Command {
                     editButtons.push(editButton)
                 }
 
-                const rows = makeRows({ buttonsData: editButtons, page: user.page, message, gameID })
+                const rows = makeRows({ buttonsData: editButtons, page: user.page, interaction, gameID })
 
-                return await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
+                return await user?.reply?.editReply({
+                    content: "Voici vos cartes, faites gaffe a bien **garder** ce message !",
                     components: rows,
                     ephemeral: true
                 })
@@ -301,20 +318,22 @@ module.exports = class Uno extends Command {
             const newTurn = userTurn(turn)
             newTurn.isTurn = true
     
-            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+            const genButton = genButtons({ interaction, playersData, userID: button.user.id, gameID })
 
-            await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                components: makeRows({ buttonsData: genButton.buttons, page: user.page, message, gameID }),
+            await user?.reply?.editReply({
+                content: "Voici vos cartes, faites gaffe a bien **garder** ce message !", 
+                components: makeRows({ buttonsData: genButton.buttons, page: user.page, interaction, gameID }),
                 ephemeral: true
             })
 
-            await msg.edit(mainText(playersData, newTurn, actualCard), {
-                buttons: [ seen_card ]
+            await msg.edit({
+                content: mainText(playersData, newTurn, actualCard),
+                components: [ seenCardComponent ]
             })
         //Add four card, color selected
         } else if (cardNumber === "addFour" && cardColor !== "special") {
             if (cardColor === "back") {
-                const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+                const genButton = genButtons({ interaction, playersData, userID: button.user.id, gameID })
 
                 const editButtons = []
 
@@ -325,9 +344,10 @@ module.exports = class Uno extends Command {
                     editButtons.push(editButton)
                 }
 
-                const rows = makeRows({ buttonsData: editButtons, page: user.page, message, gameID })
+                const rows = makeRows({ buttonsData: editButtons, page: user.page, interaction, gameID })
 
-                return await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
+                return await user?.reply?.editReply({
+                    content: "Voici vos cartes, faites gaffe a bien **garder** ce message !",
                     components: rows,
                     ephemeral: true
                 })
@@ -348,10 +368,11 @@ module.exports = class Uno extends Command {
                 drawerData.cards.push(drawCard.generatedCard)   
             }
 
-            const drawerButton = genButtons({ message, playersData, userID: drawerData.user.id, gameID })
+            const drawerButton = genButtons({ interaction, playersData, userID: drawerData.user.id, gameID })
 
-            await drawerData?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                components: makeRows({ buttonsData: drawerButton.buttons, page: drawerData.page, message, gameID }),
+            await drawerData?.reply?.editReply({
+                content: "Voici vos cartes, faites gaffe a bien **garder** ce message !",
+                components: makeRows({ buttonsData: drawerButton.buttons, page: drawerData.page, interaction, gameID }),
                 ephemeral: true
             })
 
@@ -360,19 +381,21 @@ module.exports = class Uno extends Command {
             const newTurn = userTurn(turn)
             newTurn.isTurn = true
 
-            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+            const genButton = genButtons({ interaction, playersData, userID: button.user.id, gameID })
 
-            await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                components: makeRows({ buttonsData: genButton.buttons, page: user.page, message, gameID }),
+            await user?.reply?.editReply({
+                content: "Voici vos cartes, faites gaffe a bien **garder** ce message !",
+                components: makeRows({ buttonsData: genButton.buttons, page: user.page, interaction, gameID }),
                 ephemeral: true
             })
 
-            await msg.edit(mainText(playersData, newTurn, actualCard), {
-                buttons: [ seen_card ]
+            await msg.edit({
+                content: mainText(playersData, newTurn, actualCard), 
+                components: [ seenCardComponent ]
             })
         //New color, color selector
         } else if (cardColor === "special" && cardNumber === "newColor") {
-            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+            const genButton = genButtons({ interaction, playersData, userID: button.user.id, gameID })
 
             const editButtons = []
 
@@ -383,23 +406,25 @@ module.exports = class Uno extends Command {
                 editButtons.push(editButton)
             }
 
-            const rows = makeRows({ buttonsData: editButtons, page: user.page, message, gameID })
+            const rows = makeRows({ buttonsData: editButtons, page: user.page, interaction, gameID })
 
             const colors = genColorsButtons("newColor")
 
             rows.push(colors)
 
-            await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\nMerci de choisir votre couleur", {
+            await user?.reply?.editReply({
+                content: "Voici vos cartes, faites gaffe a bien **garder** ce message !\nMerci de choisir votre couleur", 
                 components: rows,
                 ephemeral: true
             })
 
-            await msg.edit(mainText(playersData, user, actualCard), {
-                buttons: [ seen_card ]
+            await msg.edit({
+                content: mainText(playersData, user, actualCard),
+                components: [ seenCardComponent ]
             })
         //Add four, color selector
         } else if (cardColor === "special" && cardNumber === "addFour") {
-            const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+            const genButton = genButtons({ interaction, playersData, userID: button.user.id, gameID })
 
             const editButtons = []
 
@@ -410,19 +435,21 @@ module.exports = class Uno extends Command {
                 editButtons.push(editButton)
             }
 
-            const rows = makeRows({ buttonsData: editButtons, page: user.page, message, gameID })
+            const rows = makeRows({ buttonsData: editButtons, page: user.page, interaction, gameID })
             
             const colors = genColorsButtons("addFour")
 
             rows.push(colors)
             
-            await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\nMerci de choisir votre couleur", {
+            await user?.reply?.editReply({
+                content: "Voici vos cartes, faites gaffe a bien **garder** ce message !\nMerci de choisir votre couleur",
                 components: rows,
                 ephemeral: true
             })
 
-            await msg.edit(mainText(playersData, user, actualCard), {
-                buttons: [ seen_card ]
+            await msg.edit({
+                content: mainText(playersData, user, actualCard),
+                components: [ seenCardComponent ]
             })
         //Not +4 and switch color
         } else {
@@ -430,7 +457,7 @@ module.exports = class Uno extends Command {
             if (cardColor === actualCardColor || cardNumber === actualCardNumber) {
                 actualCard = `${cardColor}_${cardNumber}`
 
-                user.cards = removeCard(cards, user.cards, cardColor + "_" + cardNumber)
+                user.cards = removeCard(cards, user.cards, actualCard)
 
                 //Switch card
                 if (cardNumber === "switch") clockwise = clockwise ? false : true
@@ -448,10 +475,11 @@ module.exports = class Uno extends Command {
                         drawerData.cards.push(drawCard.generatedCard)   
                     }
 
-                    const drawerButton = genButtons({ message, playersData, userID: drawerData.user.id, gameID })
+                    const drawerButton = genButtons({ interaction, playersData, userID: drawerData.user.id, gameID })
 
-                    await drawerData?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                        components: makeRows({ buttonsData: drawerButton.buttons, page: drawerData.page, message, gameID }),
+                    await drawerData?.reply?.editReply({
+                        content: "Voici vos cartes, faites gaffe a bien **garder** ce message !", 
+                        components: makeRows({ buttonsData: drawerButton.buttons, page: drawerData.page, interaction, gameID }),
                         ephemeral: true
                     })
                 }
@@ -464,15 +492,17 @@ module.exports = class Uno extends Command {
                 const newTurn = userTurn(turn)
                 newTurn.isTurn = true
 
-                const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+                const genButton = genButtons({ interaction, playersData, userID: button.user.id, gameID })
 
-                await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !", {
-                    components: makeRows({ buttonsData: genButton.buttons, page: user.page, message, gameID }),
+                await user?.reply?.editReply({
+                    content: "Voici vos cartes, faites gaffe a bien **garder** ce message !", 
+                    components: makeRows({ buttonsData: genButton.buttons, page: user.page, interaction, gameID }),
                     ephemeral: true
                 })
 
-                await msg.edit(mainText(playersData, newTurn, actualCard), {
-                    buttons: [ seen_card ]
+                await msg.edit({
+                    content: mainText(playersData, newTurn, actualCard), 
+                    components: [ seenCardComponent ]
                 })
             } else {
                 //If the players is in draw and play an invalid card
@@ -488,31 +518,33 @@ module.exports = class Uno extends Command {
                     const newTurn = userTurn(turn)
                     newTurn.isTurn = true
     
-                    await msg.edit(mainText(playersData, newTurn, actualCard), {
-                        buttons: [ seen_card ]
+                    await msg.edit({
+                        content: mainText(playersData, newTurn, actualCard), 
+                        components: [ seenCardComponent ]
                     })
                 }
 
                 //Invalid card
-                const genButton = genButtons({ message, playersData, userID: button.clicker.user.id, gameID })
+                const genButton = genButtons({ interaction, playersData, userID: button.user.id, gameID })
 
-                await user?.reply?.edit("Voici vos cartes, faites gaffe a bien **garder** ce message !\n⚠️ La carte que vous avez essayer de jouer n'est pas valide", {
-                    components: makeRows({ buttonsData: genButton.buttons, page: user.page, message, gameID }),
+                await user?.reply?.editReply({
+                    content: "Voici vos cartes, faites gaffe a bien **garder** ce message !\n⚠️ La carte que vous avez essayer de jouer n'est pas valide", 
+                    components: makeRows({ buttonsData: genButton.buttons, page: user.page, interaction, gameID }),
                     ephemeral: true
                 })
             }
         }
 
-        await button.reply.defer()
+        await button.deferUpdate()
 
-        client.games.uno.set(gameID, { message, msg, cards, players, playersData, turn, actualCard, clockwise })
+        client.games.uno.set(gameID, { interaction, msg, cards, players, playersData, turn, actualCard, clockwise })
     }
 }
 
 async function allPlayersReady({ client, interaction, msg, gameData, i18n, cards, players }) {
     //Todo gameID
 
-    const gameID = "1"
+    const gameID = "8084065952"
 
     client.games.uno.set(gameID, { interaction, msg, gameData, i18n, cards, players })
 
@@ -555,7 +587,7 @@ async function startGame({ client, gameID }) {
     const seen_card = new MessageButton()
         .setStyle("PRIMARY")
         .setLabel("Voir mes cartes")
-        .setCustomId(`game_uno_${interaction.user.id}_${gameID}_seenCard`)
+        .setCustomId(`game_uno_${interaction.user.id}_${gameID}_seenCard_0`)
 
     const seenCardComponent = new MessageActionRow().addComponents(seen_card)
 
@@ -570,20 +602,22 @@ async function startGame({ client, gameID }) {
         if (!button.user) await button.user.fetch()
 
         if (!Object.keys(playersData).includes(button.user.id)) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: this.help.name }),
+            content: "Ce n'est pas votre partie dsl",
             ephemeral: true
         })
     
-        if (button.customId.endsWith("seenCard")) {
+        const id = button.customId.split("_")
+
+        if (id[id.length - 2] === "seenCard") {
             const { buttons } = genButtons({ interaction, playersData, userID: button.user.id, gameID })
 
-            let reply = await button.reply({
+            await button.reply({
                 content: "Voici vos cartes, faites gaffe a bien **garder** ce message !",
                 components: makeRows({ buttonsData: buttons, page: playersData[button.user.id].page, interaction, gameID }),
                 ephemeral: true
             })
 
-            playersData[button.user.id].reply = reply
+            playersData[button.user.id].reply = button
 
             return true
         }
@@ -622,7 +656,7 @@ function makeRows({ buttonsData, page, interaction, gameID }) {
     const draw = new MessageButton()
         .setStyle("DANGER")
         .setLabel("Piocher")
-        .setCustomId(`game_uno_${interaction.user.id}_${gameID}_playCard_ephemeral_draw`)
+        .setCustomId(`game_uno_${interaction.user.id}_${gameID}_playCard_ephemeral_draw_0`)
 
     if (page > maxPage) page = 0
 
@@ -732,7 +766,7 @@ function genButtons({ interaction, playersData, userID, gameID, activeCard }) {
     for (let i = 0; i < cards.length; i++) {
         const buttonCard = new MessageButton()
             .setStyle("PRIMARY")
-            .setCustomId(`game_uno_${interaction.user.id}_${gameID}_playCard_ephemeral_${cards[i]}`)
+            .setCustomId(`game_uno_${interaction.user.id}_${gameID}_playCard_ephemeral_${cards[i]}_${i}`)
 
         const emoji = getEmojiCard(cards[i])
 
@@ -749,33 +783,60 @@ function genButtons({ interaction, playersData, userID, gameID, activeCard }) {
 }
 
 function sortCard(cards) {
-    function sortCard(a, b) {
-    
-        const colorA = a.split("_")[0]
-        const colorB = b.split("_")[0]
-    
-        if (priority[colorA] === priority[colorB]) priority[colorA] = priority[colorA] + 1 //Doesn't work
+    function sortByLength(a, b) {
+        const colorA = a[0].split("_")[0]
+        const colorB = b[0].split("_")[0]
 
-        if (priority[colorA] > priority[colorB]) {
-            return 1
-        } else if (priority[colorA] < priority[colorB]) {
+        const valueA = colorA === "special" ? Infinity : a.length
+        const valueB = colorB === "special" ? Infinity : b.length
+
+        if (valueA > valueB) {
             return -1
+        } else if (valueA < valueB) {
+            return 1
         } else return 0
     }
 
-    const colorCard = cards.map(card => card.split("_")[0])
+    function sortByNumber(a, b) {
+        const number = {
+            switch: 12,
+            skip: 11,
+            addTwo: 10
+        }
 
-    const priority = {
-        special: Infinity, 
-        red: colorCard.filter(x => x === "red").length,
-        blue: colorCard.filter(x => x === "blue").length,
-        green: colorCard.filter(x => x === "green").length,
-        yellow: colorCard.filter(x => x === "yellow").length,
+        const numberA = a.split("_")[1]
+        const numberB = b.split("_")[1]
+    
+        const valueA = number[numberA] ?? numberA
+        const valueB = number[numberB] ?? numberB
+
+        if (valueA > valueB) {
+            return -1
+        } else if (valueA < valueB) {
+            return 1
+        } else return 0
     }
 
-    const sort = cards.sort(sortCard).reverse()
+    const colors = ["special", "blue", "red", "yellow", "green"]
+    let card = []
 
-    return sort
+    //Regroup by color
+    for (let i = 0; i < colors.length; i++) {
+        const filteredCard = cards.filter(x => x.split("_")[0] === colors[i])
+    
+        if (filteredCard.length > 0) card.push(filteredCard)
+    }
+
+    let sortedCard = card.sort(sortByLength)
+    card = []
+
+    //Sort by number inside array
+    for (let i = 0; i < sortedCard.length; i++) sortedCard[i].sort(sortByNumber)
+
+    //Concact
+    for (let i = 0; i < sortedCard.length; i++)card = card.concat(sortedCard[i])
+
+    return card
 }
 
 function getEmojiCard(cardID) {
