@@ -1,8 +1,7 @@
 # game-bot
 A fun discord bot
 
-# TO-DO
-
+# Road map
 
 ### Global
 - [X] Mise a jour v13 discord.js
@@ -13,7 +12,7 @@ A fun discord bot
 - [ ] Logger
 
 ### Uno
-- [ ] Refaire en slash command
+- [X] Refaire en slash command
 - [X] RemoveCard function ré ajouter dans la config
 - [X] Pouvoir faire un retour (cartes spéciales)
 - [X] Pouvoir jouer la carte piocher après avoir piocher
@@ -30,8 +29,11 @@ A fun discord bot
 ### Puissance 4 
 - [ ] Jouer contre le bot
 
+###
+- [ ] Release
+
 ### Monopoly
 - [ ] Todo complet
 
 ### Petit chevaux
-- [ ] Todo complet
+- [ ] Rework
