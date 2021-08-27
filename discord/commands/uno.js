@@ -542,9 +542,7 @@ module.exports = class Uno extends Command {
 }
 
 async function allPlayersReady({ client, interaction, msg, gameData, i18n, cards, players }) {
-    //Todo gameID
-
-    const gameID = "8084065952"
+    const gameID = interaction.id + "_" + Date.now()
 
     client.games.uno.set(gameID, { interaction, msg, gameData, i18n, cards, players })
 
