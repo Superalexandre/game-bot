@@ -17,6 +17,7 @@ A fun discord bot
 - [X] Pouvoir faire un retour (cartes spéciales)
 - [X] Pouvoir jouer la carte piocher après avoir piocher
 - [X] Si trop de carte faire deux, trois pages
+- [ ] Erreur page
 - [ ] GameData
     - [ ] Pouvoir jouer plusieurs cartes
         => playersData[ id ].activesCard = []
@@ -25,6 +26,7 @@ A fun discord bot
         => Play button -> remove card -> last card = active
     - [ ] Pouvoir "surencherir" (+2, +4)
         => Don't skip and disable color
+    # Work in progress
     - [ ] Distribution des cartes spéciales
         => If +2 add to first player and skip
         => If switch color first player select
@@ -34,7 +36,7 @@ A fun discord bot
             -> Yes but no => +6
             -> Yes and yes => User +4
 - [ ] Si piocher et qu'une carte peut etre jouer envoyer un avertissement
-- [ ] Gerer le end game
+- [X] Gerer le end game
 - [ ] Pouvoir personnalisé sa config (/config uno)
 
 ### Puissance 4 
