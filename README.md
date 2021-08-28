@@ -17,8 +17,10 @@ A fun discord bot
 - [X] Pouvoir faire un retour (cartes spéciales)
 - [X] Pouvoir jouer la carte piocher après avoir piocher
 - [X] Si trop de carte faire deux, trois pages
-- [ ] Erreur page
+- [X] Erreur page
 - [ ] GameData
+    - [ ] Probleme 1v1 changement de sens 
+        => Ajouter skip turn ?
     - [ ] Pouvoir jouer plusieurs cartes
         => playersData[ id ].activesCard = []
         => Button click -> push id -> Green
@@ -27,7 +29,7 @@ A fun discord bot
     - [ ] Pouvoir "surencherir" (+2, +4)
         => Don't skip and disable color
     # Work in progress
-    - [ ] Distribution des cartes spéciales
+    - [ ] Distribution des cartes spéciales (25%)
         => If +2 add to first player and skip
         => If switch color first player select
     - [ ] Pouvoir buffler au +4
