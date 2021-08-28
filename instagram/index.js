@@ -87,13 +87,15 @@ client.on("messageCreate", async(message) => {
 })
 
 async function opponentReady({ message, opponent }) {
-    const msg = await message.chat.sendMessage(`@${opponent.username} aimez ce message dès que vous êtes prêt(e)`)
+    const msg = await message.chat.sendMessage(`@${opponent.username} aimez ce message dès que vous êtes prêt(e)\n\n${message.author.username} si vous voulez annuler la demander liker ce message`)
 
-    const filter = (like) => like.id === opponent.id
+    const filter = (like) => [opponent.id, message.author.id].includes(like.id)
     const collector = message.createLikeCollector(msg, { filter })
 
-    collector.on("likeAdded", async() => {
+    collector.on("likeAdded", async(like) => {
         await collector.end()
+
+        if (like.id === message.author.id) return await message.chat.sendMessage(`${message.author.username} a annuler la demande de partie`)
 
         return startGame({ message, opponent })
     })
@@ -122,8 +124,8 @@ async function startGame({ message, opponent }) {
         id: opponent.id,
         username: opponent.username,
         turn: false,
-        emoji: "🟡",
-        winEmoji: "🟡"
+        emoji: "🔵",
+        winEmoji: "🔵"
     }
 
     const text = (user, opponent, error) => `Tour de : ${user.turn ? user.username : opponent.username} (${user.turn ? user.emoji : opponent.emoji}) ${error ? "\n" + error : ""}\n\n`
@@ -131,10 +133,17 @@ async function startGame({ message, opponent }) {
 
     await message.chat.sendMessage(text(userData, opponentData) + formatedBoard.string)
 
-    const filter = (msg) => [opponentData.id, userData.id].includes(msg.author.id) && ["1", "2", "3", "4", "5", "6", "7", "8", "9"].includes(msg.content)
+    const filter = (msg) => [opponentData.id, userData.id].includes(msg.author.id) && ["1", "2", "3", "4", "5", "6", "7", "stop"].includes(msg.content.toLowerCase())
     const collector = message.createMessageCollector({ filter })
 
     collector.on("message", async(msg) => {
+        if (msg.content.toLowerCase() === "stop") {
+            message.chat.puissance4 = false
+            await collector.end()
+
+            return await message.chat.sendMessage(`${msg.author.username} a décidé d'arreter la partie\nPeut etre un mauvais joueur ?`)
+        }
+
         const activeUser = userData.id === msg.author.id ? userData : opponentData
         const opposite = userData.id === msg.author.id ? opponentData : userData
 

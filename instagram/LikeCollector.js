@@ -20,7 +20,7 @@ module.exports = class LikeCollector extends EventEmitter {
     async handleLike (user, message) {
         if (this.ended) return
 
-        const valid = await this.filter(user) && message.chatID === this.chat.id && this.message.id === message.id
+        const valid = await this.filter(user) && this.message.id === message.id
         
         if (valid) {
             this.emit("likeAdded", user, message)
