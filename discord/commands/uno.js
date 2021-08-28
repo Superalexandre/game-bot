@@ -152,13 +152,13 @@ module.exports = class Uno extends Command {
             
             return await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
         }
-
-        if (!playersData[button.user.id].isTurn) return await button.reply({
+        
+        const user = userTurn(turn)
+        
+        if (!playersData[button.user.id].isTurn || user.user.id !== button.user.id) return await button.reply({
             content: `Désolé mais ce n'est pas encore votre tour`,
             ephemeral: true
         })
-
-        const user = userTurn(turn)
 
         const seen_card = new MessageButton()
             .setStyle("PRIMARY")
@@ -517,7 +517,7 @@ module.exports = class Uno extends Command {
                 }
 
                 //Invalid card
-                const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameIdD })
+                const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId })
 
                 await user?.reply?.editReply({
                     content: "Voici vos cartes, faites gaffe a bien **garder** ce message !\n⚠️ La carte que vous avez essayer de jouer n'est pas valide", 
@@ -591,7 +591,7 @@ async function startGame({ client, gameId }) {
     }
 
     //Filter doesn't work
-    const filter = gameData.config.firstSpecialCard ? ["addFour"] : ["addFour", "newColor", "skip", "switch", "addTwo"]
+    const filter = gameData.config.firstSpecialCard ? ["addFour", "newColor", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "skip", "switch"]/*["addFour"]*/ : ["addFour", "newColor", "skip", "switch", "addTwo"]
     let { generatedCard: actualCard } = await genCard({ cards, filter })
     const actualCardId = actualCard.split("_")
     const actualCardColor = actualCardId[actualCardId.length - 2]
@@ -610,9 +610,11 @@ async function startGame({ client, gameId }) {
         }
 
         turn = switchTurn(playersData, turn, 1, clockwise)
-        actualUserTurn = userTurn(turn)
+        const newUserTurn = userTurn(turn)
 
-        actualUserTurn.isTurn = true
+        newUserTurn.isTurn = true
+
+        actualUserTurn = newUserTurn
 
         /*
         
@@ -704,8 +706,9 @@ function removeCard(cardsConfig, userCards, cardToRemove) {
 }
 
 function makeRows({ buttonsData, page, interaction, gameId }) {
-    const max = 3
-    const maxPage = Math.round(buttonsData.length / 15) - 1
+    const maxRow = 3
+    const maxInRow = 5
+    const maxPage = Math.round(buttonsData.length / 15)
 
     const draw = new MessageButton()
         .setStyle("DANGER")
@@ -714,7 +717,7 @@ function makeRows({ buttonsData, page, interaction, gameId }) {
 
     if (page > maxPage) page = 0
 
-    if (buttonsData.slice((5 * max) * page, (5 * max) * (page + 1)).length > 0) buttonsData = buttonsData.slice((5 * max) * page, (5 * max) * (page + 1))
+    if (buttonsData.slice((maxInRow * maxRow) * page, (maxInRow * maxRow) * (page + 1)).length > 0) buttonsData = buttonsData.slice((maxInRow * maxRow) * page, (maxInRow * maxRow) * (page + 1))
 
     function splitIntoChunk(arr, chunk) {
         let arrays = []
@@ -728,68 +731,46 @@ function makeRows({ buttonsData, page, interaction, gameId }) {
         return arrays
     }
 
-    let arrays = splitIntoChunk(buttonsData, 5);
+    let arrays = splitIntoChunk(buttonsData, maxInRow);
 
-    if (arrays.length !== 1) {
-        let i = 0
-        let ActionRow = []
+    let i = 0
+    let ActionRow = []
 
-        for (const buttons of arrays) {
-            if (i >= max) break
+    for (const buttons of arrays) {
+        if (i >= maxRow) break
             
-            let row = new MessageActionRow()
+        let row = new MessageActionRow()
 
-            for (const button of buttons) {
-                row.addComponents(button)
-            }
+        for (const button of buttons) row.addComponents(button)
 
-            ActionRow.push(row)
-            i++
-        }
-
-        let arrowsComponent = false
-        if (i >= max || page !== 0) {
-            const arrowsLeftButtons = new MessageButton()
-                .setEmoji("◀️")
-                .setStyle("SECONDARY")
-                .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_page_${page - 1}`)
-                .setDisabled(page - 1 < 0)
-
-            const arrowsRightButtons = new MessageButton()
-                .setEmoji("▶️")
-                .setStyle("SECONDARY")
-                .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_page_${page + 1}`)
-                .setDisabled(page + 1 > maxPage)
-    
-            arrowsComponent = new MessageActionRow().addComponents(arrowsLeftButtons, arrowsRightButtons, draw)
-
-            ActionRow.push(arrowsComponent)
-        }
-
-        const drawComponent = new MessageActionRow().addComponents(draw)
-
-        if (!arrowsComponent) ActionRow.push(drawComponent)
-
-        return ActionRow
-    } else {
-        const componentButtons = new MessageActionRow()
-        let compenentDraw = false
-
-        for (const button of buttonsData) {
-            componentButtons.addComponents(button)
-        }
-
-        if (buttonsData.length === 5) {
-            compenentDraw = new MessageActionRow().addComponents(draw)
-
-        } else componentButtons.addComponents(draw)
-
-        const components = [componentButtons]
-
-        if (compenentDraw) components.push(compenentDraw)
-
-        return components
+        ActionRow.push(row)
+        i++
     }
+
+    let arrowsComponent = false
+    if (i >= maxRow || page !== 0) {
+        const arrowsLeftButtons = new MessageButton()
+            .setEmoji("◀️")
+            .setStyle("SECONDARY")
+            .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_page_${page - 1}`)
+            .setDisabled(page - 1 < 0)
+
+        const arrowsRightButtons = new MessageButton()
+            .setEmoji("▶️")
+            .setStyle("SECONDARY")
+            .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_page_${page + 1}`)
+            .setDisabled(!(page + 1 <= maxPage))
+    
+        arrowsComponent = new MessageActionRow().addComponents(arrowsLeftButtons, arrowsRightButtons, draw)
+
+        ActionRow.push(arrowsComponent)
+    }
+
+    const drawComponent = new MessageActionRow().addComponents(draw)
+
+    if (!arrowsComponent) ActionRow.push(drawComponent)
+
+    return ActionRow
 }
 
 function genCard({ cards, filter }) {
@@ -804,7 +785,7 @@ function genCard({ cards, filter }) {
 
     generatedCard += number
 
-    if (!cards?.[color]?.[number] || (cards[color][number] - 1) <= 0 || filter?.includes(number)) return genCard({ cards })
+    if (!cards?.[color]?.[number] || (cards[color][number] - 1) <= 0 || filter?.includes(number)) return genCard({ cards, filter })
 
     cards[color][number] = cards[color][number] - 1
 
