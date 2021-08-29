@@ -18,10 +18,10 @@ A fun discord bot
 - [X] Pouvoir jouer la carte piocher après avoir piocher
 - [X] Si trop de carte faire deux, trois pages
 - [X] Erreur page
-- [ ] GameData
+- [ ] GameData (50%)
     - [ ] Probleme 1v1 changement de sens 
-        => Ajouter skip turn ?
-    - [ ] Pouvoir jouer plusieurs cartes
+        => Ajouter skip turn 
+    - [X] Pouvoir jouer plusieurs cartes
         => playersData[ id ].activesCard = []
         => Button click -> push id -> Green
         => If already click -> remove id -> Red
