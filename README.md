@@ -28,8 +28,7 @@ A fun discord bot
         => Play button -> remove card -> last card = active
     - [ ] Pouvoir "surencherir" (+2, +4)
         => Don't skip and disable color
-    # Work in progress
-    - [ ] Distribution des cartes spéciales (25%)
+    - [X] Distribution des cartes spéciales
         => If +2 add to first player and skip
         => If switch color first player select
     - [ ] Pouvoir buffler au +4
