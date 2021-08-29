@@ -46,6 +46,9 @@ A fun discord bot
 ### Release
 - [ ] Release
 
+### Tetris
+- [ ] https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4
+
 ### Petit chevaux
 - [ ] Rework
 
