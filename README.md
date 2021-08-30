@@ -28,6 +28,7 @@ A fun discord bot
         => Play button -> remove card -> last card = active
         
         => [ ] Probleme skip quand on en joue plusieurs 
+        => [ ] Probleme carte changement de couleur et +4
     - [ ] Pouvoir "surencherir" (+2, +4)
         => Don't skip and disable color
     - [X] Distribution des cartes spéciales
