@@ -130,7 +130,7 @@ async function whoStart({ i18n, interaction, msg, opponent, client }) {
     const row = new MessageActionRow().addComponents(userStart, opponentStart, random) 
 
     await msg.edit({
-        content: i18n.__("whoStart", { username: interaction.user.username }),
+        content: i18n.__("global.whoStart", { username: interaction.user.username }),
         components: [ row ]
     })
 
