@@ -20,7 +20,8 @@
 			"you": "Vous {{username}}",
 			"opponent": "{{username}}",
 			"random": "Aléatoire"
-		}
+		},
+		"oppponentNotReady": "Une erreur de traduction est servenue !"
 	},
 	"rockpaperscissors": {
 		"mainText": "C'est le moment des choix ! (Attention après vous ne pouvez pas changé)\n\n{{userUsername}} {{userChoice}}\n{{opponentUsername}} {{opponentChoice}}",
