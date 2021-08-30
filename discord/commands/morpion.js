@@ -91,7 +91,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== opponent.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: this.help.name }),
+            content: i18n.__("global.notYourGame", { gameName: "morpion" }),
             ephemeral: true
         })
 
@@ -140,7 +140,7 @@ async function whoStart({ i18n, interaction, msg, opponent, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== interaction.user.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: this.help.name }),
+            content: i18n.__("global.notYourGame", { gameName: "morpion" }),
             ephemeral: true
         })
 
@@ -200,7 +200,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== userData.id && button.user.id !== opponentData.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: this.help.name }),
+            content: i18n.__("global.notYourGame", { gameName: "morpion" }),
             ephemeral: true
         })
     
