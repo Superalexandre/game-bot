@@ -102,7 +102,7 @@ module.exports = class Uno extends Command {
         const gameData = {
             config: {
                 firstSpecialCard: true,
-                multipleCard: false,
+                multipleCard: true,
                 outbid: true,
                 bluffing: true
             },

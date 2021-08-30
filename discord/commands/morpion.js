@@ -32,7 +32,7 @@ module.exports = class Morpion extends Command {
         const readyComponents = new MessageActionRow().addComponents(ready, notReady)
 
         const msg = await interaction.channel.send({
-            content: i18n.__("global.opponentReady", { username: opponent }),
+            content: i18n.__("global.opponentReady", { username: opponent.username }),
             components: [ readyComponents ]
         })
 
@@ -64,7 +64,7 @@ async function playWithBot({ i18n, interaction, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== interaction.user.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: this.help.name }),
+            content: i18n.__("global.notYourGame", { gameName: "morpion" }),
             ephemeral: true
         })
 

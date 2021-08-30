@@ -147,7 +147,7 @@ module.exports = class Memory extends Command {
             if (!interaction.user) await interaction.user.fetch()
 
             if (button.user.id !== interaction.user.id) return await button.reply({
-                content: i18n.__("global.notYourGame", { gameName: this.help.name }),
+                content: i18n.__("global.notYourGame", { gameName: "memory" }),
                 ephemeral: true
             })
 

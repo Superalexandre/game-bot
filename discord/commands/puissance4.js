@@ -34,7 +34,7 @@ module.exports = class Puissance4 extends Command {
         const readyButtons = new MessageActionRow().addComponents(ready, notReady)
 
         const msg = await interaction.channel.send({
-            content: i18n.__("global.opponentReady", { username: opponent }),
+            content: i18n.__("global.opponentReady", { username: opponent.username }),
             components: [readyButtons]
         })
 
@@ -67,7 +67,7 @@ async function playWithBot({ i18n, interaction, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== interaction.user.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: this.help.name }),
+            content: i18n.__("global.notYourGame", { gameName: "puissance4" }),
             ephemeral: true
         })
 
@@ -93,7 +93,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== opponent.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: this.help.name }),
+            content: i18n.__("global.notYourGame", { gameName: "puissance4" }),
             ephemeral: true
         })
 
@@ -146,7 +146,7 @@ async function whoStart({ i18n, interaction, msg, button, opponent, client, user
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== chooser.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: this.help.name }),
+            content: i18n.__("global.notYourGame", { gameName: "puissance4" }),
             ephemeral: true
         })
 
