@@ -101,7 +101,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
             await collector.stop()
 
             return await msg.edit({
-                content: i18n.__("global.oppponentNotReady", { username: opponent.username }),
+                content: i18n.__("global.opponentNotReady", { username: opponent.username }),
                 components: []
             })
         } else {
