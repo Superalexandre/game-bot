@@ -18,8 +18,9 @@ A fun discord bot
 - [X] Pouvoir jouer la carte piocher après avoir piocher
 - [X] Si trop de carte faire deux, trois pages
 - [X] Erreur page
+- [ ] Unknow interaction ??? interaction.editReply
 - [ ] GameData (50%)
-    - [ ] Probleme 1v1 changement de sens 
+    - [X] Probleme 1v1 changement de sens 
         => Ajouter skip turn 
     - [ ] Pouvoir jouer plusieurs cartes
         => playersData[ id ].activesCard = []
@@ -28,7 +29,7 @@ A fun discord bot
         => Play button -> remove card -> last card = active
         
         => [ ] Probleme skip quand on en joue plusieurs 
-        => [ ] Probleme carte changement de couleur et +4
+        => [X] Probleme carte changement de couleur et +4
     - [ ] Pouvoir "surencherir" (+2, +4)
         => Don't skip and disable color
     - [X] Distribution des cartes spéciales
