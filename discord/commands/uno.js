@@ -102,7 +102,7 @@ module.exports = class Uno extends Command {
         const gameData = {
             config: {
                 firstSpecialCard: true,
-                multipleCard: true,
+                multipleCard: false,
                 outbid: true,
                 bluffing: true
             },
@@ -263,19 +263,18 @@ module.exports = class Uno extends Command {
                     components: makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: false }),
                     ephemeral: true
                 })
-    
-                await button.deferUpdate()
         
                 await msg.edit({
                     content: mainText(playersData, newTurn, actualCard),
                     components: [ seenCardComponent ]
                 })
 
+                await button.deferUpdate()
                 return await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
             }
         }
     
-        if (id[id.length - 2] === "play") {
+        if (id[id.length - 2] === "play" && gameData.config.multipleCard) {
             if (user.activeCard.length <= 0) {
                 const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
 
@@ -286,7 +285,6 @@ module.exports = class Uno extends Command {
                 })
 
                 await button.deferUpdate()
-
                 return await await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
             }
 
@@ -335,7 +333,7 @@ module.exports = class Uno extends Command {
             if (cardId === "noSkip") {
                 actualCard = cardColor
             } else {
-                await checkUserActiveCard(user, `special_${cardNumber}_${cardId}_${cardColor}`)
+                user.activeCard = await checkUserActiveCard(user, `special_${cardNumber}_${cardId}_${cardColor}`)
             }
 
             const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
@@ -350,6 +348,17 @@ module.exports = class Uno extends Command {
                 content: mainText(playersData, user, actualCard),
                 components: [ seenCardComponent ]
             })
+
+            if (user.drawCard) {
+                user.drawCard = false
+                
+                return await cardsPlayed({ user, button, client, gameId, interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
+            }
+
+            if (cardId === "noSkip") {
+                await button.deferUpdate()
+                return await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })    
+            }
         //* New color and add Four, color selector
         } else if (cardColor === "special" && ["newColor", "addFour"].includes(cardNumber)) {
             const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: true })
@@ -376,14 +385,16 @@ module.exports = class Uno extends Command {
         //* Not +4 and switch color
         } else {
             //* Check if card is valid
-            const activeCardNumber = user.activeCard?.[0]?.split("_")[1]
-            if (cardColor === actualCardColor || cardNumber === actualCardNumber || activeCardNumber === cardNumber) {
+            const [, activeCardNumber] = user.activeCard?.[0]?.split("_")
+
+            if (cardColor === actualCardColor || cardNumber === actualCardNumber || (activeCardNumber === cardNumber && !user.activeCard)) {
                 if (user.drawCard) {
                     user.drawCard = false
+
                     return await cardsPlayed({ user, button, client, gameId, interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
                 }
 
-                await checkUserActiveCard(user, `${cardColor}_${cardNumber}_${cardId}`)
+                user.activeCard = await checkUserActiveCard(user, `${cardColor}_${cardNumber}_${cardId}`)
 
                 const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
 
@@ -426,50 +437,27 @@ module.exports = class Uno extends Command {
                 return await await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
             }
         }
-
+        
         await button.deferUpdate()
         await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
 
         if (!gameData.config.multipleCard) return await cardsPlayed({ user, button, client, gameId, interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
-
-        /*
-        Todo
-        await button.deferUpdate()
-
-        //If no more card
-        if (user.cards.length <= 0) {
-            for (const player in playersData) {
-                await playersData[player]?.reply?.editReply({
-                    content: "La partie est finie !",
-                    components: [],
-                    ephemeral: true
-                })
-            }
-
-            await msg.edit({
-                content: `Bien joué a ${user.user.username} qui a gagné !`,
-                components: []
-            })
-
-            return await client.games.uno.delete(gameId)
-        }
-
-        await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
-        */
     }
 }
 
 async function checkUserActiveCard(user, cardId) {
     const [color, number, id, askedColor] = cardId.split("_")
+    let userCard = user.activeCard
+
     if (cardId.startsWith("special")) cardId = `${color}_${number}_${id}-${askedColor}`
 
-    if (user.activeCard.includes(cardId)) {
-        user.activeCard = user.activeCard.filter(card => card !== cardId)
+    if (userCard.includes(cardId)) {
+        userCard = userCard.filter(card => card !== cardId)
     } else {
-        user.activeCard.push(cardId)
+        userCard.push(cardId)
     }
 
-    return user.activeCard
+    return userCard
 }
 
 async function cardsPlayed({ user, button, client, gameId, interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise }) {
@@ -509,6 +497,26 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
         user.cards = removeCard(cards, user.cards, `${cardColor}_${cardNumber}`)
     }
 
+    
+    //* If no more card
+    if (user.cards.length <= 0) {
+        for (const player in playersData) {
+            await playersData[player]?.reply?.editReply({
+                content: "La partie est finie !",
+                components: [],
+                ephemeral: true
+            })
+        }
+
+        await msg.edit({
+            content: `Bien joué a ${user.user.username} qui a gagné !`,
+            components: []
+        })
+
+        await button.deferUpdate()
+        return await client.games.uno.delete(gameId)
+    }
+
     user.activeCard = []
 
     if (lastActiveCardColor === "special") {
@@ -516,16 +524,20 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
         actualCard = askedColor
     } else actualCard = `${lastActiveCardColor}_${lastActiveCardNumber}`
 
-    if (lastActiveCardNumber === "switch") {       
+    if (lastActiveCardNumber === "switch") { 
+        if (players.length === 2) turn = switchTurn(playersData, turn, 1, clockwise)
+  
         clockwise = clockwise ? false : true
     //* Add two
-    } else if (lastActiveCardNumber === "addTwo") {
+    } else if (["addTwo", "addFour"].includes(lastActiveCardNumber)) {
+        const numberOfDraw = lastActiveCardNumber === "addTwo" ? 2 : 4
+
         turn = switchTurn(playersData, turn, 1, clockwise)
 
         const drawerData = userTurn(turn)
 
         //* Add cards to drawer
-        for (let i = 0; i < 2 * activeCardLength; i++) {
+        for (let i = 0; i < numberOfDraw * activeCardLength; i++) {
             const drawCard = await genCard({ cards })
 
             drawerData.cards.push(drawCard.generatedCard)   
@@ -539,7 +551,7 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
             ephemeral: true
         })
     } else if (lastActiveCardNumber === "skip") turn = switchTurn(playersData, turn, 1, clockwise)
-    
+
     turn = switchTurn(playersData, turn, 1, clockwise)
     user.isTurn = false
 
@@ -654,6 +666,17 @@ async function startGame({ client, gameId }) {
             buttons: new MessageActionRow().addComponents(red, green, blue, yellow)
         }
     } else if (actualCardNumber === "switch") {
+        if (players.length === 2) {
+            actualUserTurn.isTurn = false
+
+            turn = switchTurn(playersData, turn, 1, clockwise)
+            const newUserTurn = userTurn(turn)
+
+            newUserTurn.isTurn = true
+
+            actualUserTurn = newUserTurn
+        }
+
         clockwise = clockwise ? false : true
     } else if (actualCardNumber === "skip") {
         actualUserTurn.isTurn = false
