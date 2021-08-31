@@ -307,7 +307,7 @@ function genButtons({ board, userID, opponentID }) {
         for (let j = 0; j < board[i].length; j++) {
             if (board[i][j] === "") allFill = false
 
-            /* Horizontal */
+            //* Horizontal
             if (!win && board[i][j] !== "" && board[i][j] === board[i][j + 1] && board[i][j + 1] === board[i][j + 2]) {
                 winner = board[i][j]
 
@@ -316,7 +316,7 @@ function genButtons({ board, userID, opponentID }) {
                 board[i][j + 2] = winner + "_win"
 
                 win = true
-            /* Vertical */
+            //* Vertical
             } else if (!win && board[i][j] !== "" && board[i]?.[j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j]) {
                 winner = board[i][j]
 
@@ -325,7 +325,7 @@ function genButtons({ board, userID, opponentID }) {
                 board[i+ 2][j] = winner + "_win"
     
                 win = true
-            /* Diagonal Left top => Bottom right */
+            //* Diagonal Left top => Bottom right
             } else if (!win && board[i][j] !== "" && board[i]?.[j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2]) {
                 winner = board[i][j]
 
@@ -334,7 +334,7 @@ function genButtons({ board, userID, opponentID }) {
                 board[i + 2][j + 2] = winner + "_win"
     
                 win = true
-            /* Diagonal Right top => Bottom left */
+            //* Diagonal Right top => Bottom left
             } else if (!win && board[i][j] !== "" && board[i]?.[j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2]) {
                 winner = board[i][j]
 
@@ -381,57 +381,58 @@ async function botPlay({ board, emoji, filter }) {
         if (placed) break
 
         for (let j = 0; j < board[i].length; j++) {
-            /* Horizontal Left -> right (=>) */
+            //* Horizontal Left -> right (=>)
             if (!placed && board[i][j] !== filter && (board[i][j] === board[i][j + 1] || board[i][j] === board[i][j + 2])) {
                 if (board[i][j + 1] !== filter && board[i][j + 2] !== filter) continue
 
                 board[i][j + 1] === filter ? board[i][j + 1] = emoji : board[i][j + 2] = emoji
 
                 placed = true
-            /* Horizontal Right -> Left (=>) */
+            //* Horizontal Right -> Left (=>)
             } else if (!placed && board[i][j] !== filter && (board[i][j] === board[i]?.[j - 1] || board[i][j] === board[i]?.[j - 2])) {
                 if (board[i]?.[j - 1] !== filter && board[i]?.[j - 2] !== filter) continue
 
                 board[i][j - 1] === filter ? board[i][j - 1] = emoji : board[i][j - 2] = emoji
 
                 placed = true
-            /* Vertical Top -> Bottom (v)*/
+            //* Vertical Top -> Bottom (v)
             } else if (!placed && board[i][j] !== filter && (board[i][j] === board[i + 1]?.[j] || board[i][j] === board[i + 2]?.[j])) {
                 if (board[i + 1]?.[j] !== filter && board[i + 2]?.[j] !== filter) continue
 
                 board[i + 1]?.[j] === filter ? board[i + 1][j] = emoji : board[i + 2][j] = emoji
 
                 placed = true
-            /* Vertical Bottom -> Top (^)*/
-            //} else if (!placed && board[i][j] !== "" && (board[i][j] === board[i - 1]?.[j] || board[i][j] === board[i - 2]?.[j])) {
-            //    if (board[i - 2]?.[j] !== "" && board[i - 1]?.[j] !== "") continue
-            //
-            //    board[i - 2]?.[j] === "" ? board[i - 2][j] = emoji : board[i - 1][j] = emoji
-            //
-            //    placed = true
-            /* Diagonal Top right -> Bottom left */
-            //Top left
+            /* Vertical Bottom -> Top (^)
+            } else if (!placed && board[i][j] !== "" && (board[i][j] === board[i - 1]?.[j] || board[i][j] === board[i - 2]?.[j])) {
+                if (board[i - 2]?.[j] !== "" && board[i - 1]?.[j] !== "") continue
+            
+                board[i - 2]?.[j] === "" ? board[i - 2][j] = emoji : board[i - 1][j] = emoji
+            
+                placed = true
+            Diagonal Top right -> Bottom left 
+            */
+            //* Top left
             } else if (!placed && board[i][j] !== filter && (board[i][j] === board[i + 1]?.[j + 1] || board[i][j] === board[i + 2]?.[j + 2])) {
                 if (board[i + 1]?.[j + 1] !== filter && board[i + 2]?.[j + 2] !== filter) continue
 
                 board[i + 1][j + 1] === filter ? board[i + 1][j + 1] = emoji : board[i + 2][j + 2] = emoji
 
                 placed = true
-            //Top right
+            //* Top right
             } else if (!placed && board[i][j] !== filter && (board[i][j] === board[i + 1]?.[j - 1] || board[i][j] === board[i + 2]?.[j - 2])) {
                 if (board[i + 1]?.[j - 1] !== filter && board[i + 2]?.[j - 2] !== filter) continue
 
                 board[i + 1][j - 1] === filter ? board[i + 1][j - 1] = emoji : board[i + 2][j - 2] = emoji
 
                 placed = true
-            //Bottom left
+            //* Bottom left
             } else if (!placed && board[i][j] !== filter && (board[i][j] === board[i - 1]?.[j + 1] || board[i][j] === board[i - 2]?.[j + 2])) {
                 if (board[i - 1]?.[j + 1] !== filter && board[i - 2]?.[j + 2] !== filter) continue
 
                 board[i - 1][j + 1] === filter ? board[i - 1][j + 1] = emoji : board[i - 2][j + 2] = emoji
 
                 placed = true
-            //Bottom right
+            //* Bottom right
             } else if (!placed && board[i][j] !== filter && (board[i][j] === board[i - 1]?.[j - 1] || board[i][j] === board[i - 2]?.[j - 2])) {
                 if (board[i - 1]?.[j - 1] !== filter && board[i - 2]?.[j - 2] !== filter) continue
 

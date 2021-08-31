@@ -168,7 +168,6 @@ async function whoStart({ i18n, interaction, msg, button, opponent, client, user
     
         await collector.stop()
         await button?.deferUpdate()
-        //await button.reply.defer()
         return startGame({ i18n, interaction, msg, button, opponent, client, userData, opponentData })
     })
 }
@@ -311,8 +310,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, client, use
             components: []
         })
 
-        //Bot
-        //Todo
+        //Todo : Play with bot
         if (opponentData.id === client.user.id) {
             return msg.edit("ERREUR VOUS NE POUVEZ PAS JOUER AVEC LE BOT POUR LE MOMENT")
             type.turn = true
@@ -362,7 +360,7 @@ function genBoard({ board, userData, opponentData }) {
         for (let j = 0; j < board[i].length; j++) {
             if (board[i][j] === "⚪") allFill = false
 
-            /* Horizontal */
+            //* Horizontal
             if (!win && board[i][j] !== "⚪" && board[i][j] === board[i][j + 1] && board[i][j + 1] === board[i][j + 2] && board[i][j + 2] === board[i][j + 3]) {
                 winner = board[i][j]
 
@@ -374,7 +372,7 @@ function genBoard({ board, userData, opponentData }) {
                 board[i][j + 3] = winnerUser.winEmoji
 
                 win = true
-            /* Vertical */
+            //* Vertical
             } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j] && board[i + 2]?.[j] === board[i + 3]?.[j]) {
                 winner = board[i][j]
 
@@ -386,7 +384,7 @@ function genBoard({ board, userData, opponentData }) {
                 board[i + 3][j] = winnerUser.winEmoji
 
                 win = true
-            /* Diagonal Left top => Bottom right */
+            //* Diagonal Left top => Bottom right 
             } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2] && board[i + 2]?.[j + 2] === board[i + 3]?.[j + 3]) {
                 winner = board[i][j]
 
@@ -398,7 +396,7 @@ function genBoard({ board, userData, opponentData }) {
                 board[i + 3][j + 3] = winnerUser.winEmoji
 
                 win = true
-            /* Diagonal Right top => Bottom left */
+            //* Diagonal Right top => Bottom left
             } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2] && board[i + 2]?.[j - 2] === board[i + 3]?.[j - 3]) {
                 winner = board[i][j]
 
@@ -519,7 +517,7 @@ async function makeGif({ client, i18n, msg, gameData }) {
     const width = 1000
     const height = 1000
 
-    //Gif
+    //* Gif
     const gif = new gifencoder(width, height)
     
     gif.start()
@@ -528,13 +526,13 @@ async function makeGif({ client, i18n, msg, gameData }) {
     gif.setQuality(1)
     gif.setTransparent()
 
-    //Canvas
+    //* Canvas
     const canvas = Canvas.createCanvas(width, height)
     const ctx = canvas.getContext("2d")
 
     const fontSize = width / 25
 
-    //Text
+    //* Text
     ctx.fillStyle = "#FFFFFF"
     ctx.font = `${fontSize}px 'Arial'`
     const text = `${i18n.__("puissance4.replay.replayOf")} ${gameData.players[0].username} ${i18n.__("puissance4.replay.versus")} ${gameData.players[1].username}`
@@ -542,7 +540,7 @@ async function makeGif({ client, i18n, msg, gameData }) {
 
     ctx.fillText(text, (canvas.width/2) - (textWidth / 2), 50)
 
-    //Credit
+    //* Credit
     ctx.font = `${fontSize - 2}px 'Arial'`
     ctx.fillText(`${i18n.__("puissance4.replay.copyright")} ${client.user.username}`, width / 20, height - 20)
 

@@ -118,8 +118,7 @@ module.exports = class Memory extends Command {
 
         const msg = await interaction.channel.send({
             content: i18n.__("memory.remember", { username: interaction.user.username, seconds: timeSec }),
-            components: activeRows,
-            //ephemeral: true
+            components: activeRows
         })
 
         await wait(timeSec * 1000)
@@ -128,8 +127,7 @@ module.exports = class Memory extends Command {
 
         await msg.edit({
             content: i18n.__("memory.clickNumber", { username: interaction.user.username, clickNumber }),
-            components: activeQuestionRows,
-            //ephemeral: true
+            components: activeQuestionRows
         })
 
         const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
@@ -224,22 +222,19 @@ module.exports = class Memory extends Command {
 
                 return await msg.edit({
                     content: i18n.__("memory.win", { username: interaction.user.username }),
-                    components: activeUpdatedRows,
-                    //ephemeral: true
+                    components: activeUpdatedRows
                 })
             } else if (clickNumber === 0) {
                 await collector.stop()
 
                 return await msg.edit({
                     content: i18n.__("memory.loose", { username: interaction.user.username }),
-                    components: activeUpdatedRows,
-                    //ephemeral: true
+                    components: activeUpdatedRows
                 })
             } else {
                 return await msg.edit({
                     content: i18n.__("memory.clickNumber", { username: interaction.user.username, clickNumber }),
-                    components: activeUpdatedRows,
-                    //ephemeral: true
+                    components: activeUpdatedRows
                 })
             }
         })

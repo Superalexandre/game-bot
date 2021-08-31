@@ -125,7 +125,7 @@ module.exports = class Uno extends Command {
         let { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise } = game
 
         if (!playersData[button.user.id]) return await button.reply({
-            content: "PAs votre partie dsl",
+            content: "Pas votre partie dsl",
             ephemeral: true
         })
 
@@ -155,7 +155,7 @@ module.exports = class Uno extends Command {
         
         const user = userTurn(turn)
         
-        //Check turn and if good user
+        //* Check turn and if good user
         if (!playersData[button.user.id].isTurn || user.user.id !== button.user.id) return await button.reply({
             content: `Désolé mais ce n'est pas encore votre tour`,
             ephemeral: true
@@ -168,7 +168,7 @@ module.exports = class Uno extends Command {
         
         const seenCardComponent = new MessageActionRow().addComponents(seen_card)
 
-        //Buttons for +4 and switch color
+        //* Buttons for +4 and switch color
         const genColorsButtons = (type, id) => {
             const red = new MessageButton()
                 .setStyle("PRIMARY")
@@ -231,9 +231,9 @@ module.exports = class Uno extends Command {
             })
     
             return await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
-        //Draw card
+        //* Draw card
         } else if (id[id.length - 2] === "drawAction") {
-            //Play drawed card
+            //* Play drawed card
             if (id[id.length - 1] === "play") {
                 const [newCardColor, newCardNumber] = user.drawCard.split("_")
                 const newCardId = (user.cards.filter(card => card === user.drawCard).length + 1).toString()
@@ -243,7 +243,7 @@ module.exports = class Uno extends Command {
                 id[id.length] = newCardId
 
                 if (newCardColor !== "special") user.activeCard = [`${newCardColor}_${newCardNumber}_${newCardId}`]
-            //Skip
+            //* Skip
             } else if (id[id.length - 1] === "skip") {
                 turn = switchTurn(playersData, turn, 1, clockwise)
                 user.isTurn = false
@@ -299,7 +299,7 @@ module.exports = class Uno extends Command {
 
         const [actualCardColor, actualCardNumber] = actualCard.split("_")
 
-        //New color and addFour, color selected
+        //* New color and addFour, color selected
         if (["newColor", "addFour"].includes(cardNumber) && cardColor !== "special") {
             if (cardColor === "back") {
                 if (user.drawCard) {
@@ -350,7 +350,7 @@ module.exports = class Uno extends Command {
                 content: mainText(playersData, user, actualCard),
                 components: [ seenCardComponent ]
             })
-        //New color and add Four, color selector
+        //* New color and add Four, color selector
         } else if (cardColor === "special" && ["newColor", "addFour"].includes(cardNumber)) {
             const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: true })
             const rows = makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: true })
@@ -373,9 +373,9 @@ module.exports = class Uno extends Command {
             
             await button.deferUpdate()
             return await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
-        //Not +4 and switch color
+        //* Not +4 and switch color
         } else {
-            //Check if card is valid
+            //* Check if card is valid
             const activeCardNumber = user.activeCard?.[0]?.split("_")[1]
             if (cardColor === actualCardColor || cardNumber === actualCardNumber || activeCardNumber === cardNumber) {
                 if (user.drawCard) {
@@ -393,7 +393,7 @@ module.exports = class Uno extends Command {
                     ephemeral: true
                 })
             } else {
-                //If the players is in draw and play an invalid card
+                //* If the players is in draw and play an invalid card
                 if (user.drawCard) {
                     user.cards.push(user.drawCard)
 
@@ -412,7 +412,7 @@ module.exports = class Uno extends Command {
                     })
                 }
 
-                //Invalid card
+                //* Invalid card
                 const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
 
                 await user?.reply?.editReply({
@@ -433,6 +433,7 @@ module.exports = class Uno extends Command {
         if (!gameData.config.multipleCard) return await cardsPlayed({ user, button, client, gameId, interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
 
         /*
+        Todo
         await button.deferUpdate()
 
         //If no more card
@@ -517,13 +518,13 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
 
     if (lastActiveCardNumber === "switch") {       
         clockwise = clockwise ? false : true
-    //Add two
+    //* Add two
     } else if (lastActiveCardNumber === "addTwo") {
         turn = switchTurn(playersData, turn, 1, clockwise)
 
         const drawerData = userTurn(turn)
 
-        //Add cards to drawer
+        //* Add cards to drawer
         for (let i = 0; i < 2 * activeCardLength; i++) {
             const drawCard = await genCard({ cards })
 
@@ -602,7 +603,7 @@ async function startGame({ client, gameId }) {
         }
     }
 
-    //Filter doesn't work
+    //* Filter doesn't work
     const filter = gameData.config.firstSpecialCard ? ["addFour"] : ["addFour", "newColor", "skip", "switch", "addTwo"]
     let { generatedCard: actualCard } = await genCard({ cards, filter })
     const actualCardId = actualCard.split("_")
@@ -611,7 +612,7 @@ async function startGame({ client, gameId }) {
 
     let actualUserTurn = userTurn(turn)
 
-    //If first card is addTwo
+    //* If first card is addTwo
     if (actualCardNumber === "addTwo") {
         actualUserTurn.isTurn = false
         
@@ -893,7 +894,7 @@ function sortCard(cards) {
     const colors = ["special", "blue", "red", "yellow", "green"]
     let card = []
 
-    //Regroup by color
+    //* Regroup by color
     for (let i = 0; i < colors.length; i++) {
         const filteredCard = cards.filter(x => x.split("_")[0] === colors[i])
     
@@ -903,10 +904,10 @@ function sortCard(cards) {
     let sortedCard = card.sort(sortByLength)
     card = []
 
-    //Sort by number inside array
+    //* Sort by number inside array
     for (let i = 0; i < sortedCard.length; i++) sortedCard[i].sort(sortByNumber)
 
-    //Concact
+    //* Concact
     for (let i = 0; i < sortedCard.length; i++) card = card.concat(sortedCard[i])
 
     return card
@@ -994,6 +995,8 @@ function switchTurn(playersData, turn, toAdd, clockwise) {
 }
 
 /*
+! Test zone
+
 const playersData = {
     "1": {},
     "2": {}
