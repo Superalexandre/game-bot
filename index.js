@@ -1,14 +1,15 @@
-/* Language */
+//* Language 
 const i18n = require("i18n")
 
-/* All clients */
+//* All clients
 const DiscordClient = require("./discord/index")
+//const InstaClient = require("./instagram/index")
 
-/* Logger */
+//* Logger
 const Logger = require("./logger")
 const logger = new Logger("compact")
 
-/* Database */
+//* Database
 const Enmap = require("enmap")
 
 const data = {
@@ -18,12 +19,12 @@ const data = {
     }
 }
 
-/* Util */
+//* Util 
 const path = require("path")
 const functions = require("./functions")
 const config = require("./config")
 
-/* Config languages */
+//* Config languages
 i18n.configure({
     locales: ["fr_FR"],
     directory: path.join(__dirname, "locales"),
