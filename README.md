@@ -22,13 +22,14 @@ A fun discord bot
 - [ ] GameData (50%)
     - [X] Probleme 1v1 changement de sens 
         => Ajouter skip turn 
-    - [ ] Pouvoir jouer plusieurs cartes
+    - [X] Pouvoir jouer plusieurs cartes
         => playersData[ id ].activesCard = []
         => Button click -> push id -> Green
         => If already click -> remove id -> Red
         => Play button -> remove card -> last card = active
         
-        => [ ] Probleme skip quand on en joue plusieurs 
+        => [X] Probleme switch quand on en joue plusieurs 
+        => [X] Probleme skip quand on en joue plusieurs 
         => [X] Probleme carte changement de couleur et +4
     - [ ] Pouvoir "surencherir" (+2, +4)
         => Don't skip and disable color
@@ -43,6 +44,10 @@ A fun discord bot
 - [ ] Si piocher et qu'une carte peut etre jouer envoyer un avertissement
 - [X] Gerer le end game
 - [ ] Pouvoir personnalisé sa config (/config uno)
+
+### Need test
+- [ ] Probleme skip quand on en joue plusieurs 
+- [ ] Probleme switch quand on en joue plusieurs 
 
 ### Puissance 4 
 - [ ] Jouer contre le bot
