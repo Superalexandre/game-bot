@@ -110,7 +110,7 @@ module.exports = class Uno extends Command {
             players: players
         }
 
-        allPlayersReady({ client, interaction, msg, gameData, i18n, cards, players })
+        return await allPlayersReady({ client, interaction, msg, gameData, i18n, cards, players })
     }
 
     async playCard({ client, gameId, button }) {
@@ -385,9 +385,9 @@ module.exports = class Uno extends Command {
         //* Not +4 and switch color
         } else {
             //* Check if card is valid
-            const [, activeCardNumber] = user.activeCard?.[0]?.split("_")
+            const activeCardNumber = user.activeCard?.[0]?.split("_")[1]
 
-            if (cardColor === actualCardColor || cardNumber === actualCardNumber || (activeCardNumber === cardNumber && !user.activeCard)) {
+            if (cardColor === actualCardColor || cardNumber === actualCardNumber || (activeCardNumber === cardNumber && user.activeCard.length > 1)) {
                 if (user.drawCard) {
                     user.drawCard = false
 
@@ -513,7 +513,7 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
             components: []
         })
 
-        await button.deferUpdate()
+        if (!button.deferred) await button.deferUpdate()
         return await client.games.uno.delete(gameId)
     }
 
@@ -527,7 +527,7 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
     if (lastActiveCardNumber === "switch") { 
         if (players.length === 2) turn = switchTurn(playersData, turn, 1, clockwise)
   
-        clockwise = clockwise ? false : true
+        clockwise = isEven(activeCardLength) ? clockwise : !clockwise
     //* Add two
     } else if (["addTwo", "addFour"].includes(lastActiveCardNumber)) {
         const numberOfDraw = lastActiveCardNumber === "addTwo" ? 2 : 4
@@ -550,7 +550,9 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
             components: makeRows({ buttonsData: drawerButton.buttons, gameData, page: drawerData.page, interaction, gameId, disable: false }),
             ephemeral: true
         })
-    } else if (lastActiveCardNumber === "skip") turn = switchTurn(playersData, turn, 1, clockwise)
+    } else if (lastActiveCardNumber === "skip") {
+        turn = switchMultipleTurn(playersData, turn, activeCardLength.length, clockwise, user.id)
+    }
 
     turn = switchTurn(playersData, turn, 1, clockwise)
     user.isTurn = false
@@ -1017,6 +1019,22 @@ function switchTurn(playersData, turn, toAdd, clockwise) {
     return (turn - players.length) + toAdd
 }
 
+function switchMultipleTurn(playersData, turn, toAdd, clockwise, user) {
+    const players = Object.keys(playersData)
+    let j = turn + toAdd
+
+    for (let i = turn; i < j; i++) {
+        const newTurn = switchTurn(playersData, turn, i, clockwise)
+    
+        if (players[newTurn] === user) j++
+
+        return newTurn
+    } 
+}
+
+function isEven(num) { 
+    return num % 2 === 0 ? true : false
+}
 /*
 ! Test zone
 

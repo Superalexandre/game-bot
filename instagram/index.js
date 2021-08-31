@@ -7,28 +7,6 @@ Message.prototype.createLikeCollector = (message, options) => {
     return collector
 }
 
-/*
-_patch (data) {
-        /**
-          @typedef {object} MessageLike
-         
-          @property {string} userID The user who added the like to the message
-          @property {number} timestamp The time the user added the like
-         /
-        /**
-         * @type {MessageLike[]}
-         * The likes on this message
-         /
-         this.likes = 'reactions' in data ? data.reactions.likes.map((r) => {
-            return {
-                userID: r.sender_id,
-                timestamp: r.timestamp
-            }
-        }) : []
-    }
-
-*/
-
 const client = new Insta.Client()
 
 client.on("connected", () => {
@@ -196,7 +174,7 @@ function genBoard({ board, userData, opponentData }) {
         for (let j = 0; j < board[i].length; j++) {
             if (board[i][j] === "⚪") allFill = false
 
-            /* Horizontal */
+            //* Horizontal
             if (!win && board[i][j] !== "⚪" && board[i][j] === board[i][j + 1] && board[i][j + 1] === board[i][j + 2] && board[i][j + 2] === board[i][j + 3]) {
                 winner = board[i][j]
 
@@ -208,7 +186,7 @@ function genBoard({ board, userData, opponentData }) {
                 board[i][j + 3] = winnerUser.winEmoji
 
                 win = true
-            /* Vertical */
+            //* Vertical
             } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j] && board[i + 2]?.[j] === board[i + 3]?.[j]) {
                 winner = board[i][j]
 
@@ -220,7 +198,7 @@ function genBoard({ board, userData, opponentData }) {
                 board[i + 3][j] = winnerUser.winEmoji
 
                 win = true
-            /* Diagonal Left top => Bottom right */
+            //* Diagonal Left top => Bottom right
             } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2] && board[i + 2]?.[j + 2] === board[i + 3]?.[j + 3]) {
                 winner = board[i][j]
 
@@ -232,7 +210,7 @@ function genBoard({ board, userData, opponentData }) {
                 board[i + 3][j + 3] = winnerUser.winEmoji
 
                 win = true
-            /* Diagonal Right top => Bottom left */
+            //* Diagonal Right top => Bottom left
             } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2] && board[i + 2]?.[j - 2] === board[i + 3]?.[j - 3]) {
                 winner = board[i][j]
 
