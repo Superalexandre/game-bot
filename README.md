@@ -58,6 +58,8 @@ A fun discord bot
 ### Release
 - [ ] Release
 
+### Sodoku
+- [ ] https://github.com/robatron/sudoku.js
 ### Tetris
 - [ ] https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4
 
