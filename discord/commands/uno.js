@@ -102,7 +102,7 @@ module.exports = class Uno extends Command {
         const gameData = {
             config: {
                 firstSpecialCard: true,
-                multipleCard: false,
+                multipleCard: true,
                 outbid: true,
                 bluffing: true
             },
@@ -387,6 +387,11 @@ module.exports = class Uno extends Command {
             //* Check if card is valid
             const activeCardNumber = user.activeCard?.[0]?.split("_")[1]
 
+            //! Error : Multiple card
+            //! 
+
+            console.log(cardColor === actualCardColor, cardNumber === actualCardNumber, (activeCardNumber === cardNumber && user.activeCard.length > 1), user.activeCard.length)
+
             if (cardColor === actualCardColor || cardNumber === actualCardNumber || (activeCardNumber === cardNumber && user.activeCard.length > 1)) {
                 if (user.drawCard) {
                     user.drawCard = false
@@ -551,7 +556,11 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
             ephemeral: true
         })
     } else if (lastActiveCardNumber === "skip") {
-        turn = switchMultipleTurn(playersData, turn, activeCardLength.length, clockwise, user.id)
+        let result = await switchMultipleTurn(playersData, turn, activeCardLength.length, clockwise, user.id)
+    
+        turn = result
+
+        console.log("result", result)
     }
 
     turn = switchTurn(playersData, turn, 1, clockwise)
@@ -1019,17 +1028,22 @@ function switchTurn(playersData, turn, toAdd, clockwise) {
     return (turn - players.length) + toAdd
 }
 
-function switchMultipleTurn(playersData, turn, toAdd, clockwise, user) {
+async function switchMultipleTurn(playersData, turn, toAdd, clockwise, user) {
     const players = Object.keys(playersData)
     let j = turn + toAdd
+    let newTurnNumber = null
 
     for (let i = turn; i < j; i++) {
-        const newTurn = switchTurn(playersData, turn, i, clockwise)
+        const newTurn = await switchTurn(playersData, turn, i, clockwise)
     
+        console.log("newTurn", newTurn)
+
         if (players[newTurn] === user) j++
 
-        return newTurn
+        newTurnNumber = newTurn
     } 
+
+    return newTurnNumber
 }
 
 function isEven(num) { 
