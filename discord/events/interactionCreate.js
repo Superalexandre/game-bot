@@ -19,10 +19,11 @@ module.exports = class interactionCreate {
 
         const cmd = client.commands.get(interaction.commandName) || client.commands.get(client.aliases.get(interaction.commandName))
 
-        if (!cmd) return interaction.reply({
-            content: i18n.__("error.unknowCommand"),
-            ephemeral: true
-        })
+        if (!cmd)
+            return interaction.reply({
+                content: i18n.__("error.unknowCommand"),
+                ephemeral: true
+            })
 
         await interaction.deferReply({
             //content: "Partie lancée ✅",
@@ -31,37 +32,40 @@ module.exports = class interactionCreate {
 
         try {
             const messageTime = (Date.now() - start) / 1000
-        
-            return await cmd.run({
-                client: client,
-                interaction: interaction,
-                options: interaction.options,
-                i18n: i18n,
-                data: data,
-                userData: userData,
-        
-                util: {
-                    messageTimeProcessing: messageTime,
-                    startMessageProcessing: start
-                }
-            }).then(() => {
-                client.logger.commandLog({ message: cmd.help.name } /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/)
-            }).catch(error => {
-                interaction.reply({ 
-                    content: i18n.__("error.errorOccured", { error: error.toString() }), 
-                    ephemeral: true,
-                    allowedMentions: { repliedUser: false } 
+
+            return await cmd
+                .run({
+                    client: client,
+                    interaction: interaction,
+                    options: interaction.options,
+                    i18n: i18n,
+                    data: data,
+                    userData: userData,
+
+                    util: {
+                        messageTimeProcessing: messageTime,
+                        startMessageProcessing: start
+                    }
                 })
-        
-                client.logger.error({ message: error })
-            })
-        } catch(error) {
-            interaction.reply({ 
-                content: i18n.__("error.errorOccured", { error: error.toString() }), 
+                .then(() => {
+                    client.logger.commandLog({ message: cmd.help.name } /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/)
+                })
+                .catch(error => {
+                    interaction.reply({
+                        content: i18n.__("error.errorOccured", { error: error.toString() }),
+                        ephemeral: true,
+                        allowedMentions: { repliedUser: false }
+                    })
+
+                    client.logger.error({ message: error })
+                })
+        } catch (error) {
+            interaction.reply({
+                content: i18n.__("error.errorOccured", { error: error.toString() }),
                 ephemeral: true,
-                allowedMentions: { repliedUser: false } 
+                allowedMentions: { repliedUser: false }
             })
-        
+
             client.logger.error({ message: error })
         }
     }

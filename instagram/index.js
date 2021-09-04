@@ -13,7 +13,7 @@ client.on("connected", () => {
     console.log(`Logged in as ${client.user.username}`)
 })
 
-client.on("messageCreate", async(message) => {
+client.on("messageCreate", async message => {
     if (message.author.id === client.user.id) return
 
     const args = message.content.split(/ +/g).slice(1)
@@ -23,24 +23,24 @@ client.on("messageCreate", async(message) => {
 
     if (message.content.startsWith("!puissance4") || message.content.startsWith("!p4")) {
         let opponent
-        
+
         try {
             opponent = await client.fetchUser(args[0])
-        } catch(error) {
+        } catch (error) {
             return await message.chat.sendMessage("Aucun utilisateur n'a été trouvé")
         }
 
         if (!message.chat.isGroup) return await message.chat.sendMessage("Oh non vous devez être dans un groupe pour effectuer cette commande")
-    
+
         if (message.author.id === opponent.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre vous meme !")
 
         if (opponent.id === client.user.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre moi")
-    
+
         if (!message.chat.users.has(opponent.id)) return await message.chat.sendMessage("La personne doit être presente dans le groupe")
 
         if (message.chat.puissance4) return await message.chat.sendMessage(`Désolé @${message.author.username} une partie est deja en cours`)
 
-        return opponentReady({ message, opponent })    
+        return opponentReady({ message, opponent })
     } else if (message.content.startsWith("!eval") && message.author.id === 18291915089) {
         if (!args[0]) return await message.chat.sendMessage("Veuillez saisir un argument")
         let toExecute = message.content.split(" ").slice(1)
@@ -48,29 +48,31 @@ client.on("messageCreate", async(message) => {
         if (argsOptions.length > 0) toExecute = toExecute.slice(0, toExecute.length - (argsOptions.length - 1))
 
         const content = toExecute.join(" ")
-        const result = new Promise((resolve) => resolve(eval(content)))
+        const result = new Promise(resolve => resolve(eval(content)))
 
-        return result.then(async(output) => {
-            if (typeof output !== "string") output = require("util").inspect(output, { depth: 0 })
-            
-            if (argsOptions[0] === "result" && !["yes", "true"].includes(argsOptions[1])) return 
+        return result
+            .then(async output => {
+                if (typeof output !== "string") output = require("util").inspect(output, { depth: 0 })
 
-            return await message.chat.sendMessage(output)
-        }).catch(async(err) => {
-            err = err.toString()
-            
-            return await message.chat.sendMessage(err)
-        })
+                if (argsOptions[0] === "result" && !["yes", "true"].includes(argsOptions[1])) return
+
+                return await message.chat.sendMessage(output)
+            })
+            .catch(async err => {
+                err = err.toString()
+
+                return await message.chat.sendMessage(err)
+            })
     }
 })
 
 async function opponentReady({ message, opponent }) {
     const msg = await message.chat.sendMessage(`@${opponent.username} aimez ce message dès que vous êtes prêt(e)\n\n${message.author.username} si vous voulez annuler la demander liker ce message`)
 
-    const filter = (like) => [opponent.id, message.author.id].includes(like.id)
+    const filter = like => [opponent.id, message.author.id].includes(like.id)
     const collector = message.createLikeCollector(msg, { filter })
 
-    collector.on("likeAdded", async(like) => {
+    collector.on("likeAdded", async like => {
         await collector.end()
 
         if (like.id === message.author.id) return await message.chat.sendMessage(`${message.author.username} a annuler la demande de partie`)
@@ -87,7 +89,7 @@ async function startGame({ message, opponent }) {
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"]
     ]
 
     let userData = {
@@ -97,7 +99,7 @@ async function startGame({ message, opponent }) {
         emoji: "🔴",
         winEmoji: "🔴"
     }
-    
+
     let opponentData = {
         id: opponent.id,
         username: opponent.username,
@@ -111,10 +113,10 @@ async function startGame({ message, opponent }) {
 
     await message.chat.sendMessage(text(userData, opponentData) + formatedBoard.string)
 
-    const filter = (msg) => [opponentData.id, userData.id].includes(msg.author.id) && ["1", "2", "3", "4", "5", "6", "7", "stop"].includes(msg.content.toLowerCase())
+    const filter = msg => [opponentData.id, userData.id].includes(msg.author.id) && ["1", "2", "3", "4", "5", "6", "7", "stop"].includes(msg.content.toLowerCase())
     const collector = message.createMessageCollector({ filter })
 
-    collector.on("message", async(msg) => {
+    collector.on("message", async msg => {
         if (msg.content.toLowerCase() === "stop") {
             message.chat.puissance4 = false
             await collector.end()
@@ -170,7 +172,7 @@ function genBoard({ board, userData, opponentData }) {
 
     const emoteNumber = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]
 
-    for (let i = 0; i < board.length; i++) {   
+    for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
             if (board[i][j] === "⚪") allFill = false
 
@@ -186,7 +188,7 @@ function genBoard({ board, userData, opponentData }) {
                 board[i][j + 3] = winnerUser.winEmoji
 
                 win = true
-            //* Vertical
+                //* Vertical
             } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j] && board[i + 2]?.[j] === board[i + 3]?.[j]) {
                 winner = board[i][j]
 
@@ -198,7 +200,7 @@ function genBoard({ board, userData, opponentData }) {
                 board[i + 3][j] = winnerUser.winEmoji
 
                 win = true
-            //* Diagonal Left top => Bottom right
+                //* Diagonal Left top => Bottom right
             } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2] && board[i + 2]?.[j + 2] === board[i + 3]?.[j + 3]) {
                 winner = board[i][j]
 
@@ -210,7 +212,7 @@ function genBoard({ board, userData, opponentData }) {
                 board[i + 3][j + 3] = winnerUser.winEmoji
 
                 win = true
-            //* Diagonal Right top => Bottom left
+                //* Diagonal Right top => Bottom left
             } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2] && board[i + 2]?.[j - 2] === board[i + 3]?.[j - 3]) {
                 winner = board[i][j]
 
@@ -251,9 +253,9 @@ function add({ board, emoji, row }) {
             }
         }
     }
-    
+
     board.reverse()
-    
+
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
             string += board[i][j]
@@ -262,7 +264,6 @@ function add({ board, emoji, row }) {
         if (i === board.length - 1) string += "\n" + emoteNumber.join("")
         string += "\n"
     }
-
 
     if (!placed) return { error: "row_full", board, string }
 
