@@ -32,7 +32,7 @@ async function startGame({ interaction, i18n, word }) {
 	let error = 0
 	let errorText = ""
 
-    const pendu = [
+	const pendu = [
 		``, 
 		`───┴──────`, 
 			
