@@ -14,19 +14,14 @@ module.exports = class Rockpaperscissors extends Command {
 
         if (!opponent || opponent.id === client.user.id) return playWithBot({ i18n, interaction, client })
 
-        if (opponent.bot || opponent.id === interaction.user.id) return await interaction.editReply({
-            content: i18n.__("error.invalidOpponent")
-        })
+        if (opponent.bot || opponent.id === interaction.user.id)
+            return await interaction.editReply({
+                content: i18n.__("error.invalidOpponent")
+            })
 
-        const ready = new MessageButton()
-            .setStyle("SUCCESS")
-            .setLabel(i18n.__("global.yes"))
-            .setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_ready`)
-    
-        const notReady = new MessageButton()
-            .setStyle("DANGER")
-            .setLabel(i18n.__("global.no"))
-            .setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_notready`)
+        const ready = new MessageButton().setStyle("SUCCESS").setLabel(i18n.__("global.yes")).setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_ready`)
+
+        const notReady = new MessageButton().setStyle("DANGER").setLabel(i18n.__("global.no")).setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_notready`)
 
         const readyButtons = new MessageActionRow().addComponents(ready, notReady)
 
@@ -40,15 +35,9 @@ module.exports = class Rockpaperscissors extends Command {
 }
 
 async function playWithBot({ i18n, interaction, client }) {
-    const yes = new MessageButton()
-        .setStyle("SUCCESS")
-        .setLabel(i18n.__("global.yes"))
-        .setCustomId(`game_rps_${interaction.user.id}_yes`)
+    const yes = new MessageButton().setStyle("SUCCESS").setLabel(i18n.__("global.yes")).setCustomId(`game_rps_${interaction.user.id}_yes`)
 
-    const no = new MessageButton()
-        .setStyle("DANGER")
-        .setLabel(i18n.__("global.no"))
-        .setCustomId(`game_rps_${interaction.user.id}_no`)
+    const no = new MessageButton().setStyle("DANGER").setLabel(i18n.__("global.no")).setCustomId(`game_rps_${interaction.user.id}_no`)
 
     const row = new MessageActionRow().addComponents(yes, no)
 
@@ -59,13 +48,14 @@ async function playWithBot({ i18n, interaction, client }) {
 
     const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
 
-    collector.on("collect", async(button) => {
+    collector.on("collect", async button => {
         if (!button.user) await button.user.fetch()
 
-        if (button.user.id !== interaction.user.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: "rockpaperscissors" }),
-            ephemeral: true
-        })
+        if (button.user.id !== interaction.user.id)
+            return await button.reply({
+                content: i18n.__("global.notYourGame", { gameName: "rockpaperscissors" }),
+                ephemeral: true
+            })
 
         if (button.customId.endsWith("no")) {
             await collector.stop()
@@ -87,13 +77,14 @@ async function playWithBot({ i18n, interaction, client }) {
 async function opponentReady({ i18n, interaction, msg, opponent, client }) {
     const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
 
-    collector.on("collect", async(button) => {
+    collector.on("collect", async button => {
         if (!button.user) await button.user.fetch()
 
-        if (button.user.id !== opponent.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: "rockpaperscissors" }), 
-            ephemeral: true
-        })
+        if (button.user.id !== opponent.id)
+            return await button.reply({
+                content: i18n.__("global.notYourGame", { gameName: "rockpaperscissors" }),
+                ephemeral: true
+            })
 
         if (button.customId.endsWith("notready")) {
             await collector.stop()
@@ -118,13 +109,13 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         username: interaction.user.username,
         choice: ""
     }
-    
+
     let opponentData = {
         id: opponent.id,
         username: opponent.username,
         choice: ""
     }
-    
+
     const win = {
         paper: "rock",
         scissors: "paper",
@@ -135,20 +126,11 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
 
     if (opponent.id === client.user.id) opponentData.choice = choices[Math.floor(Math.random() * choices.length)]
 
-    const rock = new MessageButton()
-        .setStyle("PRIMARY")
-        .setLabel(i18n.__("rockpaperscissors.sign.rock"))
-        .setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_rock`)
+    const rock = new MessageButton().setStyle("PRIMARY").setLabel(i18n.__("rockpaperscissors.sign.rock")).setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_rock`)
 
-    const paper = new MessageButton()
-        .setStyle("PRIMARY")
-        .setLabel(i18n.__("rockpaperscissors.sign.paper"))
-        .setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_paper`)
+    const paper = new MessageButton().setStyle("PRIMARY").setLabel(i18n.__("rockpaperscissors.sign.paper")).setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_paper`)
 
-    const scissors = new MessageButton()
-        .setStyle("PRIMARY")
-        .setLabel(i18n.__("rockpaperscissors.sign.scissors"))
-        .setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_scissors`)
+    const scissors = new MessageButton().setStyle("PRIMARY").setLabel(i18n.__("rockpaperscissors.sign.scissors")).setCustomId(`game_rps_${interaction.user.id}_${opponent.id}_scissors`)
 
     const row = new MessageActionRow().addComponents(rock, paper, scissors)
 
@@ -159,13 +141,14 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
 
     const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
 
-    collector.on("collect", async(button) => {
+    collector.on("collect", async button => {
         if (!button.user) await button.user.fetch()
 
-        if (![interaction.user.id, opponent.id].includes(button.user.id)) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: "rockpaperscissors" }),
-            ephemeral: true
-        })
+        if (![interaction.user.id, opponent.id].includes(button.user.id))
+            return await button.reply({
+                content: i18n.__("global.notYourGame", { gameName: "rockpaperscissors" }),
+                ephemeral: true
+            })
 
         const uId = button.user.id
         const id = button.customId.split("_")
@@ -191,8 +174,8 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
                 const opponentChoice = i18n.__(`rockpaperscissors.sign.${opponentData.choice}`)
 
                 return await msg.edit({
-                    content: i18n.__("rockpaperscissors.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username, userChoice, opponentChoice }), 
-                    components: [] 
+                    content: i18n.__("rockpaperscissors.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username, userChoice, opponentChoice }),
+                    components: []
                 })
             } else {
                 const winner = win[opponentData.choice] === userData.choice ? opponentData : userData
@@ -202,8 +185,8 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
                 const looserChoice = i18n.__(`rockpaperscissors.sign.${looser.choice}`)
 
                 return await msg.edit({
-                    content: i18n.__("rockpaperscissors.result.win", { winnerUsername: winner.username, looserUsername: looser.username, winnerChoice, looserChoice }), 
-                    components: [] 
+                    content: i18n.__("rockpaperscissors.result.win", { winnerUsername: winner.username, looserUsername: looser.username, winnerChoice, looserChoice }),
+                    components: []
                 })
             }
         }

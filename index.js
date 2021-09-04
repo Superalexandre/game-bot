@@ -1,4 +1,4 @@
-//* Language 
+//* Language
 const i18n = require("i18n")
 
 //* All clients
@@ -19,7 +19,7 @@ const data = {
     }
 }
 
-//* Util 
+//* Util
 const path = require("path")
 const functions = require("./functions")
 const config = require("./config")
@@ -36,16 +36,16 @@ i18n.configure({
     logWarnFn: function (msg) {
         logger.warn({ message: "i18n warn " + msg })
     },
-  
+
     logErrorFn: function (msg) {
         logger.error({ message: "i18n error " + msg })
     },
-  
-    missingKeyFn: function(locale, value) {
+
+    missingKeyFn: function (locale, value) {
         logger.error({ message: `MissingKey: La valeur ${value} est manquante dans la langue ${locale}` })
 
         i18n.setLocale(locale)
-    
+
         return i18n.__("error.missingTranslation")
     },
 

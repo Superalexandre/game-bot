@@ -1,6 +1,6 @@
 const Command = require("../structures/Command")
 const sudoku = require("sudoku-umd")
-const { MessageButton, MessageActionRow, MessageEmbed  } = require("discord.js")
+const { MessageButton, MessageActionRow, MessageEmbed } = require("discord.js")
 
 module.exports = class Sudoku extends Command {
     constructor(client) {
@@ -83,9 +83,7 @@ module.exports = class Sudoku extends Command {
 
         const gameInfo = await genInfo({ grid, emotes, interaction })
 
-        const embed = new MessageEmbed()
-            .setTitle("Sudoku de " + interaction.user.username)
-            .setDescription(`Difficulté : ${playerInfo.difficulty}\nLigne : ${playerInfo.line ?? "Pas sélectionnée"}\nColonne : ${playerInfo.column ?? "Pas sélectionnée"}\nChiffre : ${playerInfo.column && playerInfo.line ? "séleectionnée le" : "A choisir après"}\n\n` + gameInfo.string + `${playerInfo.error ? `\n${playerInfo.error}` : ""}`)
+        const embed = new MessageEmbed().setTitle("Sudoku de " + interaction.user.username).setDescription(`Difficulté : ${playerInfo.difficulty}\nLigne : ${playerInfo.line ?? "Pas sélectionnée"}\nColonne : ${playerInfo.column ?? "Pas sélectionnée"}\nChiffre : ${playerInfo.column && playerInfo.line ? "séleectionnée le" : "A choisir après"}\n\n` + gameInfo.string + `${playerInfo.error ? `\n${playerInfo.error}` : ""}`)
 
         const msg = await interaction.channel.send({
             embeds: [embed],
@@ -93,34 +91,33 @@ module.exports = class Sudoku extends Command {
         })
 
         const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
-    
-        collector.on("collect", async (button) => {
+
+        collector.on("collect", async button => {
             if (!button.user) await button.user.fetch()
             if (!interaction.user) await interaction.user.fetch()
 
-            if (button.user.id !== interaction.user.id) return await button.reply({
-                content: i18n.__("global.notYourGame", { gameName: "memory" }),
-                ephemeral: true
-            })
+            if (button.user.id !== interaction.user.id)
+                return await button.reply({
+                    content: i18n.__("global.notYourGame", { gameName: "memory" }),
+                    ephemeral: true
+                })
 
             const mainText = (playerInfo, gameInfo) => `Difficulté : ${playerInfo.difficulty}\nLigne : ${playerInfo.line ?? "Pas sélectionnée"}\nColonne : ${playerInfo.column ?? "Pas sélectionnée"}\nChiffre : ${playerInfo.column && playerInfo.line ? "séleectionnée le" : "A choisir après"}\n\n` + gameInfo.string + `${playerInfo.error ? `\n${playerInfo.error}` : ""}`
 
-            const [,,, idNumber] = button.customId.split("_")
+            const [, , , idNumber] = button.customId.split("_")
             const number = parseInt(idNumber)
-    
+
             //* Back
             if (number === 10) {
                 if (playerInfo.column) {
                     playerInfo.column = undefined
                 } else if (playerInfo.line) playerInfo.line = undefined
-            
+
                 const gameInfo = await genInfo({ grid, emotes, interaction, highlightedLine: playerInfo.line, highlightedColumn: playerInfo.column })
 
                 await button.deferUpdate()
 
-                const embed = new MessageEmbed()
-                    .setTitle("Sudoku de " + interaction.user.username)
-                    .setDescription(mainText(playerInfo, gameInfo))
+                const embed = new MessageEmbed().setTitle("Sudoku de " + interaction.user.username).setDescription(mainText(playerInfo, gameInfo))
 
                 return await msg.edit({
                     embeds: [embed],
@@ -148,11 +145,8 @@ module.exports = class Sudoku extends Command {
 
                     await button.deferUpdate()
 
-                    const embed = new MessageEmbed()
-                        .setTitle("Sudoku de " + interaction.user.username)
-                        .setDescription(`Bravo ${interaction.user.username} vous avez gagner en difficulté ${playerInfo.difficulty} !\n\n` + gameInfo.string)
+                    const embed = new MessageEmbed().setTitle("Sudoku de " + interaction.user.username).setDescription(`Bravo ${interaction.user.username} vous avez gagner en difficulté ${playerInfo.difficulty} !\n\n` + gameInfo.string)
 
-                    
                     return await msg.edit({
                         embeds: [embed],
                         components: []
@@ -163,9 +157,7 @@ module.exports = class Sudoku extends Command {
 
                 await button.deferUpdate()
 
-                const embed = new MessageEmbed()
-                    .setTitle("Sudoku de " + interaction.user.username)
-                    .setDescription(mainText(playerInfo, gameInfo))
+                const embed = new MessageEmbed().setTitle("Sudoku de " + interaction.user.username).setDescription(mainText(playerInfo, gameInfo))
 
                 return await msg.edit({
                     embeds: [embed],
@@ -182,9 +174,7 @@ module.exports = class Sudoku extends Command {
 
                 await button.deferUpdate()
 
-                const embed = new MessageEmbed()
-                    .setTitle("Sudoku de " + interaction.user.username)
-                    .setDescription(mainText(playerInfo, gameInfo))
+                const embed = new MessageEmbed().setTitle("Sudoku de " + interaction.user.username).setDescription(mainText(playerInfo, gameInfo))
 
                 return await msg.edit({
                     embeds: [embed],
@@ -204,7 +194,7 @@ module.exports = class Sudoku extends Command {
                 //* If already occuped but base
                 const type = grid[playerInfo.line - 1][playerInfo.column - 1].split("-")
 
-                if (grid[playerInfo.line - 1][playerInfo.column - 1] !== "." && (!type[1] && !["false", "placed"].includes(type[1]))) {              
+                if (grid[playerInfo.line - 1][playerInfo.column - 1] !== "." && !type[1] && !["false", "placed"].includes(type[1])) {
                     playerInfo.column = undefined
                     playerInfo.error = "Désolé mais vous ne pouvez pas choisir cette case"
                 }
@@ -222,16 +212,11 @@ module.exports = class Sudoku extends Command {
 
             await button.deferUpdate()
 
-            const embed = new MessageEmbed()
-                .setTitle("Sudoku de " + interaction.user.username)
-                .setDescription(mainText(playerInfo, gameInfo))
+            const embed = new MessageEmbed().setTitle("Sudoku de " + interaction.user.username).setDescription(mainText(playerInfo, gameInfo))
 
             const components = gameInfo.components
             if (gameInfo.allFilled) {
-                const buttons = new MessageButton()
-                    .setCustomId(`game_sudoku_${interaction.user.id}_check`)
-                    .setLabel("Verifier")
-                    .setStyle("SUCCESS")
+                const buttons = new MessageButton().setCustomId(`game_sudoku_${interaction.user.id}_check`).setLabel("Verifier").setStyle("SUCCESS")
 
                 gameInfo.components[2].addComponents(buttons)
             }
@@ -250,11 +235,11 @@ async function genInfo({ grid, emotes, interaction, highlightedLine, highlighted
 
     for (let i = 0; i < grid.length; i++) {
         //* White line
-        if ((i % 3 === 0) && i > 0) string += emotes["blue"]["space"].repeat(grid[i].length + 2) + "\n"
+        if (i % 3 === 0 && i > 0) string += emotes["blue"]["space"].repeat(grid[i].length + 2) + "\n"
 
         for (let j = 0; j < grid[i].length; j++) {
             //* White line
-            if ((j % 3 === 0) && j > 0) string += emotes["blue"]["space"]
+            if (j % 3 === 0 && j > 0) string += emotes["blue"]["space"]
 
             let color = "blue"
 
@@ -286,7 +271,6 @@ async function genInfo({ grid, emotes, interaction, highlightedLine, highlighted
             .setCustomId(`game_sudoku_${interaction.user.id}_${i}`)
             .setStyle(i === 10 ? "DANGER" : "PRIMARY")
             .setLabel(i === 10 ? "Retour" : `${i}`)
-
 
         i - 1 >= 5 ? numberComponents2.addComponents(button) : numberComponents1.addComponents(button)
     }

@@ -1,9 +1,9 @@
-const Client = require("./structures/Client") 
-const {Intents} = require("discord.js")
-const client = new Client({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES,Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] })
+const Client = require("./structures/Client")
+const { Intents } = require("discord.js")
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] })
 const { readdir } = require("fs")
 
-module.exports.load = async(data, functions, logger) => {
+module.exports.load = async (data, functions, logger) => {
     client.functions = functions
     client.data = data
     client.logger = logger
@@ -13,9 +13,9 @@ module.exports.load = async(data, functions, logger) => {
 
         if (files.length <= 0) return client.logger.error({ message: "Aucun evenement n'a été trouvé" })
 
-        const events = files.filter((ext) => ext.split(".").pop() === "js")
+        const events = files.filter(ext => ext.split(".").pop() === "js")
 
-        for (let i = 0; i < events.length; i++)  {
+        for (let i = 0; i < events.length; i++) {
             const event = new (require("./events/" + events[i]))(client)
             const eventName = events[i].split(".")[0]
 
@@ -40,15 +40,15 @@ module.exports.load = async(data, functions, logger) => {
             client.commands.set(command.help.name, command)
 
             for (let j = 0; j < command.help.aliases.length; j++) {
-                client.aliases.set(command.help.aliases[j], command.help.name)  
+                client.aliases.set(command.help.aliases[j], command.help.name)
             }
 
             delete require.cache[require.resolve("./commands/" + commands[i])]
         }
     })
 
-    client.on("warn", (message) => client.logger.warn({ message: message }))
-    client.on("error", (message) => client.logger.error({ message: message }))
+    client.on("warn", message => client.logger.warn({ message: message }))
+    client.on("error", message => client.logger.error({ message: message }))
 
     client.login(client.config.tokens.discord)
 }

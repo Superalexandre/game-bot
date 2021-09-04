@@ -62,8 +62,7 @@ module.exports = class Memory extends Command {
         const emojiMap = []
 
         /* Get a random emote and push two times in emojiMap */
-        for (let i = 0; i < (row * line / 2); i++) {
-
+        for (let i = 0; i < (row * line) / 2; i++) {
             let emote = emotes[Math.floor(Math.random() * emotes.length)]
 
             if (emojiMap.includes(emote)) emote = "⁉️"
@@ -92,19 +91,11 @@ module.exports = class Memory extends Command {
 
             const emote = randomEmojiMap[i]
 
-            const button = new MessageButton()
-                .setStyle("PRIMARY")
-                .setEmoji(emote)
-                .setCustomId(`game_memory_${interaction.user.id}_${emote}_${i}`)
-                .setDisabled(true)
+            const button = new MessageButton().setStyle("PRIMARY").setEmoji(emote).setCustomId(`game_memory_${interaction.user.id}_${emote}_${i}`).setDisabled(true)
 
             await rows[rowID].addComponents(button)
 
-            const questionButton = new MessageButton()
-                .setStyle("PRIMARY")
-                .setEmoji("❓")
-                .setCustomId(`game_memory_${interaction.user.id}_${emote}_${i}`)
-                .setDisabled(false)
+            const questionButton = new MessageButton().setStyle("PRIMARY").setEmoji("❓").setCustomId(`game_memory_${interaction.user.id}_${emote}_${i}`).setDisabled(false)
 
             await questionRows[rowID].addComponents(questionButton)
 
@@ -140,14 +131,15 @@ module.exports = class Memory extends Command {
         }
 
         let findNumber = 0
-        collector.on("collect", async (button) => {
+        collector.on("collect", async button => {
             if (!button.user) await button.user.fetch()
             if (!interaction.user) await interaction.user.fetch()
 
-            if (button.user.id !== interaction.user.id) return await button.reply({
-                content: i18n.__("global.notYourGame", { gameName: "memory" }),
-                ephemeral: true
-            })
+            if (button.user.id !== interaction.user.id)
+                return await button.reply({
+                    content: i18n.__("global.notYourGame", { gameName: "memory" }),
+                    ephemeral: true
+                })
 
             clickNumber = clickNumber - 1
 
@@ -199,10 +191,7 @@ module.exports = class Memory extends Command {
                         continue
                     }
 
-                    button
-                        .setEmoji(buttonInfo[3])
-                        .setStyle("PRIMARY")
-                        .setDisabled()
+                    button.setEmoji(buttonInfo[3]).setStyle("PRIMARY").setDisabled()
 
                     updatedRows[i + 1].addComponents(button)
 
@@ -246,15 +235,13 @@ async function wait(ms) {
 }
 
 function shuffle(array) {
-    let currentIndex = array.length, randomIndex
+    let currentIndex = array.length,
+        randomIndex
 
     while (0 !== currentIndex) {
         randomIndex = Math.floor(Math.random() * currentIndex)
         currentIndex--
-
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex], array[currentIndex]
-        ]
+        ;[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]
     }
 
     return array

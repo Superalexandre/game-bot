@@ -1,7 +1,7 @@
 const { EventEmitter } = require("events")
 
 module.exports = class LikeCollector extends EventEmitter {
-    constructor (message, { filter, idle }) {
+    constructor(message, { filter, idle }) {
         super()
 
         this.client = message.chat.client
@@ -17,11 +17,11 @@ module.exports = class LikeCollector extends EventEmitter {
         this.client.on("likeAdd", this.handleLike)
     }
 
-    async handleLike (user, message) {
+    async handleLike(user, message) {
         if (this.ended) return
 
-        const valid = await this.filter(user) && this.message.id === message.id
-        
+        const valid = (await this.filter(user)) && this.message.id === message.id
+
         if (valid) {
             this.emit("likeAdded", user, message)
 
@@ -32,7 +32,7 @@ module.exports = class LikeCollector extends EventEmitter {
         }
     }
 
-    async end (reason) {
+    async end(reason) {
         this.ended = true
 
         if (this._idleTimeout) clearTimeout(this._idleTimeout)
@@ -41,7 +41,7 @@ module.exports = class LikeCollector extends EventEmitter {
         this.emit("end", reason)
     }
 
-    toJSON () {
+    toJSON() {
         return {
             client: this.client.toJSON(),
             chatID: this.chat.id,
