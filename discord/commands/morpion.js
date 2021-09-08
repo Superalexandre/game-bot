@@ -68,7 +68,7 @@ async function playWithBot({ i18n, interaction, client }) {
             ephemeral: true
         })
 
-        if (button.id.endsWith("no")) {
+        if (button.customId.endsWith("no")) {
             await collector.stop()
 
             return await msg.edit({
