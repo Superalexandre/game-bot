@@ -54,7 +54,7 @@ module.exports = class Tetris extends Command {
         ]
         
         const numberLine = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
-        const board = [
+        let board = [
             //      1    2    3    4    5    6    7    8    9    10
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*1*/
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*2*/
@@ -80,43 +80,14 @@ module.exports = class Tetris extends Command {
         
         let playerData = {
             user: interaction.user,
-            piece: pieces[Math.floor(Math.random() * pieces.length)]
-        }
-
-        function toString(piece) {
-            let string = ""
-        
-            for (let i = 0; i < piece.length; i++) {
-                for (let j = 0; j < piece[i].length; j++) {
-                    string += piece[i][j]
-                }
-                
-                string += "\n"
-            }
-        
-            return string
+            piece: pieces[Math.floor(Math.random() * pieces.length)],
+            x: 0,
+            y: 0
         }
         
-        function rotate(piece, clockwise) {
-            if (clockwise === undefined) clockwise = false
-            let result = Array.from(piece[0], x => Array.from(piece, y => false))
-            let newRow, newCol
-
-            for (let col = 0; col < piece[0].length; col++) {
-                for (let row = 0; row < piece.length; row++) {
-                    newRow = clockwise ? piece.length - row - 1 : row
-                    newCol = clockwise ? col : piece[0].length - col - 1
-                
-                    result[col][row] = piece[newRow][newCol]
-                }
-            }
-            
-            return result
-        }
-        
-        function copyArray(array) {
-            return JSON.parse(JSON.stringify(array))
-        }
+        //function copyArray(array) {
+        //    return JSON.parse(JSON.stringify(array))
+        //}
         
         //TODO
         //function place(piece, board, col) {
@@ -149,23 +120,33 @@ module.exports = class Tetris extends Command {
         //    .setStyle("PRIMARY")
         //    .setEmoji("🔽")
 
+        //* Place piece
+        board = place(playerData.x, playerData.y, playerData.piece, board)
+
+        //* Create all buttons
         const leftArrow = new MessageButton()
             .setCustomId(`game_tetris_${interaction.user.id}_left`)
             .setStyle("PRIMARY")
             .setEmoji("◀️")
+            .setDisabled(canPlace(playerData.y, "left", 1, playerData.piece, board))
 
         const rightArrow = new MessageButton()
             .setCustomId(`game_tetris_${interaction.user.id}_right`)
             .setStyle("PRIMARY")
             .setEmoji("▶️")
+            .setDisabled(canPlace(playerData.y, "right", 1, playerData.piece, board))
 
         const buttons = new MessageButton()
-            .setCustomId("rotate")
+            .setCustomId(`game_tetris_${interaction.user.id}_rotate`)
             .setEmoji("🔄")
             .setStyle("PRIMARY")
 
-        const components = new MessageActionRow()
-            .addComponents(leftArrow, rightArrow, buttons)
+        const valid = new MessageButton()
+            .setCustomId(`game_tetris_${interaction.user.id}_valid`)
+            .setEmoji("✅")
+            .setStyle("SUCCESS")
+
+        let components = new MessageActionRow().addComponents(leftArrow, rightArrow, buttons, valid)
 
         const formattedBoard = toString(board)
         const embed = new MessageEmbed()
@@ -189,9 +170,19 @@ module.exports = class Tetris extends Command {
 
             })
 
-            if (button.customId === "rotate") {
-                playerData.piece = rotate(playerData.piece, false)
+            const id = button.customId.split("_")
 
+            if (id[id.length - 1] === "rotate") {
+                //* Remove before piece
+                board = remove(playerData.x, playerData.y, playerData.piece, board)
+                
+                //* Rotate
+                playerData.piece = rotate(playerData.piece, false)             
+                
+                //* Place
+                board = place(playerData.x, playerData.y, playerData.piece, board)
+
+                //* Edit message
                 const formattedBoard = toString(board)
                 const embed = new MessageEmbed()
                     .setTitle("Tetris de " + interaction.user.username)
@@ -203,12 +194,120 @@ module.exports = class Tetris extends Command {
                     embeds: [ embed ]
                 })
             }
-        })
 
+            if (["left", "right"].includes(id[id.length - 1])) {
+                const newY = id[id.length - 1] === "left" ? playerData.y - 1 : playerData.y + 1
+
+                if (canPlace(newY, id[id.length - 1], 1, playerData.piece, board)) {
+                    //* Edit message
+                    const formattedBoard = toString(board)
+                    const embed = new MessageEmbed()
+                        .setTitle("Tetris de " + interaction.user.username)
+                        .setDescription(`\`\`\`${formattedBoard}${numberLine.join("")}\`\`\``)
+                        .addField("Erreur", "Vous ne pouvez pas continuer aussi loin")
+                        .addField(`Premiere piece :`, `\`\`\`${toString(playerData.piece)}\`\`\``)
+        
+                    await button.deferUpdate()
+                    return await msg.edit({
+                        embeds: [ embed ]
+                    })
+                }
+
+                //* Remove before piece
+                board = remove(playerData.x, playerData.y, playerData.piece, board)
+
+                playerData.y = newY        
+                
+                //* Place
+                board = place(playerData.x, playerData.y, playerData.piece, board)
+
+                leftArrow.setDisabled(canPlace(newY, "left", 1, playerData.piece, board))
+                rightArrow.setDisabled(canPlace(newY, "right", 1, playerData.piece, board))
+                
+                components = new MessageActionRow().addComponents(leftArrow, rightArrow, buttons, valid)
+
+                //* Edit message
+                const formattedBoard = toString(board)
+                const embed = new MessageEmbed()
+                    .setTitle("Tetris de " + interaction.user.username)
+                    .setDescription(`\`\`\`${formattedBoard}${numberLine.join("")}\`\`\``)
+                    .addField(`Premiere piece :`, `\`\`\`${toString(playerData.piece)}\`\`\``)
+        
+                await button.deferUpdate()
+                return await msg.edit({
+                    embeds: [ embed ],
+                    components: [ components ]
+                })
+
+            }
+        })
 
         /* 
         ⬜⬜🟩
         🟩🟩🟩
         */
     }
+}
+
+function toString(piece) {
+    let string = ""
+
+    for (let i = 0; i < piece.length; i++) {
+        for (let j = 0; j < piece[i].length; j++) {
+            string += piece[i][j]
+        }
+        
+        string += "\n"
+    }
+
+    return string
+}
+
+function rotate(piece, clockwise) {
+    if (clockwise === undefined) clockwise = false
+    let result = Array.from(piece[0], x => Array.from(piece, y => false))
+    let newRow, newCol
+
+    for (let col = 0; col < piece[0].length; col++) {
+        for (let row = 0; row < piece.length; row++) {
+            newRow = clockwise ? piece.length - row - 1 : row
+            newCol = clockwise ? col : piece[0].length - col - 1
+        
+            result[col][row] = piece[newRow][newCol]
+        }
+    }
+    
+    return result
+}
+
+function place(x, y, piece, board) {
+    for (let i = 0; i < piece.length; i++) {
+        for (let j = 0; j < piece[i].length; j++) {
+            if (piece[i][j] === "⬜") continue
+
+            board[x + i][y + j] = piece[i][j]
+        }
+    }
+
+    return board
+}
+
+function remove(x, y, piece, board) {
+    for (let i = 0; i < piece.length; i++) {
+        for (let j = 0; j < piece[i].length; j++) {
+            if (piece[i][j] === "⬜") continue
+
+            board[x + i][y + j] = "⬛"
+        }
+    }
+
+    return board
+}
+
+function canPlace(newY, direction, additionnal, piece, board) {
+    if (!additionnal) additionnal = 0
+
+    if (direction === "left") return (newY - additionnal) - piece[0].length < 0
+
+    return (newY + additionnal) + piece[0].length > board[0].length
 }
