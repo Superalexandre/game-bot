@@ -61,8 +61,9 @@ A fun discord bot
 ### Sodoku
 - [X] https://github.com/robatron/sudoku.js
 ### Tetris
-- [ ] Rotate (bizzare comment c'est fait on peu pas déplacer alors que si)
-- [ ] Arrow 
+- [X] Rotate (bizzare comment c'est fait on peu pas déplacer alors que si)
+- [X] Arrow
+- [ ] Place bottom 
 - [ ] https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4
 
 ### Petit chevaux
