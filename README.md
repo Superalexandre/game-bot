@@ -63,9 +63,10 @@ A fun discord bot
 ### Tetris
 - [X] Rotate (bizzare comment c'est fait on peu pas déplacer alors que si)
 - [X] Arrow
-- [ ] **Place bottom**
-- [ ] Ajouter des fleches pour aller directement de l'autre coter
-- [ ] https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4
+- [X] **Place bottom**
+- [X] Ajouter des fleches pour aller directement de l'autre coter
+- [X] https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4
+- [ ] A test 
 
 ### Petit chevaux
 - [ ] Rework
