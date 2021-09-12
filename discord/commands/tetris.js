@@ -11,17 +11,17 @@ module.exports = class Tetris extends Command {
 
     async run({ client, interaction, options, i18n, data, userData, util }) {
         /*
+
+        🟧 🟠
+        🟦 🔵
+        🟥 🔴
+        🟫 🟤
+        🟪 🟣
+        🟩 🟢
+        🟨 🟡
             
-        🟧
-        🟦
-        🟥
-        🟫
-        🟪
-        🟩
-        🟨
-            
-        ⬜
-        ⬛
+        ⬜ ⚪
+        ⬛ ⚫
         */
             
         const pieces = [
@@ -55,8 +55,15 @@ module.exports = class Tetris extends Command {
         ]
         
         const numberLine = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"]
+        let topBoard = [
+            ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*1*/
+            ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*2*/
+            ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*3*/
+            ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*4*/
+            ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"], //⬛ /*5*/
+        ]
+
         let board = [
-            //      1    2    3    4    5    6    7    8    9    10
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*1*/
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*2*/
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*3*/
@@ -77,53 +84,52 @@ module.exports = class Tetris extends Command {
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*18*/
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*19*/
             ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"], //⬛ /*20*/
-
-            //[
-            //    ["0:0", "0:1", "0:2", "0:3", "0:4", "0:5", "0:6", "0:7", "0:8", "0:9"],
-            //    ["1:0", "1:1", "1:2", "1:3", "1:4", "1:5", "1:6", "1:7", "1:8", "1:9"],
-            //    ["2:0", "2:1", "2:2", "2:3", "2:4", "2:5", "2:6", "2:7", "2:8", "2:9"],
-            //    ["3:0", "3:1", "3:2", "3:3", "3:4", "3:5", "3:6", "3:7", "3:8", "3:9"],
-            //    ["4:0", "4:1", "4:2", "4:3", "4:4", "4:5", "4:6", "4:7", "4:8", "4:9"],
-            //    ["5:0", "5:1", "5:2", "5:3", "5:4", "5:5", "5:6", "5:7", "5:8", "5:9"],
-            //    ["6:0", "6:1", "6:2", "6:3", "6:4", "6:5", "6:6", "6:7", "6:8", "6:9"],
-            //    ["7:0", "7:1", "7:2", "7:3", "7:4", "7:5", "7:6", "7:7", "7:8", "7:9"],
-            //    ["8:0", "8:1", "8:2", "8:3", "8:4", "8:5", "8:6", "8:7", "8:8", "8:9"],
-            //    ["9:0", "9:1", "9:2", "9:3", "9:4", "9:5", "9:6", "9:7", "9:8", "9:9"],
-            //    ["10:0", "10:1", "10:2", "10:3", "10:4", "10:5", "10:6", "10:7", "10:8", "10:9"],
-            //    ["11:0", "11:1", "11:2", "11:3", "11:4", "11:5", "11:6", "11:7", "11:8", "11:9"],
-            //    ["12:0", "12:1", "12:2", "12:3", "12:4", "12:5", "12:6", "12:7", "12:8", "12:9"],
-            //    ["13:0", "13:1", "13:2", "13:3", "13:4", "13:5", "13:6", "13:7", "13:8", "13:9"],
-            //    ["14:0", "14:1", "14:2", "14:3", "14:4", "14:5", "14:6", "14:7", "14:8", "14:9"],
-            //    ["15:0", "15:1", "15:2", "15:3", "15:4", "15:5", "15:6", "15:7", "15:8", "15:9"],
-            //    ["16:0", "16:1", "16:2", "16:3", "16:4", "16:5", "16:6", "16:7", "16:8", "16:9"],
-            //    ["17:0", "17:1", "17:2", "17:3", "17:4", "17:5", "17:6", "17:7", "17:8", "17:9"],
-            //    ["18:0", "18:1", "18:2", "18:3", "18:4", "18:5", "18:6", "18:7", "18:8", "18:9"],
-            //    ["19:0", "19:1", "19:2", "19:3", "19:4", "19:5", "19:6", "19:7", "19:8", "19:9"],
-            //]
         ]
         
         let playerData = {
             user: interaction.user,
             piece: pieces[Math.floor(Math.random() * pieces.length)],
+            nextPiece: pieces[Math.floor(Math.random() * pieces.length)],
+            lineClear: 0,
             x: 0,
             y: 0
         }
 
         //* Place piece
-        board = place(playerData.x, playerData.y, playerData.piece, board)
+        const placed = place(playerData.x, playerData.y, playerData.piece, topBoard)
+        topBoard = placed.board
+
+        //* Preview
+        const yPreview = calcBottom(playerData.x, playerData.piece, board)
+        const preview = place(playerData.x, yPreview, playerData.piece, board, true)
+        board = preview.board
 
         //* Create all buttons
+        const end = board[0].length - playerData.piece[0].length
+
+        const endLeftArrow = new MessageButton()
+            .setCustomId(`game_tetris_${interaction.user.id}_endLeft`)
+            .setStyle("PRIMARY")
+            .setEmoji("⏪")
+            .setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
+
         const leftArrow = new MessageButton()
             .setCustomId(`game_tetris_${interaction.user.id}_left`)
             .setStyle("PRIMARY")
             .setEmoji("◀️")
-            .setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, board))
+            .setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, topBoard))
 
+        const endRightArrow = new MessageButton()
+            .setCustomId(`game_tetris_${interaction.user.id}_endRight`)
+            .setStyle("PRIMARY")
+            .setEmoji("⏩")
+            .setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
+            
         const rightArrow = new MessageButton()
             .setCustomId(`game_tetris_${interaction.user.id}_right`)
             .setStyle("PRIMARY")
             .setEmoji("▶️")
-            .setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, board))
+            .setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, topBoard))
 
         const rotateArrow = new MessageButton()
             .setCustomId(`game_tetris_${interaction.user.id}_rotate`)
@@ -135,17 +141,21 @@ module.exports = class Tetris extends Command {
             .setEmoji("✅")
             .setStyle("SUCCESS")
 
-        let components = new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow, valid)
+        let components = [
+            new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
+            new MessageActionRow().addComponents(endLeftArrow, endRightArrow, valid)
+        ]
 
         const formattedBoard = toString(board)
+        const topFormattedBoard = toString(topBoard)
         const embed = new MessageEmbed()
             .setTitle("Tetris de " + interaction.user.username)
-            .setDescription(`\`\`\`${formattedBoard}${numberLine.join("")}\`\`\``)
-            .addField(`Premiere piece :`, `\`\`\`${toString(playerData.piece)}\`\`\``)
+            .setDescription(`\`\`\`${topFormattedBoard}${formattedBoard}${numberLine.join("")}\`\`\``)
+            .addField(`Prochaine piece :`, `\`\`\`${toString(playerData.nextPiece)}\`\`\``)
 
         const msg = await interaction.channel.send({
             embeds: [ embed ],
-            components: [ components ]
+            components: components
         })
 
         const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
@@ -164,149 +174,245 @@ module.exports = class Tetris extends Command {
             if (id[id.length - 1] === "rotate") {
                 const newPiece = rotate(playerData.piece, false)
 
-                if (canPlace(playerData.x, "right", 0, newPiece, board)) {
+                if (canPlace(playerData.x, "right", 0, newPiece, topBoard)) {
                     //* Edit buttons
-                    rotateArrow.setDisabled(canPlace(playerData.x, "right", 0, rotate(playerData.piece), board))
-                    leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, board))
-                    rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, board))
-                    
-                    components = new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow, valid)
+                    rotateArrow.setDisabled(canPlace(playerData.x, "right", 0, rotate(playerData.piece), topBoard))
+                    leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, topBoard))
+                    rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, topBoard))
+                    endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
+                    endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
+
+                    components = [
+                        new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
+                        new MessageActionRow().addComponents(endLeftArrow, endRightArrow, valid)
+                    ]
 
                     //* Edit message
                     const formattedBoard = toString(board)
+                    const topFormattedBoard = toString(topBoard)
                     const embed = new MessageEmbed()
                         .setTitle("Tetris de " + interaction.user.username)
-                        .setDescription(`\`\`\`${formattedBoard}${numberLine.join("")}\`\`\``)
+                        .setDescription(`\`\`\`${topFormattedBoard}${formattedBoard}${numberLine.join("")}\`\`\``)
                         .addField("Erreur", "Vous ne pouvez pas continuer aussi loin")
-                        .addField(`Premiere piece :`, `\`\`\`${toString(playerData.piece)}\`\`\``)
+                        .addField(`Prochaine piece :`, `\`\`\`${toString(playerData.nextPiece)}\`\`\``)
         
                     await button.deferUpdate()
                     return await msg.edit({
                         embeds: [ embed ],
-                        components: [ components ]
+                        components: components
                     })
                 }
 
                 //* Remove before piece
-                board = remove(playerData.x, playerData.y, playerData.piece, board)
+                topBoard = remove(playerData.x, playerData.y, playerData.piece, topBoard)
+                board = remove(playerData.x, playerData.y, playerData.piece, board, true)
 
                 //* Rotate
                 playerData.piece = newPiece
                 
+                //* Preview
+                const yPreview = calcBottom(playerData.x, playerData.piece, board)
+                const preview = place(playerData.x, yPreview, playerData.piece, board, true)
+                board = preview.board
+
                 //* Place
-                board = place(playerData.x, playerData.y, playerData.piece, board)
+                const placed = place(playerData.x, playerData.y, playerData.piece, topBoard)
+                topBoard = placed.board
 
                 //* Edit buttons
-                rotateArrow.setDisabled(canPlace(playerData.x, "right", 0, rotate(playerData.piece), board))
-                leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, board))
-                rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, board))
+                rotateArrow.setDisabled(canPlace(playerData.x, "right", 0, rotate(playerData.piece), topBoard))
+                leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, topBoard))
+                rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, topBoard))
+                endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
+                endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
                 
-                components = new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow, valid)
+                components = [
+                    new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
+                    new MessageActionRow().addComponents(endLeftArrow, endRightArrow, valid)
+                ]
 
                 //* Edit message
                 const formattedBoard = toString(board)
+                const topFormattedBoard = toString(topBoard)
                 const embed = new MessageEmbed()
                     .setTitle("Tetris de " + interaction.user.username)
-                    .setDescription(`\`\`\`${formattedBoard}${numberLine.join("")}\`\`\``)
-                    .addField(`Premiere piece :`, `\`\`\`${toString(playerData.piece)}\`\`\``)
+                    .setDescription(`\`\`\`${topFormattedBoard}${formattedBoard}${numberLine.join("")}\`\`\``)
+                    .addField(`Prochaine piece :`, `\`\`\`${toString(playerData.nextPiece)}\`\`\``)
         
                 await button.deferUpdate()
                 return await msg.edit({
                     embeds: [ embed ],
-                    components: [ components ]
+                    components: components
                 })
             }
 
-            if (["left", "right"].includes(id[id.length - 1])) {
-                const newX = id[id.length - 1] === "left" ? playerData.x - 1 : playerData.x + 1
+            if (["left", "right", "endLeft", "endRight"].includes(id[id.length - 1])) {
+                let newX
+                if (["left", "right"].includes(id[id.length - 1])) {
+                    newX = id[id.length - 1] === "left" ? playerData.x - 1 : playerData.x + 1
+                } else {    
+                    id[id.length - 1] = id[id.length - 1] === "endLeft" ? "left" : "right"
+                    newX = id[id.length - 1] === "left" ? 0 : board[0].length - playerData.piece[0].length
+                }
 
-                if (canPlace(newX, id[id.length - 1], 0, playerData.piece, board)) {
+                if (canPlace(newX, id[id.length - 1], 0, playerData.piece, topBoard)) {
                     //* Edit buttons
-                    rotateArrow.setDisabled(canPlace(newX, "right", 0, rotate(playerData.piece), board))
-                    leftArrow.setDisabled(canPlace(newX, "left", 1, playerData.piece, board))
-                    rightArrow.setDisabled(canPlace(newX, "right", 1, playerData.piece, board))
+                    rotateArrow.setDisabled(canPlace(newX, "right", 0, rotate(playerData.piece), topBoard))
+                    leftArrow.setDisabled(canPlace(newX, "left", 1, playerData.piece, topBoard))
+                    rightArrow.setDisabled(canPlace(newX, "right", 1, playerData.piece, topBoard))
+                    endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
+                    endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
                 
-                    components = new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow, valid)
+                    components = [
+                        new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
+                        new MessageActionRow().addComponents(endLeftArrow, endRightArrow, valid)
+                    ]
 
                     //* Edit message
                     const formattedBoard = toString(board)
+                    const topFormattedBoard = toString(topBoard)
                     const embed = new MessageEmbed()
                         .setTitle("Tetris de " + interaction.user.username)
-                        .setDescription(`\`\`\`${formattedBoard}${numberLine.join("")}\`\`\``)
+                        .setDescription(`\`\`\`${topFormattedBoard}${formattedBoard}${numberLine.join("")}\`\`\``)
                         .addField("Erreur", "Vous ne pouvez pas continuer aussi loin")
-                        .addField(`Premiere piece :`, `\`\`\`${toString(playerData.piece)}\`\`\``)
+                        .addField(`Prochaine piece :`, `\`\`\`${toString(playerData.nextPiece)}\`\`\``)
         
                     await button.deferUpdate()
                     return await msg.edit({
                         embeds: [ embed ],
-                        components: [ components ]
+                        components: components
                     })
                 }
 
                 //* Remove before piece
-                board = remove(playerData.x, playerData.y, playerData.piece, board)
+                topBoard = remove(playerData.x, playerData.y, playerData.piece, topBoard)
+                board = remove(playerData.x, playerData.y, playerData.piece, board, true)
 
                 playerData.x = newX        
-                
+
+                //* Preview
+                const yPreview = calcBottom(playerData.x, playerData.piece, board)
+                const preview = place(playerData.x, yPreview, playerData.piece, board, true)
+                board = preview.board
+
                 //* Place
-                board = place(playerData.x, playerData.y, playerData.piece, board)
+                const placed = place(playerData.x, playerData.y, playerData.piece, topBoard)
+                topBoard = placed.board
 
                 //* Edit buttons
-                rotateArrow.setDisabled(canPlace(newX, "right", 0, rotate(playerData.piece), board))
-                leftArrow.setDisabled(canPlace(newX, "left", 1, playerData.piece, board))
-                rightArrow.setDisabled(canPlace(newX, "right", 1, playerData.piece, board))
+                rotateArrow.setDisabled(canPlace(newX, "right", 0, rotate(playerData.piece), topBoard))
+                leftArrow.setDisabled(canPlace(newX, "left", 1, playerData.piece, topBoard))
+                rightArrow.setDisabled(canPlace(newX, "right", 1, playerData.piece, topBoard))
+                endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
+                endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
                 
-                components = new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow, valid)
+                components = [
+                    new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
+                    new MessageActionRow().addComponents(endLeftArrow, endRightArrow, valid)
+                ]
 
                 //* Edit message
                 const formattedBoard = toString(board)
+                const topFormattedBoard = toString(topBoard)
                 const embed = new MessageEmbed()
                     .setTitle("Tetris de " + interaction.user.username)
-                    .setDescription(`\`\`\`${formattedBoard}${numberLine.join("")}\`\`\``)
-                    .addField(`Premiere piece :`, `\`\`\`${toString(playerData.piece)}\`\`\``)
+                    .setDescription(`\`\`\`${topFormattedBoard}${formattedBoard}${numberLine.join("")}\`\`\``)
+                    .addField(`Prochaine piece :`, `\`\`\`${toString(playerData.nextPiece)}\`\`\``)
         
                 await button.deferUpdate()
                 return await msg.edit({
                     embeds: [ embed ],
-                    components: [ components ]
+                    components: components
                 })
             }
 
             if (id[id.length - 1] === "valid") {
-                const newY = calcBottom(playerData.x, playerData.y, playerData.piece, board)
+                const removed = remove(playerData.x, playerData.y, playerData.piece, board, true)
+                board = removed
 
-                //* Remove before piece
-                board = remove(playerData.x, playerData.y, playerData.piece, board)
+                const newY = calcBottom(playerData.x, playerData.piece, board)
+
+                //* Placed piece
+                const placed = place(playerData.x, newY, playerData.piece, board)
+
+                if (placed.error) {
+                    //* Edit buttons
+                    rotateArrow.setDisabled(canPlace(playerData.x, "right", 0, rotate(playerData.piece), topBoard))
+                    leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, topBoard))
+                    rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, topBoard))
+                    endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
+                    endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
+
+                    components = [
+                        new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
+                        new MessageActionRow().addComponents(endLeftArrow, endRightArrow, valid)
+                    ]
+
+                    //* Edit message
+                    const formattedBoard = toString(board)
+                    const topFormattedBoard = toString(topBoard)
+                    const embed = new MessageEmbed()
+                        .setTitle("Tetris de " + interaction.user.username)
+                        .setDescription(`\`\`\`${topFormattedBoard}${formattedBoard}${numberLine.join("")}\`\`\``)
+                        .addField("Erreur", "Vous ne pouvez pas jouer ici")
+                        .addField(`Prochaine piece :`, `\`\`\`${toString(playerData.nextPiece)}\`\`\``)
+        
+                    await button.deferUpdate()
+                    return await msg.edit({
+                        embeds: [ embed ],
+                        components: components
+                    })
+                }
 
                 //* Place piece
-                board = place(playerData.x, newY, playerData.piece, board)
+                board = placed.board
+
+                //* Remove before piece
+                topBoard = remove(playerData.x, playerData.y, playerData.piece, topBoard)
+
+                const clear = clearBoard(board)
+                playerData.lineClear = playerData.lineClear + clear.clearedLine
+                board = clear.board
 
                 //* Edit player data
                 playerData.x = 0
                 playerData.y = 0
-                playerData.piece = pieces[Math.floor(Math.random() * pieces.length)]
+                playerData.piece = playerData.nextPiece
+                playerData.nextPiece = pieces[Math.floor(Math.random() * pieces.length)]
 
                 //* Place piece
-                board = place(playerData.x, playerData.y, playerData.piece, board)
+                const placedTop = place(playerData.x, playerData.y, playerData.piece, topBoard)
+                topBoard = placedTop.board
+                
+                //* Preview
+                const yPreview = calcBottom(playerData.x, playerData.piece, board)
+                const preview = place(playerData.x, yPreview, playerData.piece, board, true)
+                board = preview.board
 
                 //* Edit buttons
-                rotateArrow.setDisabled(canPlace(playerData.x, "right", 0, rotate(playerData.piece), board))
-                leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, board))
-                rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, board))
+                rotateArrow.setDisabled(canPlace(playerData.x, "right", 0, rotate(playerData.piece), topBoard))
+                leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, topBoard))
+                rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, topBoard))
+                endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
+                endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
 
-                components = new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow, valid)
+                components = [
+                    new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
+                    new MessageActionRow().addComponents(endLeftArrow, endRightArrow, valid)
+                ]
 
                 //* Edit message
                 const formattedBoard = toString(board)
+                const topFormattedBoard = toString(topBoard)
                 const embed = new MessageEmbed()
                     .setTitle("Tetris de " + interaction.user.username)
-                    .setDescription(`\`\`\`${formattedBoard}${numberLine.join("")}\`\`\``)
-                    .addField(`Premiere piece :`, `\`\`\`${toString(playerData.piece)}\`\`\``)
+                    .setDescription(`\`\`\`${topFormattedBoard}${formattedBoard}${numberLine.join("")}\`\`\``)
+                    .addField(`Prochaine piece :`, `\`\`\`${toString(playerData.nextPiece)}\`\`\``)
         
                 await button.deferUpdate()
                 return await msg.edit({
                     embeds: [ embed ],
-                    components: [ components ]
+                    components: components
                 })
             }
         })
@@ -318,6 +424,12 @@ function toString(piece) {
 
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece[i].length; j++) {
+            if (piece[i][j] === "⬜") {
+                string += "⬛"
+
+                continue
+            }
+
             string += piece[i][j]
         }
         
@@ -344,23 +456,47 @@ function rotate(piece, clockwise) {
     return result
 }
 
-function place(x, y, piece, board) {
+function place(x, y, piece, board, preview) {
+    if (y < 0) return { board, error: "You can't play here" }
+
+    const previewEmote = {
+        "🟧": "🟠",
+        "🟦": "🔵",
+        "🟥": "🔴",
+        "🟫": "🟤",
+        "🟪": "🟣",
+        "🟩": "🟢",
+        "🟨": "🟡"
+    }
+
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece[i].length; j++) {
             if (piece[i][j] === "⬜") continue
 
-            board[y + i][x + j] = piece[i][j]
+            board[y + i][x + j] = preview ? previewEmote[piece[i][j]] : piece[i][j]
         }
     }
 
-    return board
+    return { board }
 }
 
-function remove(x, y, piece, board) {
+function remove(x, y, piece, board, preview) {
+    if (preview) {
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                if (["🟠", "🔵", "🔴", "🟤", "🟣", "🟢", "🟡"].includes(board[i][j])) {
+                    board[i][j] = "⬛"
+                }
+            }
+        }
+
+        return board
+    }
+
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece[i].length; j++) {
             if (piece[i][j] === "⬜") continue
-
+            
             board[y + i][x + j] = "⬛"
         }
     }
@@ -376,61 +512,67 @@ function canPlace(newX, direction, additionnal, piece, board) {
     return (newX + additionnal) + piece[0].length > board[0].length
 }
 
-//TODO
-function calcBottom(x, y, piece, board) {
-    let newY = y + (board.length - piece.length)
-    let canPlaced = true
+function calcBottom(x, piece, board) {
+    function getTop(board) {
+        const value = [ 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 ]
 
-    /*
-    ! Doesn't work
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                if (board[i][j] === "⬛" || value[j] < i) continue
 
-    let breaked = false
-    for (let i = 0; i < board.length; i++) {
-        for (let j = 0; j < board[i].length; j++) {
-            if (breaked) break
-
-            if (breaked && i > 5 && j === x && board[i][j] !== "⬛") {
-                console.log("BREAK", i, j, breaked)
-                newY = i - 1
-
-                breaked = true
+                value[j] = i
             }
         }
-    }
-    */
 
-    //* Board
+        return value
+    }
+    
+    const top = getTop(board)
+    let tops = []
+    let newY = 20
+    const lastLine = piece[piece.length - 1]
+
+    for (let i = 0; i < lastLine.length; i++) tops.push(top[x + i])
+
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece[i].length; j++) {
-            if (piece[i][j] === "⬜") continue
+            if (i > 0 && piece[i]?.[j - 1] === "⬜" && tops[j - 1] < tops[j]) {
+                newY = tops[j - 1]
 
-            if (board[newY + i][x + j] !== "⬛") { 
-                /*  
-                ! Doesn't work
+                return newY - i
+            } else if (i > 0 && piece[i]?.[j + 1] === "⬜" && tops[j + 1] < tops[j]) {
+                newY = tops[j + 1]
 
-                for (let k = 0; k < newY; k++) {
-                    if (k > 5 && board[k][x + j] !== "⬛") {
-                    
-                        canPlaced = false
-                        y = k - 1
-        
-                        console.log("Breaked", k)
-
-                        break   
-                    }
-                }
-                */
-
-                canPlaced = false
-
-                break
+                return newY - i
+            } else if (tops[j] < newY) {
+                newY = tops[j]
             }
         }
     }
 
-    if (!canPlaced) return calcBottom(x, y - 1, piece, board)
+    return newY - piece.length
+}
 
-    return newY
+function clearBoard(board) {
+    let clearedLine = 0
+    for (let i = 0; i < board.length; i++) {
+        let complete = true
+
+        for (let j = 0; j < board[i].length; j++) {
+            if (!complete) continue
+
+            if (board[i][j] === "⬛") complete = false
+        }
+
+        if (complete) {
+            clearedLine = clearedLine + 1
+
+            board.splice(i, i + 1)
+            board.unshift(["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"])
+        }
+    }
+
+    return { board, clearedLine }
 }
 
 function copyArray(array) {
