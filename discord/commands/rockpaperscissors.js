@@ -31,7 +31,7 @@ module.exports = class Rockpaperscissors extends Command {
         const readyButtons = new MessageActionRow().addComponents(ready, notReady)
 
         const msg = await interaction.channel.send({
-            content: i18n.__("global.opponentReady", { username: opponent.username }),
+            content: i18n.__("global.opponentReady", { userId: opponent.id, gameName: "rockpaperscissors" }),
             components: [readyButtons]
         })
 
@@ -100,7 +100,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
             await button?.deferUpdate()
 
             return await msg.edit({
-                content: i18n.__("global.opponentNotReady", { username: opponent.username }),
+                content: i18n.__("global.opponentNotReady", { username: opponent.username, gameName: "puissance4" }),
                 components: []
             })
         } else {

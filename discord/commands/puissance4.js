@@ -34,7 +34,7 @@ module.exports = class Puissance4 extends Command {
         const readyButtons = new MessageActionRow().addComponents(ready, notReady)
 
         const msg = await interaction.channel.send({
-            content: i18n.__("global.opponentReady", { username: opponent.username }),
+            content: i18n.__("global.opponentReady", { userId: opponent.id, gameName: "puissance4" }),
             components: [readyButtons]
         })
 
@@ -101,7 +101,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
             await collector.stop()
 
             return await msg.edit({
-                content: i18n.__("global.opponentNotReady", { username: opponent.username }),
+                content: i18n.__("global.opponentNotReady", { username: opponent.username, gameName: "puissance4" }),
                 components: []
             })
         } else {
@@ -136,7 +136,7 @@ async function whoStart({ i18n, interaction, msg, button, opponent, client, user
     await button?.deferUpdate()
 
     await msg.edit({
-        content: i18n.__("whoStart", { username: chooser.username }),
+        content: i18n.__("global.whoStart", { username: chooser.username }),
         components: [row]
     })
 

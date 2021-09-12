@@ -8,8 +8,8 @@
 	"global": {
 		"yes": "Oui",
 		"no": "Non",
-		"opponentReady": "{{username}} êtes-vous prêt(e) ?",
-		"opponentNotReady": "{{username}} n'est pas prêt(e)",
+		"opponentReady": "<@{{userId}}> êtes-vous prêt(e) pour un {{gameName}}",
+		"opponentNotReady": "{{username}} n'est pas prêt(e) pour un {{gameName}}",
 		"playWithBot": "Vous n'avez pas saisi d'adversaire voulez vous jouer contre moi ?",
 		"noPlayWithBot": "{{username}} ne veut pas jouer contre moi",
 		"notYourGame": "Désolé mais ce n'est pas votre partie ou votre tour, pour lancer une partie faites /{{gameName}}",
@@ -17,7 +17,7 @@
 		"gameOf": "Partie de : ",
 		"whoStart": "{{username}}, Qui doit commencer ?",
 		"start": {
-			"you": "Vous {{username}}",
+			"you": "Vous ({{username}})",
 			"opponent": "{{username}}",
 			"random": "Aléatoire"
 		},
@@ -470,6 +470,5 @@
 			"gameReplay": "Replay de la partie :"
 		}
 	},
-	"uno": {},
-	"whoStart": "Une erreur de traduction est servenue !"
+	"uno": {}
 }
