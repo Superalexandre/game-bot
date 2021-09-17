@@ -5,8 +5,8 @@ import Modal from "./components/Modal/index"
 function App() {
 	const [modalOpen, setModelOpen] = useState(false)
 
-	const close = () => setModelOpen(false)
-	const open = () => setModelOpen(true)
+	const closeModel = () => setModelOpen(false)
+	const openModel = () => setModelOpen(true)
 
 	return (
 		<div>
@@ -14,7 +14,7 @@ function App() {
 				whileHover={{ scale: 1.1 }}
 				whileTap={{ scale: 0.9 }}
 				className="button"
-				onClick={() => (modalOpen ? close() : open())}
+				onClick={() => (modalOpen ? closeModel() : openModel())}
 			>
 				Button test
 			</motion.button>
@@ -23,7 +23,7 @@ function App() {
 				initial={false}
 				exitBeforeEnter={true}
 			>
-				{modalOpen && <Modal modalOpen={modalOpen} handleClose={close}/>}
+				{modalOpen && <Modal modalOpen={modalOpen} handleClose={closeModel}/>}
 			</AnimatePresence>
 		</div>
     )
