@@ -1,6 +1,8 @@
-const { sep } = require("path")
+//* Dirname
+import { dirname, sep } from "path"
+import { fileURLToPath } from "url"
 
-module.exports = class Command {
+export class Command {
     constructor(client, {
         name = null,
         desc = (i18n) => i18n.__("discord.no_desc_provided"),
@@ -17,7 +19,8 @@ module.exports = class Command {
     }) {
         this.client = client
 
-        let category = (directory ? directory.split(sep) [parseInt(directory.split(sep).length - 1, 10)] : null)
+        const directoryPath = dirname(fileURLToPath(directory))
+        const category = (directoryPath ? directoryPath.split(sep) [parseInt(directoryPath.split(sep).length - 1, 10)] : null)
 
         this.help = {
             name,

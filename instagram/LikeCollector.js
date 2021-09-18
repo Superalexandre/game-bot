@@ -1,6 +1,6 @@
-const { EventEmitter } = require("events")
+import { EventEmitter } from "events"
 
-module.exports = class LikeCollector extends EventEmitter {
+export default class LikeCollector extends EventEmitter {
     constructor (message, { filter, idle }) {
         super()
 

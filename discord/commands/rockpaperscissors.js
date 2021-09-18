@@ -1,11 +1,11 @@
-const Command = require("../structures/Command")
-const { MessageButton, MessageActionRow } = require("discord.js")
+import { Command } from "../structures/Command.js"
+import { MessageButton, MessageActionRow } from "discord.js"
 
-module.exports = class Rockpaperscissors extends Command {
+export default class Rockpaperscissors extends Command {
     constructor(client) {
         super(client, {
             name: "rockpaperscissors",
-            directory: __dirname
+            directory: import.meta.url
         })
     }
 

@@ -1,16 +1,16 @@
 //* Language 
-const i18n = require("i18n")
+import i18n from "i18n"
 
 //* All clients
-const DiscordClient = require("./discord/index")
+import load from "./discord/index.js"
 //const InstaClient = require("./instagram/index")
 
 //* Logger
-const Logger = require("./logger")
+import Logger from "./logger.js"
 const logger = new Logger("compact")
 
 //* Database
-const Enmap = require("enmap")
+import Enmap from "enmap"
 
 const data = {
     users: new Enmap({ name: "users" }),
@@ -20,14 +20,19 @@ const data = {
 }
 
 //* Util 
-const path = require("path")
-const functions = require("./functions")
-const config = require("./config")
+import { join } from "path"
+import functions from "./functions.js"
+import config from "./config.js"
+
+//* Dirname
+import { dirname } from "path"
+import { fileURLToPath } from "url"
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 //* Config languages
 i18n.configure({
     locales: ["fr_FR"],
-    directory: path.join(__dirname, "locales"),
+    directory: join(__dirname, "locales"),
     defaultLocale: config.defaultLocale,
     objectNotation: true,
     register: global,
@@ -44,7 +49,7 @@ i18n.configure({
     missingKeyFn: function(locale, value) {
         logger.error({ message: `MissingKey: La valeur ${value} est manquante dans la langue ${locale}` })
 
-        i18n.setLocale(locale)
+        setLocale(locale)
     
         return i18n.__("error.missingTranslation")
     },
@@ -55,4 +60,4 @@ i18n.configure({
     }
 })
 
-DiscordClient.load(data, functions, logger)
+load(data, functions, logger)

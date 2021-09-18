@@ -1,13 +1,13 @@
-const Command = require("../structures/Command")
-const { MessageButton, MessageActionRow } = require("discord.js")
-const Canvas = require("canvas")
-const gifencoder = require("gifencoder")
+import { Command } from "../structures/Command.js"
+import { MessageButton, MessageActionRow } from "discord.js"
+import canvas from "canvas"
+import gifencoder from "gifencoder"
 
-module.exports = class Puissance4 extends Command {
+export default class Puissance4 extends Command {
     constructor(client) {
         super(client, {
             name: "puissance4",
-            directory: __dirname
+            directory: import.meta.url
         })
     }
 
@@ -527,7 +527,7 @@ async function makeGif({ client, i18n, msg, gameData }) {
     gif.setTransparent()
 
     //* Canvas
-    const canvas = Canvas.createCanvas(width, height)
+    const canvas = canvas.createCanvas(width, height)
     const ctx = canvas.getContext("2d")
 
     const fontSize = width / 25

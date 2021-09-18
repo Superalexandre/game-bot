@@ -1,4 +1,4 @@
-module.exports = class Ready {
+export default class Ready {
     constructor(client) {
         this.client = client
     }

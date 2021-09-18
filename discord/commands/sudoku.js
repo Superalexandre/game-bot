@@ -1,12 +1,13 @@
-const Command = require("../structures/Command")
-const sudoku = require("sudoku-umd")
-const { MessageButton, MessageActionRow, MessageEmbed  } = require("discord.js")
+import { Command } from "../structures/Command.js"
+//import { generate, board_string_to_grid, solve } from "sudoku-umd"
+import sudoku from "sudoku-umd"
+import { MessageButton, MessageActionRow, MessageEmbed } from "discord.js"
 
-module.exports = class Sudoku extends Command {
+export default class Sudoku extends Command {
     constructor(client) {
         super(client, {
             name: "sudoku",
-            directory: __dirname
+            directory: import.meta.url
         })
     }
 

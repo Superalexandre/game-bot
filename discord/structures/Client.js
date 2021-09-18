@@ -1,6 +1,9 @@
-const { Client: DiscordClient, Collection } = require("discord.js")
+import { Client as DiscordClient, Collection } from "discord.js"
 
-module.exports = class Client extends DiscordClient {
+import config from "../../config.js"
+import functions from "../../functions.js"
+
+export class Client extends DiscordClient {
     constructor(options) {
         super(options)
 
@@ -13,7 +16,7 @@ module.exports = class Client extends DiscordClient {
         }
 
         // Config
-        this.config = require("../../config")
-        this.functions = require("../../functions")
+        this.config = config
+        this.functions = functions
     }
 }

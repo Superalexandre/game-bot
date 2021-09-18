@@ -1,11 +1,11 @@
-const Command = require("../structures/Command")
-const { MessageButton, MessageActionRow } = require("discord.js")
+import { Command } from "../structures/Command.js"
+import { MessageButton, MessageActionRow } from "discord.js"
 
-module.exports = class Uno extends Command {
+export default class Uno extends Command {
     constructor(client) {
         super(client, {
             name: "uno",
-            directory: __dirname
+            directory: import.meta.url
         })
     }
 

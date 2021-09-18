@@ -1,4 +1,4 @@
-module.exports = class clickButton {
+export default class clickButton {
     constructor(client) {
         this.client = client
     }

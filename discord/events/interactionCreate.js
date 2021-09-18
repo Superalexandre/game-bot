@@ -1,6 +1,6 @@
-const i18n = require("i18n")
+import i18n from "i18n"
 
-module.exports = class interactionCreate {
+export default class interactionCreate {
     constructor(client) {
         this.client = client
     }

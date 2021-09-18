@@ -1,12 +1,12 @@
-const Command = require("../structures/Command")
+import { Command } from "../structures/Command.js"
 
-module.exports = class Pendu extends Command {
+export default class Hangman extends Command {
     constructor(client) {
         super(client, {
-            name: "pendu",
-            directory: __dirname
-        });
-    };
+            name: "hangman",
+            directory: import.meta.url
+        })
+    }
 
     async run({ client, interaction, options, i18n, data, userData, util }) {
 		const words = i18n.__("hangman.wordList")

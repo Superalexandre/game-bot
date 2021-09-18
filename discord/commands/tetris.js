@@ -1,11 +1,11 @@
-const Command = require("../structures/Command")
-const { MessageButton, MessageActionRow, MessageEmbed } = require("discord.js")
+import { Command } from "../structures/Command.js"
+import { MessageButton, MessageActionRow, MessageEmbed } from "discord.js"
 
-module.exports = class Tetris extends Command {
+export default class Tetris extends Command {
     constructor(client) {
         super(client, {
             name: "tetris",
-            directory: __dirname,
+            directory: import.meta.url,
         })
     }
 

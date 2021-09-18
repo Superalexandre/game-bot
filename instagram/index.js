@@ -1,13 +1,12 @@
-const Insta = require("@androz2091/insta.js")
-const LikeCollector = require("./LikeCollector")
-const Message = Insta.Message
+import { Message, Client } from "@androz2091/insta.js"
+import LikeCollector from "./LikeCollector.js"
 
 Message.prototype.createLikeCollector = (message, options) => {
     const collector = new LikeCollector(message, options)
     return collector
 }
 
-const client = new Insta.Client()
+const client = new Client()
 
 client.on("connected", () => {
     console.log(`Logged in as ${client.user.username}`)

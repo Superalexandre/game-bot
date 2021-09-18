@@ -1,11 +1,11 @@
-const Command = require("../structures/Command")
-const { MessageButton, MessageActionRow } = require("discord.js")
+import { Command } from "../structures/Command.js"
+import { MessageButton, MessageActionRow } from "discord.js"
 
-module.exports = class Morpion extends Command {
+export default class Morpion extends Command {
     constructor(client) {
         super(client, {
             name: "morpion",
-            directory: __dirname
+            directory: import.meta.url
         })
     }
 

@@ -1,10 +1,10 @@
-const Command = require("../structures/Command")
+import { Command } from "../structures/Command.js"
 
-module.exports = class Eval extends Command {
+export default class Eval extends Command {
     constructor(client) {
         super(client, {
             name: "eval",
-            directory: __dirname,
+            directory: import.meta.url,
         })
     }
 

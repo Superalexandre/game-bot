@@ -2,7 +2,7 @@
 //    { formateDate } = require("./discord/utils/functions"),
 //    logUpdate = require("log-update")
 
-module.exports = class Logger {
+export default class Logger {
     constructor(mode) {
         this.mode = mode
     }
