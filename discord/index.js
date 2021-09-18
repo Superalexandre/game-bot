@@ -24,8 +24,6 @@ async function load(data, functions, logger) {
 
             client.on(eventName, (...args) => event.run(...args))
 
-            console.log(await eventClass)
-
             //delete eventClass//require.cache[require.resolve("./events/" + events[i])]
         }
     })
@@ -40,7 +38,6 @@ async function load(data, functions, logger) {
             const command = new commandClass.default(client)
 
             //client.logger.update({ message: `Chargement de la commande ${i + 1}/${commands.length}`, end: i + 1 === commands.length })
-
 
             client.commands.set(command.help.name, command)
 
