@@ -1,4 +1,5 @@
 import { Command } from "../structures/Command.js"
+import { inspect } from "util"
 
 export default class Eval extends Command {
     constructor(client) {
@@ -16,12 +17,12 @@ export default class Eval extends Command {
 
         const code = options.getString("code")
 
-        const required = `const Discord = require("discord.js"), { MessageEmbed } = require("discord.js"), i18n = require("i18n"), fetch = require("node-fetch")`
+        const required = `const Discord = import("discord.js")\nconst { MessageEmbed } = import("discord.js")\nconst i18n = import("i18n")\nconst fetch = import("node-fetch")`
         const result = new Promise((resolve) => resolve(eval(`${required}\n${code}`)))
 
         return result.then((output) => {
             if (typeof output !== "string")
-                output = require("util").inspect(output, { depth: 0 })
+                output = inspect(output, { depth: 0 })
 
             if (output.includes(client.token)) output = output.replace(client.token, "Token is contain")
 
