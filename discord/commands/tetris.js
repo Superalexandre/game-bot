@@ -100,13 +100,21 @@ module.exports = class Tetris extends Command {
         topBoard = placed.board
 
         //* Preview
-        const yPreview = calcBottom(playerData.x, playerData.piece, board)
+        const yPreview = await calcBottom(playerData.x, playerData.y, playerData.piece, board)
+
         const preview = place(playerData.x, yPreview, playerData.piece, board, true)
         board = preview.board
 
-        //* Create all buttons
-        const end = board[0].length - playerData.piece[0].length
+        //* Function for calc endRightArrow
+        const calcEnd = (playerData) => {
+            const result = (topBoard[0].length - playerData.x) - playerData.piece[0].length
 
+            if (result === 0) return topBoard[0].length
+
+            return (topBoard[0].length - playerData.x) - playerData.piece[0].length
+        }
+
+        //* Create all buttons
         const endLeftArrow = new MessageButton()
             .setCustomId(`game_tetris_${interaction.user.id}_endLeft`)
             .setStyle("PRIMARY")
@@ -123,7 +131,7 @@ module.exports = class Tetris extends Command {
             .setCustomId(`game_tetris_${interaction.user.id}_endRight`)
             .setStyle("PRIMARY")
             .setEmoji("⏩")
-            .setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
+            .setDisabled(canPlace(playerData.x, "right", calcEnd(playerData), playerData.piece, topBoard))
             
         const rightArrow = new MessageButton()
             .setCustomId(`game_tetris_${interaction.user.id}_right`)
@@ -175,12 +183,12 @@ module.exports = class Tetris extends Command {
                 const newPiece = rotate(playerData.piece, false)
 
                 if (canPlace(playerData.x, "right", 0, newPiece, topBoard)) {
-                    //* Edit buttons
+                    //* Edit 
                     rotateArrow.setDisabled(canPlace(playerData.x, "right", 0, rotate(playerData.piece), topBoard))
                     leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, topBoard))
                     rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, topBoard))
                     endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
-                    endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
+                    endRightArrow.setDisabled(canPlace(playerData.x, "right", calcEnd(playerData), playerData.piece, topBoard))
 
                     components = [
                         new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
@@ -211,7 +219,7 @@ module.exports = class Tetris extends Command {
                 playerData.piece = newPiece
                 
                 //* Preview
-                const yPreview = calcBottom(playerData.x, playerData.piece, board)
+                const yPreview = calcBottom(playerData.x, playerData.y, playerData.piece, board)
                 const preview = place(playerData.x, yPreview, playerData.piece, board, true)
                 board = preview.board
 
@@ -224,7 +232,7 @@ module.exports = class Tetris extends Command {
                 leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, topBoard))
                 rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, topBoard))
                 endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
-                endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
+                endRightArrow.setDisabled(canPlace(playerData.x, "right", calcEnd(playerData), playerData.piece, topBoard))
                 
                 components = [
                     new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
@@ -261,7 +269,7 @@ module.exports = class Tetris extends Command {
                     leftArrow.setDisabled(canPlace(newX, "left", 1, playerData.piece, topBoard))
                     rightArrow.setDisabled(canPlace(newX, "right", 1, playerData.piece, topBoard))
                     endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
-                    endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
+                    endRightArrow.setDisabled(canPlace(playerData.x, "right", calcEnd(playerData), playerData.piece, topBoard))
                 
                     components = [
                         new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
@@ -291,7 +299,7 @@ module.exports = class Tetris extends Command {
                 playerData.x = newX        
 
                 //* Preview
-                const yPreview = calcBottom(playerData.x, playerData.piece, board)
+                const yPreview = calcBottom(playerData.x, playerData.y, playerData.piece, board)
                 const preview = place(playerData.x, yPreview, playerData.piece, board, true)
                 board = preview.board
 
@@ -304,8 +312,8 @@ module.exports = class Tetris extends Command {
                 leftArrow.setDisabled(canPlace(newX, "left", 1, playerData.piece, topBoard))
                 rightArrow.setDisabled(canPlace(newX, "right", 1, playerData.piece, topBoard))
                 endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
-                endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
-                
+                endRightArrow.setDisabled(canPlace(playerData.x, "right", calcEnd(playerData), playerData.piece, topBoard))
+
                 components = [
                     new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
                     new MessageActionRow().addComponents(endLeftArrow, endRightArrow, valid)
@@ -330,7 +338,7 @@ module.exports = class Tetris extends Command {
                 const removed = remove(playerData.x, playerData.y, playerData.piece, board, true)
                 board = removed
 
-                const newY = calcBottom(playerData.x, playerData.piece, board)
+                const newY = calcBottom(playerData.x, playerData.y, playerData.piece, board)
 
                 //* Placed piece
                 const placed = place(playerData.x, newY, playerData.piece, board)
@@ -341,7 +349,7 @@ module.exports = class Tetris extends Command {
                     leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, topBoard))
                     rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, topBoard))
                     endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
-                    endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
+                    endRightArrow.setDisabled(canPlace(playerData.x, "right", calcEnd(playerData), playerData.piece, topBoard))
 
                     components = [
                         new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
@@ -380,12 +388,28 @@ module.exports = class Tetris extends Command {
                 playerData.piece = playerData.nextPiece
                 playerData.nextPiece = pieces[Math.floor(Math.random() * pieces.length)]
 
+                const firstBoardLine = board[0].filter(piece => piece !== "⬛")
+
+                if (firstBoardLine.length > 0) {
+                    const formattedBoard = toString(board)
+                    const embed = new MessageEmbed()
+                        .setTitle("Tetris de " + interaction.user.username)
+                        .setDescription(`\`\`\`${formattedBoard}\`\`\`\nLa partie est finis !`)
+
+                    await collector.stop()
+                    await button.deferUpdate()
+                    return await msg.edit({
+                        embeds: [ embed ],
+                        components: []
+                    })
+                }
+
                 //* Place piece
                 const placedTop = place(playerData.x, playerData.y, playerData.piece, topBoard)
                 topBoard = placedTop.board
                 
                 //* Preview
-                const yPreview = calcBottom(playerData.x, playerData.piece, board)
+                const yPreview = calcBottom(playerData.x, playerData.y, playerData.piece, board)
                 const preview = place(playerData.x, yPreview, playerData.piece, board, true)
                 board = preview.board
 
@@ -394,7 +418,7 @@ module.exports = class Tetris extends Command {
                 leftArrow.setDisabled(canPlace(playerData.x, "left", 1, playerData.piece, topBoard))
                 rightArrow.setDisabled(canPlace(playerData.x, "right", 1, playerData.piece, topBoard))
                 endLeftArrow.setDisabled(canPlace(playerData.x, "left", 0, playerData.piece, topBoard))
-                endRightArrow.setDisabled(canPlace(playerData.x, "right", end, playerData.piece, topBoard))
+                endRightArrow.setDisabled(canPlace(playerData.x, "right", calcEnd(playerData), playerData.piece, topBoard))
 
                 components = [
                     new MessageActionRow().addComponents(leftArrow, rightArrow, rotateArrow),
@@ -512,45 +536,25 @@ function canPlace(newX, direction, additionnal, piece, board) {
     return (newX + additionnal) + piece[0].length > board[0].length
 }
 
-function calcBottom(x, piece, board) {
-    function getTop(board) {
-        const value = [ 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 ]
-
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[i].length; j++) {
-                if (board[i][j] === "⬛" || value[j] < i) continue
-
-                value[j] = i
-            }
-        }
-
-        return value
-    }
-    
-    const top = getTop(board)
-    let tops = []
-    let newY = 20
-    const lastLine = piece[piece.length - 1]
-
-    for (let i = 0; i < lastLine.length; i++) tops.push(top[x + i])
-
+function calcBottom(x, y, piece, board) {
+    let canBePlaced = true
     for (let i = 0; i < piece.length; i++) {
         for (let j = 0; j < piece[i].length; j++) {
-            if (i > 0 && piece[i]?.[j - 1] === "⬜" && tops[j - 1] < tops[j]) {
-                newY = tops[j - 1]
+            if (!canBePlaced || piece[i][j] === "⬜") continue
+            if (!board?.[y + i]?.[x + j]) {
 
-                return newY - i
-            } else if (i > 0 && piece[i]?.[j + 1] === "⬜" && tops[j + 1] < tops[j]) {
-                newY = tops[j + 1]
-
-                return newY - i
-            } else if (tops[j] < newY) {
-                newY = tops[j]
+                canBePlaced = false
+                continue
+            
             }
+
+            if (board[y + i][x + j] !== "⬛") canBePlaced = false
         }
     }
 
-    return newY - piece.length
+    if (!canBePlaced) return y - 1
+
+    return calcBottom(x, y + 1, piece, board)
 }
 
 function clearBoard(board) {
@@ -567,14 +571,13 @@ function clearBoard(board) {
         if (complete) {
             clearedLine = clearedLine + 1
 
-            board.splice(i, i + 1)
-            board.unshift(["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"])
+            const top = board.slice(0, i)
+            const bottom = board.slice(i + 1, board.length)
+            const newRow = ["⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛", "⬛"]
+
+            board = [newRow, ...top, ...bottom]
         }
     }
 
     return { board, clearedLine }
-}
-
-function copyArray(array) {
-    return JSON.parse(JSON.stringify(array))
 }
