@@ -1,9 +1,9 @@
 import { Command } from "../structures/Command.js"
 
-export default class Hangman extends Command {
+export default class Pendu extends Command {
     constructor(client) {
         super(client, {
-            name: "hangman",
+            name: "pendu",
             directory: import.meta.url
         })
     }
