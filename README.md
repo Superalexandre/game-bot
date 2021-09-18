@@ -18,11 +18,11 @@ A fun discord bot
 - [X] Pouvoir jouer la carte piocher après avoir piocher
 - [X] Si trop de carte faire deux, trois pages
 - [X] Erreur page
-- [ ] Unknow interaction ??? interaction.editReply
-- [ ] GameData (50%)
+- [ ] Unknow interaction ??? interaction.editReply **(Unknown)**
+- [ ] GameData (60%)
     - [X] Probleme 1v1 changement de sens 
         => Ajouter skip turn 
-    - [ ] Pouvoir jouer plusieurs cartes
+    - [X] Pouvoir jouer plusieurs cartes
         => playersData[ id ].activesCard = []
         => Button click -> push id -> Green
         => If already click -> remove id -> Red
@@ -32,10 +32,13 @@ A fun discord bot
         => [X] Probleme skip quand on en joue plusieurs 
         => [X] Probleme carte changement de couleur et +4
 
-        => [ ] Probleme une carte (deux ?) skip = null
-        => [ ] Probleme jouer plusieurs carte
+        => [ ] Probleme une carte (deux ?) skip = null **(Unknown)**
+        => [X] Probleme jouer plusieurs carte
     - [ ] Pouvoir "surencherir" (+2, +4)
-        => Don't skip and disable color
+        => [X] Don't skip and disable color
+        => [ ] Passer son tour (et donc piocher)
+    - [ ] Refaire les messages
+        => Faire une fonction getMessage() avec erreur et config + historique
     - [X] Distribution des cartes spéciales
         => If +2 add to first player and skip
         => If switch color first player select
@@ -53,6 +56,9 @@ A fun discord bot
 - [ ] Probleme switch quand on en joue plusieurs 
 
 ### Puissance 4 
+- [X] Probleme trad placement impossible (puissance4.cantPlayHere)
+- [X] Probleme start turn (mauvaise trad)
+- [ ] Opti gif
 - [ ] Jouer contre le bot
 
 ### Release
