@@ -116,6 +116,11 @@ async function whoStart({ i18n, interaction, msg, button, opponent, client, user
     const chooser = opponentData?.choose ? opponentData : interaction.user
     const opposite = opponentData?.choose ? interaction.user : opponent
 
+    let starter = {
+        random: false,
+        starterId: null
+    }
+
     const userStart = new MessageButton()
         .setStyle("PRIMARY")
         .setLabel(i18n.__("global.start.you", { username: chooser.username }))
@@ -151,16 +156,16 @@ async function whoStart({ i18n, interaction, msg, button, opponent, client, user
         })
 
         if (button.customId.endsWith("opponent")) {
-            opponent.turn = chooser === interaction.user ? true : false
-            opponent.random = false
+            starter.starterId = opposite.id
+            starter.random = false
         } else if (button.customId.endsWith("user")) {
-            opponent.turn = chooser === interaction.user ? false : true
-            opponent.random = false
+            starter.starterId = chooser.id
+            starter.random = false
         } else if (button.customId.endsWith("random")) {
             const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1
 
-            opponent.turn = random === 1 ? true : false
-            opponent.random = true
+            starter.starterId = random === 1 ? opposite.id : chooser.id
+            starter.random = true
         } else return msg.edit({
             content: "Erreur inconnue", 
             components: []
@@ -168,11 +173,11 @@ async function whoStart({ i18n, interaction, msg, button, opponent, client, user
     
         await collector.stop()
         await button?.deferUpdate()
-        return startGame({ i18n, interaction, msg, button, opponent, client, userData, opponentData })
+        return startGame({ i18n, interaction, msg, button, opponent, starter, client, userData, opponentData })
     })
 }
 
-async function startGame({ i18n, interaction, msg, button, opponent, client, userData, opponentData }) {
+async function startGame({ i18n, interaction, msg, button, opponent, starter, client, userData, opponentData }) {
     let board = [
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
@@ -184,8 +189,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, client, use
     userData = userData ? userData : {
         id: interaction.user.id,
         username: interaction.user.username,
-        turn: opponent.turn ? false : true,
-        random: opponent.random,
+        turn: starter.starterId === interaction.user.id ? true : false,
         emoji: "🔴",
         winEmoji: "<a:Sudref_Red_White:723485311467913239>"
     }
@@ -193,8 +197,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, client, use
     opponentData = opponentData ? opponentData : {
         id: opponent.id,
         username: opponent.username,
-        turn: opponent.turn,
-        random: opponent.random,
+        turn: starter.starterId === interaction.user.id ? false : true,
         emoji: "🟡",
         winEmoji: "<a:Sudref_Yellow_White:723485311954452501>"
     }
@@ -206,7 +209,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, client, use
     }
 
     await msg.edit({
-        content: `${userData.turn ? userData.username : opponentData.username} ${i18n.__("puissance.goingToStart")} (${userData.random ? i18n.__("puissance4.random") : i18n.__("puissance4.choice")})\n${i18n.__("puissance4.settingUp")}`,
+        content: `${userData.turn ? userData.username : opponentData.username} ${i18n.__("puissance4.goingToStart")} (${starter.random ? i18n.__("puissance4.random") : i18n.__("puissance4.choice")})\n${i18n.__("puissance4.settingUp")}`,
         components: []
     })
 
@@ -255,12 +258,12 @@ async function startGame({ i18n, interaction, msg, button, opponent, client, use
 
         if (added && added.error) {
             if (added.error === "row_full") return await msg.edit({
-                content: text(userData, opponentData, i18n.__("puissance4.cantPlayHere")) + added.string,
+                content: text(userData, opponentData, i18n.__("puissance4.error.cantPlayHere")) + added.string,
                 components: []
             })
 
             return await msg.edit({ 
-                content: text(userData, opponentData, i18n.__("puissance4.unknownError")) + added.string, 
+                content: text(userData, opponentData, i18n.__("puissance4.error.unknownError")) + added.string, 
                 components: []
             })
         }
@@ -298,7 +301,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, client, use
             await msg.reactions.removeAll()
 
             await msg.edit({
-                content: `**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) ${i18n.__("puissance.equality.and")} ${opponentData.username} (${opponentData.emoji}) ${i18n.__("puissance.equality.equality")}\n` + formatedBoard.string,
+                content: `**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) ${i18n.__("puissance4.equality.and")} ${opponentData.username} (${opponentData.emoji}) ${i18n.__("puissance4.equality.equality")}\n` + formatedBoard.string,
                 components: []
             })
 
@@ -479,7 +482,7 @@ async function restart({ i18n, interaction, msg, button, opponent, client, userD
 
         if (numberReady === 2) {
             await collector.stop()
-            await reply.reactions.removeAll()
+            await msg.reactions.removeAll()
 
             opponentData.choose = opponentData?.choose ? false : true
 
@@ -487,7 +490,7 @@ async function restart({ i18n, interaction, msg, button, opponent, client, userD
         }
         
         await msg.edit({
-            content: i18n.__("puissance.wantRevange", { username: user.username, number: numberReady }),
+            content: i18n.__("puissance4.wantRevange", { username: user.username, number: numberReady }),
             components: []
         })
     })
@@ -497,10 +500,10 @@ async function restart({ i18n, interaction, msg, button, opponent, client, userD
 
         if (numberReady === 0) {
             await collector.stop()
-            await reply.reactions.removeAll()
+            await msg.reactions.removeAll()
 
             return await msg.edit({
-                content: i18n.__("puissance.noMoreRevange", { username: user.username }),
+                content: i18n.__("puissance4.noMoreRevange", { username: user.username }),
                 components: []
             })
         }
