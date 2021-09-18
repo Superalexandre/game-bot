@@ -36,7 +36,7 @@ A fun discord bot
         => [X] Probleme jouer plusieurs carte
     - [ ] Pouvoir "surencherir" (+2, +4)
         => [X] Don't skip and disable color
-        => [ ] Passer son tour (et donc piocher)
+        => [ ] Passer son tour (et donc piocher) (CantPlayCard, button id)
     - [ ] Refaire les messages
         => Faire une fonction getMessage() avec erreur et config + historique
     - [X] Distribution des cartes spéciales
