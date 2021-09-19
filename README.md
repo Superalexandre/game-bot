@@ -32,10 +32,10 @@ A fun discord bot
 &emsp;&emsp;=> ✅ Probleme carte changement de couleur et +4 <br/>
 &emsp;&emsp;=> ❌ Probleme une carte (deux ?) skip = null **(Unknown)** <br/>
 &emsp;&emsp;=> ✅ Probleme jouer plusieurs carte <br/>
-&emsp;🚧 Pouvoir "surencherir" (+2, +4) <br/>
+&emsp;✅ Pouvoir "surencherir" (+2, +4) <br/>
 &emsp;&emsp;=> ✅ Don't skip and disable color <br/>
 &emsp;&emsp;=> ✅ Passer son tour (et donc piocher) (CantPlayCard, button id) <br/>
-&emsp;&emsp;=> 🚧 Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas <br/>
+&emsp;&emsp;=> ✅ Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas <br/>
 &emsp;❌ Refaire les messages <br/>
 &emsp;&emsp;=> Faire une fonction getMessage() avec erreur et config + historique <br/>
 &emsp;✅ Distribution des cartes spéciales <br/>
