@@ -36,7 +36,9 @@ A fun discord bot
         => [X] Probleme jouer plusieurs carte
     - [ ] Pouvoir "surencherir" (+2, +4)
         => [X] Don't skip and disable color
-        => [ ] Passer son tour (et donc piocher) (CantPlayCard, button id)
+        => [X] Passer son tour (et donc piocher) (CantPlayCard, button id)
+
+        => [ ] Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas
     - [ ] Refaire les messages
         => Faire une fonction getMessage() avec erreur et config + historique
     - [X] Distribution des cartes spéciales
@@ -47,6 +49,7 @@ A fun discord bot
         => If enable ask if player bluff
             -> Yes but no => +6
             -> Yes and yes => User +4
+- [ ] Impossible d'undo le +4 quand il est séléctionner
 - [ ] Si piocher et qu'une carte peut etre jouer envoyer un avertissement
 - [X] Gerer le end game
 - [ ] Pouvoir personnalisé sa config (/config uno)
