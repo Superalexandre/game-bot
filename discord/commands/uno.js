@@ -108,7 +108,8 @@ export default class Uno extends Command {
             },
             activeSpecialCard: {
                 type: null,
-                number: 0
+                askedColor: null,
+                number: 0,
             },
             card: cards,
             players: players
@@ -323,6 +324,10 @@ export default class Uno extends Command {
                 const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
 
                 await button.deferUpdate()
+
+                gameData.activeSpecialCard.number = 0
+                gameData.activeSpecialCard.askedColor = null
+                gameData.activeSpecialCard.type = null
 
                 await user?.reply?.editReply({
                     content: "Voici vos cartes, faites gaffe a bien **garder** ce message !", 
@@ -597,7 +602,10 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
         const numberOfDraw = lastActiveCardNumber === "addTwo" ? 2 : 4
 
         if (gameData.config.outbid) {
+            const [, askedColor] = lastActiveCardId.split("-")
+
             gameData.activeSpecialCard.type = lastActiveCardNumber
+            gameData.activeSpecialCard.askedColor = lastActiveCardNumber === "addTwo" ? null : askedColor
             gameData.activeSpecialCard.number = gameData.activeSpecialCard.number + activeCardLength
 
             actualCard = lastActiveCardNumber === "addTwo" ? `${lastActiveCardColor}_addTwo` : "special_addFour"
@@ -607,7 +615,6 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
             const nextTurnButtons = genButtons({ interaction, playersData, userId: nextUserTurn.user.id, gameId, actualCard, disable: false })
             const rows = makeRows({ buttonsData: nextTurnButtons.buttons, gameData, page: nextUserTurn.page, interaction, gameId, disable: false })
 
-            const [, askedColor] = lastActiveCardId.split("-")
             const id = lastActiveCardNumber === "addTwo" ? 0 : askedColor
 
             const cantPlayButton = new MessageButton()
@@ -822,6 +829,20 @@ async function startGame({ client, gameId }) {
             const rows = makeRows({ buttonsData: buttons, gameData, page: playersData[button.user.id].page, interaction, gameId, disable })
 
             if (playersData[button.user.id]?.pendingButtons?.buttons) rows.push(playersData[button.user.id]?.pendingButtons?.buttons)
+
+            if (gameData.config.outbid && gameData.activeSpecialCard.number > 0) {
+                const numberOfDraw = gameData.activeSpecialCard.type === "addTwo" ? 2 : 4
+                const id = gameData.activeSpecialCard.type === "addTwo" ? 0 : gameData.activeSpecialCard.askedColor
+
+                const cantPlayButton = new MessageButton()
+                    .setStyle("DANGER")
+                    .setLabel(`Je ne peux pas surencherir (+${gameData.activeSpecialCard.number * numberOfDraw} cartes)`)
+                    .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_cantOutbid_${id}_0`)
+
+                const componentsCantPlayButton = new MessageActionRow().addComponents(cantPlayButton)
+
+                rows.push(componentsCantPlayButton)
+            }
 
             await button.reply({
                 content: "Voici vos cartes, faites gaffe a bien **garder** ce message !",
