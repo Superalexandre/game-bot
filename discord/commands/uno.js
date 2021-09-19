@@ -302,11 +302,57 @@ export default class Uno extends Command {
         const [actualCardColor, actualCardNumber] = actualCard.split("_")
 
         if (gameData.config.outbid && gameData.activeSpecialCard.number > 0) {
-            //Check if id is cannot outbid
+            if (cardColor === "cantOutbid") {
+                //* Add cards to drawer
+                const numberOfDraw = gameData.activeSpecialCard.type === "addTwo" ? 2 : 4
+
+                for (let i = 0; i < gameData.activeSpecialCard.number * numberOfDraw; i++) {
+                    const drawCard = await genCard({ cards })
+                
+                    user.cards.push(drawCard.generatedCard)   
+                }
+
+                if (gameData.activeSpecialCard.type === "addFour") actualCard = cardNumber
+
+                turn = switchTurn(playersData, turn, 1, clockwise)
+                user.isTurn = false
+
+                const newTurn = userTurn(turn)
+                newTurn.isTurn = true
+
+                const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
+
+                await button.deferUpdate()
+
+                await user?.reply?.editReply({
+                    content: "Voici vos cartes, faites gaffe a bien **garder** ce message !", 
+                    components: makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: false }),
+                    ephemeral: true
+                })
+
+                await msg.edit({
+                    content: mainText(playersData, newTurn, actualCard),
+                    components: [ seenCardComponent ]
+                })
+
+                return await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
+            }
 
             if (gameData.activeSpecialCard.type !== cardNumber) {
                 const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
                 const rows = makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: false })
+ 
+                const numberOfDraw = gameData.activeSpecialCard.type === "addTwo" ? 2 : 4
+                const id = gameData.activeSpecialCard.type === "addTwo" ? 0 : cardNumber
+
+                const cantPlayButton = new MessageButton()
+                    .setStyle("DANGER")
+                    .setLabel(`Je ne peux pas surencherir (+${gameData.activeSpecialCard.number * numberOfDraw} cartes)`)
+                    .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_cantOutbid_${id}_0`)
+
+                const componentsCantPlayButton = new MessageActionRow().addComponents(cantPlayButton)
+
+                rows.push(componentsCantPlayButton)
 
                 await button.deferUpdate()
 
@@ -554,17 +600,20 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
             gameData.activeSpecialCard.type = lastActiveCardNumber
             gameData.activeSpecialCard.number = gameData.activeSpecialCard.number + activeCardLength
 
-            actualCard = "special_addFour"
+            actualCard = lastActiveCardNumber === "addTwo" ? `${lastActiveCardColor}_addTwo` : "special_addFour"
 
             const nextTurn = switchTurn(playersData, turn, 1, clockwise)
             const nextUserTurn = userTurn(nextTurn)
             const nextTurnButtons = genButtons({ interaction, playersData, userId: nextUserTurn.user.id, gameId, actualCard, disable: false })
             const rows = makeRows({ buttonsData: nextTurnButtons.buttons, gameData, page: nextUserTurn.page, interaction, gameId, disable: false })
 
+            const [, askedColor] = lastActiveCardId.split("-")
+            const id = lastActiveCardNumber === "addTwo" ? 0 : askedColor
+
             const cantPlayButton = new MessageButton()
                 .setStyle("DANGER")
-                .setLabel("Je ne peux pas surencherir")
-                .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_cantOutbid`)
+                .setLabel(`Je ne peux pas surencherir (+${gameData.activeSpecialCard.number * numberOfDraw} cartes)`)
+                .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_cantOutbid_${id}_0`)
 
             const componentsCantPlayButton = new MessageActionRow().addComponents(cantPlayButton)
 
