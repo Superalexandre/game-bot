@@ -174,25 +174,29 @@ export default class Uno extends Command {
         const seenCardComponent = new MessageActionRow().addComponents(seen_card)
 
         //* Buttons for +4 and switch color
-        const genColorsButtons = (type, id) => {
+        const genColorsButtons = (type, id, disabledColor) => {
             const red = new MessageButton()
                 .setStyle("PRIMARY")
                 .setLabel("Rouge")
+                .setDisabled(disabledColor.includes("red"))
                 .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_red_${type}_${id}`)
 
             const green = new MessageButton()
                 .setStyle("PRIMARY")
                 .setLabel("Vert")
+                .setDisabled(disabledColor.includes("green"))
                 .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_green_${type}_${id}`)
 
             const blue = new MessageButton()
                 .setStyle("PRIMARY")
                 .setLabel("Bleu")
+                .setDisabled(disabledColor.includes("blue"))
                 .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_blue_${type}_${id}`)
         
             const yellow = new MessageButton()
                 .setStyle("PRIMARY")
                 .setLabel("Jaune")
+                .setDisabled(disabledColor.includes("yellow"))
                 .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_yellow_${type}_${id}`)
 
             const back = new MessageButton()
@@ -438,7 +442,10 @@ export default class Uno extends Command {
             const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: true })
             const rows = makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: true })
 
-            const colors = genColorsButtons(cardNumber, cardId)
+            const colorsFilter = user.cards.map(card => card.split("_")[0])
+            const filter = !gameData.config.bluffing && cardNumber !== "newColor" ? colorsFilter : []
+
+            const colors = genColorsButtons(cardNumber, cardId, filter)
 
             rows.push(colors)
 
@@ -592,6 +599,11 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
 
     user.activeCard = []
     if (lastActiveCardColor !== "special") actualCard = `${lastActiveCardColor}_${lastActiveCardNumber}`
+
+    if (lastActiveCardColor === "special" && lastActiveCardNumber !== "special") {
+        const [, askedColor] = lastActiveCardId.split("-")
+        actualCard = askedColor
+    }
 
     if (lastActiveCardNumber === "switch") { 
         if (players.length === 2) turn = switchTurn(playersData, turn, 1, clockwise)
