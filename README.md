@@ -3,6 +3,10 @@ A fun discord bot
 
 # Road map
 
+✅ : Fini
+❌ : Annuler
+🚧 : En cours
+
 ### Global
 ✅ Mise a jour v13 discord.js <br/>
 ✅ Unknown interaction bug <br/>
@@ -36,6 +40,7 @@ A fun discord bot
 &emsp;&emsp;=> ✅ Don't skip and disable color <br/>
 &emsp;&emsp;=> ✅ Passer son tour (et donc piocher) (CantPlayCard, button id) <br/>
 &emsp;&emsp;=> ✅ Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas <br/>
+&emsp;&emsp;=> ✅ Erreur lorsque la carte est un changement de couleur (Probleme avec le outbid) <br/>
 &emsp;❌ Refaire les messages <br/>
 &emsp;&emsp;=> Faire une fonction getMessage() avec erreur et config + historique <br/>
 &emsp;✅ Distribution des cartes spéciales <br/>
