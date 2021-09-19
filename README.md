@@ -4,65 +4,65 @@ A fun discord bot
 # Road map
 
 ### Global
-✅ Mise a jour v13 discord.js
-✅ Unknown interaction bug
-✅ [En cours] Refaire les commandes en /
-✅ Event message
-✅ Traduction
-🚧 Logger
+✅ Mise a jour v13 discord.js <br/>
+✅ Unknown interaction bug <br/>
+✅ [En cours] Refaire les commandes en / <br/>
+✅ Event message <br/>
+✅ Traduction <br/>
+🚧 Logger <br/>
 
 ### Uno
-✅ Refaire en slash command
-✅ RemoveCard function ré ajouter dans la config
-✅ Pouvoir faire un retour (cartes spéciales)
-✅ Pouvoir jouer la carte piocher après avoir piocher
-✅ Si trop de carte faire deux, trois pages
-✅ Erreur page
-❌ Unknow interaction ??? interaction.editReply **(Unknown)**
-🚧 GameData (70%)
-    ✅ Probleme 1v1 changement de sens 
-        => ✅ Ajouter skip turn 
-    ✅ Pouvoir jouer plusieurs cartes
-        => ✅ playersData[ id ].activesCard = []
-        => ✅ Button click -> push id -> Green
-        => ✅ If already click -> remove id -> Red
-        => ✅ Play button -> remove card -> last card = active
+✅ Refaire en slash command <br/>
+✅ RemoveCard function ré ajouter dans la config <br/>
+✅ Pouvoir faire un retour (cartes spéciales) <br/>
+✅ Pouvoir jouer la carte piocher après avoir piocher <br/>
+✅ Si trop de carte faire deux, trois pages <br/>
+✅ Erreur page <br/>
+❌ Unknow interaction ??? interaction.editReply **(Unknown)** <br/>
+🚧 GameData (70%) <br/>
+    ✅ Probleme 1v1 changement de sens  <br/>
+        => ✅ Ajouter skip turn  <br/>
+    ✅ Pouvoir jouer plusieurs cartes <br/>
+        => ✅ playersData[ id ].activesCard = [] <br/>
+        => ✅ Button click -> push id -> Green <br/>
+        => ✅ If already click -> remove id -> Red <br/>
+        => ✅ Play button -> remove card -> last card = active <br/>
         
-        => ✅ Probleme switch quand on en joue plusieurs 
-        => ✅ Probleme skip quand on en joue plusieurs 
-        => ✅ Probleme carte changement de couleur et +4
+        => ✅ Probleme switch quand on en joue plusieurs  <br/>
+        => ✅ Probleme skip quand on en joue plusieurs  <br/>
+        => ✅ Probleme carte changement de couleur et +4 <br/>
 
-        => ❌ Probleme une carte (deux ?) skip = null **(Unknown)**
-        => ✅ Probleme jouer plusieurs carte
-    🚧 Pouvoir "surencherir" (+2, +4)
-        => ✅ Don't skip and disable color
-        => ✅ Passer son tour (et donc piocher) (CantPlayCard, button id)
+        => ❌ Probleme une carte (deux ?) skip = null **(Unknown)** <br/>
+        => ✅ Probleme jouer plusieurs carte <br/>
+    🚧 Pouvoir "surencherir" (+2, +4) <br/>
+        => ✅ Don't skip and disable color <br/>
+        => ✅ Passer son tour (et donc piocher) (CantPlayCard, button id) <br/>
 
-        => 🚧 Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas
-    ❌ Refaire les messages
-      => Faire une fonction getMessage() avec erreur et config + historique
-    ✅ Distribution des cartes spéciales
-        => If +2 add to first player and skip
-        => If switch color first player select
-    🚧 Pouvoir buffler au +4
-        => If disable = Error message
-        => If enable ask if player bluff
-            -> Yes but no => +6
-            -> Yes and yes => User +4
-🚧 Impossible d'undo le +4 quand il est séléctionner
-❌ Si piocher et qu'une carte peut etre jouer envoyer un avertissement
-✅ Gerer le end game
-🚧 Pouvoir personnalisé sa config (/config uno)
+        => 🚧 Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas <br/>
+    ❌ Refaire les messages <br/>
+      => Faire une fonction getMessage() avec erreur et config + historique <br/>
+    ✅ Distribution des cartes spéciales <br/>
+        => If +2 add to first player and skip <br/>
+        => If switch color first player select <br/>
+    🚧 Pouvoir buffler au +4 <br/>
+        => If disable = Error message <br/>
+        => If enable ask if player bluff <br/>
+            -> Yes but no => +6 <br/>
+            -> Yes and yes => User +4 <br/>
+🚧 Impossible d'undo le +4 quand il est séléctionner <br/>
+❌ Si piocher et qu'une carte peut etre jouer envoyer un avertissement <br/>
+✅ Gerer le end game <br/>
+🚧 Pouvoir personnalisé sa config (/config uno) <br/>
 
 ### Need test
-🚧 Probleme skip quand on en joue plusieurs 
-🚧 Probleme switch quand on en joue plusieurs 
+🚧 Probleme skip quand on en joue plusieurs <br/>
+🚧 Probleme switch quand on en joue plusieurs <br/>
 
 ### Puissance 4 
-✅ Probleme trad placement impossible (puissance4.cantPlayHere)
-✅ Probleme start turn (mauvaise trad)
-🚧 Opti gif
-🚧 Jouer contre le bot
+✅ Probleme trad placement impossible (puissance4.cantPlayHere) <br/>
+✅ Probleme start turn (mauvaise trad) <br/>
+🚧 Opti gif <br/>
+🚧 Jouer contre le bot <br/>
 🚧
 ### Release
 🚧 Release
