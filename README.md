@@ -18,8 +18,8 @@ A fun discord bot
 - [X] Pouvoir jouer la carte piocher après avoir piocher
 - [X] Si trop de carte faire deux, trois pages
 - [X] Erreur page
-- [ ] Unknow interaction ??? interaction.editReply **(Unknown)**
-- [ ] GameData (60%)
+❌ - [ ] Unknow interaction ??? interaction.editReply **(Unknown)**
+- [ ] GameData (70%)
     - [X] Probleme 1v1 changement de sens 
         => Ajouter skip turn 
     - [X] Pouvoir jouer plusieurs cartes
@@ -28,19 +28,19 @@ A fun discord bot
         => If already click -> remove id -> Red
         => Play button -> remove card -> last card = active
         
-        => [X] Probleme switch quand on en joue plusieurs 
-        => [X] Probleme skip quand on en joue plusieurs 
-        => [X] Probleme carte changement de couleur et +4
+        => - [X] Probleme switch quand on en joue plusieurs 
+        => - [X] Probleme skip quand on en joue plusieurs 
+        => - [X] Probleme carte changement de couleur et +4
 
-        => [ ] Probleme une carte (deux ?) skip = null **(Unknown)**
-        => [X] Probleme jouer plusieurs carte
+        ❌ => - [ ] Probleme une carte (deux ?) skip = null **(Unknown)**
+        => - [X] Probleme jouer plusieurs carte
     - [ ] Pouvoir "surencherir" (+2, +4)
         => [X] Don't skip and disable color
         => [X] Passer son tour (et donc piocher) (CantPlayCard, button id)
 
-        => [ ] Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas
-    - [ ] Refaire les messages
-        => Faire une fonction getMessage() avec erreur et config + historique
+        => - [ ] Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas
+    ❌ - [ ] Refaire les messages
+    ❌   => Faire une fonction getMessage() avec erreur et config + historique
     - [X] Distribution des cartes spéciales
         => If +2 add to first player and skip
         => If switch color first player select
@@ -50,7 +50,7 @@ A fun discord bot
             -> Yes but no => +6
             -> Yes and yes => User +4
 - [ ] Impossible d'undo le +4 quand il est séléctionner
-- [ ] Si piocher et qu'une carte peut etre jouer envoyer un avertissement
+❌ - [ ] Si piocher et qu'une carte peut etre jouer envoyer un avertissement
 - [X] Gerer le end game
 - [ ] Pouvoir personnalisé sa config (/config uno)
 
