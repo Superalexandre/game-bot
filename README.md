@@ -27,17 +27,14 @@ A fun discord bot
         => ✅ Button click -> push id -> Green <br/>
         => ✅ If already click -> remove id -> Red <br/>
         => ✅ Play button -> remove card -> last card = active <br/>
-        
         => ✅ Probleme switch quand on en joue plusieurs  <br/>
         => ✅ Probleme skip quand on en joue plusieurs  <br/>
         => ✅ Probleme carte changement de couleur et +4 <br/>
-
         => ❌ Probleme une carte (deux ?) skip = null **(Unknown)** <br/>
         => ✅ Probleme jouer plusieurs carte <br/>
     🚧 Pouvoir "surencherir" (+2, +4) <br/>
         => ✅ Don't skip and disable color <br/>
         => ✅ Passer son tour (et donc piocher) (CantPlayCard, button id) <br/>
-
         => 🚧 Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas <br/>
     ❌ Refaire les messages <br/>
       => Faire une fonction getMessage() avec erreur et config + historique <br/>
@@ -63,22 +60,22 @@ A fun discord bot
 ✅ Probleme start turn (mauvaise trad) <br/>
 🚧 Opti gif <br/>
 🚧 Jouer contre le bot <br/>
-🚧
+
 ### Release
-🚧 Release
+🚧 Release <br/>
 
 ### Sodoku
-✅ https://github.com/robatron/sudoku.js
+✅ https://github.com/robatron/sudoku.js <br/>
 ### Tetris
-✅ Rotate (bizzare comment c'est fait on peu pas déplacer alors que si)
-✅ Arrow
-✅ **Place bottom**
-✅ Ajouter des fleches pour aller directement de l'autre coter
-✅ https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4
-✅ A test 
+✅ Rotate (bizzare comment c'est fait on peu pas déplacer alors que si) <br/>
+✅ Arrow <br/>
+✅ **Place bottom** <br/>
+✅ Ajouter des fleches pour aller directement de l'autre coter <br/>
+✅ https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4 <br/>
+✅ A test  <br/>
 
 ### Petit chevaux
-🚧 Rework
+🚧 Rework <br/>
 
 ### Monopoly
-🚧 Todo complet
+🚧 Todo complet <br/>
