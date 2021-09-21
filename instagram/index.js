@@ -1,5 +1,6 @@
 import { Message, Client } from "@androz2091/insta.js"
 import LikeCollector from "./LikeCollector.js"
+import { inspect } from "util"
 
 Message.prototype.createLikeCollector = (message, options) => {
     const collector = new LikeCollector(message, options)
@@ -50,7 +51,7 @@ client.on("messageCreate", async(message) => {
         const result = new Promise((resolve) => resolve(eval(content)))
 
         return result.then(async(output) => {
-            if (typeof output !== "string") output = require("util").inspect(output, { depth: 0 })
+            if (typeof output !== "string") output = inspect(output, { depth: 0 })
             
             if (argsOptions[0] === "result" && !["yes", "true"].includes(argsOptions[1])) return 
 
