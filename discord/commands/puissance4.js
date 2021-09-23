@@ -1,15 +1,7 @@
 import { Command } from "../structures/Command.js"
 import { MessageButton, MessageActionRow } from "discord.js"
 import Canvas from "canvas"
-//import gifencoder from "gifencoder"
-import /*{ GIFEncoder, quantize, applyPalette }*/ Gif from 'gifenc'
-import arrayBufferToBuffer from "arraybuffer-to-buffer"
-
-//* Dirname
-import path, { dirname } from "path"
-import { fileURLToPath } from "url"
-
-import fs from "fs"
+import Gif from "gifenc"
 
 export default class Puissance4 extends Command {
     constructor(client) {
