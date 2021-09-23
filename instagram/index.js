@@ -1,9 +1,6 @@
 import { Message, Client, Chat, Attachment } from "@androz2091/insta.js"
 import LikeCollector from "./LikeCollector.js"
 import { inspect } from "util"
-import Canvas from "canvas"
-import Gif from "gifenc"
-import ytdl from "ytdl-core"
 
 //* Init createLikeCollector
 Message.prototype.createLikeCollector = (message, options) => {
@@ -15,6 +12,20 @@ const client = new Client()
 
 client.on("connected", () => {
     console.log(`Logged in as ${client.user.username}`)
+    
+    const pendingChat = client.cache.pendingChats
+    for (const [chatId, chat] of pendingChat.entries()) {
+        
+        chat.approve().catch(() => {})
+
+        console.log(`Message approuvé ${chatId}`)
+    }
+})
+
+client.on("pendingRequest", chat => {
+    chat.approve()
+
+    console.log(`Message approuvé ${chat.id}`)
 })
 
 client.on("messageCreate", async(message) => {
