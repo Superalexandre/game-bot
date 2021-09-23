@@ -67,8 +67,8 @@ A fun discord bot
 🚧 Jouer contre le bot <br/>
 
 ### Instagram
-🚧 Message en attente => A ouvrir (ignorer si trop vieux)
-🚧 Message non lu => A lire (ignorer, bot off)
+✅ Message en attente => A ouvrir (ignorer si trop vieux)
+✅ Message non lu => A lire (ignorer, bot off)
 
 ### Release
 🚧 Release <br/>
