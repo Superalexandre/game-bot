@@ -14,7 +14,7 @@
     "canvas": "^2.8.0",
     "discord.js": "^13.0.1",
     "enmap": "^5.8.5",
-    "gifencoder": "^2.0.1",
+    "gifenc": "github:mattdesl/gifenc",
     "i18n": "^0.13.3",
     "sudoku-umd": "^1.0.1"
   }
