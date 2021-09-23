@@ -1,7 +1,15 @@
 import { Command } from "../structures/Command.js"
 import { MessageButton, MessageActionRow } from "discord.js"
-import canvas from "canvas"
-import gifencoder from "gifencoder"
+import Canvas from "canvas"
+//import gifencoder from "gifencoder"
+import /*{ GIFEncoder, quantize, applyPalette }*/ Gif from 'gifenc'
+import arrayBufferToBuffer from "arraybuffer-to-buffer"
+
+//* Dirname
+import path, { dirname } from "path"
+import { fileURLToPath } from "url"
+
+import fs from "fs"
 
 export default class Puissance4 extends Command {
     constructor(client) {
@@ -511,26 +519,18 @@ async function restart({ i18n, interaction, msg, button, opponent, client, userD
 }
 
 async function makeGif({ client, i18n, msg, gameData }) {
-    const mainText = i18n.__("puissance4.replay.mainText")
-
     await msg.edit({
-        content: mainText + `\n${i18n.__("puissance4.replay.step")} : 1/2`
+        content: i18n.__("puissance4.replay.mainText")
     })
 
     const width = 1000
     const height = 1000
 
     //* Gif
-    const gif = new gifencoder(width, height)
-    
-    gif.start()
-    gif.setRepeat(0)
-    gif.setDelay(1500)
-    gif.setQuality(1)
-    gif.setTransparent()
+    const gif = Gif.GIFEncoder()
 
     //* Canvas
-    const canvas = canvas.createCanvas(width, height)
+    const canvas = Canvas.createCanvas(width, height)
     const ctx = canvas.getContext("2d")
 
     const fontSize = width / 25
@@ -547,13 +547,12 @@ async function makeGif({ client, i18n, msg, gameData }) {
     ctx.font = `${fontSize - 2}px 'Arial'`
     ctx.fillText(`${i18n.__("puissance4.replay.copyright")} ${client.user.username}`, width / 20, height - 20)
 
-    await msg.edit({
-        content: mainText + `\n${i18n.__("puissance4.replay.step")} : 2/2\n0/${gameData.actions.length + 1}`
-    })
-
     for (let i = 0; i < gameData.actions.length; i++) {
         for (let j = 0; j < gameData.actions[i].length; j++) {
             for (let k = 0; k < gameData.actions[i][j].length; k++) {
+
+                if (gameData.actions[0][j][k].endsWith("_placed") || (gameData.actions[i][j][k] === "⚪" && i > 0)) continue
+
                 const widthImage = width / 10
                 const heightImage = height / 10
 
@@ -568,22 +567,26 @@ async function makeGif({ client, i18n, msg, gameData }) {
                 ctx.fillStyle = gameData.actions[i][j][k] === "🔴" ? "#DD2E44" : gameData.actions[i][j][k] === "🟡" ? "#FDCB58" : "#FFFFFF"
                 ctx.fill()
 
+                if (gameData.actions[0][j][k] !== "⚪") gameData.actions[0][j][k] = `${gameData.actions[i][j][k]}_placed`
             }
         }
 
-        await msg.edit({
-            content: mainText + `\n${i18n.__("puissance4.replay.step")} : 2/2\n${i + 1}/${gameData.actions.length + 1}`
-        })
+        const { data, width: widhthCtx, height: heightCtx } = ctx.getImageData(0, 0, width, height)
+        const palette = Gif.quantize(data, 256)
+        const index = Gif.applyPalette(data, palette)
 
-        gif.addFrame(ctx)
+        gif.writeFrame(index, widhthCtx, heightCtx, { palette, transparent: true, delay: 1500, repeat: 0 })
     }
 
     gif.finish()
 
+    const bytes = gif.bytes()
+    const buffer = Buffer.from(bytes)
+
     await msg.edit({
         content: i18n.__("puissance4.replay.gameReplay"),
         files: [{
-            attachment: gif.out.getData(),
+            attachment: buffer,
             name: "replay.gif"
         }]
     })
