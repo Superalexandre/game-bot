@@ -1,7 +1,11 @@
-import { Message, Client } from "@androz2091/insta.js"
+import { Message, Client, Chat, Attachment } from "@androz2091/insta.js"
 import LikeCollector from "./LikeCollector.js"
 import { inspect } from "util"
+import Canvas from "canvas"
+import Gif from "gifenc"
+import ytdl from "ytdl-core"
 
+//* Init createLikeCollector
 Message.prototype.createLikeCollector = (message, options) => {
     const collector = new LikeCollector(message, options)
     return collector
@@ -14,6 +18,7 @@ client.on("connected", () => {
 })
 
 client.on("messageCreate", async(message) => {
+    if (!message || !message.content) return
     if (message.author.id === client.user.id) return
 
     const args = message.content.split(/ +/g).slice(1)
@@ -21,7 +26,9 @@ client.on("messageCreate", async(message) => {
 
     await message.markSeen()
 
-    if (message.content.startsWith("!puissance4") || message.content.startsWith("!p4")) {
+    if (message.content.startsWith("!video")) {
+
+    } else if (message.content.startsWith("!puissance4") || message.content.startsWith("!p4")) {
         let opponent
         
         try {
@@ -63,6 +70,89 @@ client.on("messageCreate", async(message) => {
         })
     }
 })
+
+/*
+! Problem : Cannot send a gif 
+
+async function replay({ message, userData, opponentData, gameData, client }) {
+    const collector = message.createMessageCollector({
+        filter: (msg) => [opponentData.id, userData.id].includes(msg.author.id),
+        idle: 60000
+    })
+
+    collector.on("message", async(msg) => {
+        if (["gif", "replay"].includes(msg.content.toLowerCase())) {
+            await collector.end()
+
+            const width = 1000
+            const height = 1000
+
+            //* Gif
+            const gif = Gif.GIFEncoder()
+
+            //* Canvas
+            const canvas = Canvas.createCanvas(width, height)
+            const ctx = canvas.getContext("2d")
+
+            const fontSize = width / 25
+
+            //* Text
+            ctx.fillStyle = "#FFFFFF"
+            ctx.font = `${fontSize}px 'Arial'`
+            const text = `Replay de ${gameData.players[0].username} contre ${gameData.players[1].username}`
+            const textWidth = ctx.measureText(text).width
+
+            ctx.fillText(text, (canvas.width/2) - (textWidth / 2), 50)
+
+            //* Credit
+            ctx.font = `${fontSize - 2}px 'Arial'`
+            ctx.fillText(`Replay par ${client.user.username}`, width / 20, height - 20)
+
+            for (let i = 0; i < gameData.actions.length; i++) {
+                for (let j = 0; j < gameData.actions[i].length; j++) {
+                    for (let k = 0; k < gameData.actions[i][j].length; k++) {
+
+                        if (gameData.actions[0][j][k].endsWith("_placed") || (gameData.actions[i][j][k] === "⚪" && i > 0)) continue
+
+                        const widthImage = width / 10
+                        const heightImage = height / 10
+
+                        const jLength = gameData.actions[i][j].length
+                        const iLength = gameData.actions[i].length
+
+                        const x = (width - (jLength * widthImage)) / 2
+                        const y  = (height - (iLength * heightImage)) / 2
+            
+                        ctx.beginPath()
+                        ctx.arc(x + k * widthImage, y + j * heightImage, (height / 10) / 2, 0, Math.PI * 2, true)
+                        ctx.fillStyle = gameData.actions[i][j][k] === "🔴" ? "#DD2E44" : gameData.actions[i][j][k] === "🟡" ? "#FDCB58" : "#FFFFFF"
+                        ctx.fill()
+
+                        if (gameData.actions[0][j][k] !== "⚪") gameData.actions[0][j][k] = `${gameData.actions[i][j][k]}_placed`
+                    }
+                }
+
+                const { data, width: widhthCtx, height: heightCtx } = ctx.getImageData(0, 0, width, height)
+                const palette = Gif.quantize(data, 256)
+                const index = Gif.applyPalette(data, palette)
+
+                gif.writeFrame(index, widhthCtx, heightCtx, { palette, transparent: true, delay: 1500, repeat: 0 })
+            }
+
+            gif.finish()
+
+            const bytes = gif.bytes()
+            const buffer = Buffer.from(bytes)
+
+            
+        } else await collector.end()
+    })
+
+    collector.on("end", (reason) => {
+        if (reason === "idle") return
+    })
+}
+*/
 
 async function opponentReady({ message, opponent }) {
     const msg = await message.chat.sendMessage(`@${opponent.username} aimez ce message dès que vous êtes prêt(e)\n\n${message.author.username} si vous voulez annuler la demander liker ce message`)
@@ -114,6 +204,12 @@ async function startGame({ message, opponent }) {
     const filter = (msg) => [opponentData.id, userData.id].includes(msg.author.id) && ["1", "2", "3", "4", "5", "6", "7", "stop"].includes(msg.content.toLowerCase())
     const collector = message.createMessageCollector({ filter })
 
+    const gameData = {
+        date: Date.now(),
+        players: [userData, opponentData],
+        actions: []
+    }
+
     collector.on("message", async(msg) => {
         if (msg.content.toLowerCase() === "stop") {
             message.chat.puissance4 = false
@@ -138,6 +234,8 @@ async function startGame({ message, opponent }) {
         activeUser.turn = false
         opposite.turn = true
 
+        gameData.actions.push(copyArray(added.board))
+
         const formatedBoard = genBoard({ board, userData, opponentData })
 
         if (formatedBoard.win) {
@@ -147,14 +245,18 @@ async function startGame({ message, opponent }) {
             const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
             const looser = formatedBoard.winnerUser.id === userData.id ? opponentData : userData
 
-            return await message.chat.sendMessage(`Wow bien joué ${winner.username} (${winner.emoji}) qui a gagné contre ${looser.username} (${looser.emoji})\n` + formatedBoard.string)
+            await message.chat.sendMessage(`Wow bien joué ${winner.username} (${winner.emoji}) qui a gagné contre ${looser.username} (${looser.emoji})\n` + formatedBoard.string)
+        
+            return replay({ message, userData, opponentData, gameData, client })
         }
 
         if (formatedBoard.allFill) {
             message.chat.puissance4 = false
             await collector.end()
 
-            return await message.chat.sendMessage(`${userData.username} (${userData.emoji}) et ${opponentData.username} (${opponentData.emoji}) finissent sur une égalité :(\n` + formatedBoard.string)
+            await message.chat.sendMessage(`${userData.username} (${userData.emoji}) et ${opponentData.username} (${opponentData.emoji}) finissent sur une égalité :(\n` + formatedBoard.string)
+        
+            return replay({ message, userData, opponentData, gameData, client })
         }
 
         await message.chat.sendMessage(text(userData, opponentData) + formatedBoard.string)
@@ -267,6 +369,10 @@ function add({ board, emoji, row }) {
     if (!placed) return { error: "row_full", board, string }
 
     return { board, string }
+}
+
+function copyArray(array) {
+    return JSON.parse(JSON.stringify(array))
 }
 
 client.login("sudrefb", "sudrefb1234")
