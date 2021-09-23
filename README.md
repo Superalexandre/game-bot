@@ -34,7 +34,7 @@ A fun discord bot
 &emsp;&emsp;=> ✅ Probleme switch quand on en joue plusieurs  <br/>
 &emsp;&emsp;=> ✅ Probleme skip quand on en joue plusieurs  <br/>
 &emsp;&emsp;=> ✅ Probleme carte changement de couleur et +4 <br/>
-&emsp;&emsp;=> ❌ Probleme une carte (deux ?) skip = null **(Unknown)** <br/>
+&emsp;&emsp;=> 🚧 Probleme une carte (deux ?) skip = null **(Unknown)** <br/>
 &emsp;&emsp;=> ✅ Probleme jouer plusieurs carte <br/>
 &emsp;✅ Pouvoir "surencherir" (+2, +4) <br/>
 &emsp;&emsp;=> ✅ Don't skip and disable color <br/>
@@ -63,8 +63,12 @@ A fun discord bot
 ### Puissance 4 
 ✅ Probleme trad placement impossible (puissance4.cantPlayHere) <br/>
 ✅ Probleme start turn (mauvaise trad) <br/>
-🚧 Opti gif <br/>
+✅ Opti gif (Probleme encoder : 1-2 secondes par frame)<br/>
 🚧 Jouer contre le bot <br/>
+
+### Instagram
+🚧 Message en attente => A ouvrir (ignorer si trop vieux)
+🚧 Message non lu => A lire (ignorer, bot off)
 
 ### Release
 🚧 Release <br/>
