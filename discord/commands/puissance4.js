@@ -617,12 +617,11 @@ async function makeGif({ client, i18n, msg, gameData }) {
 
 async function botPlay({ board, emoji, filter }) {
     let placed = false
+    const canBePlaced = []
 
     if (!filter) filter = "⚪"
 
     for (let i = 0; i < board.length; i++) {
-        if (placed) break
-
         for (let j = 0; j < board[i].length; j++) { 
             //* All variables
             const horizontal = [board[i][j], board[i][j + 1], board[i][j + 2], board[i][j + 3]]
@@ -631,117 +630,78 @@ async function botPlay({ board, emoji, filter }) {
             const diagnoalRtBl = [board[i][j], board[i + 1]?.[j - 1], board[i + 2]?.[j - 2], board[i + 3]?.[j - 3]]
             
             //* Horizontal
-            if (!placed && board[i][j] !== filter && countElement(horizontal, board[i][j]) >= 2) {
-                if (board[i][j + 1] !== filter && board[i][j + 2] !== filter && board[i][j + 3] !== filter) continue
-                
-                board[i][j + 1] === filter ? board[i][j + 1] = emoji : board[i][j + 2] === filter ? board[i][j + 2] = emoji : board[i][j + 3] = emoji
+            if (getDiff(horizontal, filter) && countElement(horizontal, getDiff(horizontal, filter)) >= 2) {
+                if (board[i][j] !== filter && board[i][j + 1] !== filter && board[i][j + 2] !== filter && board[i][j + 3] !== filter) continue
+            
+                const pos = board[i]?.[j + 3] === filter ? { pos: board[i][j + 3], i, j: j + 3} : board[i]?.[j + 2] === filter ? { pos: board[i][j + 2], i, j: j + 2 } : board[i]?.[j + 1] === filter ? { pos: board[i][j + 1], i, j: j + 1 } : { pos: board[i][j], i, j: j + 1 }
 
-                placed = true
+                canBePlaced.push({ pos, type: "horizontal", horizontal })
             //* Vertical
-            } else if (!placed && board[i][j] !== filter && countElement(vertical, board[i][j]) >= 3) {
+            } else if (board[i][j] !== filter && countElement(vertical, board[i][j]) >= 3) {
                 if (board[i + 1]?.[j] !== filter && board[i + 2]?.[j] !== filter && board[i + 3]?.[j] !== filter) continue
 
-                board[i + 1]?.[j] === filter ? board[i + 1][j] = emoji : board[i + 2]?.[j] === filter ? board[i + 2][j] = emoji : board[i + 3][j] = emoji
+                const pos = board[i + 1]?.[j] === filter ? { pos: board[i + 1][j], i: i + 1, j } : board[i + 2]?.[j] === filter ? { pos: board[i + 2][j], i: i + 1, j } : { pos: board[i + 3][j], i: i + 3, j}
                 
-                placed = true
+                canBePlaced.push({ pos, type: "vertical", vertical })
             //* Diagonal Left top => Bottom right 
-            } else if (!placed && board[i][j] !== filter && countElement(diagonalLtBr, board[i][j]) >= 3) {
+            } else if (board[i][j] !== filter && countElement(diagonalLtBr, board[i][j]) >= 3) {
                 if (board[i + 1]?.[j + 1] !== filter && board[i + 2]?.[j + 2] !== filter && board[i + 3]?.[j + 3] !== filter) continue
 
-                board[i + 1]?.[j + 1] === filter ? board[i + 1][j + 1] = emoji : board[i + 2]?.[j + 2] === filter ? board[i + 2][j + 2] = emoji : board[i + 3][j + 3] = emoji
+                const pos = board[i + 1]?.[j + 1] === filter ? { pos: board[i + 1][j + 1], i: i + 3, j: j + 3} : board[i + 2]?.[j + 2] === filter ? { pos: board[i + 2][j + 2], i: i + 2, j: j + 2} : { pos: board[i + 3][j + 3], i: i + 3, j: j + 3 }
 
-                placed = true
+                canBePlaced.push({ pos, type: "diagnoalLtBr", diagonalLtBr })
             //* Diagonal Right top => Bottom left
-            } else if (!placed && board[i][j] !== filter && countElement(diagnoalRtBl, board[i][j]) >= 3) {
+            } else if (board[i][j] !== filter && countElement(diagnoalRtBl, board[i][j]) >= 3) {
                 if (board[i + 1]?.[j - 1] !== filter && board[i + 2]?.[j - 2] !== filter && board[i + 3]?.[j - 3] !== filter) continue
 
-                board[i + 1]?.[j - 1] === filter ? board[i + 1][j - 1] = emoji : board[i + 2]?.[j - 2] === filter ? board[i + 2][j - 2] = emoji : board[i + 3][j - 3] = emoji
+                const pos = board[i + 1]?.[j - 1] === filter ? { pos: board[i + 1][j - 1], i: i + 1, j: j - 1} : board[i + 2]?.[j - 2] === filter ? { pos: board[i + 2][j - 2], i: i + 2, j: j - 2 } : { pos: board[i + 3][j - 3], i: i + 3, j: j - 3 }
 
-                placed = true
+                canBePlaced.push({ pos, type: "diagonalRtBl", diagnoalRtBl })
             }
         }
     }
 
-    if (!placed) {
-        //! Improve this
-
+    if (canBePlaced.length <= 0) {
         for (let i = 0; i < board.length; i++) {
-            if (placed) break
-
             for (let j = 0; j < board[i].length; j++) {
-                if (!placed && board[i][j] === filter && (board[i + 1]?.[j] !== filter && board[i + 1]?.[j])) {
-                    console.log(5)
-
-                    board[i][j] = emoji
-                    
-                    placed = true
+                if (board[i][j] === filter && (board[i + 1]?.[j] !== filter && board[i + 1]?.[j])) {                    
+                    canBePlaced.push({
+                        pos: {
+                            pos: board[i][j],
+                            i: i,
+                            j: j
+                        },
+                        type: "topUser", 
+                    })
                 }
             }
         }
     }
 
+    if (canBePlaced.length === 1) {
+        const { i, j } = canBePlaced[0].pos
+
+        board[i][j] = emoji
+        placed = true
+    } else {
+
+        //Select better 
+
+        console.log(canBePlaced)
+
+    }
+
     return { board, placed }
 }
 
-/*
-for (let i = 0; i < board.length; i++) {   
-        for (let j = 0; j < board[i].length; j++) {
-            if (board[i][j] === "⚪") allFill = false
-
-            //* Horizontal
-            if (!win && board[i][j] !== "⚪" && board[i][j] === board[i][j + 1] && board[i][j + 1] === board[i][j + 2] && board[i][j + 2] === board[i][j + 3]) {
-                winner = board[i][j]
-
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
-
-                board[i][j] = winnerUser.winEmoji
-                board[i][j + 1] = winnerUser.winEmoji
-                board[i][j + 2] = winnerUser.winEmoji
-                board[i][j + 3] = winnerUser.winEmoji
-
-                win = true
-            //* Vertical
-            } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j] && board[i + 2]?.[j] === board[i + 3]?.[j]) {
-                winner = board[i][j]
-
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
-
-                board[i][j] = winnerUser.winEmoji
-                board[i + 1][j] = winnerUser.winEmoji
-                board[i + 2][j] = winnerUser.winEmoji
-                board[i + 3][j] = winnerUser.winEmoji
-
-                win = true
-            //* Diagonal Left top => Bottom right 
-            } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2] && board[i + 2]?.[j + 2] === board[i + 3]?.[j + 3]) {
-                winner = board[i][j]
-
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
-
-                board[i][j] = winnerUser.winEmoji
-                board[i + 1][j + 1] = winnerUser.winEmoji
-                board[i + 2][j + 2] = winnerUser.winEmoji
-                board[i + 3][j + 3] = winnerUser.winEmoji
-
-                win = true
-            //* Diagonal Right top => Bottom left
-            } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2] && board[i + 2]?.[j - 2] === board[i + 3]?.[j - 3]) {
-                winner = board[i][j]
-
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
-
-                board[i][j] = winnerUser.winEmoji
-                board[i + 1][j - 1] = winnerUser.winEmoji
-                board[i + 2][j - 2] = winnerUser.winEmoji
-                board[i + 3][j - 3] = winnerUser.winEmoji
-
-                win = true
-            }
-
-            string += board[i][j]
-        }
-*/
-
 function countElement(array, toCount) {
     return array.filter(x => x === toCount).length
+}
+
+function getDiff(array, diff) {
+    const difference = array.filter(x => x !== diff)
+
+    if (difference.length <= 0) return false
+
+    return difference[0]
 }
