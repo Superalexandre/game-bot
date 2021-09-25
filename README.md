@@ -14,6 +14,7 @@ A fun discord bot
 ✅ Event message <br/>
 ✅ Traduction <br/>
 🚧 Logger <br/>
+🚧 Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc) <br/>
 
 ### Uno
 ✅ Refaire en slash command <br/>
