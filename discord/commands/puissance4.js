@@ -81,7 +81,12 @@ async function playWithBot({ i18n, interaction, client }) {
         } else {
             await collector.stop()
 
-            return startGame({ i18n, interaction, button, opponent: client.user, client, userData, opponentData })
+            const starter = {
+                random: false,
+                starterId: interaction.user.id
+            }
+
+            return startGame({ i18n, interaction, msg, button, opponent: client.user, starter, client/*, userData, opponentData*/ })
         }
     })
 }
@@ -315,34 +320,54 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
 
         //Todo : Play with bot
         if (opponentData.id === client.user.id) {
-            return msg.edit("ERREUR VOUS NE POUVEZ PAS JOUER AVEC LE BOT POUR LE MOMENT")
-            type.turn = true
-            opposite.turn = false
+            const genBotPlay = await botPlay({ board, emoji: opposite.emoji })
+            
+            if (!genBotPlay.placed) console.error("Erreur pion non placé bot play")
 
-            const rowToPlay = await botPlay({ board, emoji: opposite.emoji })
-            const added = add({ board, emoji: opposite.emoji, row: rowToPlay })
+            gameData.actions.push(copyArray(genBotPlay.board))
+            actionsNumber = actionsNumber + 1
 
-            if (added && added.error) {
-                if (added.error === "row_full") return await interaction.editReply({
-                    content: text(userData, opponentData, "Vous ne pouvez pas jouer ici !") + added.string,
-                    components: []
-                })
-                
-                return await interaction.editReply({
-                    content: text(userData, opponentData, "Une erreur inconnu est survenue") + added.string,
-                    components: []
-                })
-            }
+            board = genBotPlay.board
 
             const formatedBoard = genBoard({ board, userData, opponentData })
 
+            activeUser.turn = true
+            opposite.turn = false
+
             if (formatedBoard.win) {
                 await collector.stop()
+                await msg.reactions.removeAll()
 
-                console.log("WIN")
+                const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
+                const looser = formatedBoard.winnerUser.id === userData.id ? opponentData : userData
+
+                const numberWin = winner.win ? winner.win : 0
+                const numberLoose = looser.loose ? looser.loose : 0
+
+                winner.win = numberWin + 1
+                looser.loose = numberLoose + 1
+
+                await msg.edit({
+                    content: `**${userData?.win ? userData.win : 0}** ${userData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${i18n.__("puissance4.win.wellPlay")} ${winner.username} (${winner.emoji}) ${i18n.__("puissance4.win.wonOver")} ${looser.username} (${looser.emoji})\n` + formatedBoard.string,
+                    components: []
+                })
+
+                return restart({ i18n, interaction, msg, button, opponent, client, userData, opponentData, gameData })
             }
 
-            await interaction.editReply({
+            if (formatedBoard.allFill) {
+                await collector.stop()
+                await msg.reactions.removeAll()
+
+                await msg.edit({
+                    content: `**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) ${i18n.__("puissance4.equality.and")} ${opponentData.username} (${opponentData.emoji}) ${i18n.__("puissance4.equality.equality")}\n` + formatedBoard.string,
+                    components: []
+                })
+
+                return restart({ i18n, interaction, msg, button, opponent, client, userData, opponentData, gameData })
+            }
+
+            await msg.edit({ 
                 content: text(userData, opponentData) + formatedBoard.string,
                 components: []
             })
@@ -376,7 +401,7 @@ function genBoard({ board, userData, opponentData }) {
 
                 win = true
             //* Vertical
-            } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j] && board[i + 2]?.[j] === board[i + 3]?.[j]) {
+            } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j] && board[i + 2]?.[j] === board[i + 3]?.[j]) {
                 winner = board[i][j]
 
                 winnerUser = opponentData.emoji === winner ? opponentData : userData
@@ -388,7 +413,7 @@ function genBoard({ board, userData, opponentData }) {
 
                 win = true
             //* Diagonal Left top => Bottom right 
-            } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2] && board[i + 2]?.[j + 2] === board[i + 3]?.[j + 3]) {
+            } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2] && board[i + 2]?.[j + 2] === board[i + 3]?.[j + 3]) {
                 winner = board[i][j]
 
                 winnerUser = opponentData.emoji === winner ? opponentData : userData
@@ -400,7 +425,7 @@ function genBoard({ board, userData, opponentData }) {
 
                 win = true
             //* Diagonal Right top => Bottom left
-            } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2] && board[i + 2]?.[j - 2] === board[i + 3]?.[j - 3]) {
+            } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2] && board[i + 2]?.[j - 2] === board[i + 3]?.[j - 3]) {
                 winner = board[i][j]
 
                 winnerUser = opponentData.emoji === winner ? opponentData : userData
@@ -462,7 +487,13 @@ async function restart({ i18n, interaction, msg, button, opponent, client, userD
     await msg.react("🔄")
     await msg.react("📥")
 
-    const filter = (reaction, user) => [userData.id, opponentData.id].includes(user.id) && ["🔄", "📥"].includes(reaction.emoji.name)
+    const filter = (reaction, user) => {
+        
+        const opponentId = opponentData.id !== client.user.id ? opponentData.id : ""
+
+        return [userData.id, opponentId].includes(user.id) && ["🔄", "📥"].includes(reaction.emoji.name)
+    }
+    
     const collector = await msg.createReactionCollector({ filter, dispose: true })
 
     let numberReady = 0
@@ -582,4 +613,135 @@ async function makeGif({ client, i18n, msg, gameData }) {
             name: "replay.gif"
         }]
     })
+}
+
+async function botPlay({ board, emoji, filter }) {
+    let placed = false
+
+    if (!filter) filter = "⚪"
+
+    for (let i = 0; i < board.length; i++) {
+        if (placed) break
+
+        for (let j = 0; j < board[i].length; j++) { 
+            //* All variables
+            const horizontal = [board[i][j], board[i][j + 1], board[i][j + 2], board[i][j + 3]]
+            const vertical = [board[i][j], board[i + 1]?.[j], board[i + 2]?.[j], board[i + 3]?.[j]]
+            const diagonalLtBr = [board[i][j], board[i + 1]?.[j + 1], board[i + 2]?.[j + 2], board[i + 3]?.[j + 3]]
+            const diagnoalRtBl = [board[i][j], board[i + 1]?.[j - 1], board[i + 2]?.[j - 2], board[i + 3]?.[j - 3]]
+            
+            //* Horizontal
+            if (!placed && board[i][j] !== filter && countElement(horizontal, board[i][j]) >= 2) {
+                if (board[i][j + 1] !== filter && board[i][j + 2] !== filter && board[i][j + 3] !== filter) continue
+                
+                board[i][j + 1] === filter ? board[i][j + 1] = emoji : board[i][j + 2] === filter ? board[i][j + 2] = emoji : board[i][j + 3] = emoji
+
+                placed = true
+            //* Vertical
+            } else if (!placed && board[i][j] !== filter && countElement(vertical, board[i][j]) >= 3) {
+                if (board[i + 1]?.[j] !== filter && board[i + 2]?.[j] !== filter && board[i + 3]?.[j] !== filter) continue
+
+                board[i + 1]?.[j] === filter ? board[i + 1][j] = emoji : board[i + 2]?.[j] === filter ? board[i + 2][j] = emoji : board[i + 3][j] = emoji
+                
+                placed = true
+            //* Diagonal Left top => Bottom right 
+            } else if (!placed && board[i][j] !== filter && countElement(diagonalLtBr, board[i][j]) >= 3) {
+                if (board[i + 1]?.[j + 1] !== filter && board[i + 2]?.[j + 2] !== filter && board[i + 3]?.[j + 3] !== filter) continue
+
+                board[i + 1]?.[j + 1] === filter ? board[i + 1][j + 1] = emoji : board[i + 2]?.[j + 2] === filter ? board[i + 2][j + 2] = emoji : board[i + 3][j + 3] = emoji
+
+                placed = true
+            //* Diagonal Right top => Bottom left
+            } else if (!placed && board[i][j] !== filter && countElement(diagnoalRtBl, board[i][j]) >= 3) {
+                if (board[i + 1]?.[j - 1] !== filter && board[i + 2]?.[j - 2] !== filter && board[i + 3]?.[j - 3] !== filter) continue
+
+                board[i + 1]?.[j - 1] === filter ? board[i + 1][j - 1] = emoji : board[i + 2]?.[j - 2] === filter ? board[i + 2][j - 2] = emoji : board[i + 3][j - 3] = emoji
+
+                placed = true
+            }
+        }
+    }
+
+    if (!placed) {
+        //! Improve this
+
+        for (let i = 0; i < board.length; i++) {
+            if (placed) break
+
+            for (let j = 0; j < board[i].length; j++) {
+                if (!placed && board[i][j] === filter && (board[i + 1]?.[j] !== filter && board[i + 1]?.[j])) {
+                    console.log(5)
+
+                    board[i][j] = emoji
+                    
+                    placed = true
+                }
+            }
+        }
+    }
+
+    return { board, placed }
+}
+
+/*
+for (let i = 0; i < board.length; i++) {   
+        for (let j = 0; j < board[i].length; j++) {
+            if (board[i][j] === "⚪") allFill = false
+
+            //* Horizontal
+            if (!win && board[i][j] !== "⚪" && board[i][j] === board[i][j + 1] && board[i][j + 1] === board[i][j + 2] && board[i][j + 2] === board[i][j + 3]) {
+                winner = board[i][j]
+
+                winnerUser = opponentData.emoji === winner ? opponentData : userData
+
+                board[i][j] = winnerUser.winEmoji
+                board[i][j + 1] = winnerUser.winEmoji
+                board[i][j + 2] = winnerUser.winEmoji
+                board[i][j + 3] = winnerUser.winEmoji
+
+                win = true
+            //* Vertical
+            } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j] && board[i + 2]?.[j] === board[i + 3]?.[j]) {
+                winner = board[i][j]
+
+                winnerUser = opponentData.emoji === winner ? opponentData : userData
+
+                board[i][j] = winnerUser.winEmoji
+                board[i + 1][j] = winnerUser.winEmoji
+                board[i + 2][j] = winnerUser.winEmoji
+                board[i + 3][j] = winnerUser.winEmoji
+
+                win = true
+            //* Diagonal Left top => Bottom right 
+            } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2] && board[i + 2]?.[j + 2] === board[i + 3]?.[j + 3]) {
+                winner = board[i][j]
+
+                winnerUser = opponentData.emoji === winner ? opponentData : userData
+
+                board[i][j] = winnerUser.winEmoji
+                board[i + 1][j + 1] = winnerUser.winEmoji
+                board[i + 2][j + 2] = winnerUser.winEmoji
+                board[i + 3][j + 3] = winnerUser.winEmoji
+
+                win = true
+            //* Diagonal Right top => Bottom left
+            } else if (!win && board[i][j] !== "⚪" && board[i]?.[j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2] && board[i + 2]?.[j - 2] === board[i + 3]?.[j - 3]) {
+                winner = board[i][j]
+
+                winnerUser = opponentData.emoji === winner ? opponentData : userData
+
+                board[i][j] = winnerUser.winEmoji
+                board[i + 1][j - 1] = winnerUser.winEmoji
+                board[i + 2][j - 2] = winnerUser.winEmoji
+                board[i + 3][j - 3] = winnerUser.winEmoji
+
+                win = true
+            }
+
+            string += board[i][j]
+        }
+*/
+
+function countElement(array, toCount) {
+    return array.filter(x => x === toCount).length
 }
