@@ -66,6 +66,7 @@ A fun discord bot
 ✅ Probleme start turn (mauvaise trad) <br/>
 ✅ Opti gif (Probleme encoder : 1-2 secondes par frame)<br/>
 🚧 Jouer contre le bot <br/>
+    => Replay
 
 ### Instagram
 ✅ Message en attente => A ouvrir (ignorer si trop vieux)
