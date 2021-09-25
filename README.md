@@ -57,7 +57,7 @@ A fun discord bot
 🚧 Pouvoir personnalisé sa config (/config uno) <br/>
 
 ### Need test
-🚧 Probleme skip quand on en joue plusieurs <br/>
+🚧 Probleme skip quand on en joue plusieurs (1v1 meme probleme ?)<br/>
 🚧 Probleme switch quand on en joue plusieurs <br/>
 
 ### Puissance 4 
