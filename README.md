@@ -15,6 +15,7 @@ A fun discord bot
 ✅ Traduction <br/>
 🚧 Logger <br/>
 🚧 Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc) <br/>
+🚧 Sentry, gitguardian <br/>
 
 ### Uno
 ✅ Refaire en slash command <br/>
