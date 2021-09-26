@@ -627,36 +627,44 @@ async function botPlay({ board, emoji, filter }) {
             const horizontal = [board[i][j], board[i][j + 1], board[i][j + 2], board[i][j + 3]]
             const vertical = [board[i][j], board[i + 1]?.[j], board[i + 2]?.[j], board[i + 3]?.[j]]
             const diagonalLtBr = [board[i][j], board[i + 1]?.[j + 1], board[i + 2]?.[j + 2], board[i + 3]?.[j + 3]]
-            const diagnoalRtBl = [board[i][j], board[i + 1]?.[j - 1], board[i + 2]?.[j - 2], board[i + 3]?.[j - 3]]
+            const diagonalRtBl = [board[i][j], board[i + 1]?.[j - 1], board[i + 2]?.[j - 2], board[i + 3]?.[j - 3]]
             
             //* Horizontal
             if (getDiff(horizontal, filter) && countElement(horizontal, getDiff(horizontal, filter)) >= 2) {
                 if (board[i][j] !== filter && board[i][j + 1] !== filter && board[i][j + 2] !== filter && board[i][j + 3] !== filter) continue
             
-                const pos = board[i]?.[j + 3] === filter ? { pos: board[i][j + 3], i, j: j + 3} : board[i]?.[j + 2] === filter ? { pos: board[i][j + 2], i, j: j + 2 } : board[i]?.[j + 1] === filter ? { pos: board[i][j + 1], i, j: j + 1 } : { pos: board[i][j], i, j: j + 1 }
+                const pos = board[i]?.[j + 3] === filter ? { pos: board[i][j + 3], i, j: j + 3} : board[i]?.[j + 2] === filter ? { pos: board[i][j + 2], i, j: j + 2 } : board[i]?.[j + 1] === filter ? { pos: board[i][j + 1], i, j: j + 1 } : { pos: board[i][j], i, j: j}
 
-                canBePlaced.push({ pos, type: "horizontal", horizontal })
+                if (board[pos.i][pos.j] !== filter || board[pos.i + 1]?.[pos.j] === filter) continue
+
+                canBePlaced.push({ pos, type: "horizontal", horizontal, count: countElement(horizontal, getDiff(horizontal, filter)) })
             //* Vertical
-            } else if (board[i][j] !== filter && countElement(vertical, board[i][j]) >= 3) {
-                if (board[i + 1]?.[j] !== filter && board[i + 2]?.[j] !== filter && board[i + 3]?.[j] !== filter) continue
+            } else if (getDiff(vertical, filter) && countElement(vertical, getDiff(vertical, filter)) >= 2) {
+                if (board[i][j] !== filter && board[i + 1]?.[j] !== filter && board[i + 2]?.[j] !== filter && board[i + 3]?.[j] !== filter) continue
 
-                const pos = board[i + 1]?.[j] === filter ? { pos: board[i + 1][j], i: i + 1, j } : board[i + 2]?.[j] === filter ? { pos: board[i + 2][j], i: i + 1, j } : { pos: board[i + 3][j], i: i + 3, j}
+                const pos = board[i + 3]?.[j] === filter ? { pos: board[i + 3][j], i: i + 3, j } : board[i + 2]?.[j] === filter ? { pos: board[i + 2][j], i: i + 2, j } : board[i + 1]?.[j] === filter ? { pos: board[i + 1][j], i: i + 1, j } : { pos: board[i][j], i, j}
                 
-                canBePlaced.push({ pos, type: "vertical", vertical })
+                if (board[pos.i][pos.j] !== filter || board[pos.i + 1]?.[pos.j] === filter) continue
+
+                canBePlaced.push({ pos, type: "vertical", vertical, count: countElement(vertical, getDiff(vertical, filter)) })
             //* Diagonal Left top => Bottom right 
-            } else if (board[i][j] !== filter && countElement(diagonalLtBr, board[i][j]) >= 3) {
-                if (board[i + 1]?.[j + 1] !== filter && board[i + 2]?.[j + 2] !== filter && board[i + 3]?.[j + 3] !== filter) continue
+            } else if (getDiff(diagonalLtBr, filter) && countElement(diagonalLtBr, getDiff(diagonalLtBr, filter)) >= 2) {
+                if (board[i][j] !== filter && board[i + 1]?.[j + 1] !== filter && board[i + 2]?.[j + 2] !== filter && board[i + 3]?.[j + 3] !== filter) continue
 
-                const pos = board[i + 1]?.[j + 1] === filter ? { pos: board[i + 1][j + 1], i: i + 3, j: j + 3} : board[i + 2]?.[j + 2] === filter ? { pos: board[i + 2][j + 2], i: i + 2, j: j + 2} : { pos: board[i + 3][j + 3], i: i + 3, j: j + 3 }
+                const pos = board[i + 3]?.[j + 3] === filter ? { pos: board[i + 3][j + 3], i: i + 3, j: j + 3 } : board[i + 2]?.[j + 2] === filter ? { pos: board[i + 2][j + 2], i: i + 2, j: j + 2} : board[i + 1]?.[j + 1] === filter ? { pos: board[i + 1][j + 1], i: i + 1, j: j + 1} : { pos: board[i][j], i, j }
 
-                canBePlaced.push({ pos, type: "diagnoalLtBr", diagonalLtBr })
+                if (board[pos.i][pos.j] !== filter || board[pos.i + 1]?.[pos.j] === filter) continue
+
+                canBePlaced.push({ pos, type: "diagnoalLtBr", diagonalLtBr, count: countElement(diagonalLtBr, getDiff(diagonalLtBr, filter)) })
             //* Diagonal Right top => Bottom left
-            } else if (board[i][j] !== filter && countElement(diagnoalRtBl, board[i][j]) >= 3) {
-                if (board[i + 1]?.[j - 1] !== filter && board[i + 2]?.[j - 2] !== filter && board[i + 3]?.[j - 3] !== filter) continue
+            } else if (getDiff(diagonalRtBl, filter) && countElement(diagonalRtBl, getDiff(diagonalRtBl, filter)) >= 2) {
+                if (board[i][j] !== filter && board[i + 1]?.[j - 1] !== filter && board[i + 2]?.[j - 2] !== filter && board[i + 3]?.[j - 3] !== filter) continue
 
-                const pos = board[i + 1]?.[j - 1] === filter ? { pos: board[i + 1][j - 1], i: i + 1, j: j - 1} : board[i + 2]?.[j - 2] === filter ? { pos: board[i + 2][j - 2], i: i + 2, j: j - 2 } : { pos: board[i + 3][j - 3], i: i + 3, j: j - 3 }
+                const pos = board[i + 3]?.[j - 3] === filter ? { pos: board[i + 3][j - 3], i, j } : board[i + 2]?.[j - 2] === filter ? { pos: board[i + 2][j - 2], i: i + 2, j: j - 2} : board[i + 1]?.[j - 1] === filter ? { pos: board[i + 1][j - 1], i: i + 1, j: j - 1 } : { pos: board[i][j], i, j }
 
-                canBePlaced.push({ pos, type: "diagonalRtBl", diagnoalRtBl })
+                if (board[pos.i][pos.j] !== filter || board[pos.i + 1]?.[pos.j] === filter) continue
+
+                canBePlaced.push({ pos, type: "diagonalRtBl", diagonalRtBl, count: countElement(diagonalRtBl, getDiff(diagonalRtBl, filter)) })
             }
         }
     }
@@ -684,11 +692,37 @@ async function botPlay({ board, emoji, filter }) {
         board[i][j] = emoji
         placed = true
     } else {
+        /*
+        canBePlaced.sort(sortByPriority)        
+
+        
+        const priority = {
+            "topUser": 1,
+            "horizontal": 2,
+            "vertical": 3,
+            "diagonalRtBl": 4,
+            "diagonalLtBr": 5,
+        }
+
+        if (priority[a.type] > priority[b.type]) return 1
+
+        if (priority[b.type] > priority[a.type]) return -1
+
+        return 0
+
+        */
 
         //Select better 
+        const selected = canBePlaced[0]
+        const { i, j } = selected.pos
+        
+        if (board[i][j] !== filter) console.log("Erreur la")
+
+        board[i][j] = emoji
 
         console.log(canBePlaced)
 
+        placed = true
     }
 
     return { board, placed }
