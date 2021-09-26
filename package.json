@@ -12,7 +12,7 @@
   "dependencies": {
     "@androz2091/insta.js": "^1.6.1",
     "canvas": "^2.8.0",
-    "discord.js": "^13.0.1",
+    "discord.js": "^13.1.0",
     "enmap": "^5.8.5",
     "gifenc": "github:mattdesl/gifenc",
     "i18n": "^0.13.3",
