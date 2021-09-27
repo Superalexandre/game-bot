@@ -693,10 +693,13 @@ async function botPlay({ board, emoji, filter }) {
         placed = true
     } else {
 
-        //Todo : Priority :
-        //Todo : les priorités sont mal faites un count va être en dessous juste parce qu'il y a une couleur
+        //Todo : Need to optimize
+        //Todo : Random if all same prio
 
-        let sortedCanBePlaced = []
+        let sortedCanBePlaced = [
+            [],
+            []
+        ]
         const priority = {
             "topUser": 1,
             "horizontal": 2,
@@ -704,39 +707,58 @@ async function botPlay({ board, emoji, filter }) {
             "diagonalRtBl": 4,
             "diagonalLtBr": 5,
         }
-        
-        sortedCanBePlaced = canBePlaced.sort((a, b) => {
-            if (a.count > b.count) return -2
-            
-            if (b.count > a.count) return 2
-            
-            return 0
-        })
-        
-        sortedCanBePlaced = canBePlaced.sort((a, b) => {
-            if (priority[a.type] > priority[b.type]) return -1
-        
-            if (priority[b.type] > priority[a.type]) return 1
-        
-            return 0
-        })
-        
-        sortedCanBePlaced = canBePlaced.sort((a) => {
-            if (getDiff(a[a.type], emoji) === emoji) return 0
 
-            if (getDiff(a[a.type], emoji) !== emoji) return 1
+        //* Group by count
+        for (let i = 0; i < canBePlaced.length; i++) {
+            if (canBePlaced[i].count === 3) {
+                canBePlaced[i].priority = 2
 
-            return 0
-        })
+                sortedCanBePlaced[0].push(canBePlaced[i])
+            } else if (canBePlaced[i].count === 2) {
+                canBePlaced[i].priority = 1
 
-        const selected = sortedCanBePlaced[0]
+                sortedCanBePlaced[1].push(canBePlaced[i])
+            }
+        }
+        
+        //* Group by priority
+        for (let i = 0; i < sortedCanBePlaced.length; i++) {
+            sortedCanBePlaced[i] = sortedCanBePlaced[i].sort((a, b) => {
+                if (priority[a.type] > priority[b.type]) {
+                    //* Prio
+                    a.priority = a.priority + 1
+
+                    return -1
+                } else if (priority[b.type] > priority[a.type]) {
+                    //* Prio
+                    b.priority = b.priority + 1
+
+                    return 1
+                } else return 0
+            })
+        }
+        
+        //* Check if same emoji
+        for (let i = 0; i < sortedCanBePlaced.length; i++) {
+            sortedCanBePlaced[i] = sortedCanBePlaced[i].sort((a) => {
+                if (getDiff(a[a.type], emoji) === emoji) {
+                    //* Prio
+                    a.priority = a.priority + 1
+
+                    return 1
+                } else return 0
+            })
+        }
+
+        sortedCanBePlaced = sortedCanBePlaced.filter(arr => arr.length > 0)
+
+        const selected = sortedCanBePlaced[0][0]
         const { i, j } = selected.pos
         
         if (board[i][j] !== filter) console.log("Erreur la")
 
         board[i][j] = emoji
 
-        console.log(sortedCanBePlaced)
 
         placed = true
     }
