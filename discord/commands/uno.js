@@ -1016,7 +1016,7 @@ function genButtons({ interaction, playersData, userId, gameId, actualCard, disa
 }
 
 function sortCard(cards) {
-    function sortByLength(a, b) {
+    function sortByColor(a, b) {
         const [colorA] = a[0].split("_")
         const [colorB] = b[0].split("_")
 
@@ -1060,7 +1060,7 @@ function sortCard(cards) {
         if (filteredCard.length > 0) card.push(filteredCard)
     }
 
-    let sortedCard = card.sort(sortByLength)
+    let sortedCard = card.sort(sortByColor)
     card = []
 
     //* Sort by number inside array
