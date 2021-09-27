@@ -655,7 +655,7 @@ async function botPlay({ board, emoji, filter }) {
 
                 if (board[pos.i][pos.j] !== filter || board[pos.i + 1]?.[pos.j] === filter) continue
 
-                canBePlaced.push({ pos, type: "diagnoalLtBr", diagonalLtBr, count: countElement(diagonalLtBr, getDiff(diagonalLtBr, filter)) })
+                canBePlaced.push({ pos, type: "diagonalLtBr", diagonalLtBr, count: countElement(diagonalLtBr, getDiff(diagonalLtBr, filter)) })
             //* Diagonal Right top => Bottom left
             } else if (getDiff(diagonalRtBl, filter) && countElement(diagonalRtBl, getDiff(diagonalRtBl, filter)) >= 2) {
                 if (board[i][j] !== filter && board[i + 1]?.[j - 1] !== filter && board[i + 2]?.[j - 2] !== filter && board[i + 3]?.[j - 3] !== filter) continue
@@ -692,10 +692,11 @@ async function botPlay({ board, emoji, filter }) {
         board[i][j] = emoji
         placed = true
     } else {
-        /*
-        canBePlaced.sort(sortByPriority)        
 
-        
+        //Todo : Priority :
+        //Todo : les priorités sont mal faites un count va être en dessous juste parce qu'il y a une couleur
+
+        let sortedCanBePlaced = []
         const priority = {
             "topUser": 1,
             "horizontal": 2,
@@ -703,24 +704,39 @@ async function botPlay({ board, emoji, filter }) {
             "diagonalRtBl": 4,
             "diagonalLtBr": 5,
         }
+        
+        sortedCanBePlaced = canBePlaced.sort((a, b) => {
+            if (a.count > b.count) return -2
+            
+            if (b.count > a.count) return 2
+            
+            return 0
+        })
+        
+        sortedCanBePlaced = canBePlaced.sort((a, b) => {
+            if (priority[a.type] > priority[b.type]) return -1
+        
+            if (priority[b.type] > priority[a.type]) return 1
+        
+            return 0
+        })
+        
+        sortedCanBePlaced = canBePlaced.sort((a) => {
+            if (getDiff(a[a.type], emoji) === emoji) return 0
 
-        if (priority[a.type] > priority[b.type]) return 1
+            if (getDiff(a[a.type], emoji) !== emoji) return 1
 
-        if (priority[b.type] > priority[a.type]) return -1
+            return 0
+        })
 
-        return 0
-
-        */
-
-        //Select better 
-        const selected = canBePlaced[0]
+        const selected = sortedCanBePlaced[0]
         const { i, j } = selected.pos
         
         if (board[i][j] !== filter) console.log("Erreur la")
 
         board[i][j] = emoji
 
-        console.log(canBePlaced)
+        console.log(sortedCanBePlaced)
 
         placed = true
     }
