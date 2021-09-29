@@ -24,7 +24,7 @@ A fun discord bot
 ✅ Pouvoir jouer la carte piocher après avoir piocher <br/>
 ✅ Si trop de carte faire deux, trois pages <br/>
 ✅ Erreur page <br/>
-❌ Unknow interaction ??? interaction.editReply **(Unknown)** <br/>
+✅ Unknow interaction ??? interaction.editReply **(Double start)** <br/>
 🚧 GameData (70%) <br/>
 &emsp;✅ Probleme 1v1 changement de sens  <br/>
 &emsp;&emsp;=> ✅ Ajouter skip turn  <br/>
@@ -66,7 +66,7 @@ A fun discord bot
 ✅ Probleme trad placement impossible (puissance4.cantPlayHere) <br/>
 ✅ Probleme start turn (mauvaise trad) <br/>
 ✅ Opti gif (Probleme encoder : 1-2 secondes par frame)<br/>
-🚧 Jouer contre le bot <br/>
+✅ Jouer contre le bot <br/>
     => Replay
 
 ### Instagram
