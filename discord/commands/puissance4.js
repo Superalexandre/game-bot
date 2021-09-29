@@ -488,7 +488,6 @@ async function restart({ i18n, interaction, msg, button, opponent, client, userD
     await msg.react("📥")
 
     const filter = (reaction, user) => {
-        
         const opponentId = opponentData.id !== client.user.id ? opponentData.id : ""
 
         return [userData.id, opponentId].includes(user.id) && ["🔄", "📥"].includes(reaction.emoji.name)
@@ -510,16 +509,27 @@ async function restart({ i18n, interaction, msg, button, opponent, client, userD
 
         activeUser.readyRestart = true 
         numberReady = numberReady + 1
+        
+        if (opponentData.id === client.user.id) {
+            await collector.stop()
+            await msg.reactions.removeAll()
 
+            const starter = {
+                random: false,
+                starterId: userData.id
+            }
+
+            return startGame({ i18n, interaction, msg, button: null, opponent: client.user, starter, client, userData, opponentData })
+        }
+        
         if (numberReady === 2) {
             await collector.stop()
             await msg.reactions.removeAll()
 
-            opponentData.choose = opponentData?.choose ? false : true
-
             return whoStart({ i18n, interaction, msg, button: null, opponent, client, userData, opponentData })
         }
         
+
         await msg.edit({
             content: i18n.__("puissance4.wantRevange", { username: user.username, number: numberReady }),
             components: []
@@ -692,10 +702,6 @@ async function botPlay({ board, emoji, filter }) {
         board[i][j] = emoji
         placed = true
     } else {
-
-        //Todo : Need to optimize
-        //Todo : Random if all same prio
-
         let sortedCanBePlaced = [
             [],
             []
