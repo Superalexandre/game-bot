@@ -47,20 +47,24 @@ export default class interactionCreate {
             }).then(() => {
                 client.logger.commandLog({ message: cmd.help.name } /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/)
             }).catch(error => {
+                /*
                 interaction.reply({ 
                     content: i18n.__("error.errorOccured", { error: error.toString() }), 
                     ephemeral: true,
                     allowedMentions: { repliedUser: false } 
                 })
+                */
         
                 client.logger.error({ message: error })
             })
         } catch(error) {
+            /*
             interaction.reply({ 
                 content: i18n.__("error.errorOccured", { error: error.toString() }), 
                 ephemeral: true,
                 allowedMentions: { repliedUser: false } 
             })
+            */
         
             client.logger.error({ message: error })
         }
