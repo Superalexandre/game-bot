@@ -74,7 +74,7 @@ A fun discord bot
 ✅ Message non lu => A lire (ignorer, bot off)
 
 ### Release
-🚧 Release <br/>
+🚧 Release (Prévue 16 janvier anniv Sudref)<br/>
 
 ### Sodoku
 ✅ https://github.com/robatron/sudoku.js <br/>
