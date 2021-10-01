@@ -29,6 +29,14 @@ import { dirname } from "path"
 import { fileURLToPath } from "url"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+//* Import errors
+import * as Sentry from "@sentry/node"
+
+Sentry.init({
+    dsn: config.sentry.dsn,
+    tracesSampleRate: 1.0
+})
+
 //* Config languages
 i18n.configure({
     locales: ["fr_FR"],
