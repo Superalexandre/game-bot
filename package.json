@@ -17,6 +17,8 @@
     "@androz2091/insta.js": "^1.6.1",
     "@sentry/node": "^6.13.2",
     "canvas": "^2.8.0",
+    "colors": "^1.4.0",
+    "date-fns-tz": "^1.1.6",
     "discord.js": "^13.0.1",
     "enmap": "^5.8.5",
     "gifenc": "github:mattdesl/gifenc",
