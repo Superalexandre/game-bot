@@ -2,7 +2,7 @@
 //    { formateDate } = require("./discord/utils/functions"),
 //    logUpdate = require("log-update")
 
-import colors from "colors"
+//import colors from "colors"
 import DateFns from "date-fns-tz"
 import { fr } from "date-fns/locale/index.js"
 
@@ -14,7 +14,7 @@ export default class Logger {
 
     log({ message }) {
         if (this.mode === "compact") {
-            console.log(`[${formateDate(Date.now(), this.mode)}] ${green("[LOG]")} ${message}`)
+            console.log(`[${formateDate(Date.now(), this.mode)}] [LOG] ${message}`)
         }
     }
 
