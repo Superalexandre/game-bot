@@ -74,6 +74,7 @@ A fun discord bot
 ✅ Message non lu => A lire (ignorer, bot off)
 
 ### Release
+🚧 Logo
 🚧 Release (Prévue 16 janvier anniv Sudref)<br/>
 
 ### Sodoku
@@ -91,3 +92,6 @@ A fun discord bot
 
 ### Monopoly
 🚧 Todo complet <br/>
+
+### Loup garou ?
+🚧 A reflechir
