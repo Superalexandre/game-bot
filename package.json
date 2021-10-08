@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "FORCE_COLOR=1 pm2 start index.js --name game --interpreter=/home/pi/.nvm/versions/node/v16.6.1/bin/node"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "@androz2091/insta.js": "^1.6.1",
     "@sentry/node": "^6.13.2",
     "canvas": "^2.8.0",
-    "colors": "^1.4.0",
+    "chalk": "^4.1.2",
     "date-fns-tz": "^1.1.6",
     "discord.js": "^13.1.0",
     "enmap": "^5.8.7",
