@@ -8,7 +8,8 @@ import load from "./discord/index.js"
 //* Logger
 import Logger from "./logger.js"
 const logger = new Logger({
-    mode: "compact"
+    mode: "compact",
+    plateform: "Discord"
 })
 
 //* Database
