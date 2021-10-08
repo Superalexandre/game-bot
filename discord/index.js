@@ -52,7 +52,9 @@ async function load(data, functions, logger) {
     client.on("warn", (message) => client.logger.warn({ message: message }))
     client.on("error", (message) => client.logger.error({ message: message }))
 
-    client.login(client.config.discord.token)
+    client.logger.log({ message: "Connection en cours..." })
+    await client.login(client.config.discord.token)
+    client.logger.log({ message: "Connection effectué" })
 }
 
 export default load
