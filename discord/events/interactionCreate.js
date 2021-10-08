@@ -45,7 +45,11 @@ export default class interactionCreate {
                     startMessageProcessing: start
                 }
             }).then(() => {
-                client.logger.commandLog({ message: cmd.help.name } /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/)
+                client.logger.commandLog({ 
+                    interaction,
+                    command: cmd 
+                    /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/
+                })
             }).catch(error => {
                 /*
                 interaction.reply({ 
