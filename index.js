@@ -7,7 +7,9 @@ import load from "./discord/index.js"
 
 //* Logger
 import Logger from "./logger.js"
-const logger = new Logger("compact")
+const logger = new Logger({
+    mode: "compact"
+})
 
 //* Database
 import Enmap from "enmap"
@@ -57,7 +59,7 @@ i18n.configure({
     missingKeyFn: function(locale, value) {
         logger.error({ message: `MissingKey: La valeur ${value} est manquante dans la langue ${locale}` })
 
-        setLocale(locale)
+        i18n.setLocale(locale)
     
         return i18n.__("error.missingTranslation")
     },
