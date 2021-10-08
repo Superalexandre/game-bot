@@ -6,6 +6,8 @@ export default class Ready {
     async run() {
         const client = this.client
 
-        client.logger.log({ message: "Client connecté" })
+        //Todo check commands
+
+        client.logger.log({ message: "Client prêt !" })
     }
 }
