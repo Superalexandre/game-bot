@@ -1,20 +1,17 @@
-//const colors = require("colors"),
-//    { formateDate } = require("./discord/utils/functions"),
-//    logUpdate = require("log-update")
-
-//import colors from "colors"
 import DateFns from "date-fns-tz"
 import { fr } from "date-fns/locale/index.js"
-
+import chalk from "chalk"
 import * as Sentry from "@sentry/node"
+
 export default class Logger {
-    constructor(mode) {
-        this.mode = mode
+    constructor(param) {
+        this.mode = param?.mode || "compact"
+        this.plateform = param?.plateform || "Unknown"
     }
 
     log({ message }) {
         if (this.mode === "compact") {
-            console.log(`[${formateDate(Date.now(), this.mode)}] [LOG] ${message}`)
+            console.log(`[${formateDate(Date.now(), this.mode)}] ${getColorPlateform(this.plateform)} ${chalk.bgGreen("[LOG]")} ${message}`)
         }
     }
 
@@ -22,7 +19,7 @@ export default class Logger {
         Sentry.captureException(message)
 
         if (this.mode === "compact") {
-            return console.log(`[${formateDate(Date.now(), this.mode)}] [ERROR] ${message}`)
+            console.log(`[${formateDate(Date.now(), this.mode)}] ${getColorPlateform(this.plateform)} ${chalk.bgRed("[ERROR]")} ${message}`)
         }
     }
 
@@ -30,15 +27,23 @@ export default class Logger {
         Sentry.captureMessage(message)
 
         if (this.mode === "compact") {
-            return console.log(`[${formateDate(Date.now(), this.mode)}] [WARN] ${message}`)
+            console.log(`[${formateDate(Date.now(), this.mode)}] ${getColorPlateform(this.plateform)} ${chalk.bgYellow("[WARN]")} ${message}`)
         }
     }
 
-    commandLog({ message }) {
+    commandLog({ interaction, command }) {
         if (this.mode === "compact") {
-            return console.log(`[${formateDate(Date.now(), this.mode)}] [LOG] ${message}`)
+            console.log(`[${formateDate(Date.now(), this.mode)}] ${getColorPlateform(this.plateform)} ${chalk.bgBlue("[LOG - COMMAND]")} /${command.help.name} (INTERACT ID : ${interaction.id})`)
         }
     }
+}
+
+function getColorPlateform(plateform) {
+    if (plateform === "Discord") return chalk.bgMagenta("[Discord]")
+
+    if (plateform === "Instagram") return chalk.bgMagentaBright("[Instagram]")
+
+    return chalk.magenta("[Unknown plateform]")
 }
 
 function formateDate(date = Date.now(), type) {
