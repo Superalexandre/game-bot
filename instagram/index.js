@@ -25,6 +25,9 @@ export default async function init(data, functions) {
     client.functions = functions
     client.logger = logger
 
+    client.on("warn", (message) => logger.warn({ message: message }))
+    client.on("error", (message) => logger.error({ message: message }))
+
     client.on("connected", async() => {
         
         logger.log({ message: `Client prêt (${client.user.username})` })
