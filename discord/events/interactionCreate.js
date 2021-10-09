@@ -46,8 +46,9 @@ export default class interactionCreate {
                 }
             }).then(() => {
                 client.logger.commandLog({ 
-                    interaction,
-                    command: cmd 
+                    interactionId: interaction.id,
+                    commandName: cmd.help.name,
+                    prefix: "/" 
                     /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/
                 })
             }).catch(error => {
