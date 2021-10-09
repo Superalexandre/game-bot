@@ -1,6 +1,7 @@
-import { Message, Client, Chat, Attachment } from "@androz2091/insta.js"
+import { Message, Client } from "@androz2091/insta.js"
 import LikeCollector from "./LikeCollector.js"
 import { inspect } from "util"
+import config from "../config.js"
 
 //* Init createLikeCollector
 Message.prototype.createLikeCollector = (message, options) => {
@@ -8,162 +9,100 @@ Message.prototype.createLikeCollector = (message, options) => {
     return collector
 }
 
-const client = new Client()
+import Logger from "../logger.js"
+const logger = new Logger({
+    mode: config.logger.mode,
+    plateform: "Instagram"
+})
 
-client.on("connected", () => {
-    console.log(`Logged in as ${client.user.username}`)
+export default async function init(data, functions) {
+    const client = new Client()
     
-    const pendingChat = client.cache.pendingChats
-    for (const [chatId, chat] of pendingChat.entries()) {
+    logger.log({ message: "Connexion en cours" })
+    client.login(config.instagram.username, config.instagram.password)
+
+    client.data = data
+    client.functions = functions
+    client.logger = logger
+
+    client.on("connected", async() => {
         
-        chat.approve().catch(() => {})
-
-        console.log(`Message approuvé ${chatId}`)
-    }
-})
-
-client.on("pendingRequest", chat => {
-    chat.approve()
-
-    console.log(`Message approuvé ${chat.id}`)
-})
-
-client.on("messageCreate", async(message) => {
-    if (!message || !message.content) return
-    if (message.author.id === client.user.id) return
-
-    const args = message.content.split(/ +/g).slice(1)
-    const argsOptions = message.content.split(/--([a-z]+) ([a-z]+)/gm).slice(1)
-
-    await message.markSeen()
-
-    if (message.content.startsWith("!video")) {
-
-    } else if (message.content.startsWith("!puissance4") || message.content.startsWith("!p4")) {
-        let opponent
+        logger.log({ message: `Client prêt (${client.user.username})` })
+    
+        const pendingChat = client.cache.pendingChats
+        for (const [chatId, chat] of pendingChat.entries()) {
         
-        try {
-            opponent = await client.fetchUser(args[0])
-        } catch(error) {
-            return await message.chat.sendMessage("Aucun utilisateur n'a été trouvé")
+            await chat.approve().catch(() => {})
+
+            logger.warn({ message: `Message approuvé ${chatId}` })
         }
-
-        if (!message.chat.isGroup) return await message.chat.sendMessage("Oh non vous devez être dans un groupe pour effectuer cette commande")
-    
-        if (message.author.id === opponent.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre vous meme !")
-
-        if (opponent.id === client.user.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre moi")
-    
-        if (!message.chat.users.has(opponent.id)) return await message.chat.sendMessage("La personne doit être presente dans le groupe")
-
-        if (message.chat.puissance4) return await message.chat.sendMessage(`Désolé @${message.author.username} une partie est deja en cours`)
-
-        return opponentReady({ message, opponent })    
-    } else if (message.content.startsWith("!eval") && message.author.id === 18291915089) {
-        if (!args[0]) return await message.chat.sendMessage("Veuillez saisir un argument")
-        let toExecute = message.content.split(" ").slice(1)
-
-        if (argsOptions.length > 0) toExecute = toExecute.slice(0, toExecute.length - (argsOptions.length - 1))
-
-        const content = toExecute.join(" ")
-        const result = new Promise((resolve) => resolve(eval(content)))
-
-        return result.then(async(output) => {
-            if (typeof output !== "string") output = inspect(output, { depth: 0 })
-            
-            if (argsOptions[0] === "result" && !["yes", "true"].includes(argsOptions[1])) return 
-
-            return await message.chat.sendMessage(output)
-        }).catch(async(err) => {
-            err = err.toString()
-            
-            return await message.chat.sendMessage(err)
-        })
-    }
-})
-
-/*
-! Problem : Cannot send a gif 
-
-async function replay({ message, userData, opponentData, gameData, client }) {
-    const collector = message.createMessageCollector({
-        filter: (msg) => [opponentData.id, userData.id].includes(msg.author.id),
-        idle: 60000
     })
 
-    collector.on("message", async(msg) => {
-        if (["gif", "replay"].includes(msg.content.toLowerCase())) {
-            await collector.end()
+    client.on("pendingRequest", async(chat) => {
+        await chat.approve()
 
-            const width = 1000
-            const height = 1000
+        logger.log({ message: `Message approuvé ${chat.id}` })
+    })
 
-            //* Gif
-            const gif = Gif.GIFEncoder()
+    client.on("messageCreate", async(message) => {
+        if (!message || !message.content) return
+        if (message.author.id === client.user.id) return
 
-            //* Canvas
-            const canvas = Canvas.createCanvas(width, height)
-            const ctx = canvas.getContext("2d")
+        const command = message.content.split(" ")[0].slice("!").toLowerCase()
+        const args = message.content.split(/ +/g).slice(1)
+        const argsOptions = message.content.split(/--([a-z]+) ([a-z]+)/gm).slice(1)
 
-            const fontSize = width / 25
+        await message.markSeen()
 
-            //* Text
-            ctx.fillStyle = "#FFFFFF"
-            ctx.font = `${fontSize}px 'Arial'`
-            const text = `Replay de ${gameData.players[0].username} contre ${gameData.players[1].username}`
-            const textWidth = ctx.measureText(text).width
+        if (["!puissance4", "!p4", "!eval"].includes(message.content)) client.logger.commandLog({ 
+            interactionId: message.id,
+            commandName: command,
+            prefix: ""
+        })
 
-            ctx.fillText(text, (canvas.width/2) - (textWidth / 2), 50)
-
-            //* Credit
-            ctx.font = `${fontSize - 2}px 'Arial'`
-            ctx.fillText(`Replay par ${client.user.username}`, width / 20, height - 20)
-
-            for (let i = 0; i < gameData.actions.length; i++) {
-                for (let j = 0; j < gameData.actions[i].length; j++) {
-                    for (let k = 0; k < gameData.actions[i][j].length; k++) {
-
-                        if (gameData.actions[0][j][k].endsWith("_placed") || (gameData.actions[i][j][k] === "⚪" && i > 0)) continue
-
-                        const widthImage = width / 10
-                        const heightImage = height / 10
-
-                        const jLength = gameData.actions[i][j].length
-                        const iLength = gameData.actions[i].length
-
-                        const x = (width - (jLength * widthImage)) / 2
-                        const y  = (height - (iLength * heightImage)) / 2
+        if (message.content.startsWith("!puissance4") || message.content.startsWith("!p4")) {
+            let opponent
             
-                        ctx.beginPath()
-                        ctx.arc(x + k * widthImage, y + j * heightImage, (height / 10) / 2, 0, Math.PI * 2, true)
-                        ctx.fillStyle = gameData.actions[i][j][k] === "🔴" ? "#DD2E44" : gameData.actions[i][j][k] === "🟡" ? "#FDCB58" : "#FFFFFF"
-                        ctx.fill()
-
-                        if (gameData.actions[0][j][k] !== "⚪") gameData.actions[0][j][k] = `${gameData.actions[i][j][k]}_placed`
-                    }
-                }
-
-                const { data, width: widhthCtx, height: heightCtx } = ctx.getImageData(0, 0, width, height)
-                const palette = Gif.quantize(data, 256)
-                const index = Gif.applyPalette(data, palette)
-
-                gif.writeFrame(index, widhthCtx, heightCtx, { palette, transparent: true, delay: 1500, repeat: 0 })
+            try {
+                opponent = await client.fetchUser(args[0])
+            } catch(error) {
+                return await message.chat.sendMessage("Aucun utilisateur n'a été trouvé")
             }
 
-            gif.finish()
+            if (!message.chat.isGroup) return await message.chat.sendMessage("Oh non vous devez être dans un groupe pour effectuer cette commande")
+        
+            if (message.author.id === opponent.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre vous meme !")
 
-            const bytes = gif.bytes()
-            const buffer = Buffer.from(bytes)
+            if (opponent.id === client.user.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre moi")
+        
+            if (!message.chat.users.has(opponent.id)) return await message.chat.sendMessage("La personne doit être presente dans le groupe")
 
-            
-        } else await collector.end()
-    })
+            if (message.chat.puissance4) return await message.chat.sendMessage(`Désolé @${message.author.username} une partie est deja en cours`)
 
-    collector.on("end", (reason) => {
-        if (reason === "idle") return
+            return opponentReady({ message, opponent })    
+        } else if (message.content.startsWith("!eval") && message.author.id === 18291915089) {
+            if (!args[0]) return await message.chat.sendMessage("Veuillez saisir un argument")
+            let toExecute = message.content.split(" ").slice(1)
+
+            if (argsOptions.length > 0) toExecute = toExecute.slice(0, toExecute.length - (argsOptions.length - 1))
+
+            const content = toExecute.join(" ")
+            const result = new Promise((resolve) => resolve(eval(content)))
+
+            return result.then(async(output) => {
+                if (typeof output !== "string") output = inspect(output, { depth: 0 })
+                
+                if (argsOptions[0] === "result" && !["yes", "true"].includes(argsOptions[1])) return 
+
+                return await message.chat.sendMessage(output)
+            }).catch(async(err) => {
+                err = err.toString()
+                
+                return await message.chat.sendMessage(err)
+            })
+        }
     })
 }
-*/
 
 async function opponentReady({ message, opponent }) {
     const msg = await message.chat.sendMessage(`@${opponent.username} aimez ce message dès que vous êtes prêt(e)\n\n${message.author.username} si vous voulez annuler la demander liker ce message`)
@@ -385,5 +324,3 @@ function add({ board, emoji, row }) {
 function copyArray(array) {
     return JSON.parse(JSON.stringify(array))
 }
-
-client.login("sudrefb", "sudrefb1234")
