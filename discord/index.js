@@ -1,9 +1,18 @@
 import { Client } from "./structures/Client.js" 
 import { Intents } from "discord.js"
-const client = new Client({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] })
+const client = new Client({ 
+    intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] 
+})
 import { readdir } from "fs"
 
-async function load(data, functions, logger) {
+//* Logger
+import Logger from "../logger.js"
+const logger = new Logger({
+    mode: "compact",
+    plateform: "Discord"
+})
+
+export default async function init(data, functions) {
     client.functions = functions
     client.data = data
     client.logger = logger
@@ -52,9 +61,7 @@ async function load(data, functions, logger) {
     client.on("warn", (message) => client.logger.warn({ message: message }))
     client.on("error", (message) => client.logger.error({ message: message }))
 
-    client.logger.log({ message: "Connection en cours..." })
+    client.logger.log({ message: "Connexion en cours..." })
     await client.login(client.config.discord.token)
-    client.logger.log({ message: "Connection effectué" })
+    client.logger.log({ message: "Connexion effectué" })
 }
-
-export default load
