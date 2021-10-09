@@ -18,7 +18,7 @@ const logger = new Logger({
 export default async function init(data, functions) {
     const client = new Client()
     
-    logger.log({ message: "Connexion en cours" })
+    logger.log({ message: "Connexion en cours..." })
     client.login(config.instagram.username, config.instagram.password)
 
     client.data = data
