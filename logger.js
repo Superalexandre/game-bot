@@ -9,31 +9,31 @@ export default class Logger {
         this.plateform = param?.plateform || "Unknown"
     }
 
-    log({ message }) {
+    log({ message, plateform }) {
         if (this.mode === "compact") {
-            console.log(`[${formateDate(Date.now(), this.mode)}] ${getColorPlateform(this.plateform)} ${chalk.bgGreen("[LOG]")} ${message}`)
+            console.log(`[${formateDate(Date.now(), this.mode)}] ${chalk.bgGreen("[LOG]")} ${getColorPlateform(plateform ?? this.plateform)} ${message}`)
         }
     }
 
-    error({ message }) {
+    error({ message, plateform }) {
         Sentry.captureException(message)
 
         if (this.mode === "compact") {
-            console.log(`[${formateDate(Date.now(), this.mode)}] ${getColorPlateform(this.plateform)} ${chalk.bgRed("[ERROR]")} ${message}`)
+            console.log(`[${formateDate(Date.now(), this.mode)}] ${chalk.bgRed("[ERROR]")} ${getColorPlateform(plateform ?? this.plateform)} ${message}`)
         }
     }
 
-    warn({ message }) {
+    warn({ message, plateform }) {
         Sentry.captureMessage(message)
 
         if (this.mode === "compact") {
-            console.log(`[${formateDate(Date.now(), this.mode)}] ${getColorPlateform(this.plateform)} ${chalk.bgYellow("[WARN]")} ${message}`)
+            console.log(`[${formateDate(Date.now(), this.mode)}] ${chalk.bgYellow("[WARN]")} ${getColorPlateform(plateform ?? this.plateform)} ${message}`)
         }
     }
 
-    commandLog({ interaction, command }) {
+    commandLog({ interactionId, commandName, prefix, plateform }) {
         if (this.mode === "compact") {
-            console.log(`[${formateDate(Date.now(), this.mode)}] ${getColorPlateform(this.plateform)} ${chalk.bgBlue("[LOG - COMMAND]")} /${command.help.name} (INTERACT ID : ${interaction.id})`)
+            console.log(`[${formateDate(Date.now(), this.mode)}] ${chalk.bgBlue("[LOG - COMMAND]")} ${getColorPlateform(plateform ?? this.plateform)} ${prefix ?? "!"}${commandName} (INTERACT ID : ${interactionId})`)
         }
     }
 }
@@ -43,7 +43,11 @@ function getColorPlateform(plateform) {
 
     if (plateform === "Instagram") return chalk.bgMagentaBright("[Instagram]")
 
-    return chalk.magenta("[Unknown plateform]")
+    if (plateform === "Global") return chalk.bgBlackBright("[Global]")
+
+    if (plateform === "i18n") return chalk.bgBlackBright("[i18n]")
+
+    return chalk.red("[Unknown plateform]")
 }
 
 function formateDate(date = Date.now(), type) {
