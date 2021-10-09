@@ -52,7 +52,6 @@ i18n.configure({
 
     logDebugFn: function (message) {
         logger.log({ plateform: "i18n", message })
-        //console.log('debug', msg)
     },
 
     logWarnFn: function (message) {
@@ -77,5 +76,9 @@ i18n.configure({
     }
 })
 
-discordClient(data, functions)
-instaClient(data, functions)
+discordClient(data, functions).catch((err) => {
+    logger.error({ plateform: "Discord", message: err })
+})
+instaClient(data, functions).catch((err) => {
+    logger.error({ plateform: "Instagram", message: err })
+})
