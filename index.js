@@ -2,14 +2,15 @@
 import i18n from "i18n"
 
 //* All clients
-import load from "./discord/index.js"
+import { default as discordClient } from "./discord/index.js"
+import { default as instaClient } from "./instagram/index.js"
 //const InstaClient = require("./instagram/index")
 
 //* Logger
 import Logger from "./logger.js"
 const logger = new Logger({
     mode: "compact",
-    plateform: "Discord"
+    plateform: "Global"
 })
 
 //* Database
@@ -49,16 +50,21 @@ i18n.configure({
     register: global,
     syncFiles: true,
 
-    logWarnFn: function (msg) {
-        logger.warn({ message: "i18n warn " + msg })
+    logDebugFn: function (message) {
+        logger.log({ plateform: "i18n", message })
+        //console.log('debug', msg)
+    },
+
+    logWarnFn: function (message) {
+        logger.warn({ plateform: "i18n", message })
     },
   
-    logErrorFn: function (msg) {
-        logger.error({ message: "i18n error " + msg })
+    logErrorFn: function (message) {
+        logger.error({ plateform: "i18n", message })
     },
   
     missingKeyFn: function(locale, value) {
-        logger.error({ message: `MissingKey: La valeur ${value} est manquante dans la langue ${locale}` })
+        logger.error({ plateform: "i18n", message: `MissingKey: La valeur ${value} est manquante dans la langue ${locale}` })
 
         i18n.setLocale(locale)
     
@@ -71,4 +77,5 @@ i18n.configure({
     }
 })
 
-load(data, functions, logger)
+discordClient(data, functions)
+instaClient(data, functions)
