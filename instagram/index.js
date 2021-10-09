@@ -48,19 +48,20 @@ export default async function init(data, functions) {
         if (!message || !message.content) return
         if (message.author.id === client.user.id) return
 
-        const command = message.content.split(" ")[0].slice("!").toLowerCase()
+        const prefix = config.instagram.prefix
+        const command = message.content.split(" ")[0].slice(prefix).toLowerCase()
         const args = message.content.split(/ +/g).slice(1)
         const argsOptions = message.content.split(/--([a-z]+) ([a-z]+)/gm).slice(1)
 
         await message.markSeen()
 
-        if (["!puissance4", "!p4", "!eval"].includes(message.content)) client.logger.commandLog({ 
+        if ([`${prefix}puissance4`, `${prefix}p4`, `${prefix}eval`].includes(message.content)) client.logger.commandLog({ 
             interactionId: message.id,
             commandName: command,
             prefix: ""
         })
 
-        if (message.content.startsWith("!puissance4") || message.content.startsWith("!p4")) {
+        if (message.content.startsWith(`${prefix}puissance4`) || message.content.startsWith(`${prefix}p4`)) {
             let opponent
             
             try {
@@ -80,7 +81,7 @@ export default async function init(data, functions) {
             if (message.chat.puissance4) return await message.chat.sendMessage(`Désolé @${message.author.username} une partie est deja en cours`)
 
             return opponentReady({ message, opponent })    
-        } else if (message.content.startsWith("!eval") && message.author.id === 18291915089) {
+        } else if (message.content.startsWith(`${prefix}eval`) && message.author.id === 18291915089) {
             if (!args[0]) return await message.chat.sendMessage("Veuillez saisir un argument")
             let toExecute = message.content.split(" ").slice(1)
 
