@@ -1,19 +1,19 @@
 import { Client } from "./structures/Client.js" 
 import { Intents } from "discord.js"
+import { readdir } from "fs"
+import Logger from "../logger.js"
+
 const client = new Client({ 
     intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS ] 
 })
-import { readdir } from "fs"
 
 //* Logger
-import Logger from "../logger.js"
 const logger = new Logger({
     mode: "compact",
     plateform: "Discord"
 })
 
-export default async function init(data, functions) {
-    client.functions = functions
+export default async function init(data) {
     client.data = data
     client.logger = logger
 
@@ -29,11 +29,9 @@ export default async function init(data, functions) {
             const event = new eventClass.default(client)
             const eventName = events[i].split(".")[0]
 
-            //client.logger.log({ message: `Chargement de l'evenement ${i + 1}/${events.length}`, end: i + 1 === events.length })
+            client.logger.log({ message: `Event ${eventName} chargé` })
 
             client.on(eventName, (...args) => event.run(...args))
-
-            //delete eventClass//require.cache[require.resolve("./events/" + events[i])]
         }
     })
 
@@ -46,15 +44,13 @@ export default async function init(data, functions) {
             const commandClass = await import("./commands/" + commands[i])
             const command = new commandClass.default(client)
 
-            //client.logger.update({ message: `Chargement de la commande ${i + 1}/${commands.length}`, end: i + 1 === commands.length })
+            client.logger.log({ message: `Commande ${command.help.name} chargée` })
 
             client.commands.set(command.help.name, command)
 
             for (let j = 0; j < command.help.aliases.length; j++) {
                 client.aliases.set(command.help.aliases[j], command.help.name)  
             }
-
-            //delete require.cache[require.resolve("./commands/" + commands[i])]
         }
     })
 
@@ -65,3 +61,14 @@ export default async function init(data, functions) {
     await client.login(client.config.discord.token)
     client.logger.log({ message: "Connexion effectué" })
 }
+
+
+process.on("uncaughtException", (error) => {
+    return logger.error({ message: error })
+})
+
+process.on("unhandledRejection", (reason, promise) => {
+    logger.error({ message: reason })
+
+    return promise.catch(() => null)
+})
