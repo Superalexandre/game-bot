@@ -13,9 +13,9 @@ A fun discord bot
 ✅ [En cours] Refaire les commandes en / <br/>
 ✅ Event message <br/>
 ✅ Traduction <br/>
-🚧 Logger <br/>
+✅ Logger <br/>
 🚧 Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc) <br/>
-🚧 Sentry, gitguardian <br/>
+✅ Sentry, gitguardian <br/>
 
 ### Uno
 ✅ Refaire en slash command <br/>
@@ -70,8 +70,9 @@ A fun discord bot
     => Replay
 
 ### Instagram
-✅ Message en attente => A ouvrir (ignorer si trop vieux)
-✅ Message non lu => A lire (ignorer, bot off)
+✅ Message en attente => A ouvrir (ignorer si trop vieux)<br/>
+✅ Message non lu => A lire (ignorer, bot off)<br/>
+✅ Restructuration<br/>
 
 ### Release
 🚧 Logo
