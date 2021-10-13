@@ -12,7 +12,7 @@ export default class messageCreate {
         if (message.author.id === client.user.id) return
 
         const prefix = client.config.instagram.prefix
-        const command = message.content.split(" ")[0].slice(prefix.length).toLowerCase()
+        const commandName = message.content.split(" ")[0].slice(prefix.length).toLowerCase()
         const args = message.content.split(/ +/g).slice(1)
         const argsOptions = message.content.split(/--([a-z]+) ([a-z]+)/gm).slice(1)
 
@@ -22,14 +22,14 @@ export default class messageCreate {
 
         await message.markSeen()
 
-        const cmd = client.commands.get(command) || client.commands.get(client.aliases.get(command))
+        const command = client.commands.get(commandName) || client.commands.get(client.aliases.get(commandName))
 
-        if (!cmd) return
+        if (!command) return
 
-        if (cmd.config.ownerOnly && !client.config.instagram.ownerIds.includes(message.author.id.toString())) return
+        if (command.config.ownerOnly && !client.config.instagram.ownerIds.includes(message.author.id.toString())) return
 
         try {
-            cmd.run({
+            command.run({
                 client,
                 message,
                 args,
@@ -37,7 +37,7 @@ export default class messageCreate {
                 data,
                 i18n
             }).then(() => {
-                client.logger.commandLog({ interactionId: message.id, commandName: cmd.help.name, prefix })
+                client.logger.commandLog({ interactionId: message.id, commandName: command.help.name, prefix })
             }).catch(error => {
                 message.chat.sendMessage(i18n.__("error.errorOccured", { error: error.toString() }))
 
