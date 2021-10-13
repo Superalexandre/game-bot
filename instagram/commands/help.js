@@ -1,4 +1,4 @@
-import Command from "../structures/Command.js"
+import { Command } from "../structures/Command.js"
 
 export default class Help extends Command {
     constructor(client) {
