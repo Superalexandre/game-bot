@@ -13,7 +13,25 @@ export default class Puissance4 extends Command {
     }
 
     async run({ message, args, argsOptions, i18n }) {
-        return message.chat.sendMessage("En cours")
+        let opponent
+        
+        try {
+            opponent = await client.fetchUser(args[0])
+        } catch(error) {
+            return await message.chat.sendMessage("Aucun utilisateur n'a été trouvé")
+        }
+
+        if (!message.chat.isGroup) return await message.chat.sendMessage("Oh non vous devez être dans un groupe pour effectuer cette commande")
+    
+        if (message.author.id === opponent.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre vous meme !")
+
+        if (opponent.id === client.user.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre moi")
+    
+        if (!message.chat.users.has(opponent.id)) return await message.chat.sendMessage("La personne doit être presente dans le groupe")
+
+        if (message.chat.puissance4) return await message.chat.sendMessage(`Désolé @${message.author.username} une partie est deja en cours`)
+
+        return opponentReady({ message, opponent })
     }
 }
 
