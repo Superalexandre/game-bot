@@ -4,7 +4,7 @@ export default class Puissance4 extends Command {
     constructor(client) {
         super(client, {
             name: "puissance4",
-            desc: (i18n) => i18n.__("insta.puissance4.desc"),
+            desc: (i18n) => i18n.__("insta.puissance4.description"),
             directory: import.meta.url,
             use: (i18n) => i18n.__("insta.puissance4.usage"),
             example: (i18n) => i18n.__("insta.puissance4.example"),

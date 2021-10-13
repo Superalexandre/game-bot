@@ -5,7 +5,7 @@ export default class Eval extends Command {
     constructor(client) {
         super(client, {
             name: "eval",
-            desc: (i18n) => i18n.__("insta.eval.desc"),
+            desc: (i18n) => i18n.__("insta.eval.description"),
             directory: import.meta.url,
             use: (i18n) => i18n.__("insta.eval.usage"),
             example: (i18n) => i18n.__("insta.eval.example"),
