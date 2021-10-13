@@ -7,9 +7,9 @@ export default class Ready {
 
     async run() {
         const client = this.client
-        const config = client.config
 
         /*
+        const config = client.config
         const apiUrl = "https://discord.com/api/v8"
         const endPoint = `/applications/${config.discord.appId}/commands`
         const commands = await fetch(`${apiUrl}${endPoint}`, {

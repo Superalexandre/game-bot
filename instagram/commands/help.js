@@ -12,7 +12,7 @@ export default class Help extends Command {
         })
     }
 
-    async run({ client, message, args, argsOptions, data, i18n }) {
+    async run({ client, message, args, i18n }) {
 
         if (args[0]) {
             const command = client.commands.get(args[0].toLowerCase()) || client.commands.get(client.aliases.get(args[0].toLowerCase()))

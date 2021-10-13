@@ -12,7 +12,7 @@ export default class Puissance4 extends Command {
         })
     }
 
-    async run({ client, message, args, argsOptions, data, i18n }) {
+    async run({ client, message, args }) {
         let opponent
 
         try {
@@ -58,7 +58,7 @@ async function startGame({ message, opponent }) {
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"]
     ]
 
     let userData = {
@@ -126,18 +126,14 @@ async function startGame({ message, opponent }) {
             const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
             const looser = formatedBoard.winnerUser.id === userData.id ? opponentData : userData
 
-            await message.chat.sendMessage(`Wow bien joué ${winner.username} (${winner.emoji}) qui a gagné contre ${looser.username} (${looser.emoji})\n` + formatedBoard.string)
-        
-            return replay({ message, userData, opponentData, gameData, client })
+            return await message.chat.sendMessage(`Wow bien joué ${winner.username} (${winner.emoji}) qui a gagné contre ${looser.username} (${looser.emoji})\n` + formatedBoard.string)
         }
 
         if (formatedBoard.allFill) {
             message.chat.puissance4 = false
             await collector.end()
 
-            await message.chat.sendMessage(`${userData.username} (${userData.emoji}) et ${opponentData.username} (${opponentData.emoji}) finissent sur une égalité :(\n` + formatedBoard.string)
-        
-            return replay({ message, userData, opponentData, gameData, client })
+            return await message.chat.sendMessage(`${userData.username} (${userData.emoji}) et ${opponentData.username} (${opponentData.emoji}) finissent sur une égalité :(\n` + formatedBoard.string)
         }
 
         await message.chat.sendMessage(text(userData, opponentData) + formatedBoard.string)

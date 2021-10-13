@@ -11,7 +11,7 @@ export default class Sudoku extends Command {
         })
     }
 
-    async run({ client, interaction, options, channel, i18n, data, userData, util }) {
+    async run({ interaction, options, i18n }) {
         const difficulty = options.getString("difficulte")
         const board = await sudoku.generate(difficulty)
         const grid = sudoku.board_string_to_grid(board)

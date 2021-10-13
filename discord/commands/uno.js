@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Command } from "../structures/Command.js"
 import { MessageButton, MessageActionRow } from "discord.js"
 
@@ -109,7 +110,7 @@ export default class Uno extends Command {
             activeSpecialCard: {
                 type: null,
                 askedColor: null,
-                number: 0,
+                number: 0
             },
             card: cards,
             players: players

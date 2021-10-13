@@ -5,11 +5,11 @@ export default class Eval extends Command {
     constructor(client) {
         super(client, {
             name: "eval",
-            directory: import.meta.url,
+            directory: import.meta.url
         })
     }
 
-    async run({ client, interaction, options, i18n, data, userData, util }) {
+    async run({ client, interaction, options }) {
         if (interaction.user.id !== "253569074431262720") return interaction.editReply({
             content: "Vous n'etes pas autorisé a utiliser cette commande",
             ephemeral: true
@@ -29,7 +29,7 @@ export default class Eval extends Command {
             interaction.editReply({
                 content: output,
                 code: "js",
-                ephemeral: true,
+                ephemeral: true
             })
         }).catch((err) => {
             err = err.toString()
@@ -39,7 +39,7 @@ export default class Eval extends Command {
             interaction.editReply({
                 content: "Une erreur est survenue\n" + err,
                 code: "js",
-                ephemeral: true,
+                ephemeral: true
             })
         })
     }

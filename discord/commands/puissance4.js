@@ -11,7 +11,7 @@ export default class Puissance4 extends Command {
         })
     }
 
-    async run({ client, interaction, options, i18n, data, userData, util }) {
+    async run({ client, interaction, options, i18n }) {
         const opponent = options.getUser("adversaire")
 
         if (!opponent || opponent.id === client.user.id) return playWithBot({ i18n, interaction, client })
@@ -188,7 +188,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
-        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"]
     ]
 
     userData = userData ? userData : {
@@ -483,7 +483,7 @@ function add({ board, emoji, row }) {
     return { board, string }
 }
 
-async function restart({ i18n, interaction, msg, button, opponent, client, userData, opponentData, gameData }) {
+async function restart({ i18n, interaction, msg, opponent, client, userData, opponentData, gameData }) {
     await msg.react("🔄")
     await msg.react("📥")
 
@@ -689,7 +689,7 @@ async function botPlay({ board, emoji, filter }) {
                             i: i,
                             j: j
                         },
-                        type: "topUser", 
+                        type: "topUser" 
                     })
                 }
             }
@@ -711,7 +711,7 @@ async function botPlay({ board, emoji, filter }) {
             "horizontal": 2,
             "vertical": 3,
             "diagonalRtBl": 4,
-            "diagonalLtBr": 5,
+            "diagonalLtBr": 5
         }
 
         //* Group by count

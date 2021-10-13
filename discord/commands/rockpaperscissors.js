@@ -9,7 +9,7 @@ export default class Rockpaperscissors extends Command {
         })
     }
 
-    async run({ client, interaction, options, i18n, data, userData, util }) {
+    async run({ client, interaction, options, i18n }) {
         const opponent = options.getUser("adversaire")
 
         if (!opponent || opponent.id === client.user.id) return playWithBot({ i18n, interaction, client })

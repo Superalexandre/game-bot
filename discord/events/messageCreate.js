@@ -5,7 +5,7 @@ export default class messageCreate {
         this.client = client
     }
 
-    async run(message) {
+    async run(/*message*/) {
         /*
         //https://discordjs.guide/additional-info/changes-in-v13.html#replies-message-reply
 

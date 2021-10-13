@@ -9,7 +9,7 @@ export default class Memory extends Command {
         })
     }
 
-    async run({ client, interaction, options, channel, i18n, data, userData, util }) {
+    async run({ interaction, options, i18n }) {
         let emotes = ["🐶", "🔰", "⚜️", "🔱", "🐻", "🐨", "🐯", "🐷", "🦧", "🌺", "⭐", "🍏", "🍊", "🍉", "🍇", "🍓", "💵", "⚙️", "📕", "❤️", "💜", "🔵", "🟢", "🟧", "🟫", "🟨"]
 
         const difficultyType = {
