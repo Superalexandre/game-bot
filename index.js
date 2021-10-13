@@ -75,13 +75,5 @@ i18n.configure({
     }
 })
 
-
-(async() => {
-    await discordClient(data).catch((err) => {
-        return logger.error({ plateform: "Discord", message: err })
-    })
-
-    await instaClient(data).catch((err) => {
-        return logger.error({ plateform: "Instagram", message: err })
-    })
-})()
+discordClient(data)
+instaClient(data)
