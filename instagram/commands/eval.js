@@ -14,7 +14,7 @@ export default class Eval extends Command {
         })
     }
 
-    async run({ message, args, argsOptions, i18n }) {
+    async run({ client, message, args, argsOptions, data, i18n }) {
         if (!args[0]) return await message.chat.sendMessage("Veuillez saisir un argument")
         let toExecute = message.content.split(" ").slice(1)
 

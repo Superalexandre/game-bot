@@ -12,7 +12,7 @@ export default class Help extends Command {
         })
     }
 
-    async run({ message, args, argsOptions, i18n }) {
+    async run({ client, message, args, argsOptions, data, i18n }) {
         return message.chat.sendMessage("En cours")
     }
 }

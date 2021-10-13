@@ -12,9 +12,9 @@ export default class Puissance4 extends Command {
         })
     }
 
-    async run({ message, args, argsOptions, i18n }) {
+    async run({ client, message, args, argsOptions, data, i18n }) {
         let opponent
-        
+
         try {
             opponent = await client.fetchUser(args[0])
         } catch(error) {
