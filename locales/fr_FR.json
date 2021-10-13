@@ -1,4 +1,9 @@
 {
+	"discord": {
+		"no_desc_provided": "Aucune description fourni",
+		"no_use_provided": "Aucun usage fourn",
+		"no_example_provided": "Aucun exemple fourni"
+	},
 	"error": {
 		"missingTranslation": "Une erreur de traduction est servenue !",
 		"errorOccured": "Une erreur inconnu est survenue\n```{{error}}```",
@@ -468,6 +473,29 @@
 			"replayOf": "Replay de",
 			"versus": "contre",
 			"gameReplay": "Replay de la partie :"
+		}
+	},
+	"insta": {
+		"no_desc_provided": "Aucune description fourni",
+		"no_use_provided": "Aucun usage fourn",
+		"no_example_provided": "Aucun exemple fourni",
+
+		"eval": {
+			"description": "Permet d'executer du code",
+			"usage": "{{prefix}}eval <Code>",
+			"example": "{{prefix}}eval console.log('Test')"
+		},
+
+		"puissance4": {
+			"description": "Permet de jouer au puissance 4 avec vos amis !",
+			"usage": "{{prefix}}puissance4 <Mention d'un utilisateur>",
+			"example": "{{prefix}}puissance4 @sudrefb"
+		},
+
+		"help": {
+			"description": "Permet de voir la liste des commandes",
+			"usage": "{{prefix}}help (Commande)",
+			"example": "{{prefix}}help (puissance4)"
 		}
 	}
 }
