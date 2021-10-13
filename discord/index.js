@@ -61,12 +61,3 @@ export default async function init(data) {
     await client.login(client.config.discord.token)
     client.logger.log({ message: "Connexion effectué" })
 }
-
-
-process.on("uncaughtException", (error) => {
-    return logger.error({ message: error })
-})
-
-process.on("unhandledRejection", (reason) => {
-    return logger.error({ message: reason })
-})

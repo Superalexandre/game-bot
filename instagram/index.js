@@ -57,11 +57,3 @@ export default async function init(data) {
     logger.log({ message: "Connexion en cours..." })
     client.login(client.config.instagram.username, client.config.instagram.password)
 }
-
-process.on("uncaughtException", (error) => {
-    return logger.error({ message: error })
-})
-
-process.on("unhandledRejection", (reason) => {
-    return logger.error({ message: reason })
-})
