@@ -4,17 +4,23 @@ import i18n from "i18n"
 //* All clients
 import { default as discordClient } from "./discord/index.js"
 import { default as instaClient } from "./instagram/index.js"
-//const InstaClient = require("./instagram/index")
 
-//* Logger
+import { join } from "path"
+import config from "./config.js"
+
+import { dirname } from "path"
+import { fileURLToPath } from "url"
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+import * as Sentry from "@sentry/node"
 import Logger from "./logger.js"
+
+import Enmap from "enmap"
+
 const logger = new Logger({
     mode: "compact",
     plateform: "Global"
 })
-
-//* Database
-import Enmap from "enmap"
 
 const data = {
     users: new Enmap({ name: "users" }),
@@ -23,18 +29,11 @@ const data = {
     }
 }
 
-//* Util 
-import { join } from "path"
-import functions from "./functions.js"
-import config from "./config.js"
-
-//* Dirname
-import { dirname } from "path"
-import { fileURLToPath } from "url"
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
-//* Import errors
-import * as Sentry from "@sentry/node"
+/*
+enmap.changed((keyName, oldValue, newValue) => {  
+    console.log(`Value of ${keyName} has changed from: \n${oldValue}\nto\n${newValue}`);
+});
+*/
 
 Sentry.init({
     dsn: config.sentry.dsn,
@@ -76,9 +75,13 @@ i18n.configure({
     }
 })
 
-discordClient(data, functions).catch((err) => {
-    logger.error({ plateform: "Discord", message: err })
-})
-instaClient(data, functions).catch((err) => {
-    logger.error({ plateform: "Instagram", message: err })
-})
+
+(async() => {
+    await discordClient(data).catch((err) => {
+        return logger.error({ plateform: "Discord", message: err })
+    })
+
+    await instaClient(data).catch((err) => {
+        return logger.error({ plateform: "Instagram", message: err })
+    })
+})()
