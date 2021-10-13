@@ -488,8 +488,8 @@
 
 		"puissance4": {
 			"description": "Permet de jouer au puissance 4 avec vos amis !",
-			"usage": "{{prefix}}puissance4 <Mention d'un utilisateur>",
-			"example": "{{prefix}}puissance4 @sudrefb"
+			"usage": "{{prefix}}puissance4 <Nom d'utilisateur>",
+			"example": "{{prefix}}puissance4 sudrefb"
 		},
 
 		"help": {
