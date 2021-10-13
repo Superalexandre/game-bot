@@ -78,3 +78,11 @@ i18n.configure({
 
 discordClient(data)
 instaClient(data)
+
+process.on("uncaughtException", (error) => {
+    return logger.error({ message: error })
+})
+
+process.on("unhandledRejection", (reason) => {
+    return logger.error({ message: reason })
+})
