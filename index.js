@@ -37,6 +37,7 @@ enmap.changed((keyName, oldValue, newValue) => {
 
 Sentry.init({
     dsn: config.sentry.dsn,
+    release: "game-bot@1.0.0",
     tracesSampleRate: 1.0
 })
 
