@@ -1,3 +1,5 @@
+import i18n from "i18n"
+
 export default class messageCreate {
     constructor(client) {
         this.client = client
@@ -24,7 +26,7 @@ export default class messageCreate {
 
         if (!cmd) return
 
-        if (cmd.config.ownerOnly && !client.config.instagram.ownerIds.includes(message.author.id)) return
+        if (cmd.config.ownerOnly && !client.config.instagram.ownerIds.includes(message.author.id.toString())) return
 
         try {
             cmd.run({
@@ -35,7 +37,7 @@ export default class messageCreate {
                 data,
                 i18n
             }).then(() => {
-                client.logger.commandLog({ message: cmd.help.name }) //message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime/)
+                client.logger.commandLog({ interactionId: message.id, commandName: cmd.help.name, prefix })
             }).catch(error => {
                 message.chat.sendMessage(i18n.__("error.errorOccured", { error: error.toString() }))
 
