@@ -1,4 +1,21 @@
+import Command from "../structures/Command.js"
 
+export default class Puissance4 extends Command {
+    constructor(client) {
+        super(client, {
+            name: "puissance4",
+            desc: (i18n) => i18n.__("insta.puissance4.desc"),
+            directory: import.meta.url,
+            use: (i18n) => i18n.__("insta.puissance4.usage"),
+            example: (i18n) => i18n.__("insta.puissance4.example"),
+            aliases: ["p4"]
+        })
+    }
+
+    async run({ message, args, argsOptions, i18n }) {
+        return message.chat.sendMessage("En cours")
+    }
+}
 
 async function opponentReady({ message, opponent }) {
     const msg = await message.chat.sendMessage(`@${opponent.username} aimez ce message dès que vous êtes prêt(e)\n\n${message.author.username} si vous voulez annuler la demander liker ce message`)
