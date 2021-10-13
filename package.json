@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "FORCE_COLOR=1 pm2 start index.js --name game --interpreter=/home/pi/.nvm/versions/node/v16.6.1/bin/node"
+    "start": "FORCE_COLOR=1 sudo pm2 start index.js --name game --interpreter=/home/pi/.nvm/versions/node/v16.6.1/bin/node"
   },
   "repository": {
     "type": "git",
