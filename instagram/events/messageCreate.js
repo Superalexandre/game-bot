@@ -22,6 +22,8 @@ export default class messageCreate {
 
         await message.markSeen()
 
+        if (!message.content.startsWith(prefix)) return
+
         const command = client.commands.get(commandName) || client.commands.get(client.aliases.get(commandName))
 
         if (!command) return
