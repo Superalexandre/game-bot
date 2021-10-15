@@ -5,17 +5,17 @@ import { fileURLToPath } from "url"
 export class Command {
     constructor(client, {
         name = null,
-        desc = (i18n) => i18n.__("discord.noDescProvided"),
+        //desc = (i18n) => i18n.__("discord.noDescProvided"),
         directory = false,
-        use = (i18n) => i18n.__("discord.noUseProvided"),
-        example = (i18n) => i18n.__("discord.noExampleProvided"),
-        aliases = [],
+        //use = (i18n) => i18n.__("discord.noUseProvided"),
+        //example = (i18n) => i18n.__("discord.noExampleProvided"),
+        //aliases = [],
         enabled = true,
-        ownerOnly = false,
-        slowmode = 3,
+        //ownerOnly = false,
+        //slowmode = 3,
         botPerms = [],
-        memberPerms = [],
-        privateMessage = false
+        memberPerms = []
+        //privateMessage = false
     }) {
         this.client = client
 
@@ -24,20 +24,20 @@ export class Command {
 
         this.help = {
             name,
-            desc,
-            category,
-            use,
-            example,
-            aliases
+            //desc,
+            category
+            //use,
+            //example,
+            //aliases
         }
 
         this.config = {
             enabled,
-            ownerOnly,
-            slowmode,
+            //ownerOnly,
+            //slowmode,
             botPerms,
-            memberPerms,
-            privateMessage
+            memberPerms
+            //privateMessage
         }
     }
 }
