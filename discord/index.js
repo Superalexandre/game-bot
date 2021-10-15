@@ -56,7 +56,7 @@ export default async function init(data) {
         }
     })
 
-    client.on("warn", (message) => client.logger.warn({ message: message }))
+    client.on("warn", (message) => client.logger.warn({ message: message, trace: true }))
     client.on("error", (message) => client.logger.error({ message: message }))
 
     client.logger.log({ message: "Connexion en cours..." })

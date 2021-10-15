@@ -23,8 +23,8 @@ export default class Logger {
         }
     }
 
-    warn({ message, plateform }) {
-        Sentry.captureMessage(message)
+    warn({ message, plateform, trace }) {
+        if (trace) Sentry.captureMessage(message)
 
         if (this.mode === "compact") {
             console.log(`[${formateDate(Date.now(), this.mode)}] ${chalk.bgYellow("[WARN]")} ${getColorPlateform(plateform ?? this.plateform)} ${message}`)

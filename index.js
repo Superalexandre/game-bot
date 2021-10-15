@@ -55,7 +55,7 @@ i18n.configure({
     },
 
     logWarnFn: function (message) {
-        logger.warn({ plateform: "i18n", message })
+        logger.warn({ plateform: "i18n", message, trace: true })
     },
   
     logErrorFn: function (message) {
