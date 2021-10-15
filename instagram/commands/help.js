@@ -17,7 +17,7 @@ export default class Help extends Command {
         if (args[0]) {
             const command = client.commands.get(args[0].toLowerCase()) || client.commands.get(client.aliases.get(args[0].toLowerCase()))
 
-            if (!command) return message.chat.sendMessage(i18n.__("insta.help.no_command", { commandName: args[0] }))
+            if (!command) return message.chat.sendMessage(i18n.__("insta.help.noCommand", { commandName: args[0] }))
 
             if (!command.config.enabled) return
             if (command.config.ownerOnly && !client.config.instagram.ownerIds.includes(message.author.id.toString())) return
@@ -36,7 +36,7 @@ export default class Help extends Command {
                 commandList.push(`• ${client.config.instagram.prefix}${commandName}`)
             }
 
-            message.chat.sendMessage(`${i18n.__("insta.help.list_title")} \n` + commandList.join("\n"))
+            message.chat.sendMessage(`${i18n.__("insta.help.listTitle")} \n` + commandList.join("\n"))
         }
     }
 }

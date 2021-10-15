@@ -5,10 +5,10 @@ import { fileURLToPath } from "url"
 export class Command {
     constructor(client, {
         name = null,
-        desc = (i18n) => i18n.__("discord.no_desc_provided"),
+        desc = (i18n) => i18n.__("discord.noDescProvided"),
         directory = false,
-        use = (i18n) => i18n.__("discord.no_use_provided"),
-        example = (i18n) => i18n.__("discord.no_example_provided"),
+        use = (i18n) => i18n.__("discord.noUseProvided"),
+        example = (i18n) => i18n.__("discord.noExampleProvided"),
         aliases = [],
         enabled = true,
         ownerOnly = false,

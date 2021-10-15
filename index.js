@@ -41,6 +41,8 @@ Sentry.init({
     tracesSampleRate: 1.0
 })
 
+console.log(Sentry)
+
 //* Config languages
 i18n.configure({
     locales: ["fr_FR"],

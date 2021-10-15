@@ -12,31 +12,31 @@ export default class Puissance4 extends Command {
         })
     }
 
-    async run({ client, message, args }) {
+    async run({ client, message, args, i18n }) {
         let opponent
 
         try {
             opponent = await client.fetchUser(args[0])
         } catch(error) {
-            return await message.chat.sendMessage("Aucun utilisateur n'a été trouvé")
+            return await message.chat.sendMessage(i18n.__("insta.puissance4.error.noUser"))
         }
 
-        if (!message.chat.isGroup) return await message.chat.sendMessage("Oh non vous devez être dans un groupe pour effectuer cette commande")
+        if (!message.chat.isGroup) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.noGroup"))
     
-        if (message.author.id === opponent.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre vous meme !")
+        if (message.author.id === opponent.id) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.sameUser"))
 
-        if (opponent.id === client.user.id) return await message.chat.sendMessage("Vous ne pouvez pas jouer contre moi")
+        if (opponent.id === client.user.id) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.bot"))
     
-        if (!message.chat.users.has(opponent.id)) return await message.chat.sendMessage("La personne doit être presente dans le groupe")
+        if (!message.chat.users.has(opponent.id)) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.notInGroup"))
 
-        if (message.chat.puissance4) return await message.chat.sendMessage(`Désolé @${message.author.username} une partie est deja en cours`)
+        if (message.chat.puissance4) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.alreadyGame", { username: message.author.username }))
 
-        return opponentReady({ message, opponent })
+        return opponentReady({ message, opponent, i18n })
     }
 }
 
-async function opponentReady({ message, opponent }) {
-    const msg = await message.chat.sendMessage(`@${opponent.username} aimez ce message dès que vous êtes prêt(e)\n\n${message.author.username} si vous voulez annuler la demander liker ce message`)
+async function opponentReady({ message, opponent, i18n }) {
+    const msg = await message.chat.sendMessage(i18n.__("insta.puissance4.opponentReady", { opponentUsername: opponent.username, authorUsername: message.author.username }))
 
     const filter = (like) => [opponent.id, message.author.id].includes(like.id)
     const collector = message.createLikeCollector(msg, { filter })
@@ -44,13 +44,13 @@ async function opponentReady({ message, opponent }) {
     collector.on("likeAdded", async(like) => {
         await collector.end()
 
-        if (like.id === message.author.id) return await message.chat.sendMessage(`${message.author.username} a annuler la demande de partie`)
+        if (like.id === message.author.id) return await message.chat.sendMessage(i18n.__("insta.puissance4.userUndoGame", { authorUsername: message.author.username }))
 
-        return startGame({ message, opponent })
+        return startGame({ message, opponent, i18n })
     })
 }
 
-async function startGame({ message, opponent }) {
+async function startGame({ message, opponent, i18n }) {
     message.chat.puissance4 = true
 
     let board = [
@@ -77,7 +77,7 @@ async function startGame({ message, opponent }) {
         winEmoji: "🔵"
     }
 
-    const text = (user, opponent, error) => `Tour de : ${user.turn ? user.username : opponent.username} (${user.turn ? user.emoji : opponent.emoji}) ${error ? "\n" + error : ""}\n\n`
+    const text = (user, opponent, error) => `${i18n.__("insta.puissance.turnOf")} ${user.turn ? user.username : opponent.username} (${user.turn ? user.emoji : opponent.emoji}) ${error ? "\n" + error : ""}\n\n`
     const formatedBoard = genBoard({ board, userData, opponentData })
 
     await message.chat.sendMessage(text(userData, opponentData) + formatedBoard.string)
@@ -96,7 +96,7 @@ async function startGame({ message, opponent }) {
             message.chat.puissance4 = false
             await collector.end()
 
-            return await message.chat.sendMessage(`${msg.author.username} a décidé d'arreter la partie\nPeut etre un mauvais joueur ?`)
+            return await message.chat.sendMessage(i18n.__("insta.puissance4.gameStop", { authorUsername: msg.author.username }))
         }
 
         const activeUser = userData.id === msg.author.id ? userData : opponentData
@@ -107,9 +107,9 @@ async function startGame({ message, opponent }) {
         const added = add({ board, emoji: activeUser.emoji, row: parseInt(msg.content) - 1 })
 
         if (added && added.error) {
-            if (added.error === "row_full") return await message.chat.sendMessage("Vous ne pouvez pas jouer ici " + added.string)
+            if (added.error === "row_full") return await message.chat.sendMessage(i18n.__("insta.puissance4.error.cantPlayHere") + added.string)
 
-            return await message.chat.sendMessage("Erreur inconnue " + added.string)
+            return await message.chat.sendMessage(i18n.__("insta.puissance4.error.unknownError") + added.string)
         }
 
         activeUser.turn = false
@@ -126,14 +126,14 @@ async function startGame({ message, opponent }) {
             const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
             const looser = formatedBoard.winnerUser.id === userData.id ? opponentData : userData
 
-            return await message.chat.sendMessage(`Wow bien joué ${winner.username} (${winner.emoji}) qui a gagné contre ${looser.username} (${looser.emoji})\n` + formatedBoard.string)
+            return await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji, looserUsername: looser.username, looserEmoji: looser.emoji })}\n` + formatedBoard.string)
         }
 
         if (formatedBoard.allFill) {
             message.chat.puissance4 = false
             await collector.end()
 
-            return await message.chat.sendMessage(`${userData.username} (${userData.emoji}) et ${opponentData.username} (${opponentData.emoji}) finissent sur une égalité :(\n` + formatedBoard.string)
+            return await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.equality", { userDataUsername: userData.username, userDataEmoji: userData.emoji, opponentDataUsername: opponentData.username, opponentDataEmoji: opponentData.emoji })}\n` + formatedBoard.string)
         }
 
         await message.chat.sendMessage(text(userData, opponentData) + formatedBoard.string)

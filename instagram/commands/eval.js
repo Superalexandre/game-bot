@@ -15,7 +15,7 @@ export default class Eval extends Command {
     }
 
     async run({ message, args, argsOptions, i18n }) {
-        if (!args[0]) return await message.chat.sendMessage(i18n.__("insta.eval.no_args"))
+        if (!args[0]) return await message.chat.sendMessage(i18n.__("insta.eval.noArgs"))
         let toExecute = message.content.split(" ").slice(1)
 
         if (argsOptions.length > 0) toExecute = toExecute.slice(0, toExecute.length - (argsOptions.length - 1))

@@ -5,10 +5,10 @@ import { fileURLToPath } from "url"
 export class Command {
     constructor(client, {
         name = null,
-        desc = (i18n) => i18n.__("insta.no_desc_provided"),
+        desc = (i18n) => i18n.__("insta.noDescProvided"),
         directory = false,
-        use = (i18n) => i18n.__("insta.no_use_provided"),
-        example = (i18n) => i18n.__("insta.no_example_provided"),
+        use = (i18n) => i18n.__("insta.noUseProvided"),
+        example = (i18n) => i18n.__("insta.noExampleProvided"),
         aliases = [],
         enabled = true,
         ownerOnly = false,
