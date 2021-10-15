@@ -41,8 +41,6 @@ Sentry.init({
     tracesSampleRate: 1.0
 })
 
-console.log(Sentry)
-
 //* Config languages
 i18n.configure({
     locales: ["fr_FR"],
@@ -78,8 +76,13 @@ i18n.configure({
     }
 })
 
-discordClient(data)
-instaClient(data)
+if (config.discord.start) {
+    discordClient(data)
+} else logger.warn({ plateform: "Discord", message: "Le bot discord n'est pas lancé" })
+
+if (config.instagram.start) {
+    instaClient(data)
+} else logger.warn({ plateform: "Instagram", message: "Le bot instagram n'est pas lancé" })
 
 process.on("uncaughtException", (error) => {
     return logger.error({ message: error })
