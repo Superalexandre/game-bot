@@ -5,7 +5,8 @@ export default class Eval extends Command {
     constructor(client) {
         super(client, {
             name: "eval",
-            directory: import.meta.url
+            directory: import.meta.url,
+            enabled: false
         })
     }
 
