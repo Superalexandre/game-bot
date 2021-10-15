@@ -17,16 +17,16 @@ export default class Help extends Command {
         if (args[0]) {
             const command = client.commands.get(args[0].toLowerCase()) || client.commands.get(client.aliases.get(args[0].toLowerCase()))
 
-            if (!command) return message.chat.sendMessage(`Aucune commande trouvée pour ${args[0]}`)
+            if (!command) return message.chat.sendMessage(i18n.__("insta.help.no_command", { commandName: args[0] }))
 
             if (!command.config.enabled) return
             if (command.config.ownerOnly && !client.config.instagram.ownerIds.includes(message.author.id.toString())) return
 
-            message.chat.sendMessage(`Informations sur la commande : ${command.help.name}\n\n
-            • Alias : ${command.help.aliases.join(", ")}\n
-            • Description : ${command.help.desc(i18n)}\n
-            • Usage : ${command.help.use(i18n)}\n
-            • Exemple : ${command.help.example(i18n)}`)
+            message.chat.sendMessage(`${i18n.__("insta.help.title")} ${command.help.name}\n\n` + 
+            `• ${i18n.__("insta.help.alias")} : ${command.help.aliases.join(", ")}\n` +
+            `• ${i18n.__("insta.help.desc")} : ${command.help.desc(i18n)}\n` + 
+            `• ${i18n.__("insta.help.use")} : ${command.help.use(i18n)}\n` + 
+            `• ${i18n.__("insta.help.exam")} : ${command.help.example(i18n)}`)
         } else {
             const commandList = []
             
@@ -36,7 +36,7 @@ export default class Help extends Command {
                 commandList.push(`• ${client.config.instagram.prefix}${commandName}`)
             }
 
-            message.chat.sendMessage(`Liste des commandes : \n` + commandList.join("\n"))
+            message.chat.sendMessage(`${i18n.__("insta.help.list_title")} \n` + commandList.join("\n"))
         }
     }
 }

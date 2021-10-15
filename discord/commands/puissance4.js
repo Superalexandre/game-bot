@@ -23,18 +23,18 @@ export default class Puissance4 extends Command {
 
         const ready = new MessageButton()
             .setStyle("SUCCESS")
-            .setLabel(i18n.__("global.yes"))
+            .setLabel(i18n.__("discord.global.yes"))
             .setCustomId(`game_puissance4_${interaction.user.id}_${opponent.id}_ready`)
     
         const notReady = new MessageButton()
             .setStyle("DANGER")
-            .setLabel(i18n.__("global.no"))
+            .setLabel(i18n.__("discord.global.no"))
             .setCustomId(`game_puissance4_${interaction.user.id}_${opponent.id}_notready`)
 
         const readyButtons = new MessageActionRow().addComponents(ready, notReady)
 
         const msg = await interaction.channel.send({
-            content: i18n.__("global.opponentReady", { userId: opponent.id, gameName: "puissance4" }),
+            content: i18n.__("discord.global.opponentReady", { userId: opponent.id, gameName: "puissance4" }),
             components: [readyButtons]
         })
 
@@ -45,19 +45,19 @@ export default class Puissance4 extends Command {
 async function playWithBot({ i18n, interaction, client }) {
     const yes = new MessageButton()
         .setStyle("SUCCESS")
-        .setLabel(i18n.__("global.yes"))
+        .setLabel(i18n.__("discord.global.yes"))
         .setCustomId(`game_puissance4_${interaction.user.id}_yes`)
 
     const no = new MessageButton()
         .setStyle("DANGER")
-        .setLabel(i18n.__("global.no"))
+        .setLabel(i18n.__("discord.global.no"))
         .setCustomId(`game_puissance4_${interaction.user.id}_no`)
 
     const row = new MessageActionRow()
         .addComponents(yes, no)
 
     const msg = await interaction.channel.send({
-        content: i18n.__("global.playWithBot"),
+        content: i18n.__("discord.global.playWithBot"),
         components: [row]
     })
 
@@ -67,7 +67,7 @@ async function playWithBot({ i18n, interaction, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== interaction.user.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: "puissance4" }),
+            content: i18n.__("discord.global.notYourGame", { gameName: "puissance4" }),
             ephemeral: true
         })
 
@@ -75,7 +75,7 @@ async function playWithBot({ i18n, interaction, client }) {
             await collector.stop()
 
             return await msg.edit({
-                content: i18n.__("global.noPlayWithBot", { username: interaction.user.username }),
+                content: i18n.__("discord.global.noPlayWithBot", { username: interaction.user.username }),
                 components: []
             })
         } else {
@@ -98,7 +98,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== opponent.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: "puissance4" }),
+            content: i18n.__("discord.global.notYourGame", { gameName: "puissance4" }),
             ephemeral: true
         })
 
@@ -106,7 +106,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
             await collector.stop()
 
             return await msg.edit({
-                content: i18n.__("global.opponentNotReady", { username: opponent.username, gameName: "puissance4" }),
+                content: i18n.__("discord.global.opponentNotReady", { username: opponent.username, gameName: "puissance4" }),
                 components: []
             })
         } else {
@@ -128,17 +128,17 @@ async function whoStart({ i18n, interaction, msg, button, opponent, client, user
 
     const userStart = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel(i18n.__("global.start.you", { username: chooser.username }))
+        .setLabel(i18n.__("discord.global.start.you", { username: chooser.username }))
         .setCustomId(`game_puissance4_${interaction.user.id}_${opponent.id}_user`)
 
     const opponentStart = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel(i18n.__("global.start.opponent", { username: opposite.username }))
+        .setLabel(i18n.__("discord.global.start.opponent", { username: opposite.username }))
         .setCustomId(`game_puissance4_${interaction.user.id}_${opponent.id}_opponent`)
 
     const random = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel(i18n.__("global.start.random"))
+        .setLabel(i18n.__("discord.global.start.random"))
         .setCustomId(`game_puissance4_${interaction.user.id}_${opponent.id}_random`)
 
     const row = new MessageActionRow().addComponents(userStart, opponentStart, random)
@@ -146,7 +146,7 @@ async function whoStart({ i18n, interaction, msg, button, opponent, client, user
     await button?.deferUpdate()
 
     await msg.edit({
-        content: i18n.__("global.whoStart", { username: chooser.username }),
+        content: i18n.__("discord.global.whoStart", { username: chooser.username }),
         components: [row]
     })
 
@@ -156,7 +156,7 @@ async function whoStart({ i18n, interaction, msg, button, opponent, client, user
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== chooser.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: "puissance4" }),
+            content: i18n.__("discord.global.notYourGame", { gameName: "puissance4" }),
             ephemeral: true
         })
 
@@ -214,7 +214,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
     }
 
     await msg.edit({
-        content: `${userData.turn ? userData.username : opponentData.username} ${i18n.__("puissance4.goingToStart")} (${starter.random ? i18n.__("puissance4.random") : i18n.__("puissance4.choice")})\n${i18n.__("puissance4.settingUp")}`,
+        content: `${userData.turn ? userData.username : opponentData.username} ${i18n.__("discord.puissance4.goingToStart")} (${starter.random ? i18n.__("discord.puissance4.random") : i18n.__("puissance4.choice")})\n${i18n.__("puissance4.settingUp")}`,
         components: []
     })
 
@@ -230,10 +230,10 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
         const userWin = user.win ? user.win : 0
         const opponentWin = opponent.win ? opponent.win : 0
 
-        return `${i18n.__("puissance4.revange")}${userWin + opponentWin} : **${userWin}** ${user.username} - **${opponentWin}** ${opponent.username}\n`
+        return `${i18n.__("discord.puissance4.revange")}${userWin + opponentWin} : **${userWin}** ${user.username} - **${opponentWin}** ${opponent.username}\n`
     }
 
-    const text = (user, opponent, error) => `${revangeText(user, opponent)}${i18n.__("puissance4.turnOf")} ${user.turn ? user.username : opponent.username} (${user.turn ? user.emoji : opponent.emoji}) ${error ? "\n" + error : ""}\n\n`
+    const text = (user, opponent, error) => `${revangeText(user, opponent)}${i18n.__("discord.puissance4.turnOf")} ${user.turn ? user.username : opponent.username} (${user.turn ? user.emoji : opponent.emoji}) ${error ? "\n" + error : ""}\n\n`
 
     const formatedBoard = genBoard({ board, userData, opponentData })
 
@@ -263,12 +263,12 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
 
         if (added && added.error) {
             if (added.error === "row_full") return await msg.edit({
-                content: text(userData, opponentData, i18n.__("puissance4.error.cantPlayHere")) + added.string,
+                content: text(userData, opponentData, i18n.__("discord.puissance4.error.cantPlayHere")) + added.string,
                 components: []
             })
 
             return await msg.edit({ 
-                content: text(userData, opponentData, i18n.__("puissance4.error.unknownError")) + added.string, 
+                content: text(userData, opponentData, i18n.__("discord.puissance4.error.unknownError")) + added.string, 
                 components: []
             })
         }
@@ -294,7 +294,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
             looser.loose = numberLoose + 1
 
             await msg.edit({
-                content: `**${userData?.win ? userData.win : 0}** ${userData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${i18n.__("puissance4.win.wellPlay")} ${winner.username} (${winner.emoji}) ${i18n.__("puissance4.win.wonOver")} ${looser.username} (${looser.emoji})\n` + formatedBoard.string,
+                content: `**${userData?.win ? userData.win : 0}** ${userData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${i18n.__("discord.puissance4.win.wellPlay")} ${winner.username} (${winner.emoji}) ${i18n.__("discord.puissance4.win.wonOver")} ${looser.username} (${looser.emoji})\n` + formatedBoard.string,
                 components: []
             })
 
@@ -306,7 +306,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
             await msg.reactions.removeAll()
 
             await msg.edit({
-                content: `**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) ${i18n.__("puissance4.equality.and")} ${opponentData.username} (${opponentData.emoji}) ${i18n.__("puissance4.equality.equality")}\n` + formatedBoard.string,
+                content: `**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) ${i18n.__("discord.puissance4.equality.and")} ${opponentData.username} (${opponentData.emoji}) ${i18n.__("discord.puissance4.equality.equality")}\n` + formatedBoard.string,
                 components: []
             })
 
@@ -348,7 +348,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
                 looser.loose = numberLoose + 1
 
                 await msg.edit({
-                    content: `**${userData?.win ? userData.win : 0}** ${userData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${i18n.__("puissance4.win.wellPlay")} ${winner.username} (${winner.emoji}) ${i18n.__("puissance4.win.wonOver")} ${looser.username} (${looser.emoji})\n` + formatedBoard.string,
+                    content: `**${userData?.win ? userData.win : 0}** ${userData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${i18n.__("discord.puissance4.win.wellPlay")} ${winner.username} (${winner.emoji}) ${i18n.__("discord.puissance4.win.wonOver")} ${looser.username} (${looser.emoji})\n` + formatedBoard.string,
                     components: []
                 })
 
@@ -360,7 +360,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
                 await msg.reactions.removeAll()
 
                 await msg.edit({
-                    content: `**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) ${i18n.__("puissance4.equality.and")} ${opponentData.username} (${opponentData.emoji}) ${i18n.__("puissance4.equality.equality")}\n` + formatedBoard.string,
+                    content: `**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) ${i18n.__("discord.puissance4.equality.and")} ${opponentData.username} (${opponentData.emoji}) ${i18n.__("discord.puissance4.equality.equality")}\n` + formatedBoard.string,
                     components: []
                 })
 
@@ -531,7 +531,7 @@ async function restart({ i18n, interaction, msg, opponent, client, userData, opp
         
 
         await msg.edit({
-            content: i18n.__("puissance4.wantRevange", { username: user.username, number: numberReady }),
+            content: i18n.__("discord.puissance4.wantRevange", { username: user.username, number: numberReady }),
             components: []
         })
     })
@@ -544,7 +544,7 @@ async function restart({ i18n, interaction, msg, opponent, client, userData, opp
             await msg.reactions.removeAll()
 
             return await msg.edit({
-                content: i18n.__("puissance4.noMoreRevange", { username: user.username }),
+                content: i18n.__("discord.puissance4.noMoreRevange", { username: user.username }),
                 components: []
             })
         }
@@ -553,7 +553,7 @@ async function restart({ i18n, interaction, msg, opponent, client, userData, opp
 
 async function makeGif({ client, i18n, msg, gameData }) {
     await msg.edit({
-        content: i18n.__("puissance4.replay.mainText")
+        content: i18n.__("discord.puissance4.replay.mainText")
     })
 
     const width = 1000
@@ -571,14 +571,14 @@ async function makeGif({ client, i18n, msg, gameData }) {
     //* Text
     ctx.fillStyle = "#FFFFFF"
     ctx.font = `${fontSize}px 'Arial'`
-    const text = `${i18n.__("puissance4.replay.replayOf")} ${gameData.players[0].username} ${i18n.__("puissance4.replay.versus")} ${gameData.players[1].username}`
+    const text = `${i18n.__("discord.puissance4.replay.replayOf")} ${gameData.players[0].username} ${i18n.__("discord.puissance4.replay.versus")} ${gameData.players[1].username}`
     const textWidth = ctx.measureText(text).width
 
     ctx.fillText(text, (canvas.width/2) - (textWidth / 2), 50)
 
     //* Credit
     ctx.font = `${fontSize - 2}px 'Arial'`
-    ctx.fillText(`${i18n.__("puissance4.replay.copyright")} ${client.user.username}`, width / 20, height - 20)
+    ctx.fillText(`${i18n.__("discord.puissance4.replay.copyright")} ${client.user.username}`, width / 20, height - 20)
 
     for (let i = 0; i < gameData.actions.length; i++) {
         for (let j = 0; j < gameData.actions[i].length; j++) {
@@ -617,7 +617,7 @@ async function makeGif({ client, i18n, msg, gameData }) {
     const buffer = Buffer.from(bytes)
 
     await msg.edit({
-        content: i18n.__("puissance4.replay.gameReplay"),
+        content: i18n.__("discord.puissance4.replay.gameReplay"),
         files: [{
             attachment: buffer,
             name: "replay.gif"

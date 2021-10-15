@@ -9,7 +9,7 @@ export default class Pendu extends Command {
     }
 
     async run({ interaction, options, i18n }) {
-        const words = i18n.__("hangman.wordList")
+        const words = i18n.__("discord.hangman.wordList")
         const length = options.getString("longueur") === "random" ? -1 : options.getString("longueur")
 
         let sorted = words.sort((a, b) => a.length > b.length ? 1 : a.length < b.length ? -1 : 0)
@@ -24,7 +24,7 @@ export default class Pendu extends Command {
 
 async function startGame({ interaction, i18n, word }) {
     if (!word) return await interaction.editReply({
-        content: i18n.__("hangman.error.noWordFound"),
+        content: i18n.__("discord.hangman.error.noWordFound"),
         ephemeral: true
     })
 
@@ -122,10 +122,10 @@ async function startGame({ interaction, i18n, word }) {
 
     // eslint-disable-next-line no-useless-escape
     const genWord = (word, lettersSaid) => word.split("").map(letter => lettersSaid.includes(letter) ? letter : "\_").join("")
-    const genText = (word, lettersSaid, error, errorText) => `${i18n.__("hangman.word")} \`${genWord(word, lettersSaid)}\`\n${i18n.__("hangman.lettersSaid")} ${lettersSaid.length > 0 ? lettersSaid.map(letter => `\`${letter}\``).join(", ") : i18n.__("hangman.noLetter")}\n${pendu[error] !== "" ? `\`\`\`${pendu[error === pendu.length ? error - 1 : error]}\n\n${error}/${pendu.length}\`\`\`` : ""}\n${errorText ? errorText : ""}`
+    const genText = (word, lettersSaid, error, errorText) => `${i18n.__("discord.hangman.word")} \`${genWord(word, lettersSaid)}\`\n${i18n.__("discord.hangman.lettersSaid")} ${lettersSaid.length > 0 ? lettersSaid.map(letter => `\`${letter}\``).join(", ") : i18n.__("discord.hangman.noLetter")}\n${pendu[error] !== "" ? `\`\`\`${pendu[error === pendu.length ? error - 1 : error]}\n\n${error}/${pendu.length}\`\`\`` : ""}\n${errorText ? errorText : ""}`
 
     const msg = await interaction.channel.send({
-        content: `${i18n.__("global.gameOf")} ${interaction.user.username}\n${i18n.__("hangman.gameReady")}\n\n\n${genText(word, lettersSaid, error, errorText)}`
+        content: `${i18n.__("discord.global.gameOf")} ${interaction.user.username}\n${i18n.__("discord.hangman.gameReady")}\n\n\n${genText(word, lettersSaid, error, errorText)}`
     })
 	
     const filter = (message) => message.author.id === interaction.user.id
@@ -139,24 +139,24 @@ async function startGame({ interaction, i18n, word }) {
             await m.delete().catch(() => {})
 
             return await msg.edit({
-                content: `${interaction.user.username} ${i18n.__("hangman.gameStop")} ${word}`
+                content: `${interaction.user.username} ${i18n.__("discord.hangman.gameStop")} ${word}`
             })
         }
 
         if (m.content.length !== 1 || !m.content.match(/[a-z]|[A-Z]/i)) {
-            errorText = i18n.__("hangman.error.onlyLetters")
+            errorText = i18n.__("discord.hangman.error.onlyLetters")
 
             return await msg.edit({
-                content: `${i18n.__("global.gameOf")} ${interaction.user.username}\n` + genText(word, lettersSaid, error, errorText)
+                content: `${i18n.__("discord.global.gameOf")} ${interaction.user.username}\n` + genText(word, lettersSaid, error, errorText)
             })
         }
 
         if (lettersSaid.includes(m.content)) {
             await m.delete().catch(() => {})
-            errorText = i18n.__("hangman.error.alreadySaid")
+            errorText = i18n.__("discord.hangman.error.alreadySaid")
 
             return await msg.edit({
-                content: `${i18n.__("global.gameOf")} ${interaction.user.username}\n` + genText(word, lettersSaid, error, errorText)
+                content: `${i18n.__("discord.global.gameOf")} ${interaction.user.username}\n` + genText(word, lettersSaid, error, errorText)
             })
         }
 
@@ -169,7 +169,7 @@ async function startGame({ interaction, i18n, word }) {
             await m.delete().catch(() => {})
 
             return await msg.edit({
-                content: `${error === 0 ? i18n.__("hangman.result.win.perfect", { username: interaction.user.username }) : i18n.__("hangman.result.win.normal", { username: interaction.user.username })}\n${i18n.__("hangman.result.win.word")} ${word}\n${error > 0 ? `\`\`\`${pendu[error === pendu.length ? error - 1 : error]}\n\n${error}/${pendu.length}\`\`\`` : ""}`
+                content: `${error === 0 ? i18n.__("discord.hangman.result.win.perfect", { username: interaction.user.username }) : i18n.__("discord.hangman.result.win.normal", { username: interaction.user.username })}\n${i18n.__("discord.hangman.result.win.word")} ${word}\n${error > 0 ? `\`\`\`${pendu[error === pendu.length ? error - 1 : error]}\n\n${error}/${pendu.length}\`\`\`` : ""}`
             })
         }
 
@@ -180,12 +180,12 @@ async function startGame({ interaction, i18n, word }) {
             await m.delete().catch(() => {})
 
             return await msg.edit({
-                content: `${i18n.__("hangman.result.loose", { username: interaction.user.username })} ${word}\n\`\`\`${pendu[error === pendu.length ? error - 1 : error]}\n\n${error}/${pendu.length}\`\`\``
+                content: `${i18n.__("discord.hangman.result.loose", { username: interaction.user.username })} ${word}\n\`\`\`${pendu[error === pendu.length ? error - 1 : error]}\n\n${error}/${pendu.length}\`\`\``
             })
         }
 
         return await msg.edit({
-            content: `${i18n.__("global.gameOf")} ${interaction.user.username}\n` + genText(word, lettersSaid, error, errorText)
+            content: `${i18n.__("discord.global.gameOf")} ${interaction.user.username}\n` + genText(word, lettersSaid, error, errorText)
         })
     })
 }

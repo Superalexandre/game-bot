@@ -117,7 +117,7 @@ export default class Memory extends Command {
         }
 
         const msg = await interaction.channel.send({
-            content: i18n.__("memory.remember", { username: interaction.user.username, seconds: timeSec }),
+            content: i18n.__("discord.memory.remember", { username: interaction.user.username, seconds: timeSec }),
             components: activeRows
         })
 
@@ -126,7 +126,7 @@ export default class Memory extends Command {
         let clickNumber = difficultyType[difficulty].clickNumber
 
         await msg.edit({
-            content: i18n.__("memory.clickNumber", { username: interaction.user.username, clickNumber }),
+            content: i18n.__("discord.memory.clickNumber", { username: interaction.user.username, clickNumber }),
             components: activeQuestionRows
         })
 
@@ -145,7 +145,7 @@ export default class Memory extends Command {
             if (!interaction.user) await interaction.user.fetch()
 
             if (button.user.id !== interaction.user.id) return await button.reply({
-                content: i18n.__("global.notYourGame", { gameName: "memory" }),
+                content: i18n.__("discord.global.notYourGame", { gameName: "memory" }),
                 ephemeral: true
             })
 
@@ -221,19 +221,19 @@ export default class Memory extends Command {
                 await collector.stop()
 
                 return await msg.edit({
-                    content: i18n.__("memory.win", { username: interaction.user.username }),
+                    content: i18n.__("discord.memory.win", { username: interaction.user.username }),
                     components: activeUpdatedRows
                 })
             } else if (clickNumber === 0) {
                 await collector.stop()
 
                 return await msg.edit({
-                    content: i18n.__("memory.loose", { username: interaction.user.username }),
+                    content: i18n.__("discord.memory.loose", { username: interaction.user.username }),
                     components: activeUpdatedRows
                 })
             } else {
                 return await msg.edit({
-                    content: i18n.__("memory.clickNumber", { username: interaction.user.username, clickNumber }),
+                    content: i18n.__("discord.memory.clickNumber", { username: interaction.user.username, clickNumber }),
                     components: activeUpdatedRows
                 })
             }

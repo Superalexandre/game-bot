@@ -21,18 +21,18 @@ export default class Morpion extends Command {
 
         const ready = new MessageButton()
             .setStyle("SUCCESS")
-            .setLabel(i18n.__("global.yes"))
+            .setLabel(i18n.__("discord.global.yes"))
             .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_ready`)
     
         const notReady = new MessageButton()
             .setStyle("DANGER")
-            .setLabel(i18n.__("global.no"))
+            .setLabel(i18n.__("discord.global.no"))
             .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_notready`)
 
         const readyComponents = new MessageActionRow().addComponents(ready, notReady)
 
         const msg = await interaction.channel.send({
-            content: i18n.__("global.opponentReady", { userId: opponent.id, gameName: "morpion" }),
+            content: i18n.__("discord.global.opponentReady", { userId: opponent.id, gameName: "morpion" }),
             components: [ readyComponents ]
         })
 
@@ -43,18 +43,18 @@ export default class Morpion extends Command {
 async function playWithBot({ i18n, interaction, client }) {
     const yes = new MessageButton()
         .setStyle("SUCCESS")
-        .setLabel(i18n.__("global.yes"))
+        .setLabel(i18n.__("discord.global.yes"))
         .setCustomId(`game_morpion_${interaction.user.id}_yes`)
 
     const no = new MessageButton()
         .setStyle("DANGER")
-        .setLabel(i18n.__("global.no"))
+        .setLabel(i18n.__("discord.global.no"))
         .setCustomId(`game_morpion_${interaction.user.id}_no`)
 
     const row = new MessageActionRow().addComponents(yes, no)
 
     const msg = await interaction.channel.send({
-        content: i18n.__("global.playWithBot"),
+        content: i18n.__("discord.global.playWithBot"),
         components: [row]
     })
 
@@ -64,7 +64,7 @@ async function playWithBot({ i18n, interaction, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== interaction.user.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: "morpion" }),
+            content: i18n.__("discord.global.notYourGame", { gameName: "morpion" }),
             ephemeral: true
         })
 
@@ -72,7 +72,7 @@ async function playWithBot({ i18n, interaction, client }) {
             await collector.stop()
 
             return await msg.edit({
-                content: i18n.__("global.noPlayWithBot", { username: interaction.user.username }),
+                content: i18n.__("discord.global.noPlayWithBot", { username: interaction.user.username }),
                 components: []
             })
         } else {
@@ -91,7 +91,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== opponent.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: "morpion" }),
+            content: i18n.__("discord.global.notYourGame", { gameName: "morpion" }),
             ephemeral: true
         })
 
@@ -99,7 +99,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
             await collector.stop()
 
             return await msg.edit({
-                content: i18n.__("global.opponentNotReady", { username: opponent.username, gameName: "puissance4" }),
+                content: i18n.__("discord.global.opponentNotReady", { username: opponent.username, gameName: "puissance4" }),
                 components: []
             })
         } else {
@@ -114,23 +114,23 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
 async function whoStart({ i18n, interaction, msg, opponent, client }) {
     const userStart = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel(i18n.__("global.start.you", { username: interaction.user.username }))
+        .setLabel(i18n.__("discord.global.start.you", { username: interaction.user.username }))
         .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_user`)
 
     const opponentStart = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel(i18n.__("global.start.opponent", { username: opponent.username }))
+        .setLabel(i18n.__("discord.global.start.opponent", { username: opponent.username }))
         .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_opponent`)
 
     const random = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel(i18n.__("global.start.random"))
+        .setLabel(i18n.__("discord.global.start.random"))
         .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_random`)
 
     const row = new MessageActionRow().addComponents(userStart, opponentStart, random) 
 
     await msg.edit({
-        content: i18n.__("global.whoStart", { username: interaction.user.username }),
+        content: i18n.__("discord.global.whoStart", { username: interaction.user.username }),
         components: [ row ]
     })
 
@@ -140,7 +140,7 @@ async function whoStart({ i18n, interaction, msg, opponent, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== interaction.user.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: "morpion" }),
+            content: i18n.__("discord.global.notYourGame", { gameName: "morpion" }),
             ephemeral: true
         })
 
@@ -179,7 +179,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         customEmoteWin: "855726782288363521"
     }
 
-    const text = (user, opponent) => i18n.__("morpion.turn", { username: user.turn ? user.username : opponent.username, emoji: user.turn ? user.emoji : opponent.emoji })
+    const text = (user, opponent) => i18n.__("discord.morpion.turn", { username: user.turn ? user.username : opponent.username, emoji: user.turn ? user.emoji : opponent.emoji })
 
     let board = [
         [ "", "", "" ],
@@ -200,7 +200,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         if (!button.user) await button.user.fetch()
 
         if (button.user.id !== userData.id && button.user.id !== opponentData.id) return await button.reply({
-            content: i18n.__("global.notYourGame", { gameName: "morpion" }),
+            content: i18n.__("discord.global.notYourGame", { gameName: "morpion" }),
             ephemeral: true
         })
     
@@ -208,7 +208,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         const opposite = button.user.id === userData.id ? opponentData : userData
 
         if (!type.turn) return await button.reply({
-            content: i18n.__("notYourTurn"), 
+            content: i18n.__("discord.global.notYourTurn"), 
             ephemeral: true
         })
 
@@ -228,7 +228,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
             await collector.stop()
 
             return await msg.edit({
-                content: i18n.__("morpion.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username }), 
+                content: i18n.__("discord.morpion.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username }), 
                 components: genBoard.row
             })
         }
@@ -239,7 +239,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
             const winner = genBoard.winner === userData.emoji ? userData : opponentData
 
             return await msg.edit({
-                content: i18n.__("morpion.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji }),
+                content: i18n.__("discord.morpion.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji }),
                 components: genBoard.row
             })
         }
@@ -261,7 +261,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
                 await collector.stop()
                 
                 return await msg.edit({
-                    content: i18n.__("morpion.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username }),
+                    content: i18n.__("discord.morpion.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username }),
                     components: genBoard.row
                 })
             }
@@ -272,7 +272,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
                 const winner = genBoard.winner === userData.emoji ? userData : opponentData
 
                 return await msg.edit({
-                    content: i18n.__("morpion.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji }),
+                    content: i18n.__("discord.morpion.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji }),
                     components: genBoard.row
                 })
             }

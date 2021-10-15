@@ -172,7 +172,7 @@ export default class Tetris extends Command {
             if (!button.user) await button.user.fetch()
 
             if (button.user.id !== interaction.user.id) return await button.reply({
-                content: i18n.__("global.notYourGame", { gameName: "tetris" }),
+                content: i18n.__("discord.global.notYourGame", { gameName: "tetris" }),
                 ephemeral: true
 
             })
