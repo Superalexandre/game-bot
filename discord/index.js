@@ -19,7 +19,6 @@ export default async function init(data) {
 
     readdir("./discord/events", async(err, files) => {
         if (err) return client.logger.error({ message: err })
-
         if (files.length <= 0) return client.logger.error({ message: "Aucun evenement n'a été trouvé" })
 
         const events = files.filter((ext) => ext.split(".").pop() === "js")
