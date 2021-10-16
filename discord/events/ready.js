@@ -23,8 +23,13 @@ export default class Ready {
         
         for (const [commandName, commandData] of commandList) {
             if (!commandData.config.enabled) continue
-            if (slashCommandList.map(cmd => cmd.name === commandName).includes(commandName)) continue
-            
+            if (slashCommandList.map(cmd => cmd.name === commandName).includes(commandName)) {
+                
+                //TODO : Check name, desc
+                
+                continue
+            }
+
             client.logger.warn({ message: `La commande ${commandName} n'est pas enregistrer !` })
 
             /*
