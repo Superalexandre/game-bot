@@ -6,6 +6,7 @@ export class Command {
     constructor(client, {
         name = null,
         //desc = (i18n) => i18n.__("discord.noDescProvided"),
+        description = "Erreur aucune description fournis",
         directory = false,
         //use = (i18n) => i18n.__("discord.noUseProvided"),
         //example = (i18n) => i18n.__("discord.noExampleProvided"),
@@ -13,6 +14,18 @@ export class Command {
         enabled = true,
         //ownerOnly = false,
         //slowmode = 3,
+        options = null,
+
+        /*
+        {
+            type: null,
+            name: "Aucun nom pour cette option",
+            description: "Aucune description fournis pour cette option",
+            required: false,
+            choices: []
+        }
+        */
+
         botPerms = [],
         memberPerms = []
         //privateMessage = false
@@ -25,6 +38,7 @@ export class Command {
         this.help = {
             name,
             //desc,
+            description,
             category
             //use,
             //example,
@@ -33,6 +47,7 @@ export class Command {
 
         this.config = {
             enabled,
+            options,
             //ownerOnly,
             //slowmode,
             botPerms,
