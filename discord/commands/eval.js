@@ -20,7 +20,7 @@ export default class Eval extends Command {
     }
 
     async run({ client, interaction, options }) {
-        if (client.config.discord.ownerIds.includes(interaction.user.id)) return interaction.editReply({
+        if (!client.config.discord.ownerIds.includes(interaction.user.id)) return interaction.editReply({
             content: "Vous n'etes pas autorisé a utiliser cette commande",
             ephemeral: true
         })
