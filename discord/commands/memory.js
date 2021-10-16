@@ -13,16 +13,9 @@ export default class Memory extends Command {
                     description: "Saisissez la difficulté",
                     required: true,
                     choices: [
-                        {
-                            name: "Facile",
-                            value: "easy"
-                        }, {
-                            name: "Moyen",
-                            value: "medium"
-                        }, {
-                            name: "Difficile",
-                            value: "hard"
-                        }
+                        [ "Facile", "easy" ],
+                        [ "Moyen", "medium" ],
+                        [ "Difficile", "hard" ]
                     ]
                 }
             ],

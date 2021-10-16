@@ -15,25 +15,12 @@ export default class Sudoku extends Command {
                     description: "Saisissez la difficulté",
                     required: true,
                     choices: [
-                        {
-                            name: "Facile",
-                            value: "easy"
-                        }, {
-                            name: "Moyen",
-                            value: "medium"
-                        }, {
-                            name: "Difficile",
-                            value: "hard"
-                        }, {
-                            name: "Très difficile",
-                            value: "very-hard"
-                        }, {
-                            name: "Insane",
-                            value: "insane"
-                        }, {
-                            name: "Inhumain",
-                            value: "inhumain"
-                        }
+                        [ "Facile", "easy"], 
+                        [ "Moyen", "medium"], 
+                        [ "Difficile", "hard"], 
+                        [ "Très difficile", "very-hard"], 
+                        [ "Insane", "insane"], 
+                        [ "Inhumain", "inhumain" ]
                     ]
                 }
             ],

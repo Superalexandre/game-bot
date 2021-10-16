@@ -12,19 +12,10 @@ export default class Pendu extends Command {
                     description: "Longueur du mot",
                     required: true,
                     choices: [
-                        {
-                            name: "Facile (5 caractères)",
-                            value: "5"
-                        }, {
-                            name: "Normal (10 caractères)",
-                            value: "10"
-                        }, {
-                            name: "Difficile (15 caractères)",
-                            value: "15"
-                        }, {
-                            name: "Aléatoire",
-                            value: "random"
-                        }
+                        [ "Facile (5 caractères)", "5" ], 
+                        [ "Normal (10 caractères)", "10" ], 
+                        [ "Difficile (15 caractères)", "15" ], 
+                        [ "Aléatoire", "random" ]
                     ]
                 }
             ],
