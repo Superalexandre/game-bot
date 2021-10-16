@@ -5,6 +5,15 @@ export default class Morpion extends Command {
     constructor(client) {
         super(client, {
             name: "morpion",
+            description: "Jouez au morpion facilement !",
+            options: [
+                {
+                    type: "USER",
+                    name: "adversaire",
+                    description: "Saisissez un utilisateur afin de jouer contre lui ou saisissez le robot pour jouer contre lui",
+                    required: true
+                }
+            ],
             directory: import.meta.url
         })
     }

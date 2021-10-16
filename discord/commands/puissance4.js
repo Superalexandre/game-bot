@@ -7,6 +7,15 @@ export default class Puissance4 extends Command {
     constructor(client) {
         super(client, {
             name: "puissance4",
+            description: "Jouer au puissance 4 facilement !",
+            options: [
+                {
+                    type: "USER",
+                    name: "adversaire",
+                    description: "Saisissez un utilisateur afin de jouer contre lui ou saisissez le robot pour jouer contre lui",
+                    required: true
+                }
+            ],
             directory: import.meta.url
         })
     }

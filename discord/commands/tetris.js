@@ -5,6 +5,7 @@ export default class Tetris extends Command {
     constructor(client) {
         super(client, {
             name: "tetris",
+            description: "Le plus vieux jeux !",
             directory: import.meta.url
         })
     }

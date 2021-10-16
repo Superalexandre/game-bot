@@ -7,6 +7,36 @@ export default class Sudoku extends Command {
     constructor(client) {
         super(client, {
             name: "sudoku",
+            description: "Faites fonctionner votre cerveau pour résoudre ce sudoku !",
+            options: [
+                {
+                    type: "STRING",
+                    name: "difficulte",
+                    description: "Saisissez la difficulté",
+                    required: true,
+                    choices: [
+                        {
+                            name: "Facile",
+                            value: "easy"
+                        }, {
+                            name: "Moyen",
+                            value: "medium"
+                        }, {
+                            name: "Difficile",
+                            value: "hard"
+                        }, {
+                            name: "Très difficile",
+                            value: "very-hard"
+                        }, {
+                            name: "Insane",
+                            value: "insane"
+                        }, {
+                            name: "Inhumain",
+                            value: "inhumain"
+                        }
+                    ]
+                }
+            ],
             directory: import.meta.url
         })
     }

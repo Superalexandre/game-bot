@@ -4,6 +4,30 @@ export default class Pendu extends Command {
     constructor(client) {
         super(client, {
             name: "pendu",
+            description: "Jouez au pendu !",
+            options: [
+                {
+                    type: "STRING",
+                    name: "longueur",
+                    description: "Longueur du mot",
+                    required: true,
+                    choices: [
+                        {
+                            name: "Facile (5 caractères)",
+                            value: "5"
+                        }, {
+                            name: "Normal (10 caractères)",
+                            value: "10"
+                        }, {
+                            name: "Difficile (15 caractères)",
+                            value: "15"
+                        }, {
+                            name: "Aléatoire",
+                            value: "random"
+                        }
+                    ]
+                }
+            ],
             directory: import.meta.url
         })
     }

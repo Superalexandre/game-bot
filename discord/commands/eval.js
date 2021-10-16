@@ -5,13 +5,22 @@ export default class Eval extends Command {
     constructor(client) {
         super(client, {
             name: "eval",
+            description: "Commande reserver a l'administration",
+            options: [
+                {
+                    type: "STRING",
+                    name: "code",
+                    description: "Code a executer",
+                    required: true
+                }
+            ],
             directory: import.meta.url,
             enabled: false
         })
     }
 
     async run({ client, interaction, options }) {
-        if (interaction.user.id !== "253569074431262720") return interaction.editReply({
+        if (client.config.discord.ownerIds.includes(interaction.user.id)) return interaction.editReply({
             content: "Vous n'etes pas autorisé a utiliser cette commande",
             ephemeral: true
         })

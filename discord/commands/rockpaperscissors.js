@@ -5,6 +5,15 @@ export default class Rockpaperscissors extends Command {
     constructor(client) {
         super(client, {
             name: "rockpaperscissors",
+            description: "Pierre feuille ciseaux ? Faites le bon choix !",
+            options: [
+                {
+                    type: "USER",
+                    name: "adversaire",
+                    description: "Saisissez un utilisateur afin de jouer contre lui ou saisissez le robot pour jouer contre lui",
+                    required: true
+                }
+            ],
             directory: import.meta.url
         })
     }

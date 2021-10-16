@@ -5,6 +5,27 @@ export default class Memory extends Command {
     constructor(client) {
         super(client, {
             name: "memory",
+            description: "Testez votre mémoire !",
+            options: [
+                {
+                    type: "STRING",
+                    name: "difficulte",
+                    description: "Saisissez la difficulté",
+                    required: true,
+                    choices: [
+                        {
+                            name: "Facile",
+                            value: "easy"
+                        }, {
+                            name: "Moyen",
+                            value: "medium"
+                        }, {
+                            name: "Difficile",
+                            value: "hard"
+                        }
+                    ]
+                }
+            ],
             directory: import.meta.url
         })
     }
