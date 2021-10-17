@@ -15,8 +15,8 @@ A fun discord bot
 ✅ Traduction <br/>
 ✅ Logger <br/>
 🚧 Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc) <br/>
-&emsp;=>✅ Crée les commandes
-&emsp;=>🚧 Modifier si changement
+&emsp;=>✅ Crée les commandes<br/>
+&emsp;=>🚧 Modifier si changement<br/>
 ✅ Sentry, gitguardian <br/>
 
 ### Uno
@@ -69,7 +69,7 @@ A fun discord bot
 ✅ Probleme start turn (mauvaise trad) <br/>
 ✅ Opti gif (Probleme encoder : 1-2 secondes par frame)<br/>
 ✅ Jouer contre le bot <br/>
-    => Replay
+&emsp;=> Replay
 
 ### Instagram
 ✅ Message en attente => A ouvrir (ignorer si trop vieux)<br/>
@@ -77,7 +77,7 @@ A fun discord bot
 ✅ Restructuration<br/>
 
 ### Release
-✅ Logo
+✅ Logo<br/>
 🚧 Release (Prévue 16 janvier anniv Sudref)<br/>
 
 ### Sodoku
