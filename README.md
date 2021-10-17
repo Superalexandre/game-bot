@@ -15,6 +15,8 @@ A fun discord bot
 ✅ Traduction <br/>
 ✅ Logger <br/>
 🚧 Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc) <br/>
+&emsp;=>✅ Crée les commandes
+&emsp;=>🚧 Modifier si changement
 ✅ Sentry, gitguardian <br/>
 
 ### Uno
@@ -75,7 +77,7 @@ A fun discord bot
 ✅ Restructuration<br/>
 
 ### Release
-🚧 Logo
+✅ Logo
 🚧 Release (Prévue 16 janvier anniv Sudref)<br/>
 
 ### Sodoku
