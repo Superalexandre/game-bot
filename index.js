@@ -88,6 +88,6 @@ process.on("uncaughtException", (error) => {
     return logger.error({ message: error })
 })
 
-process.on("unhandledRejection", (reason) => {
-    return logger.error({ message: reason })
+process.on("unhandledRejection", (error) => {
+    return logger.error({ message: error })
 })
