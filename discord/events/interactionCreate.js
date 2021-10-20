@@ -13,9 +13,27 @@ export default class interactionCreate {
         if (interaction.isButton()) await client.emit("clickButton", interaction)
         if (!interaction.isCommand()) return
 
-        const userData = {} //await client.data.users.get(message.author.accountID)
+        let userData = await data.users.find(user => user.plateformData.find(data => data.plateform === "discord" && data.data.id === interaction.user.id))
 
-        i18n.setLocale("fr_FR")
+        if (!userData) {
+            const newAccount = await client.functions.createAccount({
+                data,
+                lang: "fr_FR",
+                plateformData: [
+                    {
+                        plateform: "discord",
+                        lastUpdate: Date.now(),
+                        data: interaction.user
+                    }
+                ]
+            })
+
+            if (!newAccount.success) return new Error("No account created")
+
+            userData = newAccount.account
+        }
+
+        i18n.setLocale(userData.lang ?? "fr_FR")
 
         const cmd = client.commands.get(interaction.commandName) || client.commands.get(client.aliases.get(interaction.commandName))
 
@@ -33,12 +51,12 @@ export default class interactionCreate {
             const messageTime = (Date.now() - start) / 1000
         
             return await cmd.run({
-                client: client,
-                interaction: interaction,
+                client,
+                interaction,
                 options: interaction.options,
-                i18n: i18n,
-                data: data,
-                userData: userData,
+                i18n,
+                data,
+                userData,
         
                 util: {
                     messageTimeProcessing: messageTime,
