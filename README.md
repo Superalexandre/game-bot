@@ -6,6 +6,7 @@ A fun discord bot
 ✅ : Fini
 ❌ : Annuler
 🚧 : En cours
+❓ : Idée
 
 ### Global
 ✅ Mise a jour v13 discord.js <br/>
@@ -17,6 +18,12 @@ A fun discord bot
 🚧 Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc) <br/>
 &emsp;=>✅ Crée les commandes<br/>
 &emsp;=>🚧 Modifier si changement<br/>
+🚧 Compte et base de données
+&emsp;=>🚧 Crée un compte<br/>
+&emsp;=>🚧 Ajouter stats<br/>
+&emsp;=>🚧 Voir ses données stockés<br/>
+&emsp;=>🚧 Supprimer un compte respect des données<br/>
+&emsp;=>❓ Supprimer un compte respect des données<br/>
 ✅ Sentry, gitguardian <br/>
 
 ### Uno
