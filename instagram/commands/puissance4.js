@@ -31,11 +31,11 @@ export default class Puissance4 extends Command {
 
         if (message.chat.puissance4) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.alreadyGame", { username: message.author.username }))
 
-        return opponentReady({ message, opponent, i18n })
+        return opponentReady({ client, message, opponent, i18n })
     }
 }
 
-async function opponentReady({ message, opponent, i18n }) {
+async function opponentReady({ client, message, opponent, i18n }) {
     const msg = await message.chat.sendMessage(i18n.__("insta.puissance4.opponentReady", { opponentUsername: opponent.username, authorUsername: message.author.username }))
 
     const filter = (like) => [opponent.id, message.author.id].includes(like.id)
@@ -46,11 +46,11 @@ async function opponentReady({ message, opponent, i18n }) {
 
         if (like.id === message.author.id) return await message.chat.sendMessage(i18n.__("insta.puissance4.userUndoGame", { authorUsername: message.author.username }))
 
-        return startGame({ message, opponent, i18n })
+        return startGame({ client, message, opponent, i18n })
     })
 }
 
-async function startGame({ message, opponent, i18n }) {
+async function startGame({ client, message, opponent, i18n }) {
     message.chat.puissance4 = true
 
     let board = [
@@ -126,12 +126,30 @@ async function startGame({ message, opponent, i18n }) {
             const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
             const looser = formatedBoard.winnerUser.id === userData.id ? opponentData : userData
 
+            await client.functions.gameStats({ 
+                data: client.data, 
+                plateform: "instagram", 
+                user1: userData, 
+                user2: opponentData, 
+                gameName: "puissance4", 
+                winnerId: winner.id
+            })
+
             return await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji, looserUsername: looser.username, looserEmoji: looser.emoji })}\n` + formatedBoard.string)
         }
 
         if (formatedBoard.allFill) {
             message.chat.puissance4 = false
             await collector.end()
+
+            await client.functions.gameStats({ 
+                data: client.data, 
+                plateform: "instagram", 
+                user1: userData, 
+                user2: opponentData, 
+                gameName: "puissance4", 
+                winnerId: "equality"
+            })
 
             return await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.equality", { userDataUsername: userData.username, userDataEmoji: userData.emoji, opponentDataUsername: opponentData.username, opponentDataEmoji: opponentData.emoji })}\n` + formatedBoard.string)
         }
