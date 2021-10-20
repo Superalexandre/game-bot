@@ -29,11 +29,9 @@ const data = {
     }
 }
 
-/*
-enmap.changed((keyName, oldValue, newValue) => {  
-    console.log(`Value of ${keyName} has changed from: \n${oldValue}\nto\n${newValue}`);
-});
-*/
+data.users.changed((keyName, oldValue, newValue) => {
+    logger.log({ message: `Valeur changer ${keyName} (${oldValue} -> ${newValue})`, plateform: "Enmap" })
+})
 
 Sentry.init({
     dsn: config.sentry.dsn,
