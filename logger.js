@@ -43,9 +43,7 @@ function getColorPlateform(plateform) {
 
     if (plateform === "Instagram") return chalk.bgMagentaBright("[Instagram]")
 
-    if (plateform === "Global") return chalk.bgBlackBright("[Global]")
-
-    if (plateform === "i18n") return chalk.bgBlackBright("[i18n]")
+    if (["Global", "i18n", "Enmap"].includes(plateform)) return chalk.bgBlackBright(`[${plateform}]`)
 
     return chalk.red("[Unknown plateform]")
 }
