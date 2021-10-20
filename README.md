@@ -19,11 +19,12 @@ A fun discord bot
 &emsp;=>✅ Crée les commandes<br/>
 &emsp;=>🚧 Modifier si changement<br/>
 🚧 Compte et base de données
-&emsp;=>🚧 Crée un compte<br/>
+&emsp;=>✅ Crée un compte<br/>
+&emsp;=>🚧 Merge compte<br/>
 &emsp;=>🚧 Ajouter stats<br/>
 &emsp;=>🚧 Voir ses données stockés<br/>
 &emsp;=>🚧 Supprimer un compte respect des données<br/>
-&emsp;=>❓ Supprimer un compte respect des données<br/>
+&emsp;=>❓ Site<br/>
 ✅ Sentry, gitguardian <br/>
 
 ### Uno
