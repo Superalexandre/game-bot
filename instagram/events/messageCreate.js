@@ -11,16 +11,33 @@ export default class messageCreate {
         if (!message || !message.content) return
         if (message.author.id === client.user.id) return
 
+        const data = client.data
         const prefix = client.config.instagram.prefix
         const commandName = message.content.split(" ")[0].slice(prefix.length).toLowerCase()
         const args = message.content.split(/ +/g).slice(1)
         const argsOptions = message.content.split(/--([a-z]+) ([a-z]+)/gm).slice(1)
 
-        //? TODO CREATE ACCOUNT
+        let userData = await data.users.find(user => user.plateformData.find(data => data.plateform === "instagram" && data.data.id === message.author.id))
 
-        const userData = {}
+        if (!userData) {
+            const newAccount = await client.functions.createAccount({
+                data,
+                lang: "fr_FR",
+                plateformData: [
+                    {
+                        plateform: "instagram",
+                        lastUpdate: Date.now(),
+                        data: message.author
+                    }
+                ]
+            })
 
-        i18n.setLocale("fr_FR")
+            if (!newAccount.success) return new Error("No account created")
+
+            userData = newAccount.account
+        }
+
+        i18n.setLocale(userData.lang ?? "fr_FR")
 
         await message.markSeen()
 
