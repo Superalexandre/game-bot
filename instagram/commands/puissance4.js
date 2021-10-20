@@ -77,7 +77,7 @@ async function startGame({ client, message, opponent, i18n }) {
         winEmoji: "🔵"
     }
 
-    const text = (user, opponent, error) => `${i18n.__("insta.puissance.turnOf")} ${user.turn ? user.username : opponent.username} (${user.turn ? user.emoji : opponent.emoji}) ${error ? "\n" + error : ""}\n\n`
+    const text = (user, opponent, error) => `${i18n.__("insta.puissance4.turnOf")} ${user.turn ? user.username : opponent.username} (${user.turn ? user.emoji : opponent.emoji}) ${error ? "\n" + error : ""}\n\n`
     const formatedBoard = genBoard({ board, userData, opponentData })
 
     await message.chat.sendMessage(text(userData, opponentData) + formatedBoard.string)
