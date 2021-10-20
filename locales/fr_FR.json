@@ -496,9 +496,8 @@
 				"bot": "Vous ne pouvez pas jouer contre moi",
 				"notInGroup": "La personne doit être presente dans le groupe",
 				"alreadyGame": "Désolé @{{username}} une partie est deja en cours",
-
 				"cantPlayHere": "Vous ne pouvez pas jouer ici ",
-				"unknownError":"Erreur inconnue : "
+				"unknownError": "Erreur inconnue : "
 			},
 			"opponentReady": "@{{opponentUsername}} aimez ce message dès que vous êtes prêt(e)\n\n{{authorUsername}} si vous voulez annuler la demander liker ce message",
 			"userUndoGame": "{{authorUsername}} a annuler la demande de partie",
