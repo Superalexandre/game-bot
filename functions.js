@@ -68,6 +68,7 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId }) 
     await data.users.push(user1Data.accountId, {
         gameName,
         date: Date.now(),
+        plateform,
         versus: user2,
         result: winnerId === user1.id ? "win" : winnerId === user2.id ? "loose" : "equality"
     }, "statistics")
@@ -75,6 +76,7 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId }) 
     await data.users.push(user2Data.accountId, {
         gameName,
         date: Date.now(),
+        plateform,
         versus: user1,
         result: winnerId === user1.id ? "loose" : winnerId === user2.id ? "win" : "equality"
     }, "statistics")
