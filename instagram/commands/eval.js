@@ -14,7 +14,7 @@ export default class Eval extends Command {
         })
     }
 
-    async run({ message, args, argsOptions, i18n }) {
+    async run({ client, message, args, argsOptions, i18n }) {
         if (!args[0]) return await message.chat.sendMessage(i18n.__("insta.eval.noArgs"))
         let toExecute = message.content.split(" ").slice(1)
 
@@ -26,6 +26,8 @@ export default class Eval extends Command {
         return result.then(async(output) => {
             if (typeof output !== "string") output = inspect(output, { depth: 0 })
                 
+            if (output.includes(client.token)) output = output.replace(client.token, "Token is contain")
+
             if (argsOptions[0] === "result" && !["yes", "true"].includes(argsOptions[1])) return 
 
             return await message.chat.sendMessage(output)

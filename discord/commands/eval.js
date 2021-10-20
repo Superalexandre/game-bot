@@ -31,8 +31,7 @@ export default class Eval extends Command {
         const result = new Promise((resolve) => resolve(eval(`${required}\n${code}`)))
 
         return result.then((output) => {
-            if (typeof output !== "string")
-                output = inspect(output, { depth: 0 })
+            if (typeof output !== "string") output = inspect(output, { depth: 0 })
 
             if (output.includes(client.token)) output = output.replace(client.token, "Token is contain")
 
