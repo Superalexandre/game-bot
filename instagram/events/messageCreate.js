@@ -16,7 +16,9 @@ export default class messageCreate {
         const args = message.content.split(/ +/g).slice(1)
         const argsOptions = message.content.split(/--([a-z]+) ([a-z]+)/gm).slice(1)
 
-        const data = {}
+        //? TODO CREATE ACCOUNT
+
+        const userData = {}
 
         i18n.setLocale("fr_FR")
 
@@ -36,7 +38,7 @@ export default class messageCreate {
                 message,
                 args,
                 argsOptions,
-                data,
+                userData,
                 i18n
             }).then(() => {
                 client.logger.commandLog({ interactionId: message.id, commandName: command.help.name, prefix })
