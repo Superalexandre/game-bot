@@ -33,6 +33,22 @@ async function createAccount({ data, lang = "fr_FR", plateformData = {} }) {
     return { success: true, error: false, account }
 }
 
+async function mergeAccount({ data, id1, id2 }) {
+    if (!data.users.has(id1) || !data.users.has(id2)) return new Error(`Provided id is not in database`)
+
+    const account1 = await data.users.get(id1)
+    const account2 = await data.users.get(id2)
+
+    const newAccount = account1.createdTimestamp > account2.createdTimestamp ? account1 : account2
+    const deletedAccount = account1.createdTimestamp > account2.createdTimestamp ? account2 : account1
+
+    //! TODO
+
+    await data.users.delete(deletedAccount.id)
+
+    return { success: true, error: false, newAccount }
+}
+
 function genId() {
     let random = ""
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -49,5 +65,6 @@ function genId() {
 export default {
     createAccount,
     deleteAccount,
-    genId
+    genId,
+    mergeAccount
 }
