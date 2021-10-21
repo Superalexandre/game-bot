@@ -129,7 +129,7 @@ async function startGame({ client, message, opponent, i18n }) {
 
             await client.functions.gameStats({ 
                 data: client.data, 
-                gameId: await client.functions.genGameId({ gameName: "puissance4" }),
+                gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
                 plateform: "instagram", 
                 user1: userData, 
                 user2: opponentData, 
@@ -146,7 +146,7 @@ async function startGame({ client, message, opponent, i18n }) {
 
             await client.functions.gameStats({ 
                 data: client.data, 
-                gameId: await client.functions.genGameId({ gameName: "puissance4" }),
+                gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
                 plateform: "instagram", 
                 user1: userData, 
                 user2: opponentData, 

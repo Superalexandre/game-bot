@@ -9,7 +9,7 @@ async function deleteAccount({ data }) {
 async function createAccount({ data, lang = "fr_FR", plateformData = {} }) {
     if (!data) new Error("No database provided")
 
-    const id = genId()
+    const id = genId({ length: 30 })
 
     if (data.users.has(id)) return new Error(`${id} already exists`)
 
