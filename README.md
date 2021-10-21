@@ -22,8 +22,8 @@ A fun discord bot
 &emsp;=>✅ Crée un compte<br/>
 &emsp;=>🚧 Merge compte<br/>
 &emsp;=>🚧 Ajouter stats<br/>
-&emsp;&emsp;=> **Probleme** insta redémarrage = plus id = restockage
-&emsp;&emsp;=> Donc il peut pas add les stats
+&emsp;&emsp;=>✅ **Probleme** insta redémarrage = plus id = restockage
+&emsp;&emsp;=>🚧 Donc il peut pas add les stats
 &emsp;=>🚧 Voir ses données stockés<br/>
 &emsp;=>🚧 Supprimer un compte respect des données<br/>
 &emsp;=>❓ Site<br/>
