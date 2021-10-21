@@ -49,7 +49,7 @@ async function mergeAccount({ data, id1, id2 }) {
     return { success: true, error: false, newAccount }
 }
 
-async function gameStats({ data, plateform, user1, user2, gameName, winnerId }) {
+async function gameStats({ data, plateform, user1, user2, gameName, winnerId, gameId }) {
     if (!user1.id || !user2.id) {
         new Error("No id provided in user object")
     
@@ -67,6 +67,7 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId }) 
 
     await data.users.push(user1Data.accountId, {
         gameName,
+        gameId,
         date: Date.now(),
         plateform,
         versus: user2,
@@ -75,11 +76,20 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId }) 
 
     await data.users.push(user2Data.accountId, {
         gameName,
+        gameId,
         date: Date.now(),
         plateform,
         versus: user1,
         result: winnerId === user1.id ? "loose" : winnerId === user2.id ? "win" : "equality"
     }, "statistics")
+
+    await data.games.set(gameId, {
+        gameName,
+        date: Date.now(),
+        plateform,
+        beetween: [user1, user2],
+        result: winnerId
+    })
 
     return { success: true, error: false, user1Data, user2Data }
 }
