@@ -20,6 +20,8 @@ export default class messageCreate {
         let userData = await data.users.find(user => user.plateformData.find(data => data.plateform === "instagram" && data.data.id === message.author.id))
 
         if (!userData) {
+            const { id, username, fullName, biography, isPrivate, isVerified, avatarURL, followers, following } = message.author
+
             const newAccount = await client.functions.createAccount({
                 data,
                 lang: "fr_FR",
@@ -27,7 +29,17 @@ export default class messageCreate {
                     {
                         plateform: "instagram",
                         lastUpdate: Date.now(),
-                        data: message.author
+                        data: {
+                            id,
+                            username,
+                            fullName,
+                            biography,
+                            isPrivate,
+                            isVerified,
+                            avatarURL,
+                            followers,
+                            following
+                        }
                     }
                 ]
             })
