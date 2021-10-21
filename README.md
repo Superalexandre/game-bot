@@ -7,6 +7,7 @@ A fun discord bot
 ❌ : Annuler
 🚧 : En cours
 ❓ : Idée
+❗ : Prioritaire
 
 ### Global
 ✅ Mise a jour v13 discord.js <br/>
@@ -19,6 +20,7 @@ A fun discord bot
 &emsp;=>✅ Crée les commandes<br/>
 &emsp;=>🚧 Modifier si changement<br/>
 🚧 Compte et base de données
+&emsp;=>❗ **GAME ID**
 &emsp;=>✅ Crée un compte<br/>
 &emsp;=>🚧 Merge compte<br/>
 &emsp;=>🚧 Ajouter stats<br/>
