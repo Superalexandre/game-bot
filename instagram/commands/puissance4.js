@@ -50,6 +50,7 @@ async function opponentReady({ client, message, opponent, i18n }) {
     })
 }
 
+// eslint-disable-next-line no-unused-vars
 async function startGame({ client, message, opponent, i18n }) {
     message.chat.puissance4 = true
 
@@ -126,6 +127,7 @@ async function startGame({ client, message, opponent, i18n }) {
             const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
             const looser = formatedBoard.winnerUser.id === userData.id ? opponentData : userData
 
+            /*
             await client.functions.gameStats({ 
                 data: client.data, 
                 plateform: "instagram", 
@@ -134,6 +136,7 @@ async function startGame({ client, message, opponent, i18n }) {
                 gameName: "puissance4", 
                 winnerId: winner.id
             })
+            */
 
             return await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji, looserUsername: looser.username, looserEmoji: looser.emoji })}\n` + formatedBoard.string)
         }
@@ -142,6 +145,7 @@ async function startGame({ client, message, opponent, i18n }) {
             message.chat.puissance4 = false
             await collector.end()
 
+            /*
             await client.functions.gameStats({ 
                 data: client.data, 
                 plateform: "instagram", 
@@ -150,6 +154,7 @@ async function startGame({ client, message, opponent, i18n }) {
                 gameName: "puissance4", 
                 winnerId: "equality"
             })
+            */
 
             return await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.equality", { userDataUsername: userData.username, userDataEmoji: userData.emoji, opponentDataUsername: opponentData.username, opponentDataEmoji: opponentData.emoji })}\n` + formatedBoard.string)
         }
