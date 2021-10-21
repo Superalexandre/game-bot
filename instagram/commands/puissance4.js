@@ -127,16 +127,15 @@ async function startGame({ client, message, opponent, i18n }) {
             const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
             const looser = formatedBoard.winnerUser.id === userData.id ? opponentData : userData
 
-            /*
             await client.functions.gameStats({ 
                 data: client.data, 
+                gameId: await client.functions.genGameId({ gameName: "puissance4" }),
                 plateform: "instagram", 
                 user1: userData, 
                 user2: opponentData, 
                 gameName: "puissance4", 
                 winnerId: winner.id
             })
-            */
 
             return await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji, looserUsername: looser.username, looserEmoji: looser.emoji })}\n` + formatedBoard.string)
         }
@@ -145,16 +144,15 @@ async function startGame({ client, message, opponent, i18n }) {
             message.chat.puissance4 = false
             await collector.end()
 
-            /*
             await client.functions.gameStats({ 
                 data: client.data, 
+                gameId: await client.functions.genGameId({ gameName: "puissance4" }),
                 plateform: "instagram", 
                 user1: userData, 
                 user2: opponentData, 
                 gameName: "puissance4", 
                 winnerId: "equality"
             })
-            */
 
             return await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.equality", { userDataUsername: userData.username, userDataEmoji: userData.emoji, opponentDataUsername: opponentData.username, opponentDataEmoji: opponentData.emoji })}\n` + formatedBoard.string)
         }
