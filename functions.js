@@ -84,13 +84,27 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId }) 
     return { success: true, error: false, user1Data, user2Data }
 }
 
-function genId() {
+function genId({ length = 30 }) {
     let random = ""
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     const stringDate = Date.now().toString()
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < length; i++) {
         random += characters.charAt(Math.floor(Math.random() * characters.length))
 
+        random += stringDate[i] ? stringDate[i] : ""
+    }
+
+    return random
+}
+
+function genGameId({ gameName = "", length = 30 }) {
+    let random = `game-${gameName}-`
+
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    const stringDate = Date.now().toString()
+    for (let i = 0; i < length; i++) {
+        random += characters.charAt(Math.floor(Math.random() * characters.length))
+    
         random += stringDate[i] ? stringDate[i] : ""
     }
 
@@ -101,6 +115,7 @@ export default {
     createAccount,
     deleteAccount,
     genId,
+    genGameId,
     gameStats,
     mergeAccount
 }
