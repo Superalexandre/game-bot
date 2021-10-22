@@ -30,8 +30,12 @@ A fun discord bot
 &emsp;&emsp;=>✅ Donc il peut pas add les stats<br/>
 &emsp;=>🚧 Voir ses données stockés<br/>
 &emsp;=>🚧 Supprimer un compte respect des données<br/>
-&emsp;=>❓ Site<br/>
 ✅ Sentry, gitguardian <br/>
+
+### Site
+🚧 Finir la nav bar
+🚧 Page d'acceuil
+🚧 Login
 
 ### Uno
 ✅ Refaire en slash command <br/>
