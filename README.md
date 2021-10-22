@@ -19,13 +19,15 @@ A fun discord bot
 🚧 Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc) <br/>
 &emsp;=>✅ Crée les commandes<br/>
 &emsp;=>🚧 Modifier si changement<br/>
-🚧 Compte et base de données
-&emsp;=>❗ **GAME ID**
+🚧 Compte et base de données<br/>
+&emsp;=>❗ **GAME ID**<br/>
+&emsp;&emsp;=>✅ Insta<br/>
+&emsp;&emsp;=>🚧 Discord<br/>
 &emsp;=>✅ Crée un compte<br/>
 &emsp;=>🚧 Merge compte<br/>
-&emsp;=>🚧 Ajouter stats<br/>
-&emsp;&emsp;=>✅ **Probleme** insta redémarrage = plus id = restockage
-&emsp;&emsp;=>🚧 Donc il peut pas add les stats
+&emsp;=>✅ Ajouter stats<br/>
+&emsp;&emsp;=>✅ **Probleme** insta redémarrage = plus id = restockage<br/>
+&emsp;&emsp;=>✅ Donc il peut pas add les stats<br/>
 &emsp;=>🚧 Voir ses données stockés<br/>
 &emsp;=>🚧 Supprimer un compte respect des données<br/>
 &emsp;=>❓ Site<br/>
