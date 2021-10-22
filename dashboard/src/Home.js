@@ -6,9 +6,6 @@ function Home() {
             <NavBar></NavBar>
 
             <div className="dark:bg-gray-primary bg-white w-full h-full">
-                <div className="center">
-                    <p className="text-white">Accueil</p>
-                </div>
             </div>
         </div>
     )
