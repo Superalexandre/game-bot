@@ -5,40 +5,6 @@
         return colors[Math.floor(Math.random() * colors.length)]
     }
 %>
-<!--
-<nav class="relative flex flex-wrap items-center justify-between px-2 py-3 bg-gray-secondary">
-    <div class="container px-4 mx-auto flex flex-wrap items-center justify-between">
-        <div class="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
-            <a class="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white hover:<%= getRandomColor() %>" href="/">
-                <img class="h-16 inline-block mr-6" src="../public/img/logos/Logo.png" alt="Logo"/>
-                
-                Accueil
-
-                <i class="fas fa-home mx-1.5"></i>
-            </a>
-            <input id="checkbox" type="checkbox" class="hidden" />
-            <label for="checkbox" class="text-white cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none">
-                <i class="fas fa-bars"></i>
-            </label>
-        </div>
-        
-            class={
-            "lg:flex flex-grow items-center" +
-            (NavBarOpen ? " flex" : " hidden")
-            }
-        <div id="example-navbar-danger">
-            <ul class="flex flex-col lg:flex-row list-none lg:ml-auto">
-                <li class="nav-item">
-                    <a class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:<%= getRandomColor() %>" href="/login">
-                        Connexion <i class="fas fa-sign-in-alt mx-1.5"></i>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
--->
-
 <nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6 dark:bg-gray-secondary bg-white-secondary">
     <div class="flex items-center flex-shrink-0 text-white mr-6">
         <a href="/" class="uppercase font-bold hover:<%= getRandomColor() %>">
