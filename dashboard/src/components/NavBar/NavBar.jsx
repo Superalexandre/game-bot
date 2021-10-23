@@ -7,16 +7,16 @@ const getRandomColor = () => {
     return colors[Math.floor(Math.random() * colors.length)]
 }
 
-const getClassName = (css) => `${css} hover:${getRandomColor()}`
+const getHoverColor = (tailwindClass) => `${tailwindClass} hover:${getRandomColor()}`
 
-const NavBar = ({ fixed }) => {
+const NavBar = () => {
     const [NavBarOpen, setNavBarOpen] = React.useState(false)
     
     return (
         <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-gray-secondary">
             <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
                 <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
-                    <a className={getClassName("text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white")}
+                    <a className={getHoverColor("text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white")}
                     href="/">
                         <img className="h-16 inline-block mr-6" src={Logo} alt="Logo"/>
                         
@@ -42,7 +42,7 @@ const NavBar = ({ fixed }) => {
                     <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
                         <li className="nav-item">
                             <a
-                                className={getClassName("px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white")} 
+                                className={getHoverColor("px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white")} 
                                 href="/login">
                                 Connexion
 
