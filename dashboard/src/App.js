@@ -1,5 +1,6 @@
 import Home from "./pages/Home.js"
 import Login from "./pages/Login.js"
+import Api from "./pages/Api.js"
 import { Component } from "react"
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom"
 
@@ -12,6 +13,7 @@ class App extends Component {
 				<Switch>
 					<Route path="/" exact component={Home} />
 					<Route path="/login" component={Login} />
+					<Route path="/api" component={Api} />
 
 					<Redirect to="/" />
 				</Switch>
