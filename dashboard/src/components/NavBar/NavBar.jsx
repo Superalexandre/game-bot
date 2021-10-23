@@ -44,7 +44,7 @@ const NavBar = () => {
                             <a
                                 className={getHoverColor("px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white")} 
                                 href="/login">
-                                Connexion
+                                {localStorage.getItem("user") === null ? "Connexion" : "Profile"}
 
                                 <i className="fas fa-sign-in-alt mx-1.5"></i>
                             </a>
