@@ -33,10 +33,12 @@ A fun discord bot
 ✅ Sentry, gitguardian <br/>
 
 ### Site
-✅ Thème blanc
-✅ Finir la nav bar
-🚧 Login
-🚧 Page d'acceuil
+✅ Thème blanc<br/>
+✅ Finir la nav bar<br/>
+🚧 Favico<br/>
+🚧 Theme localstorage<br/>
+🚧 Login<br/>
+🚧 Page d'acceuil<br/>
 
 ### Uno
 ✅ Refaire en slash command <br/>
