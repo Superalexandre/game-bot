@@ -5,6 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build:css": "npx tailwindcss -i dashboard/public/styles/tailwind.css -o dashboard/public/styles/styles.css -c dashboard/tailwind.config.cjs",
     "start": "FORCE_COLOR=1 sudo pm2 start index.js --name game --interpreter=/home/pi/.nvm/versions/node/v16.6.1/bin/node"
   },
   "repository": {
@@ -19,12 +20,21 @@
     "@sentry/node": "^6.13.3",
     "canvas": "^2.8.0",
     "chalk": "^4.1.2",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "date-fns-tz": "^1.1.6",
     "discord.js": "^13.1.0",
+    "ejs": "^3.1.6",
     "enmap": "^5.8.7",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
     "gifenc": "github:mattdesl/gifenc",
     "i18n": "^0.13.3",
     "node-fetch": "^3.0.0",
+    "passport": "^0.5.0",
+    "passport-discord": "^0.1.4",
+    "path": "^0.12.7",
+    "postcss-cli": "^9.0.1",
     "sudoku-umd": "^1.0.1"
   },
   "devDependencies": {
