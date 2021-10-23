@@ -7,6 +7,14 @@ module.exports = {
                 blurple: {
                     DEFAULT: "#5865F2"
                 },
+                instagram: {
+                    one: "#F09433",
+                    two: "#F09433",
+                    three: "#E6683C",
+                    four: "#DC2743",
+                    five: "#CC2366",
+                    six: "#BC1888"
+                },
                 red: {
                     DEFAULT: "#FF5555"
                 },
