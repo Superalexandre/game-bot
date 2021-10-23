@@ -1,22 +1,26 @@
-import createError from "http-errors"
 import express, { json, urlencoded, static as staticExpress } from "express"
-import { join } from "path"
+import { join, dirname } from "path"
 import cookieParser from "cookie-parser"
 import logger from "morgan"
 import cors from "cors"
+import session from "express-session"
+import bodyParser from "body-parser"
 
 import passport from "passport"
 import { Strategy as DiscordStrategy } from "passport-discord"
-import config from "../../config"
+import config from "../../config.js"
 
+import { fileURLToPath } from "url"
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
 
 passport.serializeUser((user, done) => {
-    done(null, user);
+    done(null, user)
 })
 
 passport.deserializeUser((obj, done) => {
-    done(null, obj);
+    done(null, obj)
 })
 
 passport.use(new DiscordStrategy({
@@ -31,28 +35,52 @@ passport.use(new DiscordStrategy({
 }))
 
 app
-    //All config
-    .set("views", join(__dirname, "views"))
-    .set("view engine", "jade")
     .use(cors())
     .use(logger("dev"))
     .use(json())
     .use(urlencoded({ extended: false }))
     .use(cookieParser())
-    .use(staticExpress(join(__dirname, "public")))
-    
-    //404
-    .use(function(req, res, next) {
-        next(createError(404))
+    .use(staticExpress(join(__dirname + "public")))
+    .use(bodyParser.json())
+    .use(session({ 
+        secret: config.dashboard.api.secret,
+        resave: false,
+        saveUninitialized: false
+    }))
+    .use(passport.initialize())
+    .use(passport.session())
+    .get("/api/login/discord", function(req, res, next) {
+        res.send("Login discord")
     })
+    .get("/api/callback/discord", async function(req, res, next) {
+        //access_denied
 
-    //Errors
-    .use(function(err, req, res, next) {
-        res.locals.message = err.message
-        res.locals.error = req.app.get("env") === "development" ? err : {}
+		await passport.authenticate("discord", async function(err, user, info) {
+            if (err && err.name === "TokenError") return res.redirect("http://localhost:3000/login")
 
-        res.status(err.status || 500)
-        res.render("error")
+			if (err) return res.send(JSON.stringify({ success: false, error: true, message: err, code: 1 }))
+
+			if (!user) return res.send(JSON.stringify({ success: false, error: true, message: "Le compte n'a pas été trouvé", info: info.message }))
+
+			req.logIn(user, async function(err) {
+				if (err) return res.send(JSON.stringify({ success: false, error: true, message: err, code: 2 }))
+
+				req.session.user = user
+
+                //return res.send("Oui bienvenue")
+                res.redirect(`http://localhost:3000/?user=${user.id}`)
+				//return res.send(JSON.stringify({ success: true, error: false, message: "Connecté avec succès", redirect: "/profile/" + user.id }))
+			})
+		})(req, res, next)
+    })
+    .get("/api/signout/discord", function(req, res, next) {
+        res.send("Signout")
+    })
+    .get("*", function(req, res, next) {
+        res.redirect("http://localhost:3000")
+    })
+    .listen(config.dashboard.api.port, () => {
+        console.log("Api prête " + config.dashboard.api.port)
     })
 
 export default app
