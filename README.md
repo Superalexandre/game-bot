@@ -33,10 +33,10 @@ A fun discord bot
 ✅ Sentry, gitguardian <br/>
 
 ### Site
-🚧 Thème blanc
-🚧 Finir la nav bar
-🚧 Page d'acceuil
+✅ Thème blanc
+✅ Finir la nav bar
 🚧 Login
+🚧 Page d'acceuil
 
 ### Uno
 ✅ Refaire en slash command <br/>
