@@ -3,6 +3,19 @@ module.exports = {
     darkMode: "class",
     theme: {
         extend: {
+            keyframes: {
+                "rotate-360": {
+                    "0%": {
+                        transform: "rotate(0)"
+                    },
+                    "100%": {
+                        transform: "rotate(360deg)"
+                    }
+                }
+            },
+            animation: {
+                "rotate-360": "rotate-center 0.6s both"
+            },
             colors: {
                 blurple: {
                     DEFAULT: "#5865F2"
