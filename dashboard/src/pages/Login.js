@@ -2,7 +2,7 @@ import NavBar from "../components/NavBar/NavBar"
 import LoginButtonDiscord from "../components/Buttons/LoginDiscord"
 import { Component } from "react"
 
-class Login extends Component { 
+class Login extends Component {
     render() {
         return (
 		    <div className="top-0 left-0 absolute w-full h-full dark">
