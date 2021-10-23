@@ -1,37 +1,58 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require("cors");
+import createError from "http-errors"
+import express, { json, urlencoded, static as staticExpress } from "express"
+import { join } from "path"
+import cookieParser from "cookie-parser"
+import logger from "morgan"
+import cors from "cors"
 
-var app = express();
+import passport from "passport"
+import { Strategy as DiscordStrategy } from "passport-discord"
+import config from "../../config"
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+const app = express()
 
-app.use(cors());
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+passport.serializeUser((user, done) => {
+    done(null, user);
+})
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+passport.deserializeUser((obj, done) => {
+    done(null, obj);
+})
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+passport.use(new DiscordStrategy({
+    clientID: config.discord.appId,
+    clientSecret: config.discord.clientSecret,
+    callbackURL: config.discord.callBackURL,
+    scope: ["identify", "guilds"]
+}, function(accessToken, refreshToken, profile, done) {
+    process.nextTick(function() {
+        return done(null, profile);
+    })
+}))
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+app
+    //All config
+    .set("views", join(__dirname, "views"))
+    .set("view engine", "jade")
+    .use(cors())
+    .use(logger("dev"))
+    .use(json())
+    .use(urlencoded({ extended: false }))
+    .use(cookieParser())
+    .use(staticExpress(join(__dirname, "public")))
+    
+    //404
+    .use(function(req, res, next) {
+        next(createError(404))
+    })
 
-module.exports = app;
+    //Errors
+    .use(function(err, req, res, next) {
+        res.locals.message = err.message
+        res.locals.error = req.app.get("env") === "development" ? err : {}
+
+        res.status(err.status || 500)
+        res.render("error")
+    })
+
+export default app
