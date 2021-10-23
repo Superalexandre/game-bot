@@ -4,9 +4,9 @@ module.exports = {
     theme: {
         extend: {
             keyframes: {
-                "rotate-360": {
+                rotate360: {
                     "0%": {
-                        transform: "rotate(0)"
+                        transform: "rotate(0deg)"
                     },
                     "100%": {
                         transform: "rotate(360deg)"
@@ -14,7 +14,7 @@ module.exports = {
                 }
             },
             animation: {
-                "rotate-360": "rotate-center 0.6s both"
+                rotate360: "rotate360 0.6s both"
             },
             colors: {
                 blurple: {
@@ -54,7 +54,9 @@ module.exports = {
         }
     },
     variants: {
-        extend: {}
+        extend: {
+            animation: ["hover", "group-hover"] 
+        }
     },
     plugins: []
 }
