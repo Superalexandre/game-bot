@@ -6,26 +6,30 @@
     }
 %>
 <nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6 dark:bg-gray-secondary bg-white-secondary">
-    <div class="flex items-center flex-shrink-0 text-white mr-6">
+    <div class="flex items-center flex-shrink-0 text-black dark:text-white mr-6">
         <a href="/" class="uppercase font-bold hover:<%= getRandomColor() %>">
-            <img class="h-16 inline-block mr-6" src="../public/img/logos/Logo.png" alt="Logo"/>
+            <img class="h-16 inline-block mr-6 align-middle" src="../public/img/logos/Logo.png" alt="Logo"/>
             
-            <span class="hidden lg:inline-block">Accueil</span>
+            <span class="hidden align-middle lg:inline-block">Accueil</span>
         </a>
     </div>
     <div class="block lg:hidden">
-        <button class="mobileButton flex items-center px-3 py-2 text-teal-200 border-teal-400 dark:text-white hover:<%= getRandomColor() %>">
+        <button class="mobileButton flex items-center px-3 py-2 text-teal-200 border-teal-400 text-black dark:text-white hover:<%= getRandomColor() %>">
             <i class="fas fa-bars "></i>
         </button>
     </div>
     <div class="mobileToHidden hidden w-full flex-grow lg:flex lg:items-center lg:w-auto">
         <div class="ml-auto text-center lg:text-justify">
-            <a href="/" class="p-10 lg:p-0 lg:hidden block uppercase font-bold text-white hover:<%= getRandomColor() %>">
+            <a href="/" class="p-10 lg:p-0 lg:hidden block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %>">
                 Accueil
             </a>
-            <a href="/login" class="p-10 lg:p-0 block lg:inline-block uppercase font-bold text-white hover:<%= getRandomColor() %>">
+            <a href="/login" class="p-10 align-middle lg:p-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %>">
                 Se connecter
             </a>
+
+            <button class="changeTheme mx-auto my-0 lg:ml-6 align-middle p-10 lg:p-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:text-yellow">
+                <i class="fas fa-sun fa-3x"></i>
+            </button>
         </div>
     </div>
 </nav>
@@ -37,6 +41,16 @@
             document.querySelector(".mobileToHidden").classList.remove("hidden")
         } else {
             document.querySelector(".mobileToHidden").classList.add("hidden")
+        }
+    })
+
+    document.querySelector(".changeTheme").addEventListener("click", (click) => {
+        const classList = document.querySelector("html").className.split(" ")
+
+        if (classList.includes("dark")) {
+            document.querySelector("html").classList.remove("dark")
+        } else {
+            document.querySelector("html").classList.add("dark")
         }
     })
 </script>
