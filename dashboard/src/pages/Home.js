@@ -1,4 +1,4 @@
-import NavBar from "./components/NavBar/NavBar"
+import NavBar from "../components/NavBar/NavBar"
 
 function Home() {
     return (
@@ -6,6 +6,7 @@ function Home() {
             <NavBar></NavBar>
 
             <div className="dark:bg-gray-primary bg-white w-full h-full">
+                <p>Home</p>
             </div>
         </div>
     )

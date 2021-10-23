@@ -1,9 +1,13 @@
+import NavBar from "../components/NavBar/NavBar"
+
 function Login() {
     return (
-        <div>
+		<div className="top-0 left-0 absolute w-full h-full dark">
+            <NavBar></NavBar>
 
-            <p>Login</p>
-
+            <div className="dark:bg-gray-primary bg-white w-full h-full">
+                <p>Login</p>
+            </div>
         </div>
     )
 }
