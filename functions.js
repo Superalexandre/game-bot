@@ -69,6 +69,17 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId, ga
         return { success: false, error: true, message: "No account found" }
     }
 
+    let user1Result 
+    if (winnerId === "loose" || winnerId === user1.id) {
+        user1Result ="win"
+    } else if (!user2 && winnerId !== "loose") {
+        user1Result ="solo"
+    } else if (user2 && winnerId === user2.id) {
+        user1Result ="loose"
+    } else if (user2 && winnerId !== user2.id && winnerId !== user1.id) {
+        user1Result ="equality"
+    } else user1Result = "error"
+
     await data.users.push(user1Data.accountId, {
         gameName,
         guildOrChat,
@@ -76,7 +87,7 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId, ga
         date: Date.now(),
         plateform,
         versus: user2 ? user2 : "solo",
-        result: user2 ? winnerId === user1.id ? "win" : winnerId === user2.id ? "loose" : "equality" : "solo"
+        result: user1Result
     }, "statistics")
 
     if (user2 && user2Data) { 
