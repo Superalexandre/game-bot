@@ -12,7 +12,7 @@
             <%- include("utils/navbar") %> 
 
             <div class="text-center">
-                <p>Bienvenue <%= req.user.username %></p>
+                <p>Bienvenue <%= req.session.user.username %></p>
             </div>
         </div>
     </body>
