@@ -11,6 +11,12 @@ import { fileURLToPath } from "url"
 import Enmap from "enmap"
 import fetch from "node-fetch"
 import btoa from "btoa"
+import Logger from "../logger.js"
+
+const logger = new Logger({
+    mode: "compact",
+    plateform: "Dashboard"
+})
 
 const data = {
     users: new Enmap({ name: "users" }),
@@ -182,11 +188,8 @@ async function init() {
         .listen(config.dashboard.port, (err) => {
             if (err) console.error(err)
 
-            console.log("Dashboard en ligne port " + config.dashboard.port)
+            logger.log({ message: "En ligne port " + config.dashboard.port })
         })
 }
-
-
-init()
 
 export default init
