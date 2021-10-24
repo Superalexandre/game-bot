@@ -4,11 +4,11 @@ A fun discord bot
 
 ## Road map
 
-✅ : Fini
-❌ : Annuler
-🚧 : En cours
-❓ : Idée
-❗ : Prioritaire
+✅ : Fini \
+❌ : Annuler \
+🚧 : En cours \
+❓ : Idée \
+❗ : Prioritaire \
 
 ### Global
 
@@ -22,17 +22,18 @@ A fun discord bot
 &emsp;=>✅ Crée les commandes
 &emsp;=>🚧 Modifier si changement
 🚧 Compte et base de données
-&emsp;=>❗ **GAME ID**
-&emsp;&emsp;=>🚧 Add server or chat
+&emsp;=>🚧 **GAME ID**
+&emsp;&emsp;=>✅ Add server or chat
 &emsp;&emsp;=>✅ Insta
-&emsp;&emsp;=>🚧 Discord
+&emsp;&emsp;=>🚧 Discord (1/8)
 &emsp;=>✅ Crée un compte
-&emsp;=>🚧 Merge compte
+&emsp;=>**❗ Merge compte**
 &emsp;=>✅ Ajouter stats
 &emsp;&emsp;=>✅ **Probleme** insta redémarrage = plus id = restockage
 &emsp;&emsp;=>✅ Donc il peut pas add les stats
-&emsp;=>🚧 Voir ses données stockés
-&emsp;=>🚧 Supprimer un compte respect des données
+&emsp;=> 🚧 Commande profile
+&emsp;&emsp;=>🚧 Voir ses données stockés
+&emsp;&emsp;=>🚧 Supprimer un compte respect des données
 ✅ Sentry, gitguardian
 
 ### Site
@@ -41,8 +42,12 @@ A fun discord bot
 ✅ Finir la nav bar
 🚧 Favico
 ✅ Theme localstorage
-✅ Login
-&emsp;=>❓ Rework pour retirer passport-discord
+🚧 Components
+&emsp;=> Notif
+&emsp;=> Page erreur
+🚧 Login
+&emsp;=>✅ Rework pour retirer passport-discord
+&emsp;=>🚧 Instagram
 🚧 Page d'acceuil
 
 ### Uno
@@ -85,7 +90,7 @@ A fun discord bot
 🚧 Impossible d'undo le +4 quand il est séléctionner
 ❌ Si piocher et qu'une carte peut etre jouer envoyer un avertissement
 ✅ Gerer le end game
-🚧 Pouvoir personnalisé sa config (/config uno)
+🚧 Pouvoir personnalisé sa config (/profile config uno)
 
 ### Need test
 
