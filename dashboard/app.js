@@ -4,12 +4,13 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 import session from "express-session"
 import passport from "passport"
-import { Strategy as DiscordStrategy } from "passport-discord"
 import config from "../config.js"
 import functions from "../functions.js"
 import ejs from "ejs"
 import { fileURLToPath } from "url"
 import Enmap from "enmap"
+import fetch from "node-fetch"
+import btoa from "btoa"
 
 const data = {
     users: new Enmap({ name: "users" }),
@@ -18,48 +19,6 @@ const data = {
         bot: new Enmap({ name: "discordBot" })
     }
 }
-
-passport.serializeUser((user, done) => {
-    done(null, user)
-})
-
-passport.deserializeUser((obj, done) => {
-    done(null, obj)
-})
-
-passport.use(new DiscordStrategy({
-    clientID: config.discord.appId,
-    clientSecret: config.discord.clientSecret,
-    callbackURL: config.discord.callBackURL,
-    scope: config.discord.scopes,
-    prompt: "consent"
-}, async function(accessToken, refreshToken, profile, done) {
-    if (!profile) return done(null, false)
-
-    let profileData = await data.users.find(user => user.plateformData.find(data => data.plateform === "discord" && data.data.id === profile.id))
-
-    if (!profileData) {
-        const newAccount = await functions.createAccount({
-            data,
-            lang: "fr_FR",
-            plateformData: [
-                {
-                    plateform: "discord",
-                    lastUpdate: Date.now(),
-                    data: profile
-                }
-            ]
-        })
-
-        if (!newAccount.success) return done(null, null)
-
-        profileData = newAccount.account
-    }
-
-    profile.profileData = profileData
-
-    return done(null, profile)
-}))
 
 async function init() {
     const app = express()
@@ -91,9 +50,21 @@ async function init() {
                 req, res
             })
         })
+        .get("/profile/:id?", function(req, res) {
+            if (req.params.id) {
+                res.render("viewProfile", {
+                    req, res
+                })
+            } else {
+                if (!req.session.user) return res.redirect("/login")
 
-        .get("/profile", checkAuth, function(req, res) {
-            res.render("profile", {
+                res.render("profile", {
+                    req, res
+                })
+            }
+        })
+        .get("/server/:id", function(req, res) {
+            res.render("server", {
                 req, res
             })
         })
@@ -102,14 +73,109 @@ async function init() {
                 req, res
             })
         })
-        .get("/api/discord/login", passport.authenticate("discord"))
-        .get("/api/discord/callback", passport.authenticate("discord", {
-            failureRedirect: "/login"
-        }), function(req, res) {
-            res.redirect(`/profile?user=${req.user.id}`)
+        .get("/api/discord/invite", function(req, res) {
+            res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
         })
-        .get("/api/discord/logout", checkAuth, function(req, res) {
-            req.logout()
+        .get("/api/discord/login", function(req, res) {
+            res.redirect("https://discord.com/api/oauth2/authorize?client_id=848272310557343795&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fdiscord%2Fcallback&response_type=code&scope=email%20identify%20guilds")
+        })
+        .get("/api/discord/callback", async function(req, res) {
+            if (!req.query.code) return res.redirect("/login")
+
+            if (req.query.guild_id) return res.redirect(`/server/${req.query.guild_id}`)
+
+            const parameters = new URLSearchParams()
+                
+            parameters.set("grant_type", "authorization_code")
+            parameters.set("code", req.query.code)
+            parameters.set("redirect_uri", config.discord.callBackURL)
+
+            const response = await fetch("https://discord.com/api/oauth2/token", {
+                method: "POST",
+                body: parameters.toString(),
+                headers: {
+                    Authorization: `Basic ${btoa(`${config.discord.appId}:${config.discord.clientSecret}`)}`,
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            })
+
+            const token = await response.json();
+            
+            if (token.error || !token.access_token) return res.redirect(`/login?error_message=${token.error_message ?? "no_access_token"}`)
+
+            const userData = {
+                infos: null,
+                servers: null
+            }
+
+            if (!userData.infos) {
+                const response = await fetch("http://discordapp.com/api/users/@me", {
+                    method: "GET",
+                    headers: { 
+                        Authorization: `Bearer ${token.access_token}` 
+                    }
+                })
+
+                const json = await response.json()
+
+                if (json) userData.infos = json
+            }
+            
+            if (!userData.servers) {
+                const response = await fetch("https://discordapp.com/api/users/@me/guilds", {
+                    method: "GET",
+                    headers: { Authorization: `Bearer ${token.access_token}` }
+                })
+                
+                const json = await response.json();
+
+                if (json) userData.servers = json
+
+            }
+
+            if (!userData.infos || !userData.servers) return res.redirect("/login?error=missing_args")
+
+            const guilds = []
+            for (const guildPos in userData.servers) guilds.push(userData.servers[guildPos])
+
+            let profileData = await data.users.find(user => user.plateformData.find(data => data.plateform === "discord" && data.data.id === userData.infos.id))
+
+            if (!profileData) {
+                const newAccount = await functions.createAccount({
+                    data,
+                    lang: "fr_FR",
+                    plateformData: [
+                        {
+                            plateform: "discord",
+                            lastUpdate: Date.now(),
+                            data: userData.infos
+                        }
+                    ]
+                })
+
+                if (!newAccount.success) {
+                    req.session.user = {}
+
+                    return res.redirect("/login?error=cannot_create_account")
+                }
+
+                profileData = newAccount.account
+            }
+
+            req.session.user = { 
+
+                profileData,
+
+                ... userData.infos, 
+                ... { guilds } 
+            }
+
+            console.log(req.session.user)
+
+            res.redirect("/")
+        })
+        .get("/api/discord/logout", function(req, res) {
+            req.session.user = {}
             res.redirect("/")
         })
         .get("*", function(req, res) {
@@ -122,11 +188,6 @@ async function init() {
         })
 }
 
-function checkAuth(req, res, next) {
-    if (req.isAuthenticated()) return next()
-
-    res.redirect("/login")
-}
 
 init()
 
