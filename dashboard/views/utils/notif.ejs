@@ -1,0 +1,58 @@
+<% 
+function getIcon(type) { 
+    if (type === "success") {
+        return "fas fa-check"
+    } else if (type === "info") {
+        return "fas fa-info-circle"
+    } else {
+        return "fas fa-exclamation-triangle"
+    }
+}
+
+function getColor(type) { 
+    if (type === "success") {
+        return "bg-green"
+    } else if (type === "info") {
+        return "bg-blue"
+    } else if (type === "warn") {
+        return "bg-yellow"
+    } else {
+        return "bg-red"
+    }
+}
+%>
+
+<% function notif() { %>
+    <%= console.log(req.state.messages) %>
+    <div class="all-notif">
+        <% req.state.messages.forEach((message, i) => { %>
+            <div class="notif-<%= i %> text-center fixed bottom-0 right-3">
+                <div class="p-2 <%= getColor(message.type) %> items-center text-white leading-none lg:rounded-full flex lg:inline-flex">
+                    <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
+                        <i class="<%= getIcon(message.type) %>"></i>
+                    </span>
+                    <span class="font-semibold mr-2 text-left flex-auto">
+                        <%= message.message %>
+                    </span>
+                    <button class="remove-notif id-<%= i %> font-semibold mr-2 text-left flex-auto hover:text-red-dark">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        <% }) %> 
+    </div>
+<% } %>
+
+<% notif() %>
+
+<script>
+    document.querySelectorAll(".remove-notif").forEach(button => {
+        button.addEventListener("click", click => {
+            const classList = button.className.split(" ")
+        
+            const idToRemove = classList.find(className => className.startsWith("id-")).split("-")[1]
+
+            document.querySelector(`.notif-${idToRemove}`).remove()
+        })
+    })
+</script>
