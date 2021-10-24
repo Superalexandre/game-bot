@@ -49,7 +49,7 @@ async function mergeAccount({ data, id1, id2 }) {
     return { success: true, error: false, newAccount }
 }
 
-async function gameStats({ data, plateform, user1, user2, gameName, winnerId, gameId }) {
+async function gameStats({ data, plateform, user1, user2, gameName, winnerId, gameId, guildOrChat }) {
     if (!user1.id || !user2.id) {
         new Error("No id provided in user object")
     
@@ -57,9 +57,13 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId, ga
     }
 
     const user1Data = await data.users.find(user => user.plateformData.find(data => data.plateform === plateform && data.data.id === user1.id))
-    const user2Data = await data.users.find(user => user.plateformData.find(data => data.plateform === plateform && data.data.id === user2.id))
+    
+    let user2Data
+    if (user2) {
+        user2Data = await data.users.find(user => user.plateformData.find(data => data.plateform === plateform && data.data.id === user2.id))
+    }
 
-    if (!user1Data || !user2Data) {
+    if (!user1Data || (!user2Data && user2)) {
         new Error("No account found")
 
         return { success: false, error: true, message: "No account found" }
@@ -67,31 +71,36 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId, ga
 
     await data.users.push(user1Data.accountId, {
         gameName,
+        guildOrChat,
         gameId,
         date: Date.now(),
         plateform,
-        versus: user2,
-        result: winnerId === user1.id ? "win" : winnerId === user2.id ? "loose" : "equality"
+        versus: user2 ? user2 : "solo",
+        result: user2 ? winnerId === user1.id ? "win" : winnerId === user2.id ? "loose" : "equality" : "solo"
     }, "statistics")
 
-    await data.users.push(user2Data.accountId, {
-        gameName,
-        gameId,
-        date: Date.now(),
-        plateform,
-        versus: user1,
-        result: winnerId === user1.id ? "loose" : winnerId === user2.id ? "win" : "equality"
-    }, "statistics")
+    if (user2 && user2Data) { 
+        await data.users.push(user2Data.accountId, {
+            gameName,
+            guildOrChat,
+            gameId,
+            date: Date.now(),
+            plateform,
+            versus: user1,
+            result: winnerId === user1.id ? "loose" : winnerId === user2.id ? "win" : "equality"
+        }, "statistics")
+    }
 
     await data.games.set(gameId, {
         gameName,
+        guildOrChat,
         date: Date.now(),
         plateform,
-        beetween: [user1, user2],
+        beetween: user2 ? [user1, user2] : [user1],
         result: winnerId
     })
 
-    return { success: true, error: false, user1Data, user2Data }
+    return { success: true, error: false, user1Data, user2Data: user2Data ? user2Data : "" }
 }
 
 function genId({ length = 30 }) {
