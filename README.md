@@ -23,6 +23,7 @@ A fun discord bot
 &emsp;=>🚧 Modifier si changement
 🚧 Compte et base de données
 &emsp;=>❗ **GAME ID**
+&emsp;&emsp;=>🚧 Add server or chat
 &emsp;&emsp;=>✅ Insta
 &emsp;&emsp;=>🚧 Discord
 &emsp;=>✅ Crée un compte
