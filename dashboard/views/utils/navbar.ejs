@@ -23,9 +23,22 @@
             <a href="/" class="p-10 lg:p-0 lg:hidden block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %> dark:hover:<%= getRandomColor() %>">
                 Accueil
             </a>
-            <a href="/login" class="p-10 align-middle lg:p-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %> dark:hover:<%= getRandomColor() %>">
-                Se connecter
-            </a>
+
+            <% if (req.isAuthenticated()) { %>
+                <a href="/statistics" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %> dark:hover:<%= getRandomColor() %>">
+                    Statistiques
+                </a>
+                <a href="/profile" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %> dark:hover:<%= getRandomColor() %>">
+                    Profile
+                </a>
+                <a href="/api/discord/logout" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %> dark:hover:<%= getRandomColor() %>">
+                    Se deconnecter
+                </a>
+            <% } else { %>
+                <a href="/login" class="p-10 align-middle lg:p-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %> dark:hover:<%= getRandomColor() %>">
+                    Se connecter
+                </a>
+            <% } %>
 
             <button class="changeTheme mx-auto my-0 lg:ml-6 align-middle p-10 lg:p-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:text-yellow dark:hover:text-yellow">
                 <i class="fas fa-sun fa-3x"></i>
