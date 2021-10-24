@@ -39,6 +39,8 @@ export default class Logger {
 }
 
 function getColorPlateform(plateform) {
+    if (plateform === "Dashboard") return chalk.bgBlueBright("[Dashboard]")
+
     if (plateform === "Discord") return chalk.bgMagenta("[Discord]")
 
     if (plateform === "Instagram") return chalk.bgMagentaBright("[Instagram]")
