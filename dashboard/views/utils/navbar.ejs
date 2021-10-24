@@ -26,7 +26,7 @@
             </a>
             -->
 
-            <% if (req.isAuthenticated()) { %>
+            <% if (req.session.user) { %>
                 <a href="/statistics" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %> dark:hover:<%= getRandomColor() %>">
                     Statistiques
                 </a>
