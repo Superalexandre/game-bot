@@ -1,7 +1,8 @@
 # game-bot
+
 A fun discord bot
 
-# Road map
+## Road map
 
 ✅ : Fini
 ❌ : Annuler
@@ -10,112 +11,126 @@ A fun discord bot
 ❗ : Prioritaire
 
 ### Global
-✅ Mise a jour v13 discord.js <br/>
-✅ Unknown interaction bug <br/>
-✅ [En cours] Refaire les commandes en / <br/>
-✅ Event message <br/>
-✅ Traduction <br/>
-✅ Logger <br/>
-🚧 Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc) <br/>
-&emsp;=>✅ Crée les commandes<br/>
-&emsp;=>🚧 Modifier si changement<br/>
-🚧 Compte et base de données<br/>
-&emsp;=>❗ **GAME ID**<br/>
-&emsp;&emsp;=>✅ Insta<br/>
-&emsp;&emsp;=>🚧 Discord<br/>
-&emsp;=>✅ Crée un compte<br/>
-&emsp;=>🚧 Merge compte<br/>
-&emsp;=>✅ Ajouter stats<br/>
-&emsp;&emsp;=>✅ **Probleme** insta redémarrage = plus id = restockage<br/>
-&emsp;&emsp;=>✅ Donc il peut pas add les stats<br/>
-&emsp;=>🚧 Voir ses données stockés<br/>
-&emsp;=>🚧 Supprimer un compte respect des données<br/>
-✅ Sentry, gitguardian <br/>
+
+✅ Mise a jour v13 discord.js
+✅ Unknown interaction bug
+✅ [En cours] Refaire les commandes en /
+✅ Event message
+✅ Traduction
+✅ Logger
+🚧 Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc)
+&emsp;=>✅ Crée les commandes
+&emsp;=>🚧 Modifier si changement
+🚧 Compte et base de données
+&emsp;=>❗ **GAME ID**
+&emsp;&emsp;=>✅ Insta
+&emsp;&emsp;=>🚧 Discord
+&emsp;=>✅ Crée un compte
+&emsp;=>🚧 Merge compte
+&emsp;=>✅ Ajouter stats
+&emsp;&emsp;=>✅ **Probleme** insta redémarrage = plus id = restockage
+&emsp;&emsp;=>✅ Donc il peut pas add les stats
+&emsp;=>🚧 Voir ses données stockés
+&emsp;=>🚧 Supprimer un compte respect des données
+✅ Sentry, gitguardian
 
 ### Site
-✅ Thème blanc<br/>
-✅ Finir la nav bar<br/>
-🚧 Favico<br/>
-🚧 Theme localstorage<br/>
-🚧 Login<br/>
-🚧 Page d'acceuil<br/>
+
+✅ Thème blanc
+✅ Finir la nav bar
+🚧 Favico
+✅ Theme localstorage
+✅ Login
+&emsp;=>❓ Rework pour retirer passport-discord
+🚧 Page d'acceuil
 
 ### Uno
-✅ Refaire en slash command <br/>
-✅ RemoveCard function ré ajouter dans la config <br/>
-✅ Pouvoir faire un retour (cartes spéciales) <br/>
-✅ Pouvoir jouer la carte piocher après avoir piocher <br/>
-✅ Si trop de carte faire deux, trois pages <br/>
-✅ Erreur page <br/>
-✅ Unknow interaction ??? interaction.editReply **(Double start)** <br/>
-🚧 GameData (70%) <br/>
-&emsp;✅ Probleme 1v1 changement de sens  <br/>
-&emsp;&emsp;=> ✅ Ajouter skip turn  <br/>
-&emsp;✅ Pouvoir jouer plusieurs cartes <br/>
-&emsp;&emsp;=> ✅ playersData[ id ].activesCard = [] <br/>
-&emsp;&emsp;=> ✅ Button click -> push id -> Green <br/>
-&emsp;&emsp;=> ✅ If already click -> remove id -> Red <br/>
-&emsp;&emsp;=> ✅ Play button -> remove card -> last card = active <br/>
-&emsp;&emsp;=> ✅ Probleme switch quand on en joue plusieurs  <br/>
-&emsp;&emsp;=> ✅ Probleme skip quand on en joue plusieurs  <br/>
-&emsp;&emsp;=> ✅ Probleme carte changement de couleur et +4 <br/>
-&emsp;&emsp;=> 🚧 Probleme une carte (deux ?) skip = null **(Unknown)** <br/>
-&emsp;&emsp;=> ✅ Probleme jouer plusieurs carte <br/>
-&emsp;✅ Pouvoir "surencherir" (+2, +4) <br/>
-&emsp;&emsp;=> ✅ Don't skip and disable color <br/>
-&emsp;&emsp;=> ✅ Passer son tour (et donc piocher) (CantPlayCard, button id) <br/>
-&emsp;&emsp;=> ✅ Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas <br/>
-&emsp;&emsp;=> ✅ Erreur lorsque la carte est un changement de couleur (Probleme avec le outbid) <br/>
-&emsp;❌ Refaire les messages <br/>
-&emsp;&emsp;=> Faire une fonction getMessage() avec erreur et config + historique <br/>
-&emsp;✅ Distribution des cartes spéciales <br/>
-&emsp;&emsp;=> If +2 add to first player and skip <br/>
-&emsp;&emsp;=> If switch color first player select <br/>
-&emsp;🚧 Pouvoir buffler au +4 <br/>
-&emsp;&emsp;=> If disable = Error message <br/>
-&emsp;&emsp;=> If enable ask if player bluff <br/>
-&emsp;&emsp;&emsp;-> Yes but no => +6 <br/>
-&emsp;&emsp;&emsp;-> Yes and yes => User +4 <br/>
-🚧 Impossible d'undo le +4 quand il est séléctionner <br/>
-❌ Si piocher et qu'une carte peut etre jouer envoyer un avertissement <br/>
-✅ Gerer le end game <br/>
-🚧 Pouvoir personnalisé sa config (/config uno) <br/>
+
+✅ Refaire en slash command
+✅ RemoveCard function ré ajouter dans la config
+✅ Pouvoir faire un retour (cartes spéciales)
+✅ Pouvoir jouer la carte piocher après avoir piocher
+✅ Si trop de carte faire deux, trois pages
+✅ Erreur page
+✅ Unknow interaction ??? interaction.editReply **(Double start)**
+🚧 GameData (70%)
+&emsp;✅ Probleme 1v1 changement de sens  
+&emsp;&emsp;=> ✅ Ajouter skip turn  
+&emsp;✅ Pouvoir jouer plusieurs cartes
+&emsp;&emsp;=> ✅ playersData[ id ].activesCard = []
+&emsp;&emsp;=> ✅ Button click -> push id -> Green
+&emsp;&emsp;=> ✅ If already click -> remove id -> Red
+&emsp;&emsp;=> ✅ Play button -> remove card -> last card = active
+&emsp;&emsp;=> ✅ Probleme switch quand on en joue plusieurs  
+&emsp;&emsp;=> ✅ Probleme skip quand on en joue plusieurs  
+&emsp;&emsp;=> ✅ Probleme carte changement de couleur et +4
+&emsp;&emsp;=> 🚧 Probleme une carte (deux ?) skip = null **(Unknown)**
+&emsp;&emsp;=> ✅ Probleme jouer plusieurs carte
+&emsp;✅ Pouvoir "surencherir" (+2, +4)
+&emsp;&emsp;=> ✅ Don't skip and disable color
+&emsp;&emsp;=> ✅ Passer son tour (et donc piocher) (CantPlayCard, button id)
+&emsp;&emsp;=> ✅ Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas
+&emsp;&emsp;=> ✅ Erreur lorsque la carte est un changement de couleur (Probleme avec le outbid)
+&emsp;❌ Refaire les messages
+&emsp;&emsp;=> Faire une fonction getMessage() avec erreur et config + historique
+&emsp;✅ Distribution des cartes spéciales
+&emsp;&emsp;=> If +2 add to first player and skip
+&emsp;&emsp;=> If switch color first player select
+&emsp;🚧 Pouvoir buffler au +4
+&emsp;&emsp;=> If disable = Error message
+&emsp;&emsp;=> If enable ask if player bluff
+&emsp;&emsp;&emsp;-> Yes but no => +6
+&emsp;&emsp;&emsp;-> Yes and yes => User +4
+🚧 Impossible d'undo le +4 quand il est séléctionner
+❌ Si piocher et qu'une carte peut etre jouer envoyer un avertissement
+✅ Gerer le end game
+🚧 Pouvoir personnalisé sa config (/config uno)
 
 ### Need test
-🚧 Probleme skip quand on en joue plusieurs (1v1 meme probleme ?)<br/>
-🚧 Probleme switch quand on en joue plusieurs <br/>
 
-### Puissance 4 
-✅ Probleme trad placement impossible (puissance4.cantPlayHere) <br/>
-✅ Probleme start turn (mauvaise trad) <br/>
-✅ Opti gif (Probleme encoder : 1-2 secondes par frame)<br/>
-✅ Jouer contre le bot <br/>
+🚧 Probleme skip quand on en joue plusieurs (1v1 meme probleme ?)
+🚧 Probleme switch quand on en joue plusieurs
+
+### Puissance 4
+
+✅ Probleme trad placement impossible (puissance4.cantPlayHere)
+✅ Probleme start turn (mauvaise trad)
+✅ Opti gif (Probleme encoder : 1-2 secondes par frame)
+✅ Jouer contre le bot
 &emsp;=> Replay
 
 ### Instagram
-✅ Message en attente => A ouvrir (ignorer si trop vieux)<br/>
-✅ Message non lu => A lire (ignorer, bot off)<br/>
-✅ Restructuration<br/>
+
+✅ Message en attente => A ouvrir (ignorer si trop vieux)
+✅ Message non lu => A lire (ignorer, bot off)
+✅ Restructuration
 
 ### Release
-✅ Logo<br/>
-🚧 Release (Prévue 16 janvier anniv Sudref)<br/>
+
+✅ Logo
+🚧 Release (Prévue 16 janvier anniv Sudref)
 
 ### Sodoku
-✅ https://github.com/robatron/sudoku.js <br/>
+
+✅ <https://github.com/robatron/sudoku.js>
+
 ### Tetris
-✅ Rotate (bizzare comment c'est fait on peu pas déplacer alors que si) <br/>
-✅ Arrow <br/>
-✅ **Place bottom** <br/>
-✅ Ajouter des fleches pour aller directement de l'autre coter <br/>
-✅ https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4 <br/>
-✅ A test  <br/>
+
+✅ Rotate (bizzare comment c'est fait on peu pas déplacer alors que si)
+✅ Arrow
+✅ **Place bottom**
+✅ Ajouter des fleches pour aller directement de l'autre coter
+✅ <https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4>
+✅ A test  
 
 ### Petit chevaux
-🚧 Rework <br/>
+
+🚧 Rework
 
 ### Monopoly
-🚧 Todo complet <br/>
+
+🚧 Todo complet
 
 ### Loup garou ?
+
 🚧 A reflechir
