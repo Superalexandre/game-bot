@@ -43,8 +43,10 @@ A fun discord bot
 🚧 Favico
 ✅ Theme localstorage
 🚧 Components
-&emsp;=> Notif
-&emsp;=> Page erreur
+&emsp;=>🚧 Notif
+&emsp;&emsp;=>🚧 Space beetween
+&emsp;&emsp;=>🚧 State
+&emsp;=>? Page erreur
 🚧 Login
 &emsp;=>✅ Rework pour retirer passport-discord
 &emsp;=>🚧 Instagram
