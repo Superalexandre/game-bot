@@ -99,7 +99,7 @@ async function init() {
                 }
             })
 
-            const token = await response.json();
+            const token = await response.json()
             
             if (token.error || !token.access_token) return res.redirect(`/login?error_message=${token.error_message ?? "no_access_token"}`)
 
@@ -127,10 +127,9 @@ async function init() {
                     headers: { Authorization: `Bearer ${token.access_token}` }
                 })
                 
-                const json = await response.json();
+                const json = await response.json()
 
                 if (json) userData.servers = json
-
             }
 
             if (!userData.infos || !userData.servers) return res.redirect("/login?error=missing_args")
@@ -154,7 +153,7 @@ async function init() {
                 })
 
                 if (!newAccount.success) {
-                    req.session.user = {}
+                    req.session.user = undefined
 
                     return res.redirect("/login?error=cannot_create_account")
                 }
@@ -170,12 +169,11 @@ async function init() {
                 ... { guilds } 
             }
 
-            console.log(req.session.user)
-
             res.redirect("/")
         })
-        .get("/api/discord/logout", function(req, res) {
-            req.session.user = {}
+        .get("/api/discord/logout", async function(req, res) {
+            req.session.destroy()
+            
             res.redirect("/")
         })
         .get("*", function(req, res) {
