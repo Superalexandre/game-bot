@@ -108,7 +108,7 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId, ga
         date: Date.now(),
         plateform,
         beetween: user2 ? [user1, user2] : [user1],
-        result: user1Result
+        result: winnerId
     })
 
     return { success: true, error: false, user1Data, user2Data: user2Data ? user2Data : "" }
