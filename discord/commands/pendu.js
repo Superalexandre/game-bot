@@ -23,7 +23,7 @@ export default class Pendu extends Command {
         })
     }
 
-    async run({ interaction, options, i18n }) {
+    async run({ client, interaction, options, i18n }) {
         const words = i18n.__("discord.hangman.wordList")
         const length = options.getString("longueur") === "random" ? -1 : options.getString("longueur")
 
@@ -33,11 +33,11 @@ export default class Pendu extends Command {
 		
         const word = sorted[Math.floor(Math.random() * sorted.length)]
 
-        return startGame({ interaction, i18n, word })
+        return startGame({ client, interaction, i18n, word })
     }
 }
 
-async function startGame({ interaction, i18n, word }) {
+async function startGame({ client, interaction, i18n, word }) {
     if (!word) return await interaction.editReply({
         content: i18n.__("discord.hangman.error.noWordFound"),
         ephemeral: true
@@ -183,6 +183,19 @@ async function startGame({ interaction, i18n, word }) {
             await collector.stop()
             await m.delete().catch(() => {})
 
+            await client.functions.gameStats({ 
+                data: client.data, 
+                gameId: await client.functions.genGameId({ gameName: "pendu", length: 30 }),
+                guildOrChat: {
+                    type: "guild",
+                    data: interaction.guild
+                },
+                plateform: "discord", 
+                user1: interaction.user,
+                gameName: "pendu", 
+                winnerId: interaction.user.id
+            })
+
             return await msg.edit({
                 content: `${error === 0 ? i18n.__("discord.hangman.result.win.perfect", { username: interaction.user.username }) : i18n.__("discord.hangman.result.win.normal", { username: interaction.user.username })}\n${i18n.__("discord.hangman.result.win.word")} ${word}\n${error > 0 ? `\`\`\`${pendu[error === pendu.length ? error - 1 : error]}\n\n${error}/${pendu.length}\`\`\`` : ""}`
             })
@@ -193,6 +206,19 @@ async function startGame({ interaction, i18n, word }) {
         if (!pendu[error] && error >= 1) {
             await collector.stop()
             await m.delete().catch(() => {})
+
+            await client.functions.gameStats({ 
+                data: client.data, 
+                gameId: await client.functions.genGameId({ gameName: "pendu", length: 30 }),
+                guildOrChat: {
+                    type: "chat",
+                    data: interaction.guild
+                },
+                plateform: "discord", 
+                user1: interaction.user,
+                gameName: "pendu", 
+                winnerId: "loose"
+            })
 
             return await msg.edit({
                 content: `${i18n.__("discord.hangman.result.loose", { username: interaction.user.username })} ${word}\n\`\`\`${pendu[error === pendu.length ? error - 1 : error]}\n\n${error}/${pendu.length}\`\`\``
