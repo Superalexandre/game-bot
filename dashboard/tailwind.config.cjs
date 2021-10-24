@@ -29,6 +29,7 @@ module.exports = {
                     six: "#BC1888"
                 },
                 red: {
+                    dark: "#FF1414",
                     DEFAULT: "#FF5555"
                 },
                 green: {
