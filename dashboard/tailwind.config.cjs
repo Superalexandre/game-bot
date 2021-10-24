@@ -55,6 +55,7 @@ module.exports = {
     },
     variants: {
         extend: {
+            display: ["dark"],
             animation: ["hover", "group-hover"] 
         }
     },
