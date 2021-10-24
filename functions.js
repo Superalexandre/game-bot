@@ -50,7 +50,7 @@ async function mergeAccount({ data, id1, id2 }) {
 }
 
 async function gameStats({ data, plateform, user1, user2, gameName, winnerId, gameId, guildOrChat }) {
-    if (!user1.id || !user2.id) {
+    if (!user1.id || (user2 && !user2.id)) {
         new Error("No id provided in user object")
     
         return { success: false, error: true, message: "No id provided in user object" }
@@ -71,13 +71,13 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId, ga
 
     let user1Result 
     if (winnerId === "loose" || winnerId === user1.id) {
-        user1Result ="win"
+        user1Result = "win"
     } else if (!user2 && winnerId !== "loose") {
-        user1Result ="solo"
+        user1Result = "solo"
     } else if (user2 && winnerId === user2.id) {
-        user1Result ="loose"
+        user1Result = "loose"
     } else if (user2 && winnerId !== user2.id && winnerId !== user1.id) {
-        user1Result ="equality"
+        user1Result = "equality"
     } else user1Result = "error"
 
     await data.users.push(user1Data.accountId, {
@@ -108,7 +108,7 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId, ga
         date: Date.now(),
         plateform,
         beetween: user2 ? [user1, user2] : [user1],
-        result: winnerId
+        result: user1Result
     })
 
     return { success: true, error: false, user1Data, user2Data: user2Data ? user2Data : "" }
