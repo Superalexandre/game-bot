@@ -4,6 +4,7 @@ import i18n from "i18n"
 //* All clients
 import { default as discordClient } from "./discord/index.js"
 import { default as instaClient } from "./instagram/index.js"
+import { default as dashboardInit } from "./dashboard/app.js"
 
 import { join } from "path"
 import config from "./config.js"
@@ -82,6 +83,10 @@ if (config.discord.start) {
 if (config.instagram.start) {
     instaClient(data)
 } else logger.warn({ plateform: "Instagram", message: "Le bot instagram n'est pas lancé" })
+
+if (config.dashboard.start) {
+    dashboardInit()
+} else logger.warn({ plateform: "Dashboard", message: "Le dashboard n'est pas lancé" })
 
 process.on("uncaughtException", (error) => {
     return logger.error({ message: error })
