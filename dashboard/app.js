@@ -47,11 +47,34 @@ async function init() {
         .use(passport.initialize())
         .use(passport.session())
         .use(function(req, res, next) {
+            if (!req.state) req.state = {}
+            if (!req.state.messages) req.state.messages = []
+
+            // if (!req.state.messages) {
+            //     req.state = {
+            //         messages: []
+            //     }
+            // }
+
             req.data = data
 
             next()
         })
         .get("/", function(req, res) {
+            req.state.messages.push({
+                type: "success",
+                message: "Vous êtes connecter avec succès !"
+            }, {
+                type: "error",
+                message: "Connexion impossible"
+            }, {
+                type: "info",
+                message: "Vous allez être rediriger..."
+            }, {
+                type: "warn",
+                message: "Vous devez être connecter pour faire ceci"
+            })
+
             res.render("index", {
                 req, res
             })
@@ -175,6 +198,11 @@ async function init() {
                 ... { guilds } 
             }
 
+            req.state.messages.push({
+                type: "success",
+                message: "Connecté avec succès"
+            })
+
             res.redirect("/")
         })
         .get("/api/discord/logout", async function(req, res) {
@@ -191,5 +219,9 @@ async function init() {
             logger.log({ message: "En ligne port " + config.dashboard.port })
         })
 }
+
+if (!config.dashboard.start) {
+    init()
+} else logger.log({ message: "Le dashboard est deja actif" })
 
 export default init
