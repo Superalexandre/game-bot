@@ -20,9 +20,11 @@
     </div>
     <div class="mobileToHidden hidden w-full flex-grow lg:flex lg:items-center lg:w-auto">
         <div class="ml-auto text-center lg:text-justify">
+            <!--
             <a href="/" class="p-10 lg:p-0 lg:hidden block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %> dark:hover:<%= getRandomColor() %>">
                 Accueil
             </a>
+            -->
 
             <% if (req.isAuthenticated()) { %>
                 <a href="/statistics" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:<%= getRandomColor() %> dark:hover:<%= getRandomColor() %>">
@@ -40,7 +42,11 @@
                 </a>
             <% } %>
 
-            <button class="changeTheme mx-auto my-0 lg:ml-6 align-middle p-10 lg:p-0 block lg:inline-block uppercase font-bold text-black dark:text-white hover:text-yellow dark:hover:text-yellow">
+            <button class="lg:dark:hidden dark:hidden lg:inline-block changeTheme mx-auto my-0 lg:ml-6 align-middle p-10 lg:p-0 uppercase font-bold text-black dark:text-white hover:text-yellow dark:hover:text-yellow">
+                <i class="fas fa-moon fa-3x"></i>
+            </button>
+            
+            <button class="lg:dark:inline-block dark:inline-block hidden changeTheme mx-auto my-0 lg:ml-6 align-middle p-10 lg:p-0 uppercase font-bold text-black dark:text-white hover:text-yellow dark:hover:text-yellow">
                 <i class="fas fa-sun fa-3x"></i>
             </button>
         </div>
@@ -62,15 +68,17 @@
         document.documentElement.classList.add("dark")        
     }
 
-    document.querySelector(".changeTheme").addEventListener("click", (click) => {
-        const classList = document.documentElement.className.split(" ")
+    document.querySelectorAll(".changeTheme").forEach(button => {
+        button.addEventListener("click", (click) => {
+            const classList = document.documentElement.className.split(" ")
 
-        if (classList.includes("dark")) {
-            localStorage.theme = "light"
-            document.documentElement.classList.remove("dark")
-        } else {
-            localStorage.theme = "dark"
-            document.documentElement.classList.add("dark")
-        }
+            if (classList.includes("dark")) {
+                localStorage.theme = "light"
+                document.documentElement.classList.remove("dark")
+            } else {
+                localStorage.theme = "dark"
+                document.documentElement.classList.add("dark")
+            }
+        })
     })
 </script>
