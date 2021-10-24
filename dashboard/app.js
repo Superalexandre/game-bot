@@ -6,8 +6,18 @@ import session from "express-session"
 import passport from "passport"
 import { Strategy as DiscordStrategy } from "passport-discord"
 import config from "../config.js"
+import functions from "../functions.js"
 import ejs from "ejs"
 import { fileURLToPath } from "url"
+import Enmap from "enmap"
+
+const data = {
+    users: new Enmap({ name: "users" }),
+    games: new Enmap({ name: "games" }),
+    discord: {
+        bot: new Enmap({ name: "discordBot" })
+    }
+}
 
 passport.serializeUser((user, done) => {
     done(null, user)
@@ -21,11 +31,34 @@ passport.use(new DiscordStrategy({
     clientID: config.discord.appId,
     clientSecret: config.discord.clientSecret,
     callbackURL: config.discord.callBackURL,
-    scope: config.discord.scopes
-}, function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function() {
-        return done(null, profile)
-    })
+    scope: config.discord.scopes,
+    prompt: "consent"
+}, async function(accessToken, refreshToken, profile, done) {
+    if (!profile) return done(null, false)
+
+    let profileData = await data.users.find(user => user.plateformData.find(data => data.plateform === "discord" && data.data.id === profile.id))
+
+    if (!profileData) {
+        const newAccount = await functions.createAccount({
+            data,
+            lang: "fr_FR",
+            plateformData: [
+                {
+                    plateform: "discord",
+                    lastUpdate: Date.now(),
+                    data: profile
+                }
+            ]
+        })
+
+        if (!newAccount.success) return done(null, null)
+
+        profileData = newAccount.account
+    }
+
+    profile.profileData = profileData
+
+    return done(null, profile)
 }))
 
 async function init() {
@@ -49,10 +82,18 @@ async function init() {
         .use(passport.initialize())
         .use(passport.session())
         .use(function(req, res, next) {
+            req.data = data
+
             next()
         })
         .get("/", function(req, res) {
             res.render("index", {
+                req, res
+            })
+        })
+
+        .get("/profile", checkAuth, function(req, res) {
+            res.render("profile", {
                 req, res
             })
         })
@@ -61,11 +102,30 @@ async function init() {
                 req, res
             })
         })
+        .get("/api/discord/login", passport.authenticate("discord"))
+        .get("/api/discord/callback", passport.authenticate("discord", {
+            failureRedirect: "/login"
+        }), function(req, res) {
+            res.redirect(`/profile?user=${req.user.id}`)
+        })
+        .get("/api/discord/logout", checkAuth, function(req, res) {
+            req.logout()
+            res.redirect("/")
+        })
+        .get("*", function(req, res) {
+            res.redirect("/")
+        })
         .listen(config.dashboard.port, (err) => {
             if (err) console.error(err)
 
             console.log("Dashboard en ligne port " + config.dashboard.port)
         })
+}
+
+function checkAuth(req, res, next) {
+    if (req.isAuthenticated()) return next()
+
+    res.redirect("/login")
 }
 
 init()
