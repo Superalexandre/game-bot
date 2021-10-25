@@ -54,7 +54,6 @@ async function init() {
             next()
         })
         .get("/", function(req, res) {
-            /*
             req.app.locals.messages.push({
                 type: "success",
                 message: "Connecté avec succès"
@@ -68,8 +67,7 @@ async function init() {
                 type: "error",
                 message: "La clé de connexion a expirer ou est invalide"
             })
-            */
-
+            
             res.render("index", {
                 req, res
             })
