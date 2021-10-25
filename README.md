@@ -22,10 +22,10 @@ A fun discord bot
 &emsp;=>✅ Crée les commandes
 &emsp;=>🚧 Modifier si changement
 🚧 Compte et base de données
-&emsp;=>🚧 **GAME ID**
+&emsp;=>✅ **GAME ID**
 &emsp;&emsp;=>✅ Add server or chat
 &emsp;&emsp;=>✅ Insta
-&emsp;&emsp;=>🚧 Discord (1/8)
+&emsp;&emsp;=>✅ Discord
 &emsp;=>✅ Crée un compte
 &emsp;=>**❗ Merge compte**
 &emsp;=>✅ Ajouter stats
@@ -89,6 +89,7 @@ A fun discord bot
 &emsp;&emsp;=> If enable ask if player bluff
 &emsp;&emsp;&emsp;-> Yes but no => +6
 &emsp;&emsp;&emsp;-> Yes and yes => User +4
+🚧 GameStats
 🚧 Impossible d'undo le +4 quand il est séléctionner
 ❌ Si piocher et qu'une carte peut etre jouer envoyer un avertissement
 ✅ Gerer le end game
@@ -113,15 +114,6 @@ A fun discord bot
 ✅ Message non lu => A lire (ignorer, bot off)
 ✅ Restructuration
 
-### Release
-
-✅ Logo
-🚧 Release (Prévue 16 janvier anniv Sudref)
-
-### Sodoku
-
-✅ <https://github.com/robatron/sudoku.js>
-
 ### Tetris
 
 ✅ Rotate (bizzare comment c'est fait on peu pas déplacer alors que si)
@@ -130,6 +122,18 @@ A fun discord bot
 ✅ Ajouter des fleches pour aller directement de l'autre coter
 ✅ <https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4>
 ✅ A test  
+🚧 Arreter sa partie
+&emsp;=> Pouvoir enregistrer ?
+🚧 GameStats
+
+### Release
+
+✅ Logo
+🚧 Release (Prévue 16 janvier anniv Sudref)
+
+### Sodoku
+
+✅ <https://github.com/robatron/sudoku.js>
 
 ### Petit chevaux
 
