@@ -236,6 +236,20 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         if (!genBoard.win && genBoard.allFill) {
             await collector.stop()
 
+            await client.functions.gameStats({ 
+                data: client.data, 
+                gameId: await client.functions.genGameId({ gameName: "morpion", length: 30 }),
+                guildOrChat: {
+                    type: "guild",
+                    data: interaction.guild
+                },
+                plateform: "discord", 
+                user1: userData,
+                user2: opponentData,
+                gameName: "morpion", 
+                winnerId: "equality"
+            })
+
             return await msg.edit({
                 content: i18n.__("discord.morpion.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username }), 
                 components: genBoard.row
@@ -246,6 +260,20 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
             await collector.stop()
 
             const winner = genBoard.winner === userData.emoji ? userData : opponentData
+
+            await client.functions.gameStats({ 
+                data: client.data, 
+                gameId: await client.functions.genGameId({ gameName: "morpion", length: 30 }),
+                guildOrChat: {
+                    type: "guild",
+                    data: interaction.guild
+                },
+                plateform: "discord", 
+                user1: userData,
+                user2: opponentData,
+                gameName: "morpion", 
+                winnerId: winner.id
+            })
 
             return await msg.edit({
                 content: i18n.__("discord.morpion.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji }),
