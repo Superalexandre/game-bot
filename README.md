@@ -38,15 +38,15 @@ A fun discord bot
 
 ### Site
 
+**❗ RGPD**
 ✅ Thème blanc
 ✅ Finir la nav bar
 🚧 Favico
 ✅ Theme localstorage
-🚧 Components
-&emsp;=>🚧 Notif
-&emsp;&emsp;=>🚧 Space beetween
-&emsp;&emsp;=>🚧 State
-&emsp;=>? Page erreur
+✅ Components
+&emsp;=>✅ Notif
+&emsp;&emsp;=>✅ Space beetween
+&emsp;&emsp;=>✅ State
 🚧 Login
 &emsp;=>✅ Rework pour retirer passport-discord
 &emsp;=>🚧 Instagram
