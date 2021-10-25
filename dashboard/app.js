@@ -46,28 +46,14 @@ async function init() {
         }))
         .use(passport.initialize())
         .use(passport.session())
-        .use(function(req, res, next) {
+        .use(function(req, _res, next) {
             if (!req.app.locals.messages) req.app.locals.messages = []
 
             req.data = data
 
             next()
         })
-        .get("/", function(req, res) {
-            req.app.locals.messages.push({
-                type: "success",
-                message: "Connecté avec succès"
-            }, {
-                type: "info",
-                message: "Vous allez être rediriger"
-            }, {
-                type: "warn",
-                message: "Vous devez être connecter pour faire ceci"
-            }, {
-                type: "error",
-                message: "La clé de connexion a expirer ou est invalide"
-            })
-            
+        .get("/", function(req, res) {            
             res.render("index", {
                 req, res
             })
@@ -92,6 +78,20 @@ async function init() {
                 })
             }
         })
+        .get("/statistics", function(req, res) {
+            if (!req.session.user) {
+                req.app.locals.messages.push({
+                    type: "warn",
+                    message: "Vous devez être connecter pour faire ceci"
+                })
+
+                return res.redirect("/login")
+            }
+
+            res.render("statistics", {
+                req, res
+            })
+        })
         .get("/server/:id", function(req, res) {
             res.render("server", {
                 req, res
@@ -102,10 +102,23 @@ async function init() {
                 req, res
             })
         })
-        .get("/api/discord/invite", function(req, res) {
+        .get("/api/instagram/login", function(_req, res) {
+            res.redirect("https://api.instagram.com/oauth/authorize?client_id=406440530945557&redirect_uri=http://localhost:3000/api/instagram/callback&scope=user_profile&response_type=code")
+        })
+        .get("/api/instagram/callback", function(req, res) {
+            console.log(req.query)
+
+            req.app.locals.messages.push({
+                type: "info",
+                message: "La connexion via Instagram n'est pas encore disponible"
+            }) 
+
+            res.redirect("/login")
+        })
+        .get("/api/discord/invite", function(_req, res) {
             res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
         })
-        .get("/api/discord/login", function(req, res) {
+        .get("/api/discord/login", function(_req, res) {
             res.redirect("https://discord.com/api/oauth2/authorize?client_id=848272310557343795&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fdiscord%2Fcallback&response_type=code&scope=email%20identify%20guilds")
         })
         .get("/api/discord/callback", async function(req, res) {
@@ -234,13 +247,24 @@ async function init() {
 
             res.redirect("/")
         })
-        .get("*", function(req, res) {
-            /*
+        .use((error, _req, res) => {
+            console.log(error.statusCode)
+
+            if (!error.statusCode) error.statusCode = 500
+
+            if (error.statusCode === 301) {
+                return res.status(301).json({ error: "301" })
+            }
+        
+            logger.error({ message: error.stack ?? error.toString() })
+
+            return res.status(500).json({ error: error.toString() })
+        })
+        .use(function(req, res) {
             req.app.locals.messages.push({
-                type: "error",
-                message: "La page saisi est introuvable"
+                type: "info",
+                message: "Nous vous avons redirigez ici la page été introuvable"
             })
-            */
 
             res.redirect("/")
         })
