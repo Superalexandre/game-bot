@@ -1,5 +1,8 @@
 module.exports = {
-    purge: [],
+    purge: [
+        "./dashboard/views/*.ejs",       
+        "./dashboard/views/utils/*.ejs"
+    ],
     darkMode: "class",
     theme: {
         extend: {
@@ -11,10 +14,28 @@ module.exports = {
                     "100%": {
                         transform: "rotate(360deg)"
                     }
+                },
+                rightToLeft: {
+                    "0%": {
+                        transform: "translateX(100%)"
+                    },
+                    "100%": {
+                        transform: "translateX(0)"
+                    }
+                },
+                leftToRight: {
+                    "0%": {
+                        transform: "translateX(0)"
+                    },
+                    "100%": {
+                        transform: "translateX(100%)"
+                    }
                 }
             },
             animation: {
-                rotate360: "rotate360 0.6s both"
+                rotate360: "rotate360 0.6s both",
+                rightToLeft: "rightToLeft 2s ease",
+                leftToRight: "leftToRight 2s ease"
             },
             colors: {
                 blurple: {
