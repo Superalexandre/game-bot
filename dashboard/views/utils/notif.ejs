@@ -28,7 +28,7 @@ function getColor(type) {
 
             <% req.app.locals.messages = req.app.locals.messages.filter(msg => msg !== message) %>
 
-            <div class="notif-<%= i %> text-center ml-auto">
+            <div class="notif-<%= i %> text-center ml-auto animate-rightToLeft">
                 <div class="p-2 <%= getColor(message.type) %> items-center text-white leading-none lg:rounded-full flex lg:inline-flex">
                     <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
                         <i class="<%= getIcon(message.type) %>"></i>
@@ -48,11 +48,19 @@ function getColor(type) {
 <% notif() %>
 
 <script>
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms))
+    }
+
     document.querySelectorAll(".remove-notif").forEach(button => {
-        button.addEventListener("click", click => {
+        button.addEventListener("click", async(click) => {
             const classList = button.className.split(" ")
         
             const idToRemove = classList.find(className => className.startsWith("id-")).split("-")[1]
+
+            document.querySelector(`.notif-${idToRemove}`).classList.add("animate-leftToRight")
+
+            await sleep(2000)
 
             document.querySelector(`.notif-${idToRemove}`).remove()
         })
