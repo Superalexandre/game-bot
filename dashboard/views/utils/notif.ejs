@@ -9,7 +9,7 @@ function getIcon(type) {
     }
 }
 
-function getColor(type) { 
+function getBgColor(type) { 
     if (type === "success") {
         return "bg-green"
     } else if (type === "info") {
@@ -20,6 +20,18 @@ function getColor(type) {
         return "bg-red"
     }
 }
+
+function getTextColor(type) { 
+    if (type === "success") {
+        return "text-green-dark"
+    } else if (type === "info") {
+        return "text-blue-dark"
+    } else if (type === "warn") {
+        return "text-yellow-dark"
+    } else {
+        return "text-red-dark"
+    }
+}
 %>
 
 <div class="all-notif fixed bottom-4 flex flex-col right-3 space-y-2">
@@ -28,14 +40,14 @@ function getColor(type) {
         <% req.app.locals.messages = req.app.locals.messages.filter(msg => msg !== message) %>
 
         <div class="notif-<%= i %> text-center ml-auto animate-rightToLeft">
-            <div class="p-2 <%= getColor(message.type) %> items-center text-white leading-none lg:rounded-full flex lg:inline-flex">
+            <div class="p-2 <%= getBgColor(message.type) %> items-center text-white leading-none lg:rounded-full flex lg:inline-flex">
                 <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
                     <i class="<%= getIcon(message.type) %>"></i>
                 </span>
                 <span class="font-semibold mr-2 text-left flex-auto">
                     <%= message.message %>
                 </span>
-                <button class="remove-notif id-<%= i %> font-semibold mr-2 text-left flex-auto hover:text-red-dark">
+                <button class="remove-notif id-<%= i %> font-semibold mr-2 text-left flex-auto hover:<%= getTextColor(message.type) %>">
                     <i class="fas fa-times"></i>
                     </button>
             </div>
