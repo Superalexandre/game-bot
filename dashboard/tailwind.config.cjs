@@ -1,7 +1,9 @@
 module.exports = {
     purge: [
+        /*
         "./dashboard/views/*.ejs",       
         "./dashboard/views/utils/*.ejs"
+        */
     ],
     darkMode: "class",
     theme: {
