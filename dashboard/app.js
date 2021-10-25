@@ -53,7 +53,21 @@ async function init() {
 
             next()
         })
-        .get("/", function(req, res) {            
+        .get("/", function(req, res) {
+            req.app.locals.messages.push({
+                type: "info",
+                message: "Vous devez être connecter pour faire ceci"
+            }, {
+                type: "success",
+                message: "Vous devez être connecter pour faire ceci"
+            }, {
+                type: "warn",
+                message: "Vous devez être connecter pour faire ceci"
+            }, {
+                type: "error",
+                message: "Vous devez être connecter pour faire ceci"
+            })
+            
             res.render("index", {
                 req, res
             })
