@@ -23,7 +23,7 @@ export default class Memory extends Command {
         })
     }
 
-    async run({ interaction, options, i18n }) {
+    async run({ client, interaction, options, i18n }) {
         let emotes = ["🐶", "🔰", "⚜️", "🔱", "🐻", "🐨", "🐯", "🐷", "🦧", "🌺", "⭐", "🍏", "🍊", "🍉", "🍇", "🍓", "💵", "⚙️", "📕", "❤️", "💜", "🔵", "🟢", "🟧", "🟫", "🟨"]
 
         const difficultyType = {
@@ -233,6 +233,19 @@ export default class Memory extends Command {
 
             if (win) {
                 await collector.stop()
+  
+                await client.functions.gameStats({ 
+                    data: client.data, 
+                    gameId: await client.functions.genGameId({ gameName: "memory", length: 30 }),
+                    guildOrChat: {
+                        type: "guild",
+                        data: interaction.guild
+                    },
+                    plateform: "discord", 
+                    user1: interaction.user,
+                    gameName: "memory", 
+                    winnerId: interaction.user.id
+                })
 
                 return await msg.edit({
                     content: i18n.__("discord.memory.win", { username: interaction.user.username }),
@@ -240,6 +253,19 @@ export default class Memory extends Command {
                 })
             } else if (clickNumber === 0) {
                 await collector.stop()
+                
+                await client.functions.gameStats({ 
+                    data: client.data, 
+                    gameId: await client.functions.genGameId({ gameName: "memory", length: 30 }),
+                    guildOrChat: {
+                        type: "guild",
+                        data: interaction.guild
+                    },
+                    plateform: "discord", 
+                    user1: interaction.user,
+                    gameName: "memory", 
+                    winnerId: "loose"
+                })
 
                 return await msg.edit({
                     content: i18n.__("discord.memory.loose", { username: interaction.user.username }),
