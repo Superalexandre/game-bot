@@ -22,30 +22,26 @@ function getColor(type) {
 }
 %>
 
-<% function notif() { %>
-    <div class="all-notif fixed bottom-4 flex flex-col right-3 space-y-2">
-        <% req.app.locals.messages.forEach((message, i) => { %>
+<div class="all-notif fixed bottom-4 flex flex-col right-3 space-y-2">
+    <% req.app.locals.messages.forEach((message, i) => { %>
 
-            <% req.app.locals.messages = req.app.locals.messages.filter(msg => msg !== message) %>
+        <% req.app.locals.messages = req.app.locals.messages.filter(msg => msg !== message) %>
 
-            <div class="notif-<%= i %> text-center ml-auto animate-rightToLeft">
-                <div class="p-2 <%= getColor(message.type) %> items-center text-white leading-none lg:rounded-full flex lg:inline-flex">
-                    <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
-                        <i class="<%= getIcon(message.type) %>"></i>
-                    </span>
-                    <span class="font-semibold mr-2 text-left flex-auto">
-                        <%= message.message %>
-                    </span>
-                    <button class="remove-notif id-<%= i %> font-semibold mr-2 text-left flex-auto hover:text-red-dark">
-                        <i class="fas fa-times"></i>
+        <div class="notif-<%= i %> text-center ml-auto animate-rightToLeft">
+            <div class="p-2 <%= getColor(message.type) %> items-center text-white leading-none lg:rounded-full flex lg:inline-flex">
+                <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
+                    <i class="<%= getIcon(message.type) %>"></i>
+                </span>
+                <span class="font-semibold mr-2 text-left flex-auto">
+                    <%= message.message %>
+                </span>
+                <button class="remove-notif id-<%= i %> font-semibold mr-2 text-left flex-auto hover:text-red-dark">
+                    <i class="fas fa-times"></i>
                     </button>
-                </div>
             </div>
-        <% }) %> 
-    </div>
-<% } %>
-
-<% notif() %>
+        </div>
+    <% }) %> 
+</div>
 
 <script>
     function sleep(ms) {
