@@ -47,33 +47,28 @@ async function init() {
         .use(passport.initialize())
         .use(passport.session())
         .use(function(req, res, next) {
-            if (!req.state) req.state = {}
-            if (!req.state.messages) req.state.messages = []
-
-            // if (!req.state.messages) {
-            //     req.state = {
-            //         messages: []
-            //     }
-            // }
+            if (!req.app.locals.messages) req.app.locals.messages = []
 
             req.data = data
 
             next()
         })
         .get("/", function(req, res) {
-            req.state.messages.push({
+            /*
+            req.app.locals.messages.push({
                 type: "success",
-                message: "Vous êtes connecter avec succès !"
-            }, {
-                type: "error",
-                message: "Connexion impossible"
+                message: "Connecté avec succès"
             }, {
                 type: "info",
-                message: "Vous allez être rediriger..."
+                message: "Vous allez être rediriger"
             }, {
                 type: "warn",
                 message: "Vous devez être connecter pour faire ceci"
+            }, {
+                type: "error",
+                message: "La clé de connexion a expirer ou est invalide"
             })
+            */
 
             res.render("index", {
                 req, res
@@ -85,7 +80,14 @@ async function init() {
                     req, res
                 })
             } else {
-                if (!req.session.user) return res.redirect("/login")
+                if (!req.session.user) {
+                    req.app.locals.messages.push({
+                        type: "warn",
+                        message: "Vous devez être connecter pour faire ceci"
+                    })
+
+                    return res.redirect("/login")
+                }
 
                 res.render("profile", {
                     req, res
@@ -130,7 +132,14 @@ async function init() {
 
             const token = await response.json()
             
-            if (token.error || !token.access_token) return res.redirect(`/login?error_message=${token.error_message ?? "no_access_token"}`)
+            if (token.error || !token.access_token) {
+                req.app.locals.messages.push({
+                    type: "error",
+                    message: "La clé de connexion a expirer ou est invalide"
+                })   
+
+                return res.redirect("/login")
+            }
 
             const userData = {
                 infos: null,
@@ -161,7 +170,14 @@ async function init() {
                 if (json) userData.servers = json
             }
 
-            if (!userData.infos || !userData.servers) return res.redirect("/login?error=missing_args")
+            if (!userData.infos || !userData.servers) {
+                req.app.locals.messages.push({
+                    type: "error",
+                    message: "Des informations sont manquantes"
+                })
+
+                return res.redirect("/login")
+            }
 
             const guilds = []
             for (const guildPos in userData.servers) guilds.push(userData.servers[guildPos])
@@ -184,7 +200,12 @@ async function init() {
                 if (!newAccount.success) {
                     req.session.user = undefined
 
-                    return res.redirect("/login?error=cannot_create_account")
+                    req.app.locals.messages.push({
+                        type: "error",
+                        message: "Votre compte n'a pas plus être crée"
+                    })
+
+                    return res.redirect("/login")
                 }
 
                 profileData = newAccount.account
@@ -198,7 +219,7 @@ async function init() {
                 ... { guilds } 
             }
 
-            req.state.messages.push({
+            req.app.locals.messages.push({
                 type: "success",
                 message: "Connecté avec succès"
             })
@@ -208,9 +229,21 @@ async function init() {
         .get("/api/discord/logout", async function(req, res) {
             req.session.destroy()
             
+            req.app.locals.messages.push({
+                type: "success",
+                message: "Deconnecté avec succès"
+            })
+
             res.redirect("/")
         })
         .get("*", function(req, res) {
+            /*
+            req.app.locals.messages.push({
+                type: "error",
+                message: "La page saisi est introuvable"
+            })
+            */
+
             res.redirect("/")
         })
         .listen(config.dashboard.port, (err) => {
