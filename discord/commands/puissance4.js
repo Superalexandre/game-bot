@@ -302,6 +302,20 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
             winner.win = numberWin + 1
             looser.loose = numberLoose + 1
 
+            await client.functions.gameStats({ 
+                data: client.data, 
+                gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
+                guildOrChat: {
+                    type: "guild",
+                    data: interaction.guild
+                },
+                plateform: "discord", 
+                user1: userData,
+                user2: opponentData,
+                gameName: "puissance4", 
+                winnerId: winner.id
+            })
+
             await msg.edit({
                 content: `**${userData?.win ? userData.win : 0}** ${userData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${i18n.__("discord.puissance4.win.wellPlay")} ${winner.username} (${winner.emoji}) ${i18n.__("discord.puissance4.win.wonOver")} ${looser.username} (${looser.emoji})\n` + formatedBoard.string,
                 components: []
@@ -313,6 +327,20 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
         if (formatedBoard.allFill) {
             await collector.stop()
             await msg.reactions.removeAll()
+
+            await client.functions.gameStats({ 
+                data: client.data, 
+                gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
+                guildOrChat: {
+                    type: "guild",
+                    data: interaction.guild
+                },
+                plateform: "discord", 
+                user1: userData,
+                user2: opponentData,
+                gameName: "puissance4", 
+                winnerId: "equality"
+            })
 
             await msg.edit({
                 content: `**${userData?.win ? userData.win : 0}** ${opponentData.username} - **${opponentData?.win ? opponentData.win : 0}** ${opponentData.username}\n${userData.username} (${userData.emoji}) ${i18n.__("discord.puissance4.equality.and")} ${opponentData.username} (${opponentData.emoji}) ${i18n.__("discord.puissance4.equality.equality")}\n` + formatedBoard.string,

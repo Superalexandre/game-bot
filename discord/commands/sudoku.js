@@ -15,11 +15,11 @@ export default class Sudoku extends Command {
                     description: "Saisissez la difficulté",
                     required: true,
                     choices: [
-                        [ "Facile", "easy"], 
-                        [ "Moyen", "medium"], 
-                        [ "Difficile", "hard"], 
-                        [ "Très difficile", "very-hard"], 
-                        [ "Insane", "insane"], 
+                        [ "Facile", "easy" ], 
+                        [ "Moyen", "medium" ], 
+                        [ "Difficile", "hard" ], 
+                        [ "Très difficile", "very-hard" ], 
+                        [ "Insane", "insane" ], 
                         [ "Inhumain", "inhumain" ]
                     ]
                 }
@@ -28,7 +28,7 @@ export default class Sudoku extends Command {
         })
     }
 
-    async run({ interaction, options, i18n }) {
+    async run({ client, interaction, options, i18n }) {
         const difficulty = options.getString("difficulte")
         const board = await sudoku.generate(difficulty)
         const grid = sudoku.board_string_to_grid(board)
@@ -165,6 +165,20 @@ export default class Sudoku extends Command {
                     const gameInfo = await genInfo({ grid, emotes, interaction, highlightedLine: playerInfo.line, highlightedColumn: playerInfo.column })
 
                     await button.deferUpdate()
+                    collector.stop()
+
+                    await client.functions.gameStats({ 
+                        data: client.data, 
+                        gameId: await client.functions.genGameId({ gameName: "sudoku", length: 30 }),
+                        guildOrChat: {
+                            type: "guild",
+                            data: interaction.guild
+                        },
+                        plateform: "discord", 
+                        user1: interaction.user,
+                        gameName: "sudoku", 
+                        winnerId: "solo"
+                    })    
 
                     const embed = new MessageEmbed()
                         .setTitle("Sudoku de " + interaction.user.username)

@@ -195,7 +195,21 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         if (opponentData.choice && userData.choice) {
             await collector.stop()
 
-            if (opponentData.choice === userData.choice) {
+            if (opponentData.choice === userData.choice) {  
+                await client.functions.gameStats({ 
+                    data: client.data, 
+                    gameId: await client.functions.genGameId({ gameName: "rockpaperscissors", length: 30 }),
+                    guildOrChat: {
+                        type: "guild",
+                        data: interaction.guild
+                    },
+                    plateform: "discord", 
+                    user1: userData,
+                    user2: opponentData,
+                    gameName: "rockpaperscissors", 
+                    winnerId: "equality"
+                })
+
                 const userChoice = i18n.__(`discord.rockpaperscissors.sign.${userData.choice}`)
                 const opponentChoice = i18n.__(`discord.rockpaperscissors.sign.${opponentData.choice}`)
 
@@ -206,6 +220,20 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
             } else {
                 const winner = win[opponentData.choice] === userData.choice ? opponentData : userData
                 const looser = win[opponentData.choice] === userData.choice ? userData : opponentData
+
+                await client.functions.gameStats({ 
+                    data: client.data, 
+                    gameId: await client.functions.genGameId({ gameName: "rockpaperscissors", length: 30 }),
+                    guildOrChat: {
+                        type: "guild",
+                        data: interaction.guild
+                    },
+                    plateform: "discord", 
+                    user1: userData,
+                    user2: opponentData,
+                    gameName: "rockpaperscissors", 
+                    winnerId: winner.id
+                })
 
                 const winnerChoice = i18n.__(`discord.rockpaperscissors.sign.${winner.choice}`)
                 const looserChoice = i18n.__(`discord.rockpaperscissors.sign.${looser.choice}`)
