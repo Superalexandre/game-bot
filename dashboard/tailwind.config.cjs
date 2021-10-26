@@ -32,12 +32,26 @@ module.exports = {
                     "100%": {
                         transform: "translateX(200%)"
                     }
+                },
+                hide: {
+                    to: {
+                        opacity: 0,
+                        display: "none",
+                        visibility: "hidden",
+                        height: "0px",
+                        width: "0px"
+                    },
+                    from: {
+                        height: "auto",
+                        width: "auto"
+                    }
                 }
             },
             animation: {
                 rotate360: "rotate360 0.6s both",
                 rightToLeft: "rightToLeft 2s ease",
-                leftToRight: "leftToRight 2s ease"
+                leftToRight: "leftToRight 2s ease",
+                hide: "hide 0.5s linear 3.5s forwards"
             },
             colors: {
                 blurple: {
@@ -70,20 +84,24 @@ module.exports = {
                 gray: {
                     DEFAULT: "#808080",
                     primary: "#37393F",
-                    secondary: "#202225"
+                    secondary: "#202225",
+                    third: "#4F545C"
                 },
                 white: {
                     DEFAULT: "#FFFFFF",
                     primary: "#FFFFFF",
-                    secondary: "#E3E5E8"
+                    secondary: "#E3E5E8",
+                    third: "#D3D7DB"
                 }
             }
         }
     },
     variants: {
         extend: {
-            display: ["dark"],
-            animation: ["hover", "group-hover"] 
+            animation: ["hover", "group-hover"],
+            blur: ["hover", "group-hover"],
+            borderRadius: ["hover", "group-hover"],
+            display: ["dark"]
         }
     },
     plugins: []
