@@ -261,9 +261,8 @@ async function init() {
 
             res.redirect("/")
         })
-        .use((error, _req, res) => {
-            console.log(error.statusCode)
-
+        // eslint-disable-next-line no-unused-vars
+        .use((error, _req, res, next) => {
             if (!error.statusCode) error.statusCode = 500
 
             if (error.statusCode === 301) {
@@ -272,7 +271,7 @@ async function init() {
         
             logger.error({ message: error.stack ?? error.toString() })
 
-            return res.status(500).json({ error: error.toString() })
+            return res?.status(500)?.json({ error: error.toString() })
         })
         .use(function(req, res) {
             req.app.locals.messages.push({
