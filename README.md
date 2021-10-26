@@ -47,6 +47,7 @@ A fun discord bot
 &emsp;=>✅ Notif
 &emsp;&emsp;=>✅ Space beetween
 &emsp;&emsp;=>✅ State
+&emsp;&emsp;=>✅ Auto remove notif
 🚧 Login
 &emsp;=>✅ Rework pour retirer passport-discord
 &emsp;=>🚧 Instagram
