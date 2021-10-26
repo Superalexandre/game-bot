@@ -6,3 +6,15 @@ html, body {
     margin: 0;
     height: 100%;
 }
+
+.gradient-instagram {
+    @apply bg-clip-text bg-gradient-to-r from-instagram-one via-instagram-three to-instagram-six
+}
+
+.hover\:gradient-instagram:hover {
+    @apply bg-clip-text bg-gradient-to-r from-instagram-one via-instagram-three to-instagram-six
+}
+
+.dark .dark\:hover\:gradient-instagram:hover {
+    @apply bg-clip-text bg-gradient-to-r from-instagram-one via-instagram-three to-instagram-six
+}
