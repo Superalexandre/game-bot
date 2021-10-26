@@ -47,11 +47,6 @@ function getTextColor(type) {
                 <span class="font-semibold mr-2 text-left flex-auto">
                     <%= message.message %>
                 </span>
-                <!--
-                <button class="remove-notif id-<%= i %> font-semibold mr-2 text-left flex-auto hover:<%= getTextColor(message.type) %>">
-                    <i class="fas fa-times"></i>
-                </button>
-                -->
             </div>
         </div>
     <% }) %> 
@@ -73,20 +68,4 @@ function getTextColor(type) {
             div.remove()
         })
     }
-
-    /*
-    document.querySelectorAll(".remove-notif").forEach(button => {
-        button.addEventListener("click", async(click) => {
-            const classList = button.className.split(" ")
-            const idToRemove = classList.find(className => className.startsWith("id-")).split("-")[1]
-            const notifButton = document.querySelector(`.notif-${idToRemove}`)
-
-            notifButton.classList.add("animate-leftToRight")
-            
-            await sleep(2000)
-            
-            notifButton.remove()
-        })
-    })
-    */
 </script>
