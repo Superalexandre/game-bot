@@ -48,6 +48,11 @@ A fun discord bot
 &emsp;&emsp;=>✅ Space beetween
 &emsp;&emsp;=>✅ State
 &emsp;&emsp;=>✅ Auto remove notif
+&emsp;=>❓ Navbar
+&emsp;&emsp;=> Texte en couleur et hover blanc
+&emsp;&emsp;&emsp;=> Texte en couleur random ?
+&emsp;&emsp;=> Texte en blanc hover en couleur
+&emsp;&emsp;&emsp;=> Hover en couleur random ?
 🚧 Login
 &emsp;=>✅ Rework pour retirer passport-discord
 &emsp;=>🚧 Instagram
