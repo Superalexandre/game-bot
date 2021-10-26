@@ -39,17 +39,19 @@ function getTextColor(type) {
 
         <% req.app.locals.messages = req.app.locals.messages.filter(msg => msg !== message) %>
 
-        <div class="notif-<%= i %> text-center ml-auto animate-rightToLeft">
-            <div class="p-2 <%= getBgColor(message.type) %> items-center text-white leading-none lg:rounded-full flex lg:inline-flex">
+        <div class="notif notif-<%= i %> text-center ml-auto animate-rightToLeft">
+            <div class="p-2 <%= getBgColor(message.type) %> items-center text-white leading-none flex lg:inline-flex">
                 <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
                     <i class="<%= getIcon(message.type) %>"></i>
                 </span>
                 <span class="font-semibold mr-2 text-left flex-auto">
                     <%= message.message %>
                 </span>
+                <!--
                 <button class="remove-notif id-<%= i %> font-semibold mr-2 text-left flex-auto hover:<%= getTextColor(message.type) %>">
                     <i class="fas fa-times"></i>
-                    </button>
+                </button>
+                -->
             </div>
         </div>
     <% }) %> 
@@ -60,17 +62,31 @@ function getTextColor(type) {
         return new Promise(resolve => setTimeout(resolve, ms))
     }
 
-    document.querySelectorAll(".remove-notif").forEach(button => {
-        button.addEventListener("click", async(click) => {
-            const classList = button.className.split(" ")
-        
-            const idToRemove = classList.find(className => className.startsWith("id-")).split("-")[1]
+    window.onload = () => {
+        document.querySelectorAll(".notif").forEach(async(div, index) => {
+            await sleep(5000 + index * 400)
 
-            document.querySelector(`.notif-${idToRemove}`).classList.add("animate-leftToRight")
+            div.classList.add("animate-leftToRight")
 
             await sleep(2000)
 
-            document.querySelector(`.notif-${idToRemove}`).remove()
+            div.remove()
+        })
+    }
+
+    /*
+    document.querySelectorAll(".remove-notif").forEach(button => {
+        button.addEventListener("click", async(click) => {
+            const classList = button.className.split(" ")
+            const idToRemove = classList.find(className => className.startsWith("id-")).split("-")[1]
+            const notifButton = document.querySelector(`.notif-${idToRemove}`)
+
+            notifButton.classList.add("animate-leftToRight")
+            
+            await sleep(2000)
+            
+            notifButton.remove()
         })
     })
+    */
 </script>
