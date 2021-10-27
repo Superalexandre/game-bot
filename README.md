@@ -40,7 +40,7 @@ A fun discord bot
     - [X] Space beetween
     - [X] State
     - [X] Auto remove notif
-  - ❓ Navbar
+  - [ ] ❓ Navbar
     - Texte en couleur et hover blanc
       => Texte en couleur random ?
     - Texte en blanc hover en couleur
