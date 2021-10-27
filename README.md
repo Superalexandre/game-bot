@@ -2,153 +2,142 @@
 
 A fun discord bot
 
-## Road map
+## Global
 
-✅ : Fini \
-❌ : Annuler \
-🚧 : En cours \
-❓ : Idée \
-❗ : Prioritaire \
-
-### Global
-
-✅ Mise a jour v13 discord.js
-✅ Unknown interaction bug
-✅ [En cours] Refaire les commandes en /
-✅ Event message
-✅ Traduction
-✅ Logger
-🚧 Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc)
-&emsp;=>✅ Crée les commandes
-&emsp;=>🚧 Modifier si changement
-🚧 Compte et base de données
-&emsp;=>✅ **GAME ID**
-&emsp;&emsp;=>✅ Add server or chat
-&emsp;&emsp;=>✅ Insta
-&emsp;&emsp;=>✅ Discord
-&emsp;=>✅ Crée un compte
-&emsp;=>**❗ Merge compte**
-&emsp;=>✅ Ajouter stats
-&emsp;&emsp;=>✅ **Probleme** insta redémarrage = plus id = restockage
-&emsp;&emsp;=>✅ Donc il peut pas add les stats
-&emsp;=> 🚧 Commande profile
-&emsp;&emsp;=>🚧 Voir ses données stockés
-&emsp;&emsp;=>🚧 Supprimer un compte respect des données
-✅ Sentry, gitguardian
+- [X] Mise a jour v13 discord.js
+- [X] Unknown interaction bug
+- [X] [En cours] Refaire les commandes en /
+- [X] Event message
+- [X] Traduction
+- [X] Logger
+- [ ] Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc)
+  - [X] Crée les commandes
+  - [ ] Modifier si changement
+- [ ] Compte et base de données
+  - [X] **GAME ID**
+    - [X] Add server or chat
+    - [X] Insta
+    - [X] Discord
+  - [X] Crée un compte
+  - [ ] **Merge compte**
+  - [X] Ajouter stats
+  - [X] **Probleme** insta redémarrage = plus id = restockage
+    - [X] Donc il peut pas add les stats
+  - [ ] Commande profile
+    - [ ] Voir ses données stockés
+    - [ ] Supprimer un compte respect des données
+- [X] Sentry, gitguardian
 
 ### Site
 
-**❗ RGPD**
-✅ Thème blanc
-✅ Finir la nav bar
-🚧 Favico
-✅ Theme localstorage
-✅ Components
-&emsp;=>✅ Notif
-&emsp;&emsp;=>✅ Space beetween
-&emsp;&emsp;=>✅ State
-&emsp;&emsp;=>✅ Auto remove notif
-&emsp;=>❓ Navbar
-&emsp;&emsp;=> Texte en couleur et hover blanc
-&emsp;&emsp;&emsp;=> Texte en couleur random ?
-&emsp;&emsp;=> Texte en blanc hover en couleur
-&emsp;&emsp;&emsp;=> Hover en couleur random ?
-🚧 Login
-&emsp;=>✅ Rework pour retirer passport-discord
-&emsp;=>🚧 Instagram
-🚧 Page d'acceuil
+- [ ] **❗ RGPD**
+- [X] Thème blanc
+- [X] Finir la nav bar
+- [ ] Favico
+- [X] Theme localstorage
+- [X] Components
+  - [X] Notif
+    - [X] Space beetween
+    - [X] State
+    - [X] Auto remove notif
+  - ❓ Navbar
+    - Texte en couleur et hover blanc
+      => Texte en couleur random ?
+    - Texte en blanc hover en couleur
+      => Hover en couleur random ?
+- [ ] Login
+  - [X] Rework pour retirer passport-discord
+  - [ ] Instagram
+- [ ] Page d'acceuil
 
 ### Uno
 
-✅ Refaire en slash command
-✅ RemoveCard function ré ajouter dans la config
-✅ Pouvoir faire un retour (cartes spéciales)
-✅ Pouvoir jouer la carte piocher après avoir piocher
-✅ Si trop de carte faire deux, trois pages
-✅ Erreur page
-✅ Unknow interaction ??? interaction.editReply **(Double start)**
-🚧 GameData (70%)
-&emsp;✅ Probleme 1v1 changement de sens  
-&emsp;&emsp;=> ✅ Ajouter skip turn  
-&emsp;✅ Pouvoir jouer plusieurs cartes
-&emsp;&emsp;=> ✅ playersData[ id ].activesCard = []
-&emsp;&emsp;=> ✅ Button click -> push id -> Green
-&emsp;&emsp;=> ✅ If already click -> remove id -> Red
-&emsp;&emsp;=> ✅ Play button -> remove card -> last card = active
-&emsp;&emsp;=> ✅ Probleme switch quand on en joue plusieurs  
-&emsp;&emsp;=> ✅ Probleme skip quand on en joue plusieurs  
-&emsp;&emsp;=> ✅ Probleme carte changement de couleur et +4
-&emsp;&emsp;=> 🚧 Probleme une carte (deux ?) skip = null **(Unknown)**
-&emsp;&emsp;=> ✅ Probleme jouer plusieurs carte
-&emsp;✅ Pouvoir "surencherir" (+2, +4)
-&emsp;&emsp;=> ✅ Don't skip and disable color
-&emsp;&emsp;=> ✅ Passer son tour (et donc piocher) (CantPlayCard, button id)
-&emsp;&emsp;=> ✅ Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas
-&emsp;&emsp;=> ✅ Erreur lorsque la carte est un changement de couleur (Probleme avec le outbid)
-&emsp;❌ Refaire les messages
-&emsp;&emsp;=> Faire une fonction getMessage() avec erreur et config + historique
-&emsp;✅ Distribution des cartes spéciales
-&emsp;&emsp;=> If +2 add to first player and skip
-&emsp;&emsp;=> If switch color first player select
-&emsp;🚧 Pouvoir buffler au +4
-&emsp;&emsp;=> If disable = Error message
-&emsp;&emsp;=> If enable ask if player bluff
-&emsp;&emsp;&emsp;-> Yes but no => +6
-&emsp;&emsp;&emsp;-> Yes and yes => User +4
-🚧 GameStats
-🚧 Impossible d'undo le +4 quand il est séléctionner
-❌ Si piocher et qu'une carte peut etre jouer envoyer un avertissement
-✅ Gerer le end game
-🚧 Pouvoir personnalisé sa config (/profile config uno)
+- [X] Refaire en slash command
+- [X] RemoveCard function ré ajouter dans la config
+- [X] Pouvoir faire un retour (cartes spéciales)
+- [X] Pouvoir jouer la carte piocher après avoir piocher
+- [X] Si trop de carte faire deux, trois pages
+- [X] Erreur page
+- [X] Unknow interaction ??? interaction.editReply **(Double start)**
+- [ ] GameData (70%)
+  - [X] Probleme 1v1 changement de sens  
+    - [X] Ajouter skip turn  
+  - [X] Pouvoir jouer plusieurs cartes
+    - [X] playersData[ id ].activesCard = []
+    - [X] Button click -> push id -> Green
+    - [X] If already click -> remove id -> Red
+    - [X] Play button -> remove card -> last card = active
+    - [X] Probleme switch quand on en joue plusieurs  
+    - [X] Probleme skip quand on en joue plusieurs  
+    - [X] Probleme carte changement de couleur et +4
+    - [ ] Probleme une carte (deux ?) skip = null **(Unknown)**
+    - [X] Probleme jouer plusieurs carte
+  - [X] Pouvoir "surencherir" (+2, +4)
+    - [X] Don't skip and disable color
+    - [X] Passer son tour (et donc piocher) (CantPlayCard, button id)
+    - [X] Si le joueur n'a pas encore vue ses cartes le bouton "Je ne peux pas surencherir" n'apparait pas
+    - [X] Erreur lorsque la carte est un changement de couleur (Probleme avec le outbid)
+  - [X] Distribution des cartes spéciales
+    If +2 add to first player and skip
+    If switch color first player select
+  - [ ] Pouvoir buffler au +4
+    If disable = Error message
+    If enable ask if player bluff
+      -> Yes but no => +6
+      -> Yes and yes => User +4
+- [ ] GameStats
+- [ ] Impossible d'undo le +4 quand il est séléctionner
+- [X] Gerer le end game
+- [ ] Pouvoir personnalisé sa config (/profile config uno)
 
 ### Need test
 
-🚧 Probleme skip quand on en joue plusieurs (1v1 meme probleme ?)
-🚧 Probleme switch quand on en joue plusieurs
+- [ ] Probleme skip quand on en joue plusieurs (1v1 meme probleme ?)
+- [ ] Probleme switch quand on en joue plusieurs
 
 ### Puissance 4
 
-✅ Probleme trad placement impossible (puissance4.cantPlayHere)
-✅ Probleme start turn (mauvaise trad)
-✅ Opti gif (Probleme encoder : 1-2 secondes par frame)
-✅ Jouer contre le bot
-&emsp;=> Replay
+- [X] Probleme trad placement impossible (puissance4.cantPlayHere)
+- [X] Probleme start turn (mauvaise trad)
+- [X] Opti gif (Probleme encoder : 1-2 secondes par frame)
+- [X] Jouer contre le bot
+  - Replay
 
 ### Instagram
 
-✅ Message en attente => A ouvrir (ignorer si trop vieux)
-✅ Message non lu => A lire (ignorer, bot off)
-✅ Restructuration
+- [X] Message en attente => A ouvrir (ignorer si trop vieux)
+- [X] Message non lu => A lire (ignorer, bot off)
+- [X] Restructuration
 
 ### Tetris
 
-✅ Rotate (bizzare comment c'est fait on peu pas déplacer alors que si)
-✅ Arrow
-✅ **Place bottom**
-✅ Ajouter des fleches pour aller directement de l'autre coter
-✅ <https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4>
-✅ A test  
-🚧 Arreter sa partie
-&emsp;=> Pouvoir enregistrer ?
-🚧 GameStats
+- [X] Rotate (bizzare comment c'est fait on peu pas déplacer alors que si)
+- [X] Arrow
+- [X] **Place bottom**
+- [X] Ajouter des fleches pour aller directement de l'autre coter
+- [X] <https://cdn.discordapp.com/attachments/850790441703702589/866167196061532190/Penetris_Guide.mp4>
+- [X] A test  
+- [ ] Arreter sa partie
+  - Pouvoir enregistrer ?
+- [ ] GameStats
 
 ### Release
 
-✅ Logo
-🚧 Release (Prévue 16 janvier anniv Sudref)
+- [X] Logo
+- [ ] Release (Prévue 16 janvier anniv Sudref)
 
 ### Sodoku
 
-✅ <https://github.com/robatron/sudoku.js>
+- [X] <https://github.com/robatron/sudoku.js>
 
 ### Petit chevaux
 
-🚧 Rework
+- [ ] Rework
 
 ### Monopoly
 
-🚧 Todo complet
+- [ ] Todo complet
 
 ### Loup garou ?
 
-🚧 A reflechir
+- [ ] A reflechir
