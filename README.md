@@ -40,11 +40,8 @@ A fun discord bot
     - [X] Space beetween
     - [X] State
     - [X] Auto remove notif
-  - [ ] ❓ Navbar
-    - Texte en couleur et hover blanc
-      => Texte en couleur random ?
-    - Texte en blanc hover en couleur
-      => Hover en couleur random ?
+  - [X] ❓ Navbar
+    - Directe en couleur et refresh a chaque fois
 - [ ] Login
   - [X] Rework pour retirer passport-discord
   - [ ] Instagram
