@@ -281,10 +281,10 @@ async function init() {
 
             res.redirect("/")
         })
-        .listen(config.dashboard.port, (err) => {
+        .listen(config.dashboard.port.HTTP, (err) => {
             if (err) console.error(err)
 
-            logger.log({ message: "En ligne port " + config.dashboard.port })
+            logger.log({ message: "En ligne port " + config.dashboard.port.HTTP })
         })
 }
 
