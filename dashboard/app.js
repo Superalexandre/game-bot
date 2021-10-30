@@ -54,21 +54,17 @@ async function init() {
             next()
         })
         .get("/", function(req, res) {
-            req.app.locals.messages.push({
-                type: "info",
-                message: "Vous devez être connecter pour faire ceci"
-            }, {
-                type: "success",
-                message: "Vous devez être connecter pour faire ceci"
-            }, {
-                type: "warn",
-                message: "Vous devez être connecter pour faire ceci"
-            }, {
-                type: "error",
-                message: "Vous devez être connecter pour faire ceci"
-            })
-            
             res.render("index", {
+                req, res
+            })
+        })
+        .get("/terms", function(req, res) {
+            res.render("terms", {
+                req, res
+            })
+        })
+        .get("/privacy", function(req, res) {
+            res.render("privacy", {
                 req, res
             })
         })
@@ -130,6 +126,9 @@ async function init() {
             res.redirect("/login")
         })
         .get("/api/discord/invite", function(_req, res) {
+            res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
+        })
+        .get("/invite", function(_req, res) {
             res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
         })
         .get("/api/discord/login", function(_req, res) {
