@@ -17,12 +17,19 @@ export default class Ready {
 
         let slashCommandList = await commands.json()
         let commandList = client.commands
-        
-        if (!client.data.discord.bot.get("pendingCommand")) client.data.discord.bot.set("pendingCommand", [])
+        const botData = client.data.discord.bot
+
+        if (!botData.get("pendingCommand")) botData.set("pendingCommand", [])
 
         for (const [commandName, commandData] of commandList) {
             if (!commandData.config.enabled) continue
             if (slashCommandList.map(cmd => cmd.name).includes(commandName)) {
+                if (botData.includes("pendingCommand", commandData.help.name)) {
+                    const pendingCommands = botData.get("pendingCommand").filter((commandName) => commandName !== commandData.help.name)
+                    botData.set("pendingCommand", pendingCommands)
+
+                    client.logger.log({ message: `Commande ${commandData.help.name} supprimer des pendingCommands, crée avec succès !` })
+                }
                 //const slashCommand = slashCommandList.filter(cmd => cmd.name === commandName)[0]
                 
                 //applications/<my_application_id>/commands/<command_id>
@@ -31,7 +38,7 @@ export default class Ready {
                 continue
             }
 
-            if (client.data.discord.bot.includes("pendingCommand", commandData.help.name)) {
+            if (botData.includes("pendingCommand", commandData.help.name)) {
                 client.logger.warn({ message: `Commande ${commandData.help.name} introuvable mais dans pendingCommand` })
 
                 continue
@@ -70,14 +77,14 @@ export default class Ready {
                 }
             }
 
-            await createCommand(client, command, commandName)
+            await createCommand(client, command, commandName, botData)
         }
         
         client.logger.log({ message: `Client prêt (${client.user.username}#${client.user.discriminator})` })
     }
 }
 
-async function createCommand(client, command, commandName) {
+async function createCommand(client, command, commandName, botData) {
     client.logger.warn({ message: `La commande ${commandName} n'est pas enregistrer !` })
     
     const rep = await fetch(`${client.config.discord.apiURL}/applications/${client.config.discord.appId}/commands`, {
@@ -99,7 +106,7 @@ async function createCommand(client, command, commandName) {
 
     client.logger.log({ message: `Commande ${commandName} crée` })
 
-    client.data.discord.bot.push("pendingCommand", commandName)
+    botData.push("pendingCommand", commandName)
 
     return true
 }
