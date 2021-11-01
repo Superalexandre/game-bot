@@ -118,6 +118,29 @@ export default class Uno extends Command {
             }
         }
 
+        let gameData = {
+            config: {
+                firstSpecialCard: true,
+                multipleCard: true,
+                outbid: false,
+                bluffing: true
+            },
+            activeSpecialCard: {
+                type: null,
+                askedColor: null,
+                number: 0
+            },
+            card: cards,
+            players: []
+        }
+
+        if (gameData.config.outbid && gameData.config.bluffing) {
+            return await interaction.channel.send({
+                content: "Nous sommes désolé vous ne pouvez pas avoir le bluff et la surenchere d'activer",
+                components: []
+            })
+        }
+
         let players = [interaction.user]
 
         for (let i = 0; i < options.data.length; i++) {
@@ -134,27 +157,15 @@ export default class Uno extends Command {
             players.push(user)
         }
 
-        if (players.length < 1) return await interaction.channel.send("Ouh la la je ne sais pas comment vous avez fait pour être seul mais merci de contacter le support au plus vite !")
+        if (players.length <= 1) return await interaction.channel.send("Ouh la la je ne sais pas comment vous avez fait pour être seul mais merci de contacter le support au plus vite !")
 
         if (players.length > 10) return await interaction.channel.send("Aie aie aie, les parties de uno sont limiter a 10 joueurs")
 
         let msg = await interaction.channel.send(`Création de la partie avec ${players.length} joueurs\n${players.map(user => "• " + user.username).join("\n")}`)
 
-        const gameData = {
-            config: {
-                firstSpecialCard: true,
-                multipleCard: true,
-                outbid: true,
-                bluffing: true
-            },
-            activeSpecialCard: {
-                type: null,
-                askedColor: null,
-                number: 0
-            },
-            card: cards,
-            players: players
-        }
+        gameData.players = players
+
+        console.log(gameData)
 
         return await allPlayersReady({ client, interaction, msg, gameData, i18n, cards, players })
     }
