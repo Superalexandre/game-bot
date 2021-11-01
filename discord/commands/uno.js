@@ -161,6 +161,13 @@ export default class Uno extends Command {
             })
         }
 
+        if (gameData.config.multipleCard && gameData.config.bluffing) {
+            return await interaction.channel.send({
+                content: "Nous sommes désolé vous ne pouvez pas avoir le bluff et la possibilité de jouer plusieurs cartes",
+                components: []
+            })
+        }
+
         let players = [interaction.user]
 
         for (let i = 0; i < options.data.length; i++) {
@@ -244,7 +251,7 @@ export default class Uno extends Command {
         const seenCardComponent = new MessageActionRow().addComponents(seen_card)
 
         //* Buttons for +4 and switch color
-        const genColorsButtons = (type, id, disabledColor) => {
+        const genColorsButtons = (type, id, disabledColor = []) => {
             const red = new MessageButton()
                 .setStyle("PRIMARY")
                 .setLabel("Rouge")
@@ -638,7 +645,35 @@ export default class Uno extends Command {
                 await button.deferUpdate()
                 return await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
             }
-            
+
+            if (user.activeCard.map(card => card.split("_")[2].split("-")[0]).includes(cardId)) {
+                for (let i = 0; i < user.activeCard.length; i++) {
+                    const forCard = user.activeCard[i]
+                    const forCardData = forCard.split("_")
+                    const [forCardId, forCardColor] = forCardData[2].split("-")
+
+                    if (forCardId === cardId) {
+                        user.activeCard = await checkUserActiveCard(user, `special_${cardNumber}_${cardId}_${forCardColor}`)
+                    }
+                }
+
+                const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
+
+                await user?.reply?.editReply({
+                    content: "Voici vos cartes, faites gaffe a bien **garder** ce message !", 
+                    components: makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: false }),
+                    ephemeral: true
+                })
+
+                await msg.edit({
+                    content: mainText(playersData, user, actualCard),
+                    components: [ seenCardComponent ]
+                })
+
+                await button.deferUpdate()
+                return await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })    
+            }
+
             const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: true })
             const rows = makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: true })
 
