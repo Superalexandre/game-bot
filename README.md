@@ -78,10 +78,10 @@ A fun discord bot
     If +2 add to first player and skip
     If switch color first player select
   - [ ] Pouvoir buffler au +4
-    If disable = Error message
-    If enable ask if player bluff
-      -> Yes but no => +6
-      -> Yes and yes => User +4
+    - If disable = Error message
+    - If enable ask if player bluff
+      - -> Yes but no => +6
+      - -> Yes and yes => User +4
 - [ ] GameStats
 - [ ] Impossible d'undo le +4 quand il est séléctionner
 - [X] Gerer le end game
