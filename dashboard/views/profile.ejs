@@ -7,8 +7,44 @@
         <div>
             <%- include("utils/navbar") %> 
 
-            <div class="text-center">
-                <p>Bienvenue <%= req.session.user.username %></p>
+            <div>
+                <% req.session.user.profileData.plateformData.forEach(plateform => { %>
+                    <div class="<%= plateform.plateform %> dark:bg-gray-secondary bg-white-secondary m-8 rounded-3xl">
+                        <div class="text-center">
+                            <% if (plateform.plateform === "discord" && plateform.data.avatar) { %>
+                                <img class="my-0 mx-auto h-32 w-32" src="https://cdn.discordapp.com/avatars/<%= plateform.data.id %>/<%= plateform.data.avatar %>.png?size=128" />
+                            <% } else { %>
+                                <img class="my-0 mx-auto h-32 w-32" src="https://avatars.dicebear.com/api/bottts/<%= req.session.user.profileData.accountId %>.svg" />
+                            <% } %>
+
+                            <p class="dark:text-white text-dark">Profile <%= plateform.plateform %></p>
+                        </div>
+
+                        <div class="flex items-center justify-center my-1">
+                            <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
+                        </div>
+
+                        <div class="p-5">
+                            <p class="dark:text-white text-dark">Information sur le compte <span class="font-bold"><%= plateform.data.username %></span></p>
+                            <p class="dark:text-white text-dark">Identifiant unique : <%= req.session.user.profileData.accountId %></p>
+                            <p class="dark:text-white text-dark">Langue active : <%= req.session.user.profileData.lang.replace(/fr_FR/g, "Français") %> <a class="hover:text-white font-bold <%= "text-" + req.color %>" href="/lang">Changer</a></p>
+                            <p class="dark:text-white text-dark">Compte crée le <%= req.functions.formatDate({ date: req.session.user.profileData.createdTimestamp, locale: req.session.user.profileData.lang }) %></p>
+                            <p class="dark:text-white text-dark">Partie jouer sur 
+                                <% if (plateform.plateform === "discord") { %>
+                                    <span class="text-blurple">
+                                <% } else if (plateform.plateform === "instagram") { %>
+                                    <span class="text-transparent gradient-instagram">
+                                <% } else { %>
+                                    <span class="dark:text-white text-dark">
+                                <% } %>
+                            <%= plateform.plateform %></span> : 0</p>
+                        </div>
+                    </div>
+                <% }) %>
+                <div class="text-center">
+                    <a class="dark:text-white text-black block" href="/api/instagram/mergeAccount">Ajouter un compte instagram</a>
+                    <a class="dark:text-white text-black block" href="/api/discord/mergeAccount">Ajouter un compte discord</a>
+                </div>
             </div>
         </div>
     </body>
