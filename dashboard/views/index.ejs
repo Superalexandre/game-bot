@@ -10,11 +10,13 @@
             <%- include("utils/notif") %>
         
             <div>
-                <div class="text-center">
-                    <a href="/api/discord/invite" class="text-dark dark:text-white hover:text-blurple dark:hover:text-blurple block lg:inline-block lg:mx-5">
+                <div class="mt-10 text-center">
+                    <a href="/api/discord/invite" class="group text-dark dark:text-white hover:text-blurple dark:hover:text-blurple block lg:inline-block lg:mx-5">
+                        <i class="fab fa-discord group-hover:animate-rotate360"></i>
                         Ajoute le bot sur <span class="font-bold text-blurple">Discord</span>
                     </a>
                     <a href="https://www.instagram.com/sudrefb/" class="text-dark dark:text-white hover:gradient-instagram dark:hover:gradient-instagram hover:text-transparent dark:hover:text-transparent block lg:inline-block lg:mx-5">
+                        <i class="fab fa-instagram"></i>
                         Joue sur <span class="font-bold text-transparent gradient-instagram">Instagram</span>
                     </a>
                 </div>
@@ -46,26 +48,27 @@
                         </div>
                     </div>
                 </div>
+                <!--
                 <div class="flex items-center justify-center mb-10">
                     <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-11/12"></div>
                 </div>
                 <div class="text-xl text-center dark:text-white text-dark">
                     <p class="m-3">Statistiques sur <span class="text-blurple font-bold">Discord</span></p>
-                    <!-- flex items-center justify-center -->
                     <div class="block lg:flex items-center justify-center">
                         <div class="dark:text-white text-dark block lg:inline-block">
-                            <p>UN NOMBRE INCROYABLE DE SERVEUR</p>
+                            <p><span></%= req?.client?.servers?.cache?.size ?? "0" %></span> serveurs</p>
                         </div>
                         <div class="mx-3 w-0.5 h-3 dark:bg-white bg-dark hidden lg:inline-block">
                         </div>
                         <div class="dark:text-white text-dark block lg:inline-block">
-                            <p>UN NOMBRE DE PARTIES WOW</p>
+                            <p><span>< "0" %></span> utilisateurs</p>
                         </div>
                     </div>
                 </div>
                 <div>
                     <p>Statistiques sur Instagram</p>
                 </div>
+                -->
             </div>
         </div>
     </body>
