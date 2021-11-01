@@ -3,6 +3,8 @@ const logger = new Logger({
     mode: "compact",
     plateform: "Global"
 })
+import DateFns from "date-fns-tz"
+import { fr as fr_locale } from "date-fns/locale/index.js"
 
 async function deleteAccount({ data }) {
     data.users.forEach(async(content, id) => {
@@ -46,9 +48,9 @@ async function mergeAccount({ data, id1, id2 }) {
     const newAccount = account1.createdTimestamp < account2.createdTimestamp ? account1 : account2
     const deletedAccount = account1.createdTimestamp < account2.createdTimestamp ? account2 : account1
     
-    await data.users.push(newAccount.accountId, ...deletedAccount.achievement, "achievement", false)
-    await data.users.push(newAccount.accountId, ...deletedAccount.statistics, "statistics", false)
-    await data.users.push(newAccount.accountId, ...deletedAccount.plateformData, "plateformData", false)
+    if (deletedAccount.plateformData.length > 0) await data.users.push(newAccount.accountId, ...deletedAccount.plateformData, "plateformData")
+    if (deletedAccount.achievement.length > 0) await data.users.push(newAccount.accountId, ...deletedAccount.achievement, "achievement")
+    if (deletedAccount.statistics.length > 0) await data.users.push(newAccount.accountId, ...deletedAccount.statistics, "statistics")
 
     await data.users.delete(deletedAccount.accountId)
 
@@ -139,11 +141,33 @@ function genGameId({ gameName = "", length = 30 }) {
     return random
 }
 
+function formatDate({ date, locale, timezone }) {
+    if (!date) date = Date.now()
+    if (!locale) locale = "fr_FR"
+    if (!timezone) timezone = "Europe/Paris"
+
+    const config = {
+        "fr_FR": {
+            "at": "à",
+            "locale": fr_locale
+        }
+    }
+
+
+    const dateZonedTime = DateFns.utcToZonedTime(date, timezone)
+
+    return DateFns.format(dateZonedTime, `EEEE dd LLLL yyyy '${config[locale].at}' pp`, {
+        timeZone: timezone,
+        locale: config[locale].locale
+    })
+}
+
 export default {
     createAccount,
     deleteAccount,
     genId,
     genGameId,
     gameStats,
-    mergeAccount
+    mergeAccount,
+    formatDate
 }
