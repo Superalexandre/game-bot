@@ -6,7 +6,7 @@ export default class Uno extends Command {
     constructor(client) {
         super(client, {
             name: "uno",
-            description: "Jouer au uno facilement avec vos amis !",
+            description: "[Bêta] Jouer au uno facilement avec vos amis !",
             options: [
                 {
                     type: "USER",
@@ -45,8 +45,7 @@ export default class Uno extends Command {
                     required: false
                 }
             ],
-            directory: import.meta.url,
-            enabled: false
+            directory: import.meta.url
         })
     }
 
