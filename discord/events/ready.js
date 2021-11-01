@@ -19,27 +19,45 @@ export default class Ready {
         let commandList = client.commands
         const botData = client.data.discord.bot
 
-        if (!botData.get("pendingCommand")) botData.set("pendingCommand", [])
+        if (!botData.get("pendingCommands")) botData.set("pendingCommands", [])
 
         for (const [commandName, commandData] of commandList) {
             if (!commandData.config.enabled) continue
-            if (slashCommandList.map(cmd => cmd.name).includes(commandName)) {
-                if (botData.includes("pendingCommand", commandData.help.name)) {
-                    const pendingCommands = botData.get("pendingCommand").filter((commandName) => commandName !== commandData.help.name)
-                    botData.set("pendingCommand", pendingCommands)
 
-                    client.logger.log({ message: `Commande ${commandData.help.name} supprimer des pendingCommands, crée avec succès !` })
+            const pendingCommands = botData.get("pendingCommands")
+            const ONE_HOUR_IN_MILISECONDES = 1 * 60 * 60 * 1000
+            const type = slashCommandList.map(cmd => cmd.name).includes(commandName) ? "update" : "create"
+
+            if (type === "update") {
+                const slashCommand = slashCommandList.filter(cmd => cmd.name === commandName)[0]
+                let { description, name } = slashCommand
+
+                if (description === commandData.help.description && name === commandData.help.name) {
+                    client.logger.log({ message: `${commandName} synchro !` })
+             
+                    continue
                 }
-                //const slashCommand = slashCommandList.filter(cmd => cmd.name === commandName)[0]
-                
-                //applications/<my_application_id>/commands/<command_id>
-                //TODO : Check name, desc
-                
-                continue
             }
 
-            if (botData.includes("pendingCommand", commandData.help.name)) {
-                client.logger.warn({ message: `Commande ${commandData.help.name} introuvable mais dans pendingCommand` })
+            if (pendingCommands.length > 0 && pendingCommands.find(cmdData => cmdData.name === commandName)) {
+                const cmdData = botData.get("pendingCommands", commandName)
+
+                if (!cmdData) {
+                    client.logger.warn({ message: `Data introuvable pour la commande ${commandName} dans pendingCommands` })
+                
+                    continue
+                } 
+
+                if (Date.now() - cmdData.edit > ONE_HOUR_IN_MILISECONDES) {
+                    const pendingCommands = botData.get("pendingCommands").filter((commandName) => commandName !== commandData.help.name)
+                    botData.set("pendingCommands", pendingCommands)
+
+                    client.logger.log({ message: `Commande ${commandData.help.name} supprimer des pendingCommands, crée avec succès !` })
+                
+                    continue
+                }
+
+                client.logger.warn({ message: `Commande ${commandData.help.name} en attente dans pendingCommands` })
 
                 continue
             }
@@ -77,7 +95,13 @@ export default class Ready {
                 }
             }
 
-            await createCommand(client, command, commandName, botData)
+            if (type === "create") {
+                await createCommand(client, command, commandName, botData)
+            } else if (type === "update") {
+                const slashCommand = slashCommandList.filter(cmd => cmd.name === commandName)[0]
+                
+                await updateCommand(client, command, commandName, slashCommand.id, botData)
+            }
         }
         
         client.logger.log({ message: `Client prêt (${client.user.username}#${client.user.discriminator})` })
@@ -106,7 +130,41 @@ async function createCommand(client, command, commandName, botData) {
 
     client.logger.log({ message: `Commande ${commandName} crée` })
 
-    botData.push("pendingCommand", commandName)
+    botData.push("pendingCommands", {
+        name: commandName,
+        edit: Date.now()
+    })
+
+    return true
+}
+
+
+async function updateCommand(client, command, commandName, commandId, botData) {
+    client.logger.warn({ message: `La commande ${commandName} n'est pas synchroniser` })
+    
+    const rep = await fetch(`${client.config.discord.apiURL}/applications/${client.config.discord.appId}/commands/${commandId}`, {
+        method: "PATCH",
+        body: JSON.stringify(command),
+        headers: {
+            "Authorization": "Bot " + client.config.discord.token,
+            "Content-Type": "application/json"
+        }
+    })
+    
+    const jsonRep = await rep.json()
+
+    if (jsonRep?.message === "You are being rate limited.") {
+        client.logger.warn({ message: `Commande ${commandName} non mise a jour ratelimit (${jsonRep.retry_after} secondes)` })
+
+        return false
+    }
+
+    client.logger.log({ message: `Commande ${commandName} mis a jour` })
+
+    botData.push("pendingCommands", {
+        name: commandName,
+        edit: Date.now()
+    })
 
     return true
 }
