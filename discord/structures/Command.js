@@ -14,7 +14,7 @@ export class Command {
         enabled = true,
         //ownerOnly = false,
         //slowmode = 3,
-        options = null,
+        options = undefined,
 
         /*
         {
