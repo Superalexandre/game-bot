@@ -15,7 +15,7 @@ A fun discord bot
   - [X] Si il rdm beaucoup de fois il va recreer a chaque fois
     - [X] Base de données ? pendingCommand
     - [X] Puis remove dans pendingCommand une fois crée
-  - [ ] Modifier si changement
+  - [X] Modifier si changement
 - [ ] Compte et base de données
   - [X] **GAME ID**
     - [X] Add server or chat
@@ -27,8 +27,10 @@ A fun discord bot
   - [X] **Probleme** insta redémarrage = plus id = restockage
     - [X] Donc il peut pas add les stats
   - [ ] Commande profile
-    - [ ] Voir ses données stockés
-    - [ ] Supprimer un compte respect des données
+    - [ ] Voir ses stats
+    - [ ] Voir ses configs par jeux (uno, tetris -> save ?)
+    - [ ] Voir ses données stockés => Sur le site
+    - [ ] Supprimer un compte respect des données => Sur le site
 - [X] Sentry, gitguardian
 
 ### Site
@@ -133,13 +135,14 @@ A fun discord bot
 
 - [X] <https://github.com/robatron/sudoku.js>
 
-### Petit chevaux
-
-- [ ] Rework
-
 ### Monopoly
 
 - [ ] Todo complet
+  - [ ] Avoir un plateau qui peut changer (Noel, Halloween ou evenement spécial)
+
+### Petit chevaux
+
+- [ ] Rework
 
 ### Loup garou ?
 
