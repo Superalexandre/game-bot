@@ -12,6 +12,9 @@ A fun discord bot
 - [X] Logger
 - [ ] Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc)
   - [X] Crée les commandes
+  - [ ] Si il rdm beaucoup de fois il va recreer a chaque fois
+    - [ ] Base de données ? pendingCommand
+    - [ ] Puis remove dans pendingCommand une fois crée
   - [ ] Modifier si changement
 - [ ] Compte et base de données
   - [X] **GAME ID**
@@ -84,7 +87,7 @@ A fun discord bot
       - [X] Yes and yes => User +4
 - [ ] i18n
 - [ ] GameStats
-- [ ] Impossible d'undo le +4 quand il est séléctionner
+- [X] Impossible d'undo le +4 quand il est séléctionner
 - [X] Gerer le end game
 - [X] Pouvoir personnalisé sa config (/profile config uno) **Global => Commande profile**
 
