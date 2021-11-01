@@ -49,6 +49,7 @@ export default class messageCreate {
             userData = newAccount.account
         }
 
+        message.author.account = userData
         i18n.setLocale(userData.lang ?? "fr_FR")
 
         await message.markSeen()

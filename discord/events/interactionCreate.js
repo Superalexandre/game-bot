@@ -35,6 +35,8 @@ export default class interactionCreate {
             userData = newAccount.account
         }
 
+        interaction.user.account = userData
+
         i18n.setLocale(userData.lang ?? "fr_FR")
 
         const cmd = client.commands.get(interaction.commandName) || client.commands.get(client.aliases.get(interaction.commandName))
