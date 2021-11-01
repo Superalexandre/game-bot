@@ -13,6 +13,8 @@ export default class interactionCreate {
         if (interaction.isButton()) await client.emit("clickButton", interaction)
         if (!interaction.isCommand()) return
 
+        await interaction.user.fetch()
+
         let userData = await data.users.find(user => user.plateformData.find(data => data.plateform === "discord" && data.data.id === interaction.user.id))
 
         if (!userData) {
