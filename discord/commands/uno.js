@@ -43,9 +43,30 @@ export default class Uno extends Command {
                     name: "adversaire6",
                     description: "Saisissez un utilisateur afin de jouer contre lui",
                     required: false
+                }, {
+                    type: "USER",
+                    name: "adversaire7",
+                    description: "Saisissez un utilisateur afin de jouer contre lui",
+                    required: false
+                }, {
+                    type: "USER",
+                    name: "adversaire8",
+                    description: "Saisissez un utilisateur afin de jouer contre lui",
+                    required: false
+                }, {
+                    type: "USER",
+                    name: "adversaire9",
+                    description: "Saisissez un utilisateur afin de jouer contre lui",
+                    required: false
+                }, {
+                    type: "USER",
+                    name: "adversaire10",
+                    description: "Saisissez un utilisateur afin de jouer contre lui",
+                    required: false
                 }
             ],
-            directory: import.meta.url
+            directory: import.meta.url,
+            enabled: false
         })
     }
 
@@ -362,8 +383,6 @@ export default class Uno extends Command {
                 const beforeTurn = turn - 1 >= 0 ? turn - 1 : turn + 1
                 const beforeUser = userTurn(beforeTurn)
 
-                console.log(cardId)
-
                 if (beforeUser.cards.map(card => card.split("_")[0]).includes(cardId)) {    
                     for (let i = 0; i < 4; i++) {
                         const drawCard = await genCard({ cards })
@@ -601,7 +620,7 @@ export default class Uno extends Command {
             }
         //* New color and add Four, color selector
         } else if (cardColor === "special" && ["newColor", "addFour"].includes(cardNumber)) {
-            if (user.cards.map(card => card.split("_")[0]).includes(actualCardColor)) {
+            if (!gameData.config.bluffing && user.cards.map(card => card.split("_")[0]).includes(actualCardColor)) {
                 const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
                 const rows = makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: false })
                     
@@ -900,8 +919,6 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
         components: makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: false }),
         ephemeral: true
     })
-
-    console.log(actualCard)
 
     await msg.edit({
         content: mainText(playersData, newTurn, actualCard),
