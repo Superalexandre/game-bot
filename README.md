@@ -12,9 +12,9 @@ A fun discord bot
 - [X] Logger
 - [ ] Systeme pour automatiquement verifier les commandes (les ajoutées, ou les mettres a jour desc etc)
   - [X] Crée les commandes
-  - [ ] Si il rdm beaucoup de fois il va recreer a chaque fois
-    - [ ] Base de données ? pendingCommand
-    - [ ] Puis remove dans pendingCommand une fois crée
+  - [X] Si il rdm beaucoup de fois il va recreer a chaque fois
+    - [X] Base de données ? pendingCommand
+    - [X] Puis remove dans pendingCommand une fois crée
   - [ ] Modifier si changement
 - [ ] Compte et base de données
   - [X] **GAME ID**
@@ -34,6 +34,8 @@ A fun discord bot
 ### Site
 
 - [ ] **❗ RGPD**
+  - [ ] Privacy
+  - [ ] TOS
 - [X] Thème blanc
 - [X] Finir la nav bar
 - [ ] Favico
