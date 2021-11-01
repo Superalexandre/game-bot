@@ -4,7 +4,7 @@
     const color = colors[Math.floor(Math.random() * colors.length)]
 %>
 <nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6 dark:bg-gray-secondary bg-white-secondary">
-    <div class="flex items-center flex-shrink-0 <%= color%> mr-6">
+    <div class="flex items-center flex-shrink-0 <%= "text-" + req.color%> mr-6">
         <a href="/" class="uppercase font-bold hover:text-black dark:hover:text-white">
             <img class="h-16 inline-block mr-6 align-middle" src="../public/img/logos/Logo.png" alt="Logo"/>
             
@@ -12,24 +12,24 @@
         </a>
     </div>
     <div class="block lg:hidden">
-        <button class="mobileButton flex items-center px-3 py-2 text-teal-200 border-teal-400 <%= color %> hover:text-dark dark:hover:text-white">
+        <button class="mobileButton flex items-center px-3 py-2 text-teal-200 border-teal-400 <%= "text-" + req.color %> hover:text-dark dark:hover:text-white">
             <i class="fas fa-bars "></i>
         </button>
     </div>
     <div class="mobileToHidden hidden w-full flex-grow lg:flex lg:items-center lg:w-auto">
         <div class="ml-auto text-center lg:text-justify">
             <% if (req.session.user) { %>
-                <a href="/statistics" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= color %> hover:text-dark dark:hover:text-white">
+                <a href="/statistics" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-dark dark:hover:text-white">
                     Statistiques
                 </a>
-                <a href="/profile" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= color %> hover:text-dark dark:hover:text-white">
+                <a href="/profile" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-dark dark:hover:text-white">
                     Profile
                 </a>
-                <a href="/api/discord/logout" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= color %> hover:text-dark dark:hover:text-white">
+                <a href="/api/discord/logout" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-dark dark:hover:text-white">
                     Se deconnecter
                 </a>
             <% } else { %>
-                <a href="/login" class="p-10 align-middle lg:p-0 block lg:inline-block uppercase font-bold <%= color %> hover:text-dark dark:hover:text-white">
+                <a href="/login" class="p-10 align-middle lg:p-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-dark dark:hover:text-white">
                     Se connecter
                 </a>
             <% } %>
