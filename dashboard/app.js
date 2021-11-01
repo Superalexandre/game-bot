@@ -287,8 +287,8 @@ async function init() {
         })
 }
 
-if (!config.dashboard.start) {
+if (config.dashboard.start) {
     init()
-} else logger.log({ message: "Le dashboard est deja actif" })
+} 
 
 export default init
