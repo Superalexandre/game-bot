@@ -56,7 +56,7 @@ A fun discord bot
 - [X] Si trop de carte faire deux, trois pages
 - [X] Erreur page
 - [X] Unknow interaction ??? interaction.editReply **(Double start)**
-- [ ] GameData (70%)
+- [ ] GameData
   - [X] Probleme 1v1 changement de sens  
     - [X] Ajouter skip turn  
   - [X] Pouvoir jouer plusieurs cartes
@@ -67,7 +67,7 @@ A fun discord bot
     - [X] Probleme switch quand on en joue plusieurs  
     - [X] Probleme skip quand on en joue plusieurs  
     - [X] Probleme carte changement de couleur et +4
-    - [ ] Probleme une carte (deux ?) skip = null **(Unknown)**
+    - [X] Probleme une carte (deux ?) skip = null
     - [X] Probleme jouer plusieurs carte
   - [X] Pouvoir "surencherir" (+2, +4)
     - [X] Don't skip and disable color
@@ -78,14 +78,14 @@ A fun discord bot
     If +2 add to first player and skip
     If switch color first player select
   - [ ] Pouvoir buffler au +4
-    - If disable = Error message
-    - If enable ask if player bluff
-      - -> Yes but no => +6
-      - -> Yes and yes => User +4
+    - [ ] If disable = Error message
+    - [X] If enable ask if player bluff
+      - [X] Yes but no => +6
+      - [X] Yes and yes => User +4
 - [ ] GameStats
 - [ ] Impossible d'undo le +4 quand il est séléctionner
 - [X] Gerer le end game
-- [ ] Pouvoir personnalisé sa config (/profile config uno)
+- [X] Pouvoir personnalisé sa config (/profile config uno) **Global => Commande profile**
 
 ### Need test
 
