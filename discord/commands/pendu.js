@@ -4,7 +4,7 @@ export default class Pendu extends Command {
     constructor(client) {
         super(client, {
             name: "pendu",
-            description: "Jouez au pendu !",
+            description: "Jouez au pendu facilement !",
             options: [
                 {
                     type: "STRING",
