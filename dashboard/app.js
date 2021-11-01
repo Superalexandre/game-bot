@@ -50,6 +50,10 @@ async function init() {
             if (!req.app.locals.messages) req.app.locals.messages = []
 
             req.data = data
+            req.functions = functions
+
+            const colors = ["red", "green", "blue", "yellow"]
+            req.color = colors[Math.floor(Math.random() * colors.length)]
 
             next()
         })
@@ -111,6 +115,29 @@ async function init() {
             res.render("login", {
                 req, res
             })
+        })
+        .get("/admin", async function(req, res) {
+            if (!req.session.user) {
+                req.app.locals.messages.push({
+                    type: "warn",
+                    message: "Vous devez être connecter pour faire ceci"
+                })
+
+                return res.redirect("/login")
+            }
+
+            if (!config.discord.ownerIds.includes(req.session.user.id) && !config.instagram.ownerIds.includes(req.session.user.id)) {
+                req.app.locals.messages.push({
+                    type: "error",
+                    message: "Vous n'êtes pas autoriser a faire ceci"
+                })
+
+                return res.redirect("/login")
+            }
+
+            const JSONdata = await req.data.users.export()
+            
+            res.send(JSONdata)
         })
         .get("/api/instagram/login", function(_req, res) {
             res.redirect("https://api.instagram.com/oauth/authorize?client_id=406440530945557&redirect_uri=http://localhost:3000/api/instagram/callback&scope=user_profile&response_type=code")
