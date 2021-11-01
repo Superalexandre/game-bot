@@ -165,8 +165,6 @@ export default class Uno extends Command {
 
         gameData.players = players
 
-        console.log(gameData)
-
         return await allPlayersReady({ client, interaction, msg, gameData, i18n, cards, players })
     }
 
@@ -357,6 +355,53 @@ export default class Uno extends Command {
         const cardId = id[id.length - 1]
 
         const [actualCardColor, actualCardNumber] = actualCard.split("_")
+
+        if (gameData.config.bluffing && gameData.activeSpecialCard.number > 0 && cardColor.startsWith("bluff")) {
+            const [id, isBluffing] = cardColor.split("-")
+
+            if (isBluffing === "yes") {
+                console.log(user.user.username)
+                //check if cardNumber includes color in user card
+                //true => +4
+                //false => +6
+
+            } else {
+                for (let i = 0; i < 4; i++) {
+                    const drawCard = await genCard({ cards })
+                
+                    user.cards.push(drawCard.generatedCard)   
+                }
+
+                actualCard = cardNumber
+
+                turn = switchTurn(playersData, turn, 1, clockwise)
+                user.isTurn = false
+
+                const newTurn = userTurn(turn)
+                newTurn.isTurn = true
+
+                const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
+
+                await button.deferUpdate()
+
+                gameData.activeSpecialCard.number = 0
+                gameData.activeSpecialCard.askedColor = null
+                gameData.activeSpecialCard.type = null
+
+                await user?.reply?.editReply({
+                    content: "Voici vos cartes, faites gaffe a bien **garder** ce message !", 
+                    components: makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: false }),
+                    ephemeral: true
+                })
+
+                await msg.edit({
+                    content: mainText(playersData, newTurn, actualCard),
+                    components: [ seenCardComponent ]
+                })
+            }
+
+            return await await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
+        }
 
         if (gameData.config.outbid && gameData.activeSpecialCard.number > 0) {
             if (cardColor === "cantOutbid") {
@@ -695,6 +740,41 @@ async function cardsPlayed({ user, button, client, gameId, interaction, msg, gam
                 components: rows,
                 ephemeral: true
             })
+        } else if (lastActiveCardNumber === "addFour" && gameData.config.bluffing) {
+            const [, askedColor] = lastActiveCardId.split("-")
+
+            gameData.activeSpecialCard.type = lastActiveCardNumber
+            gameData.activeSpecialCard.askedColor = askedColor
+            gameData.activeSpecialCard.number = gameData.activeSpecialCard.number + activeCardLength
+
+            actualCard = "special_addFour"
+
+            const nextTurn = switchTurn(playersData, turn, 1, clockwise)
+            const nextUserTurn = userTurn(nextTurn)
+            const nextTurnButtons = genButtons({ interaction, playersData, userId: nextUserTurn.user.id, gameId, actualCard, disable: true })
+            const rows = makeRows({ buttonsData: nextTurnButtons.buttons, gameData, page: nextUserTurn.page, interaction, gameId, disable: true })
+
+            const id = askedColor
+
+            const notBluffing = new MessageButton()
+                .setStyle("SUCCESS")
+                .setLabel(`${user.user.username} ne bluff pas (+4)`)
+                .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_bluff-no_${id}_0`)
+ 
+            const bluffing = new MessageButton()
+                .setStyle("DANGER")
+                .setLabel(`${user.user.username} bluff (+6 si il ne bluff pas, +4 pour lui si il bluff)`)
+                .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_bluff-yes_${id}_0`)
+
+            const componentsCantPlayButton = new MessageActionRow().addComponents(notBluffing, bluffing)
+
+            rows.push(componentsCantPlayButton)
+
+            await nextUserTurn?.reply?.editReply({
+                content: "Voici vos cartes, faites gaffe a bien **garder** ce message !", 
+                components: rows,
+                ephemeral: true
+            })
         } else {
             const [, askedColor] = lastActiveCardId.split("-")
             actualCard = askedColor
@@ -885,6 +965,7 @@ async function startGame({ client, gameId }) {
             ephemeral: true
         })
     
+        const game = client.games.uno.get(gameId)
         const id = button.customId.split("_")
 
         if (id[id.length - 2] === "seenCard") {
@@ -908,6 +989,25 @@ async function startGame({ client, gameId }) {
                 rows.push(componentsCantPlayButton)
             }
 
+            if (gameData.config.bluffing && gameData.activeSpecialCard.number > 0) {
+                const id = gameData.activeSpecialCard.askedColor
+                const beforeTurn = userTurn(game.turn - 1)
+
+                const notBluffing = new MessageButton()
+                    .setStyle("SUCCESS")
+                    .setLabel(`${beforeTurn.user.username} ne bluff pas (+4)`)
+                    .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_bluff-no_${id}_0`)
+
+                const bluffing = new MessageButton()
+                    .setStyle("DANGER")
+                    .setLabel(`${beforeTurn.user.username} bluff (+6 si il ne bluff pas, +4 pour lui si il bluff)`)
+                    .setCustomId(`game_uno_${interaction.user.id}_${gameId}_ephemeral_bluff-yes_${id}_0`)
+
+                const componentsCantPlayButton = new MessageActionRow().addComponents(notBluffing, bluffing)
+
+                rows.push(componentsCantPlayButton)
+            }
+
             await button.reply({
                 content: "Voici vos cartes, faites gaffe a bien **garder** ce message !",
                 components: rows,
@@ -915,6 +1015,7 @@ async function startGame({ client, gameId }) {
             })
 
             if (playersData[button.user.id]?.pendingButtons?.disable) playersData[button.user.id].pendingButtons = {}
+
             playersData[button.user.id].reply = button
 
             return true
