@@ -56,7 +56,7 @@ A fun discord bot
 - [X] Si trop de carte faire deux, trois pages
 - [X] Erreur page
 - [X] Unknow interaction ??? interaction.editReply **(Double start)**
-- [ ] GameData
+- [X] GameData
   - [X] Probleme 1v1 changement de sens  
     - [X] Ajouter skip turn  
   - [X] Pouvoir jouer plusieurs cartes
@@ -77,11 +77,12 @@ A fun discord bot
   - [X] Distribution des cartes spéciales
     If +2 add to first player and skip
     If switch color first player select
-  - [ ] Pouvoir buffler au +4
+  - [X] Pouvoir buffler au +4
     - [ ] If disable = Error message
     - [X] If enable ask if player bluff
       - [X] Yes but no => +6
       - [X] Yes and yes => User +4
+- [ ] i18n
 - [ ] GameStats
 - [ ] Impossible d'undo le +4 quand il est séléctionner
 - [X] Gerer le end game
