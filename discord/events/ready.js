@@ -18,6 +18,8 @@ export default class Ready {
         let slashCommandList = await commands.json()
         let commandList = client.commands
         
+        if (!client.data.discord.bot.get("pendingCommand")) client.data.discord.bot.set("pendingCommand", [])
+
         for (const [commandName, commandData] of commandList) {
             if (!commandData.config.enabled) continue
             if (slashCommandList.map(cmd => cmd.name).includes(commandName)) {
@@ -26,6 +28,12 @@ export default class Ready {
                 //applications/<my_application_id>/commands/<command_id>
                 //TODO : Check name, desc
                 
+                continue
+            }
+
+            if (client.data.discord.bot.includes("pendingCommand", commandData.help.name)) {
+                client.logger.warn({ message: `Commande ${commandData.help.name} introuvable mais dans pendingCommand` })
+
                 continue
             }
 
@@ -90,6 +98,8 @@ async function createCommand(client, command, commandName) {
     }
 
     client.logger.log({ message: `Commande ${commandName} crée` })
+
+    client.data.discord.bot.push("pendingCommand", commandName)
 
     return true
 }
