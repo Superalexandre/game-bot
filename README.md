@@ -41,7 +41,7 @@ A fun discord bot
   - [ ] TOS
 - [X] Thème blanc
 - [X] Finir la nav bar
-- [ ] Favico
+- [X] Favico
 - [X] Theme localstorage
 - [X] Components
   - [X] Notif
