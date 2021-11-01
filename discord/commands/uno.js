@@ -601,13 +601,29 @@ export default class Uno extends Command {
             }
         //* New color and add Four, color selector
         } else if (cardColor === "special" && ["newColor", "addFour"].includes(cardNumber)) {
+            if (user.cards.map(card => card.split("_")[0]).includes(actualCardColor)) {
+                const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: false })
+                const rows = makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: false })
+                    
+                await user?.reply?.editReply({
+                    content: "Voici vos cartes, faites gaffe a bien **garder** ce message !\nVous ne pouvez pas bluffer !", 
+                    components: rows,
+                    ephemeral: true
+                })
+
+                await msg.edit({
+                    content: mainText(playersData, user, actualCard),
+                    components: [ seenCardComponent ]
+                })
+
+                await button.deferUpdate()
+                return await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
+            }
+            
             const genButton = genButtons({ interaction, playersData, userId: button.user.id, gameId, actualCard, disable: true })
             const rows = makeRows({ buttonsData: genButton.buttons, gameData, page: user.page, interaction, gameId, disable: true })
 
-            const colorsFilter = user.cards.map(card => card.split("_")[0])
-            const filter = !gameData.config.bluffing && cardNumber !== "newColor" ? colorsFilter : []
-
-            const colors = genColorsButtons(cardNumber, cardId, filter)
+            const colors = genColorsButtons(cardNumber, cardId)
 
             rows.push(colors)
 
@@ -622,7 +638,6 @@ export default class Uno extends Command {
                 components: [ seenCardComponent ]
             })
 
-            
             await button.deferUpdate()
             return await client.games.uno.set(gameId, { interaction, msg, gameData, i18n, cards, players, playersData, turn, actualCard, clockwise })
         //* Not +4 and switch color
