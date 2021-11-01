@@ -31,10 +31,6 @@ const data = {
     }
 }
 
-data.users.changed((keyName, oldValue, newValue) => {
-    logger.log({ message: `Valeur changer ${keyName} (${oldValue} -> ${newValue})`, plateform: "Enmap" })
-})
-
 Sentry.init({
     dsn: config.sentry.dsn,
     release: "game-bot@1.0.0",
