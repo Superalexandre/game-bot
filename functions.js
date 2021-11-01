@@ -1,3 +1,9 @@
+import Logger from "./logger.js"
+const logger = new Logger({
+    mode: "compact",
+    plateform: "Global"
+})
+
 async function deleteAccount({ data }) {
     data.users.forEach(async(content, id) => {
         data.users.delete(id)
@@ -7,11 +13,11 @@ async function deleteAccount({ data }) {
 }
 
 async function createAccount({ data, lang = "fr_FR", plateformData = {} }) {
-    if (!data) new Error("No database provided")
+    if (!data) return { success: false, error: true, message: "No database provided" }
 
     const id = genId({ length: 30 })
 
-    if (data.users.has(id)) return new Error(`${id} already exists`)
+    if (data.users.has(id)) return { success: false, error: true, message: `${id} already exists` }
 
     await data.users.set(id, {
         accountId: id,
@@ -24,50 +30,42 @@ async function createAccount({ data, lang = "fr_FR", plateformData = {} }) {
 
     const account = data.users.get(id)
 
-    if (!account) {
-        new Error(`Account ${id} didn't create`)
+    if (!account) return { success: false, error: true, message: `Account ${id} didn't create` }
 
-        return { success: false, error: true, message: `Account ${id} didn't create` }
-    }
+    logger.log({ message: `Nouveau compte sur ${plateformData[0].plateform} (${id})` })
 
     return { success: true, error: false, account }
 }
 
 async function mergeAccount({ data, id1, id2 }) {
-    if (!data.users.has(id1) || !data.users.has(id2)) return new Error(`Provided id is not in database`)
+    if (!data.users.has(id1) || !data.users.has(id2)) return { success: false, error: true, message: "Provided id is not in database" }
 
     const account1 = await data.users.get(id1)
     const account2 = await data.users.get(id2)
 
-    const newAccount = account1.createdTimestamp > account2.createdTimestamp ? account1 : account2
-    const deletedAccount = account1.createdTimestamp > account2.createdTimestamp ? account2 : account1
+    const newAccount = account1.createdTimestamp < account2.createdTimestamp ? account1 : account2
+    const deletedAccount = account1.createdTimestamp < account2.createdTimestamp ? account2 : account1
+    
+    await data.users.push(newAccount.accountId, ...deletedAccount.achievement, "achievement", false)
+    await data.users.push(newAccount.accountId, ...deletedAccount.statistics, "statistics", false)
+    await data.users.push(newAccount.accountId, ...deletedAccount.plateformData, "plateformData", false)
 
-    //! TODO
+    await data.users.delete(deletedAccount.accountId)
 
-    await data.users.delete(deletedAccount.id)
+    logger.log({ message: `Merge account ${id1} + ${id2}` })
 
     return { success: true, error: false, newAccount }
 }
 
 async function gameStats({ data, plateform, user1, user2, gameName, winnerId, gameId, guildOrChat }) {
-    if (!user1.id || (user2 && !user2.id)) {
-        new Error("No id provided in user object")
-    
-        return { success: false, error: true, message: "No id provided in user object" }
-    }
+    if (!user1.id || (user2 && !user2.id)) return { success: false, error: true, message: "No id provided in user object" }
 
     const user1Data = await data.users.find(user => user.plateformData.find(data => data.plateform === plateform && data.data.id === user1.id))
     
     let user2Data
-    if (user2) {
-        user2Data = await data.users.find(user => user.plateformData.find(data => data.plateform === plateform && data.data.id === user2.id))
-    }
+    if (user2) user2Data = await data.users.find(user => user.plateformData.find(data => data.plateform === plateform && data.data.id === user2.id))
 
-    if (!user1Data || (!user2Data && user2)) {
-        new Error("No account found")
-
-        return { success: false, error: true, message: "No account found" }
-    }
+    if (!user1Data || (!user2Data && user2)) return { success: false, error: true, message: "No account found" }
 
     let user1Result 
     if (winnerId === "loose" || winnerId === user1.id) {
