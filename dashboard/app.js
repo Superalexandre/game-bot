@@ -171,7 +171,7 @@ async function init() {
             }
 
             if (!userData.infos) {
-                const response = await fetch("http://discordapp.com/api/users/@me", {
+                const response = await fetch("https://discordapp.com/api/users/@me", {
                     method: "GET",
                     headers: { 
                         Authorization: `Bearer ${token.access_token}` 
