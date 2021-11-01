@@ -287,8 +287,4 @@ async function init() {
         })
 }
 
-if (config.dashboard.start) {
-    init()
-} 
-
 export default init
