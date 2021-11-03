@@ -13,7 +13,7 @@ const logger = new Logger({
     plateform: "Discord"
 })
 
-export default async function init(data) {
+export default async function init({ data }) {
     client.data = data
     client.logger = logger
 

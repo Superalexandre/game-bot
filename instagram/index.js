@@ -8,7 +8,7 @@ const logger = new Logger({
     plateform: "Instagram"
 })
 
-export default async function init(data) {
+export default async function init({ data }) {
     const client = new Client()
     
     client.data = data
