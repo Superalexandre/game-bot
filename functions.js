@@ -1,10 +1,10 @@
 import Logger from "./logger.js"
+import DateFns from "date-fns-tz"
+import { fr as fr_locale } from "date-fns/locale/index.js"
 const logger = new Logger({
     mode: "compact",
     plateform: "Global"
 })
-import DateFns from "date-fns-tz"
-import { fr as fr_locale } from "date-fns/locale/index.js"
 
 async function deleteAccount({ data }) {
     data.users.forEach(async(content, id) => {
