@@ -73,15 +73,15 @@ i18n.configure({
 })
 
 if (config.discord.start) {
-    discordClient(data)
+    discordClient({ data })
 } else logger.warn({ plateform: "Discord", message: "Le bot discord n'est pas lancé" })
 
 if (config.instagram.start) {
-    instaClient(data)
+    instaClient({ data })
 } else logger.warn({ plateform: "Instagram", message: "Le bot instagram n'est pas lancé" })
 
 if (config.dashboard.start) {
-    dashboardInit()
+    dashboardInit({ data })
 } else logger.warn({ plateform: "Dashboard", message: "Le dashboard n'est pas lancé" })
 
 process.on("uncaughtException", (error) => {
