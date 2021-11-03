@@ -22,14 +22,14 @@ A fun discord bot
     - [X] Insta
     - [X] Discord
   - [X] Crée un compte
-  - [ ] **Merge compte**
-    - [ ] Terminer a test
+  - [ ] ⚠️ **Merge compte**
+    - [ ] ⚠️ A test
   - [X] Ajouter stats
   - [X] **Probleme** insta redémarrage = plus id = restockage
     - [X] Donc il peut pas add les stats
   - [ ] Commande profile
-    - [ ] Voir ses stats
-    - [ ] Voir ses configs par jeux (uno, tetris -> save ?)
+    - [ ] Voir ses stats => Sur le site
+    - [ ] Voir ses configs par jeux (uno, tetris -> save ?) => Site + Commande
     - [ ] Voir ses données stockés => Sur le site
     - [ ] Supprimer un compte respect des données => Sur le site
 - [X] Sentry, gitguardian
