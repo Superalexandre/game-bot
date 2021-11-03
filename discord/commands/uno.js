@@ -65,8 +65,7 @@ export default class Uno extends Command {
                     required: false
                 }
             ],
-            directory: import.meta.url,
-            enabled: false
+            directory: import.meta.url
         })
     }
 
