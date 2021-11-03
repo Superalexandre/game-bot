@@ -1,25 +1,25 @@
 {
 	"error": {
 		"missingTranslation": "Une erreur de traduction est servenue !",
-		"errorOccured": "Une erreur inconnu est survenue\n```{{error}}```",
+		"errorOccured": "Une erreur inconnue est survenue\n```{{error}}```",
 		"unknowCommand": "Cette commande est introuvable",
 		"invalidOpponent": "L'adversaire saisi est invalide !"
 	},
 	"discord": {
-		"noDescProvided": "Aucune description fourni",
-		"noUseProvided": "Aucun usage fourn",
+		"noDescProvided": "Aucune description fournie",
+		"noUseProvided": "Aucun usage fourni",
 		"noExampleProvided": "Aucun exemple fourni",
 		"global": {
 			"yes": "Oui",
 			"no": "Non",
-			"opponentReady": "<@{{userId}}> êtes-vous prêt(e) pour un {{gameName}}",
+			"opponentReady": "<@{{userId}}> es-tu prêt(e) pour un {{gameName}}",
 			"opponentNotReady": "{{username}} n'est pas prêt(e) pour un {{gameName}}",
-			"playWithBot": "Vous n'avez pas saisi d'adversaire voulez vous jouer contre moi ?",
+			"playWithBot": "Tu n'as pas saisi d'adversaire, veux-tu jouer contre moi ?",
 			"noPlayWithBot": "{{username}} ne veut pas jouer contre moi",
-			"notYourGame": "Désolé mais ce n'est pas votre partie ou votre tour, pour lancer une partie faites /{{gameName}}",
-			"notYourTurn": "Désole ce n'est pas encore a vous de jouer",
+			"notYourGame": "Désolé mais ce n'est pas ta partie ou ton tour, pour lancer une partie fais /{{gameName}}",
+			"notYourTurn": "Désolé, ce n'est pas encore à toi de jouer",
 			"gameOf": "Partie de : ",
-			"whoStart": "{{username}}, Qui doit commencer ?",
+			"whoStart": "{{username}}, qui doit commencer ?",
 			"start": {
 				"you": "Vous ({{username}})",
 				"opponent": "{{username}}",
@@ -28,7 +28,7 @@
 			"oppponentNotReady": "Une erreur de traduction est servenue !"
 		},
 		"rockpaperscissors": {
-			"mainText": "C'est le moment des choix ! (Attention après vous ne pouvez pas changé)\n\n{{userUsername}} {{userChoice}}\n{{opponentUsername}} {{opponentChoice}}",
+			"mainText": "C'est le moment des choix ! (Attention, après vous ne pourrez plus changer)\n\n{{userUsername}} {{userChoice}}\n{{opponentUsername}} {{opponentChoice}}",
 			"sign": {
 				"paper": "Feuille",
 				"rock": "Pierre",
@@ -40,16 +40,16 @@
 			}
 		},
 		"memory": {
-			"remember": "Partie de : {{username}}\nVous avez {{seconds}} secondes pour tout retenir...",
-			"clickNumber": "Partie de : {{username}}\nVous avez {{clickNumber}} cliques",
-			"win": "Bien joué {{username}} tu as gagner ! :tada:",
-			"loose": "Désolé {{username}} vous avez perdue !"
+			"remember": "Partie de : {{username}}\nTu as {{seconds}} secondes pour tout retenir...",
+			"clickNumber": "Partie de : {{username}}\nTu as {{clickNumber}} cliques",
+			"win": "Bien joué {{username}} tu as gagné ! :tada:",
+			"loose": "Désolé {{username}} tu as perdu !"
 		},
 		"morpion": {
 			"turn": "Tour de : {{username}} ({{emoji}})",
 			"result": {
-				"win": "Wow bien joué a {{winnerUsername}} ({{winnerEmoji}}) il a gagné !",
-				"equality": "Wow égalité bien joué a vous deux {{userUsername}} et {{opponentUsername}}"
+				"win": "Wow bien joué à {{winnerUsername}} ({{winnerEmoji}}) il a gagné !",
+				"equality": "Wow égalité bien joué à vous deux {{userUsername}} et {{opponentUsername}}"
 			}
 		},
 		"hangman": {
@@ -426,19 +426,19 @@
 				"gens"
 			],
 			"error": {
-				"noWordFound": "Une erruer est survenue aucun mot n'a été trouver",
-				"onlyLetters": "Uniquement les lettres sont acceptés",
-				"alreadySaid": "Vous avez deja dit cette lettre"
+				"noWordFound": "Une erruer est survenue aucun mot n'a été trouvé",
+				"onlyLetters": "Uniquement les lettres sont acceptées",
+				"alreadySaid": "Tu as déjà dit cette lettre"
 			},
-			"gameStop": "a arreter la partie, le mot était :",
-			"gameReady": "Votre partie est prête, pour arreter celle-ci vous pouvez dire `stop`, le mot qu'on cherche n'a pas d'accent !\nBon courage !",
+			"gameStop": "a arreté la partie, le mot était :",
+			"gameReady": "Ta partie est prête, pour arreter celle-ci tu peux dire `stop`, le mot que l'on cherche n'a pas d'accent !\nBon courage !",
 			"word": "Mot :",
-			"lettersSaid": "Lettre(s) deja dites",
+			"lettersSaid": "Lettre(s) déjà dites",
 			"noLetter": "aucune lettre",
 			"result": {
 				"win": {
-					"perfect": "Parfait ! {{username}} a trouver sans aucune erreur !",
-					"normal": "Bravo {{username}} a gagner !",
+					"perfect": "Parfait ! {{username}} a trouvé sans aucune erreur !",
+					"normal": "Bravo {{username}} a gagné !",
 					"word": "Le mot :"
 				},
 				"loose": "Oh non {{username}} a perdu\nLe mot était :"
@@ -446,13 +446,13 @@
 		},
 		"puissance4": {
 			"goingToStart": "va commencer",
-			"settingUp": "Veuillez patienter quelque seconde, le temps de la mise en place des réactions",
+			"settingUp": "Veuillez patienter quelque secondes, le temps de la mise en place des réactions",
 			"choice": "Choix",
 			"random": "Aléatoire",
 			"revange": "Revanche n°",
 			"turnOf": "Tour de :",
 			"error": {
-				"cantPlayHere": "Vous ne pouvez pas jouer ici",
+				"cantPlayHere": "Tu ne peux pas jouer ici",
 				"unknownError": "Erreur inconnu : "
 			},
 			"win": {
@@ -463,7 +463,7 @@
 				"and": "et",
 				"equality": "finissent sur une égalité :("
 			},
-			"wantRevange": "{{username}} veux une revanche ({{number}}/2)",
+			"wantRevange": "{{username}} veut une revanche ({{number}}/2)",
 			"noMoreRevange": "{{username}} ne veut plus de revanche",
 			"replay": {
 				"mainText": "Génération du replay veuillez patientez... Ceci peut prendre quelques minutes",
@@ -476,8 +476,8 @@
 		}
 	},
 	"insta": {
-		"noDescProvided": "Aucune description fourni",
-		"noUseProvided": "Aucun usage fourn",
+		"noDescProvided": "Aucune description fournie",
+		"noUseProvided": "Aucun usage fourni",
 		"noExampleProvided": "Aucun exemple fourni",
 		"eval": {
 			"description": "Permet d'executer du code",
@@ -491,18 +491,18 @@
 			"example": "{{prefix}}puissance4 sudrefb",
 			"error": {
 				"noUser": "Aucun utilisateur n'a été trouvé",
-				"noGroup": "Oh non vous devez être dans un groupe pour effectuer cette commande",
-				"sameUser": "Vous ne pouvez pas jouer contre vous meme !",
-				"bot": "Vous ne pouvez pas jouer contre moi",
+				"noGroup": "Oh non tu dois être dans un groupe pour effectuer cette commande",
+				"sameUser": "Tu ne peux pas jouer contre toi-même !",
+				"bot": "Tu ne peux pas jouer contre moi",
 				"notInGroup": "La personne doit être presente dans le groupe",
-				"alreadyGame": "Désolé @{{username}} une partie est deja en cours",
-				"cantPlayHere": "Vous ne pouvez pas jouer ici ",
+				"alreadyGame": "Désolé @{{username}} une partie est déjà en cours",
+				"cantPlayHere": "Tu ne peux pas jouer ici ",
 				"unknownError": "Erreur inconnue : "
 			},
-			"opponentReady": "@{{opponentUsername}} aimez ce message dès que vous êtes prêt(e)\n\n{{authorUsername}} si vous voulez annuler la demander liker ce message",
-			"userUndoGame": "{{authorUsername}} a annuler la demande de partie",
+			"opponentReady": "@{{opponentUsername}} like ce message dès que tu es prêt(e)\n\n{{authorUsername}} si tu veux annuler la demande, like ce message",
+			"userUndoGame": "{{authorUsername}} a annulé la demande de partie",
 			"turnOf": "Tour de :",
-			"gameStop": "{{authorUsername}} a décidé d'arreter la partie\nPeut etre un mauvais joueur ?",
+			"gameStop": "{{authorUsername}} a décidé d'arreter la partie\nPeut-être un mauvais joueur ?",
 			"result": {
 				"equality": "{{userDataUsername}} ({{userDataEmoji}}) et {{opponentDataUsername}} ({{opponentDataEmoji}}) finissent sur une égalité :(",
 				"win": "Wow bien joué {{winnerUsername}} ({{winnerEmoji}}) qui a gagné contre {{looserUsername}} ({{looserEmoji}})"
@@ -514,7 +514,7 @@
 			"example": "{{prefix}}help (puissance4)",
 			"title": "Informations sur la commande :",
 			"listTitle": "Liste des commandes :",
-			"noCommand": "Aucun commande trouvée pour {{commandName}}",
+			"noCommand": "Aucune commande trouvée pour {{commandName}}",
 			"alias": "Alias",
 			"desc": "Description",
 			"use": "Usage",
