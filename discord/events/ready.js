@@ -33,6 +33,17 @@ export default class Ready {
                 let { description, name } = slashCommand
 
                 if (description === commandData.help.description && name === commandData.help.name) {
+                    const cmdData = pendingCommands.find(cmdData => cmdData.name === commandName)
+
+                    if (cmdData) {
+                        const pendingCommands = botData.get("pendingCommands").filter((commandName) => commandName !== commandData.help.name)
+                        botData.set("pendingCommands", pendingCommands)
+    
+                        client.logger.log({ message: `Commande ${commandData.help.name} supprimer des pendingCommands, mis a jour !` })    
+                    
+                        continue
+                    }
+
                     client.logger.log({ message: `${commandName} synchro !` })
              
                     continue
@@ -40,7 +51,7 @@ export default class Ready {
             }
 
             if (pendingCommands.length > 0 && pendingCommands.find(cmdData => cmdData.name === commandName)) {
-                const cmdData = botData.get("pendingCommands", commandName)
+                const cmdData = pendingCommands.find(cmdData => cmdData.name === commandName)
 
                 if (!cmdData) {
                     client.logger.warn({ message: `Data introuvable pour la commande ${commandName} dans pendingCommands` })
