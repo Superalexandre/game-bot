@@ -8,7 +8,7 @@ import config from "../config.js"
 import functions from "../functions.js"
 import ejs from "ejs"
 import { fileURLToPath } from "url"
-import Enmap from "enmap"
+//import Enmap from "enmap"
 import fetch from "node-fetch"
 import btoa from "btoa"
 import Logger from "../logger.js"
@@ -18,15 +18,17 @@ const logger = new Logger({
     plateform: "Dashboard"
 })
 
-const data = {
+/*
+const CopyData = {
     users: new Enmap({ name: "users" }),
     games: new Enmap({ name: "games" }),
     discord: {
         bot: new Enmap({ name: "discordBot" })
     }
 }
+*/
 
-async function init() {
+async function init({ data }) {
     const app = express()
     const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -46,14 +48,34 @@ async function init() {
         }))
         .use(passport.initialize())
         .use(passport.session())
-        .use(function(req, _res, next) {
+        .use(async function(req, res, next) {
             if (!req.app.locals.messages) req.app.locals.messages = []
 
+            req.logger = logger
             req.data = data
             req.functions = functions
 
             const colors = ["red", "green", "blue", "yellow"]
             req.color = colors[Math.floor(Math.random() * colors.length)]
+            req.user = req.session.user
+            
+            if (req.session.user) {
+                const profileData = await data.users.get(req.user.profileData.accountId)
+                
+                if (!profileData) {
+                    req.user = null
+                    req.session.destroy()
+                    
+                    req.app.locals.messages.push({
+                        type: "error",
+                        message: "Votre profil n'a pas été trouvé, veuillez vous reconnecter."
+                    })
+
+                    return res.redirect("/")
+                }
+
+                req.session.user.profileData = profileData
+            }
 
             next()
         })
@@ -78,7 +100,7 @@ async function init() {
                     req, res
                 })
             } else {
-                if (!req.session.user) {
+                if (!req.user) {
                     req.app.locals.messages.push({
                         type: "warn",
                         message: "Vous devez être connecter pour faire ceci"
@@ -93,7 +115,7 @@ async function init() {
             }
         })
         .get("/statistics", function(req, res) {
-            if (!req.session.user) {
+            if (!req.user) {
                 req.app.locals.messages.push({
                     type: "warn",
                     message: "Vous devez être connecter pour faire ceci"
@@ -117,7 +139,7 @@ async function init() {
             })
         })
         .get("/admin", async function(req, res) {
-            if (!req.session.user) {
+            if (!req.user) {
                 req.app.locals.messages.push({
                     type: "warn",
                     message: "Vous devez être connecter pour faire ceci"
@@ -126,7 +148,7 @@ async function init() {
                 return res.redirect("/login")
             }
 
-            if (!config.discord.ownerIds.includes(req.session.user.id) && !config.instagram.ownerIds.includes(req.session.user.id)) {
+            if (!config.discord.ownerIds.includes(req.user.id) && !config.instagram.ownerIds.includes(req.user.id)) {
                 req.app.locals.messages.push({
                     type: "error",
                     message: "Vous n'êtes pas autoriser a faire ceci"
@@ -233,7 +255,7 @@ async function init() {
             const guilds = []
             for (const guildPos in userData.servers) guilds.push(userData.servers[guildPos])
 
-            let profileData = await data.users.find(user => user.plateformData.find(data => data.plateform === "discord" && data.data.id === userData.infos.id))
+            let profileData = await data.users.find(user => user.plateformData.find(uData => uData.plateform === "discord" && uData.data.id === userData.infos.id))
 
             if (!profileData) {
                 const newAccount = await functions.createAccount({
@@ -249,7 +271,7 @@ async function init() {
                 })
 
                 if (!newAccount.success) {
-                    req.session.user = undefined
+                    req.user = null
 
                     req.app.locals.messages.push({
                         type: "error",
@@ -263,7 +285,6 @@ async function init() {
             }
 
             req.session.user = { 
-
                 profileData,
 
                 ... userData.infos, 
@@ -279,6 +300,7 @@ async function init() {
         })
         .get("/api/discord/logout", async function(req, res) {
             req.session.destroy()
+            req.user = null
             
             req.app.locals.messages.push({
                 type: "success",
