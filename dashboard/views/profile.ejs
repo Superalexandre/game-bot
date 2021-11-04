@@ -8,50 +8,75 @@
             <%- include("utils/navbar") %> 
 
             <div>
-                <div class="dark:bg-gray-secondary bg-white-secondary m-8 rounded-3xl">
-                    <div class="text-center">
-                        <p class="dark:text-white text-dark font-bold text-xl">Informations globales</p>
-                    </div>
-                    <div class="flex items-center justify-center my-1">
-                        <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
-                    </div>
-                    <div class="p-5">
-                        <p class="dark:text-white text-dark">Identifiant unique : <%= req.user.profileData.accountId %></p>
-                        <p class="dark:text-white text-dark">Langue active : <%= req.user.profileData.lang.replace(/fr_FR/g, "Français") %> <a class="hover:text-white font-bold <%= "text-" + req.color %>" href="/lang">Changer</a></p>
-                        <p class="dark:text-white text-dark">Compte crée le <%= req.functions.formatDate({ date: req.user.profileData.createdTimestamp, locale: req.user.profileData.lang }) %></p>
-                    </div>
-                </div>
-                <% req.user.profileData.plateformData.forEach(plateform => { %>
-                    <div class="<%= plateform.plateform %> dark:bg-gray-secondary bg-white-secondary m-8 rounded-3xl">
+                <div class="group">
+                    <div class="dark:bg-gray-secondary bg-white-secondary m-8 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
                         <div class="text-center">
-                            <% if (plateform.plateform === "discord" && plateform.data.avatar) { %>
-                                <img class="my-0 mx-auto h-32 w-32" src="https://cdn.discordapp.com/avatars/<%= plateform.data.id %>/<%= plateform.data.avatar %>.png?size=128" />
-                            <% } else { %>
-                                <img class="my-0 mx-auto h-32 w-32" src="https://avatars.dicebear.com/api/bottts/<%= req.user.profileData.accountId %>.svg" />
-                            <% } %>
-
-                            <p class="dark:text-white text-dark">Profile <%= plateform.plateform %></p>
+                            <p class="dark:text-white text-black font-bold text-xl">Informations globales</p>
                         </div>
                         <div class="flex items-center justify-center my-1">
                             <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
                         </div>
                         <div class="p-5">
-                            <p class="dark:text-white text-dark">Information sur le compte <span class="font-bold"><%= plateform.data.username %></span></p>
-                            <p class="dark:text-white text-dark">Partie jouer sur 
-                                <% if (plateform.plateform === "discord") { %>
-                                    <span class="text-blurple">
-                                <% } else if (plateform.plateform === "instagram") { %>
-                                    <span class="text-transparent gradient-instagram">
+                            <p class="dark:text-white text-black break-words">Identifiant unique : <%= profileData.accountId %></p>
+                            <p class="dark:text-white text-black break-words">Langue active : <%= profileData.lang.replace(/fr_FR/g, "Français") %> <a class="hover:text-black dark:hover:text-white font-bold <%= "text-" + req.color %>" href="/lang">Changer</a></p>
+                            <p class="dark:text-white text-black break-words">Compte crée le <%= req.functions.formatDate({ date: profileData.createdTimestamp, locale: profileData.lang }) %></p>
+                        </div>
+                    </div>
+                </div>
+                <% plateformData.forEach(plateform => { %>
+                    <div class="group">
+                        <div class="<%= plateform.plateform %> dark:bg-gray-secondary bg-white-secondary m-8 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
+                            <div class="text-center">
+                                <% if (plateform.plateform === "discord" && plateform.data.avatar) { %>
+                                    <img class="my-0 mx-auto h-32 w-32" src="https://cdn.discordapp.com/avatars/<%= plateform.data.id %>/<%= plateform.data.avatar %>.png?size=128" />
                                 <% } else { %>
-                                    <span class="dark:text-white text-dark">
+                                    <img class="my-0 mx-auto h-32 w-32" src="https://avatars.dicebear.com/api/bottts/<%= profileData.accountId %>.svg" />
                                 <% } %>
-                            <%= plateform.plateform %></span> : <%= req.user.profileData.statistics.filter(pltf => pltf.plateform === plateform.plateform).length %></p>
+
+                                <p class="dark:text-white text-black">Profile <%= plateform.plateform %></p>
+                            </div>
+                            <div class="flex items-center justify-center my-1">
+                                <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
+                            </div>
+                            <div class="p-5">
+                                <p class="dark:text-white text-black">Information sur le compte <span class="font-bold"><%= plateform.data.username %></span></p>
+                                <p class="dark:text-white text-black">Partie jouer sur 
+                                    <% if (plateform.plateform === "discord") { %>
+                                        <span class="text-blurple">
+                                    <% } else if (plateform.plateform === "instagram") { %>
+                                        <span class="text-transparent gradient-instagram">
+                                    <% } else { %>
+                                        <span class="dark:text-white text-black">
+                                    <% } %>
+                                <%= plateform.plateform %></span> : <%= profileData.statistics.filter(pltf => pltf.plateform === plateform.plateform).length %></p>
+
+                                <% if (profileData.statistics.filter(pltf => pltf.plateform === plateform.plateform).length > 0) { %>
+                                    <% let games = profileData.statistics.filter(pltf => pltf.plateform === plateform.plateform) %>
+                                    <% let lastGame = profileData.statistics[games.length - 1] %>
+
+                                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/games/<%= lastGame.gameId.replace("game-", "") %>">Dernier partie (<%= lastGame.result %>) : <%= lastGame.gameName %><%= lastGame.versus && lastGame.versus !== "solo" ? ` | Contre : ${lastGame.versus.username}` : "" %></a>
+                                    
+                                    <% if (lastGame.guildOrChat && lastGame.guildOrChat.type === "guild") { %>
+                                        <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/server/<%= lastGame.guildOrChat.data.id %>">Sur le serveur : <%= lastGame.guildOrChat.data.name %></a>
+                                    <% } else if (lastGame.guildOrChat && lastGame.guildOrChat.type === "chat") { %>
+                                        <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/server/<%= lastGame %>">Data not found</a>
+                                    <% } else { %>
+                                        <p class="dark:text-white text-black">Aucun données sur ou a été éffectué la partie</p>
+                                    <% } %>
+                                <% } else { %>
+                                    <p class="dark:text-white text-black">Dernier partie : Aucune données enregistrer</p>
+                                <% } %>
+
+                            </div>
                         </div>
                     </div>
                 <% }) %>
-                <div class="text-center">
-                    <a class="dark:text-white text-black block" href="/api/instagram/mergeAccount">Ajouter un compte instagram</a>
-                    <a class="dark:text-white text-black block" href="/api/discord/mergeAccount">Ajouter un compte discord</a>
+                <div class="flex items-center justify-center mb-5">
+                    <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-10/12"></div>
+                </div>
+                <div class="flex flex-col items-center justify-center">
+                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black text-xl" href="/api/instagram/mergeAccount">Ajouter un compte Discord</a>
+                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black text-xl" href="/api/discord/mergeAccount">Ajouter un compte Instagram</a>
                 </div>
             </div>
         </div>
