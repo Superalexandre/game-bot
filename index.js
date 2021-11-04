@@ -72,17 +72,30 @@ i18n.configure({
     }
 })
 
-if (config.discord.start) {
-    discordClient({ data })
-} else logger.warn({ plateform: "Discord", message: "Le bot discord n'est pas lancé" })
+async function init() {
+    const clients = {
+        discord: null,
+        insta: null
+    }
 
-if (config.instagram.start) {
-    instaClient({ data })
-} else logger.warn({ plateform: "Instagram", message: "Le bot instagram n'est pas lancé" })
+    if (config.discord.start) {
+        const result = await discordClient({ data })
 
-if (config.dashboard.start) {
-    dashboardInit({ data })
-} else logger.warn({ plateform: "Dashboard", message: "Le dashboard n'est pas lancé" })
+        clients.discord = result
+    } else logger.warn({ plateform: "Discord", message: "Le bot discord n'est pas lancé" })
+
+    if (config.instagram.start) {
+        const result = await instaClient({ data })
+
+        clients.insta = result
+    } else logger.warn({ plateform: "Instagram", message: "Le bot instagram n'est pas lancé" })
+
+    if (config.dashboard.start) {
+        await dashboardInit({ data, clients })
+    } else logger.warn({ plateform: "Dashboard", message: "Le dashboard n'est pas lancé" })
+}
+
+init()
 
 process.on("uncaughtException", (error) => {
     return logger.error({ message: error })
