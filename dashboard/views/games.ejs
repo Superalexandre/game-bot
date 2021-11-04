@@ -9,40 +9,54 @@
 
             <div>
                 <div class="text-center">
-                    <%= console.log(game) %>
+                    <p class="dark:text-white text-black text-lg">Informations sur la partie <%= gameId %></p>
 
-                    <p class="dark:text-white text-black">Informations sur la partie <%= gameId %></p>
-
-                    <p class="dark:text-white text-black">Jeux : <%= game.gameName %></p>
+                    <p class="dark:text-white text-black text-lg">Jeux : <%= game.gameName %></p>
 
                     <% if (game.guildOrChat.type === "guild") { %>
-                        <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black" href="/server/<%= game.guildOrChat.data.id %>">Effectué sur le serveur <%= game.guildOrChat.data.name %></a>
+                        <a class="text-lg <%= "text-" + req.color %> dark:hover:text-white hover:text-black" href="/server/<%= game.guildOrChat.data.id %>">Effectué sur le serveur <%= game.guildOrChat.data.name %></a>
                     <% } else if (game.guildOrChat.type === "chat") { %>
-                        <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black" href="/chat/<%= game.guildOrChat.data.id %>"></a>
+                        <a class="text-lg <%= "text-" + req.color %> dark:hover:text-white hover:text-black" href="/chat/<%= game.guildOrChat.data.id %>"></a>
                     <% } %>
                     
-                    <p>Joué le <%= game.date %></p>
-                    <p>Gagnant : <%= game.result %></p>
+                    <p class="dark:text-white text-black text-lg">Joué le <%= req.functions.formatDate({ date: game.date }) %></p>
 
-                    <p>Participants</p>
+                    <% const winner = game.beetween.find(user => user.id === game.result) %>
+
+                    <p class="dark:text-white text-black text-lg">Gagnant : <%= winner.username %></p>
+
+                    <div class="flex items-center justify-center my-5">
+                        <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-10/12"></div>
+                    </div>
+
+                    <p class="dark:text-white text-black text-xl font-bold">Participants</p>
 
                     <div class="flex flex-row justify-center items-center flex-wrap md:flex-nowrap">
                         <% for (let i = 0; i < game.beetween.length; i++) { %>
                             <% const user = game.beetween[i] %>
                             <% const userData = req.data.users.find(u => u.plateformData.find(uData => uData.plateform === game.plateform && uData.data.id === user.id)) %>
+                            <% const plateformData = userData.plateformData.find(pData => pData.plateform === game.plateform) %>
 
                             <% if (!userData) { %>
                                 <p>Profile pour <%= user.username %> non trouvé</p>
                             <% } else { %>
                                 <a href="/profile/<%= userData.accountId %>" class="group w-80 m-3">
                                     <div class="dark:bg-gray-secondary bg-white-secondary rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
-                                        <% if (game.plateform === "discord" && user.avatar) { %>
-                                            <img class="my-0 mx-auto h-32 w-32" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png?size=128" />
+
+                                        <% if (game.plateform === "discord" && plateformData.data.avatar) { %>
+                                            <img class="my-0 mx-auto h-32 w-32" src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= plateformData.data.avatar %>.png?size=128" />
                                         <% } else { %>
                                             <img class="my-0 mx-auto h-32 w-32" src="https://avatars.dicebear.com/api/bottts/<%= userData.accountId %>.svg" />
                                         <% } %>
 
-                                        <p class="dark:text-white text-black <%= "group-hover:text-" + req.color %> <%= "dark:group-hover:text-" + req.color %>"><%= user.username %><%= req.user && req.user.id === user.id ? " (Vous)" : "" %></p>
+                                        <p class="dark:text-white text-black <%= "group-hover:text-" + req.color %> <%= "dark:group-hover:text-" + req.color %>">
+                                            <% if (user.id === winner.id) { %>
+                                                <i class="fas fa-award"></i>
+                                            <% } %>
+                                            
+                                            <%= user.username %>
+                                            <%= req.user && req.user.id === user.id ? " (Vous)" : "" %>
+                                        </p>
                                     </div>
                                 </a>
                             <% } %>
