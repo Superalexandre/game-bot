@@ -25,7 +25,7 @@ export default async function init({ data }) {
 
         for (let i = 0; i < events.length; i++)  {
             const eventClass = await import("./events/" + events[i])
-            const event = new eventClass.default(client)
+            const event = await new eventClass.default(client)
             const eventName = events[i].split(".")[0]
 
             client.logger.log({ message: `Event ${eventName} chargé` })
@@ -41,7 +41,7 @@ export default async function init({ data }) {
 
         for (let i = 0; i < commands.length; i++) {
             const commandClass = await import("./commands/" + commands[i])
-            const command = new commandClass.default(client)
+            const command = await new commandClass.default(client)
 
             client.logger.log({ message: `Commande ${command.help.name} chargée` })
 
@@ -61,4 +61,6 @@ export default async function init({ data }) {
     client.logger.log({ message: "Connexion en cours..." })
     await client.login(client.config.discord.token)
     client.logger.log({ message: "Connexion effectué" })
+
+    return client
 }
