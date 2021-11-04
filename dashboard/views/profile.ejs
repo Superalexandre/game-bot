@@ -52,14 +52,24 @@
 
                                 <% if (profileData.statistics.filter(pltf => pltf.plateform === plateform.plateform).length > 0) { %>
                                     <% let games = profileData.statistics.filter(pltf => pltf.plateform === plateform.plateform) %>
-                                    <% let lastGame = profileData.statistics[games.length - 1] %>
+                                    <% let lastGame = games[games.length - 1] %>
 
                                     <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/games/<%= lastGame.gameId.replace("game-", "") %>">Dernier partie (<%= lastGame.result %>) : <%= lastGame.gameName %><%= lastGame.versus && lastGame.versus !== "solo" ? ` | Contre : ${lastGame.versus.username}` : "" %></a>
                                     
                                     <% if (lastGame.guildOrChat && lastGame.guildOrChat.type === "guild") { %>
                                         <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/server/<%= lastGame.guildOrChat.data.id %>">Sur le serveur : <%= lastGame.guildOrChat.data.name %></a>
                                     <% } else if (lastGame.guildOrChat && lastGame.guildOrChat.type === "chat") { %>
-                                        <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/server/<%= lastGame %>">Data not found</a>
+                                        <a>
+                                            <!--
+
+                                                Hep hep qu'est ce que tu fais la ?
+
+                                                T'aimes bien ?
+
+                                                Ici logiquement tu peux acceder a la conversation, mais niveau confidientalité, c'est un peu bof.
+
+                                            -->
+                                        </a>
                                     <% } else { %>
                                         <p class="dark:text-white text-black">Aucun données sur ou a été éffectué la partie</p>
                                     <% } %>
