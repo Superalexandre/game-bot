@@ -20,16 +20,20 @@
         <div class="ml-auto text-center lg:text-justify">
             <% if (req.user) { %>
                 <a href="/statistics" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
+                    <i class="fas fa-chart-line"></i>
                     Statistiques
                 </a>
                 <a href="/profile" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
+                    <i class="fas fa-user"></i>
                     Profile
                 </a>
                 <a href="/api/discord/logout" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
+                    <i class="fas fa-sign-out-alt"></i>
                     Se deconnecter
                 </a>
             <% } else { %>
                 <a href="/login" class="p-10 align-middle lg:p-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
+                    <i class="fas fa-sign-in-alt"></i>
                     Se connecter
                 </a>
             <% } %>
