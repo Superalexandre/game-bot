@@ -211,7 +211,7 @@ async function startGame({ client, interaction, i18n, word }) {
                 data: client.data, 
                 gameId: await client.functions.genGameId({ gameName: "pendu", length: 30 }),
                 guildOrChat: {
-                    type: "chat",
+                    type: "guild",
                     data: interaction.guild
                 },
                 plateform: "discord", 
