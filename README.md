@@ -22,8 +22,8 @@ A fun discord bot
     - [X] Insta
     - [X] Discord
   - [X] Crée un compte
-  - [ ] ⚠️ **Merge compte**
-    - [ ] ⚠️ A test
+  - [X] ⚠️ **Merge compte**
+    - [X] ⚠️ A test
   - [X] Ajouter stats
   - [X] **Probleme** insta redémarrage = plus id = restockage
     - [X] Donc il peut pas add les stats
