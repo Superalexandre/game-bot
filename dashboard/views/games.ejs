@@ -21,10 +21,20 @@
                     
                     <p class="dark:text-white text-black text-lg">Joué le <%= req.functions.formatDate({ date: game.date }) %></p>
 
-                    <% const winner = game.beetween.find(user => user.id === game.result) %>
+                    <%
+                    let winner
+                    
+                    if (game.result !== "loose") {
+                        winner = game.beetween.find(user => user.id === game.result)
+                    } 
+                    %>
 
-                    <p class="dark:text-white text-black text-lg">Gagnant : <%= winner.username %></p>
-
+                    <% if (winner) { %>
+                        <p class="dark:text-white text-black text-lg">Gagnant : <%= winner.username %></p>
+                    <% } else { %>
+                        <p class="dark:text-white text-black text-lg">Gagnant : Aucun</p>
+                    <% } %>
+                    
                     <div class="flex items-center justify-center my-5">
                         <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-10/12"></div>
                     </div>
@@ -50,7 +60,7 @@
                                         <% } %>
 
                                         <p class="dark:text-white text-black <%= "group-hover:text-" + req.color %> <%= "dark:group-hover:text-" + req.color %>">
-                                            <% if (user.id === winner.id) { %>
+                                            <% if (user.id === winner?.id) { %>
                                                 <i class="fas fa-award"></i>
                                             <% } %>
                                             
