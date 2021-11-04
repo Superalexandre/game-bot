@@ -223,7 +223,7 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
     }
 
     await msg.edit({
-        content: `${userData.turn ? userData.username : opponentData.username} ${i18n.__("discord.puissance4.goingToStart")} (${starter.random ? i18n.__("discord.puissance4.random") : i18n.__("puissance4.choice")})\n${i18n.__("puissance4.settingUp")}`,
+        content: `${userData.turn ? userData.username : opponentData.username} ${i18n.__("discord.puissance4.goingToStart")} (${starter.random ? i18n.__("discord.puissance4.random") : i18n.__("discord.puissance4.choice")})\n${i18n.__("discord.puissance4.settingUp")}`,
         components: []
     })
 
