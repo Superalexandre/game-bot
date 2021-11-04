@@ -28,7 +28,7 @@ const CopyData = {
 }
 */
 
-async function init({ data }) {
+async function init({ data, clients }) {
     const app = express()
     const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -51,6 +51,8 @@ async function init({ data }) {
         .use(async function(req, res, next) {
             if (!req.app.locals.messages) req.app.locals.messages = []
 
+            req.instaClient = clients?.instaClient
+            req.discordClient = clients?.discord
             req.logger = logger
             req.data = data
             req.functions = functions
@@ -110,7 +112,11 @@ async function init({ data }) {
                 }
 
                 res.render("profile", {
-                    req, res
+                    req,
+                    res,
+                    user: req.user,
+                    profileData: req.user.profileData,
+                    plateformData: req.user.profileData.plateformData
                 })
             }
         })
@@ -129,8 +135,56 @@ async function init({ data }) {
             })
         })
         .get("/server/:id", function(req, res) {
+            const server = req.discordClient.guilds.cache.get(req.params.id)
+
+            if (!server) {
+                req.app.locals.messages.push({
+                    type: "error",
+                    message: "Le serveur n'a pas été trouvé"
+                })
+
+                return res.redirect("/")
+            }
+
             res.render("server", {
+                req, 
+                res,
+                server
+            })
+        })
+        .get("/chat/:id", function(req, res) {
+            const chat = req.instaClient.chats.get(req.params.id)
+
+            if (!chat) {
+                req.app.locals.messages.push({
+                    type: "error",
+                    message: "Le chat n'a pas été trouvé"
+                })
+
+                return res.redirect("/")
+            }
+
+            res.render("chat", {
                 req, res
+            })
+        })
+        .get("/games/:id", function(req, res) {
+            const game = req.data.games.get(req.params.id)
+
+            if (!game) {
+                req.app.locals.messages.push({
+                    type: "error",
+                    message: "Le jeu n'a pas été trouvé"
+                })
+
+                return res.redirect("/")
+            }
+
+            res.render("games", {
+                req, 
+                res,
+                game,
+                gameId: req.params.id
             })
         })
         .get("/login", function(req, res) {
