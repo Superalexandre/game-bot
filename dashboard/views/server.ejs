@@ -10,11 +10,48 @@
             <div>
                 <div class="text-center">
                     <p class="dark:text-white text-black">Information sur le serveur <%= server.name %> (<%= server.id %>)</p>
+                    <p class="dark:text-white text-black"><%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> parties jouées</p>
+                
+                    <% 
+                        let playedGame = {} 
+                        let countPlayerGame = {}
+                        let firstPlayedGame = null
+                        let lastPlayedGame = null
 
-                    <%= console.log(req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id)) %>
-                    <%= console.log(req.data.games) %>
+                        req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).forEach(game => {
+                            if (firstPlayedGame > game.date) firstPlayedGame = game.date
+                            if (lastPlayedGame < game.date) lastPlayedGame = game.date
+                            
+                            playedGame[game.gameName] = (playedGame[game.gameName] || 0) + 1
+                            
+                            for (let i = 0; i < game.beetween.length; i++) {
+                                let player, { id, username } = game.beetween[i]
 
-                    <p><%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> parties jouées</p>
+                                countPlayerGame[player.id].count = (countPlayerGame[player.id] || 0) + 1
+                                countPlayerGame[player.id].username = username
+                                //countPlayerGame[player.id].id = player.id
+                            }
+                        })
+
+                        //Get highest played game
+                        const highestPlayedGame = Object.keys(playedGame).reduce((a, b) => playedGame[a] > playedGame[b] ? a : b)
+                    
+                        //Get smaller played game
+                        const smallerPlayedGame = Object.keys(playedGame).reduce((a, b) => playedGame[a] < playedGame[b] ? a : b)
+
+                        //Get highest player game
+                        const highestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame.count[a] > countPlayerGame.count[b] ? a : b)
+                    
+                        //Get smallest player game
+                        const smallestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame.count[a] < countPlayerGame.count[b] ? a : b)
+                    %>
+
+                    <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green"></i> Jeux le plus jouer <%= highestPlayedGame %> avec <%= playedGame[highestPlayedGame] %> parties</p>
+                    <p class="dark:text-white text-black"><i class="fas fa-arrow-down text-red"></i> Jeux le moins jouer <%= smallerPlayedGame %> avec <%= playedGame[smallerPlayedGame] %> parties</p>
+                    <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green"></i> Joueur qui a le plus jouer <a href="/server"><%= highestPlayerGame.username %></a> avec <%= countPlayerGame[highestPlayerGame.id] %> parties</p>
+                    <p class="dark:text-white text-black"><i class="fas fa-arrow-down text-red"></i> Joueur qui a le moins jouer <a><%= smallestPlayerGame.username %></a> avec <%= countPlayerGame[smallestPlayerGame.id] %> parties</p>
+                    <p class="dark:text-white text-black">Premiere partie jouer <%= firstPlayedGame %></p>
+                    <p class="dark:text-white text-black">Derniere partie jouer <%= lastPlayedGame %></p>
                 </div>
             </div>
         </div>
