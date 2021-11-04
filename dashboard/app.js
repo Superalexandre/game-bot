@@ -153,7 +153,7 @@ async function init({ data, clients }) {
             })
         })
         .get("/chat/:id", function(req, res) {
-            const chat = req.instaClient.chats.get(req.params.id)
+            const chat = req.instaClient.chats.cache.get(req.params.id)
 
             if (!chat) {
                 req.app.locals.messages.push({
