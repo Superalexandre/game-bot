@@ -4,8 +4,6 @@ A fun discord bot
 
 ## Global
 
-Blablabla je test en faites voila voila blablabla
-
 - [X] Mise a jour v13 discord.js
 - [X] Unknown interaction bug
 - [X] [En cours] Refaire les commandes en /
