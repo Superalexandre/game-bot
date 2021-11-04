@@ -24,20 +24,19 @@ export default class Ready {
         for (const [commandName, commandData] of commandList) {
             if (!commandData.config.enabled) continue
 
-            const pendingCommands = botData.get("pendingCommands")
+            const pendingCommands = await botData.get("pendingCommands")
             const ONE_HOUR_IN_MILISECONDES = 1 * 60 * 60 * 1000
-            const type = slashCommandList.map(cmd => cmd.name).includes(commandName) ? "update" : "create"
+            const type = await slashCommandList.map(cmd => cmd.name).includes(commandName) ? "update" : "create"
 
             if (type === "update") {
-                const slashCommand = slashCommandList.filter(cmd => cmd.name === commandName)[0]
+                const slashCommand = await slashCommandList.filter(cmd => cmd.name === commandName)[0]
                 let { description, name } = slashCommand
 
                 if (description === commandData.help.description && name === commandData.help.name) {
-                    const cmdData = pendingCommands.find(cmdData => cmdData.name === commandName)
+                    const cmdData = await pendingCommands.find(cmdData => cmdData.name === commandName)
 
                     if (cmdData) {
-                        const pendingCommands = botData.get("pendingCommands").filter((commandName) => commandName !== commandData.help.name)
-                        botData.set("pendingCommands", pendingCommands)
+                        await botData.delete("pendingCommands", commandData.help.name)
     
                         client.logger.log({ message: `Commande ${commandData.help.name} supprimer des pendingCommands, mis a jour !` })    
                     
@@ -51,7 +50,7 @@ export default class Ready {
             }
 
             if (pendingCommands.length > 0 && pendingCommands.find(cmdData => cmdData.name === commandName)) {
-                const cmdData = pendingCommands.find(cmdData => cmdData.name === commandName)
+                const cmdData = await pendingCommands.find(cmdData => cmdData.name === commandName)
 
                 if (!cmdData) {
                     client.logger.warn({ message: `Data introuvable pour la commande ${commandName} dans pendingCommands` })
@@ -60,8 +59,7 @@ export default class Ready {
                 } 
 
                 if (Date.now() - cmdData.edit > ONE_HOUR_IN_MILISECONDES) {
-                    const pendingCommands = botData.get("pendingCommands").filter((commandName) => commandName !== commandData.help.name)
-                    botData.set("pendingCommands", pendingCommands)
+                    await botData.delete("pendingCommands", commandData.help.name)
 
                     client.logger.log({ message: `Commande ${commandData.help.name} supprimer des pendingCommands, crée avec succès !` })
                 
@@ -141,7 +139,7 @@ async function createCommand(client, command, commandName, botData) {
 
     client.logger.log({ message: `Commande ${commandName} crée` })
 
-    botData.push("pendingCommands", {
+    await botData.push("pendingCommands", {
         name: commandName,
         edit: Date.now()
     })
@@ -172,7 +170,7 @@ async function updateCommand(client, command, commandName, commandId, botData) {
 
     client.logger.log({ message: `Commande ${commandName} mis a jour` })
 
-    botData.push("pendingCommands", {
+    await botData.push("pendingCommands", {
         name: commandName,
         edit: Date.now()
     })
