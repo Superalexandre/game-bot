@@ -29,13 +29,21 @@ A fun discord bot
     - [X] Donc il peut pas add les stats
   - [ ] Commande profile
     - [ ] Voir ses stats => Sur le site
+
+    - Gestion des preferences (langue, theme, configs)
+
     - [ ] Voir ses configs par jeux (uno, tetris -> save ?) => Site + Commande
-    - [ ] Voir ses données stockés => Sur le site
-    - [ ] Supprimer un compte respect des données => Sur le site
+
+    - Section "Gestion du compte"
+
+    - [ ] Voir ses données stockés => Sur le site => Page profile
+    - [ ] Supprimer un compte respect des données => Sur le site => Page profile
 - [X] Sentry, gitguardian
 
 ### Site
 
+- [ ] Page serveur
+  - ? Faire une /server/id/images retourne l'image avec les stats ?
 - [ ] **❗ RGPD**
   - [ ] Privacy
   - [ ] TOS
