@@ -128,7 +128,7 @@ function genId({ length = 30 }) {
 }
 
 function genGameId({ gameName = "", length = 30 }) {
-    let random = `game-${gameName}-`
+    let random = `${gameName}-`
 
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
     const stringDate = Date.now().toString()
