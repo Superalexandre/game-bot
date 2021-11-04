@@ -7,8 +7,15 @@
         <div>
             <%- include("utils/navbar") %> 
 
-            <div class="text-center">
-                <p>Serveur id : <%= req.params.id %></p>
+            <div>
+                <div class="text-center">
+                    <p class="dark:text-white text-black">Information sur le serveur <%= server.name %> (<%= server.id %>)</p>
+
+                    <%= console.log(req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id)) %>
+                    <%= console.log(req.data.games) %>
+
+                    <p><%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> parties jouées</p>
+                </div>
             </div>
         </div>
     </body>
