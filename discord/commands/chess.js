@@ -36,13 +36,14 @@ async function opponentReady({ i18n, interaction, opponent, client }) {
     return startGame({ i18n, interaction, msg, opponent, client })
 }
 
-async function startGame({ i18n, interaction, msg, opponent, client }) {
+async function startGame({ interaction, msg, opponent }) {
     let userData = {
         username: interaction.user.username,
         id: interaction.user.id,
         turn: true,
         color: "w",
-        colorName: "white"
+        colorName: "white",
+        hexColor: "#FFFFFF"
     }
     
     let opponentData = {
@@ -50,14 +51,17 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         id: opponent.id,
         turn: false,
         color: "b",
-        colorName: "black"
+        colorName: "black",
+        hexColor: "#000000"
     }
 
+    /*
     const gameData = {
         date: Date.now(),
         players: [userData, opponentData],
         actions: []
     }
+    */
     
     const chess = new ChessModule()
     const pieces = {
@@ -82,7 +86,9 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
     const boardCanvas = await genBoard({ board: chess.board(), pieces })
 
     const embed = new MessageEmbed()
-        .setTitle("Echec test")
+        .setTitle(`Partie d'echec entre ${userData.username} et ${opponentData.username}`)
+        .setColor(userData.turn ? userData.hexColor : opponentData.hexColor)
+        .setDescription(`${userData.turn ? userData.username : opponentData.username} commence`)
         .setImage("attachment://chess.png")
 
     await msg.edit({
@@ -99,15 +105,16 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
     const collector = await interaction.channel.createMessageCollector({ filter })
 
     collector.on("collect", async(message) => {
-        const regex = /\b[A-H]{1}[1-9]{1};{1}[A-H]{1}[1-9]\b/gi
-        
+        const moveRegex = /\b[A-H]{1}[1-9]{1};{1}[A-H]{1}[1-9]\b/gi
+        const optionsRegex = /\b[A-H]{1}[1-9]{1}/gi
+
         let activeUser = userData.id === message.author.id ? userData : opponentData
         let opposite = userData.id === message.author.id ? opponentData : userData
 
         if (!activeUser.turn) return
 
         //Test message content with regex
-        if (regex.test(message.content)) {
+        if (moveRegex.test(message.content)) {
             const [from, to] = message.content.split(";")
 
             const piece = chess.get(from)
@@ -123,11 +130,44 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
             //Test if move is valid
             if (chess.move({ from, to })) {
 
+                opposite.turn = true
+                activeUser.turn = false
+
+                //Test if move is a capture
+                if (chess.get(to)) {
+                    const captured = chess.get(to)
+
+                    //Test if piece is a king
+                    if (captured.type === "k") {
+                        await msg.edit({
+                            content: `${opposite.username} a gagne la partie`,
+                            attachments: [],
+                            files: [],
+                            embeds: []
+                        })
+
+                        return collector.stop()
+                    }
+
+                    //Test if piece is a pawn
+                    if (captured.type === "p") {
+                        //Test if pawn is on the last rank
+                        if (captured.color === "w" && captured?.square?.charAt(1) === "8") {
+                            const queen = chess.put({ type: "q", color: captured.color }, to)
+
+                            chess.remove(captured)
+                            chess.put(queen, to)
+                        }
+                    }
+                }
+
                 //Edit embed image with new board
                 const boardCanvas = await genBoard({ board: chess.board(), pieces })
 
                 const embed = new MessageEmbed()
-                    .setTitle("Echec test 2")
+                    .setTitle(`Partie d'echec entre ${userData.username} et ${opponentData.username}`)
+                    .setColor(userData.turn ? userData.hexColor : opponentData.hexColor)
+                    .setDescription(`Au tour de ${userData.turn ? userData.username : opponentData.username}`)
                     .setImage("attachment://chess.png")
 
                 return await msg.edit({
@@ -141,14 +181,56 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
                 })
             }
         }
+   
+        if (optionsRegex.test(message.content)) {
+            const [pos] = message.content.split(";")
+            const moves = chess.moves({ square: pos })
+            
+            if (moves.length === 0) return await msg.edit({
+                content: `Aucun mouvement possible en ${pos}`
+            })
 
-        await msg.edit({
-            content: "Ce mouvement n'est pas valide"
+            const boardCanvas = await genBoard({ board: chess.board(), pieces, highlight: moves })
+
+            const embed = new MessageEmbed()
+                .setTitle(`Partie d'echec entre ${userData.username} et ${opponentData.username}`)
+                .setColor(userData.turn ? userData.hexColor : opponentData.hexColor)
+                .setDescription(`Au tour de ${userData.turn ? userData.username : opponentData.username}`)
+                .setImage("attachment://chess.png")
+
+            return await msg.edit({
+                content: null,
+                attachments: [],
+                files: [{
+                    attachment: boardCanvas.canvas.toBuffer(),
+                    name: "chess.png"
+                }],
+                embeds: [embed]
+            })
+        }
+
+        //Edit embed image with new board
+        const boardCanvas = await genBoard({ board: chess.board(), pieces })
+
+        const embed = new MessageEmbed()
+            .setTitle(`Partie d'echec entre ${userData.username} et ${opponentData.username}`)
+            .setColor(userData.turn ? userData.hexColor : opponentData.hexColor)
+            .setDescription(`Au tour de ${userData.turn ? userData.username : opponentData.username}`)
+            .setImage("attachment://chess.png")
+
+        return await msg.edit({
+            content: null,
+            attachments: [],
+            files: [{
+                attachment: boardCanvas.canvas.toBuffer(),
+                name: "chess.png"
+            }],
+            embeds: [embed]
         })
     })
 }
 
-async function genBoard({ board, pieces }) {
+async function genBoard({ board, pieces, highlight = [] }) {
     const size = 50
     const canvas = Canvas.createCanvas((board.length + 1) * size, (board.length + 1) * size)
     const ctx = canvas.getContext("2d")
@@ -186,12 +268,19 @@ async function genBoard({ board, pieces }) {
             //Get color
             let color
             if (i % 2 === 0) {
-                color = j % 2 === 0 ? "white" : "black"
+                color = j % 2 === 0 ? "#4F545C" : "#202225"
             } else {
-                color = j % 2 === 0 ? "black" : "white"
+                color = j % 2 === 0 ? "#202225" : "#4F545C"
             }
 
-            ctx.fillStyle = color === "black" ? "#202225" : "#4F545C"
+            //Highlight square
+            for (let k = 0; k < highlight.length; k++) {
+                if (highlight[k] === `${letters[j].toLocaleLowerCase()}${board.length - i}`) {
+                    color = "#E3E5E8"
+                }
+            }
+
+            ctx.fillStyle = color
             ctx.fillRect((j + 1) * size, (i + 1) * size, size, size)
 
             const pieceColor = board[i][j]?.color === "b" ? "black" : "white"
