@@ -115,21 +115,26 @@ async function startGame({ interaction, msg, opponent }) {
 
         //Test message content with regex
         if (moveRegex.test(message.content)) {
+            if (message.deleteable) await message.delete()
+
             const [from, to] = message.content.split(";")
 
             const piece = chess.get(from)
 
-            if (!piece) return await msg.edit({
-                content: `Aucune piece en ${from}`
-            })
+            if (!piece) {
+                return await msg.edit({
+                    content: `Aucune piece en ${from}`
+                })
+            }
 
-            if (piece && piece.color !== activeUser.color) return await msg.edit({
-                content: `Cette piece n'est pas de votre couleur`
-            })
+            if (piece && piece.color !== activeUser.color) {
+                return await msg.edit({
+                    content: `Cette piece n'est pas de votre couleur`
+                })
+            }
 
             //Test if move is valid
             if (chess.move({ from, to })) {
-
                 opposite.turn = true
                 activeUser.turn = false
 
@@ -161,6 +166,20 @@ async function startGame({ interaction, msg, opponent }) {
                     }
                 }
 
+                if (chess.in_checkmate()) {
+                    await collector.stop()
+        
+                    return await msg.edit({
+                        content: `${opposite.username} a gagne la partie`
+                    })
+                }
+
+                if (chess.in_check()) {
+                    await msg.edit({
+                        content: `${opposite.username} est en echec`
+                    })
+                }
+
                 //Edit embed image with new board
                 const boardCanvas = await genBoard({ board: chess.board(), pieces })
 
@@ -170,8 +189,7 @@ async function startGame({ interaction, msg, opponent }) {
                     .setDescription(`Au tour de ${userData.turn ? userData.username : opponentData.username}`)
                     .setImage("attachment://chess.png")
 
-                return await msg.edit({
-                    content: null,
+                await msg.edit({
                     attachments: [],
                     files: [{
                         attachment: boardCanvas.canvas.toBuffer(),
@@ -180,12 +198,14 @@ async function startGame({ interaction, msg, opponent }) {
                     embeds: [embed]
                 })
             }
-        }
-   
-        if (optionsRegex.test(message.content)) {
-            const [pos] = message.content.split(";")
-            const moves = chess.moves({ square: pos })
+        } else if (optionsRegex.test(message.content)) {
+            const pos = message.content
+            const moves = chess.moves({ square: pos, verbose: true })
             
+            console.log(moves)
+
+            if (message.deleteable) await message.delete()
+
             if (moves.length === 0) return await msg.edit({
                 content: `Aucun mouvement possible en ${pos}`
             })
@@ -207,25 +227,8 @@ async function startGame({ interaction, msg, opponent }) {
                 }],
                 embeds: [embed]
             })
-        }
-
-        //Edit embed image with new board
-        const boardCanvas = await genBoard({ board: chess.board(), pieces })
-
-        const embed = new MessageEmbed()
-            .setTitle(`Partie d'echec entre ${userData.username} et ${opponentData.username}`)
-            .setColor(userData.turn ? userData.hexColor : opponentData.hexColor)
-            .setDescription(`Au tour de ${userData.turn ? userData.username : opponentData.username}`)
-            .setImage("attachment://chess.png")
-
-        return await msg.edit({
-            content: null,
-            attachments: [],
-            files: [{
-                attachment: boardCanvas.canvas.toBuffer(),
-                name: "chess.png"
-            }],
-            embeds: [embed]
+        } else return await msg.edit({
+            content: "Message invalide"
         })
     })
 }
@@ -275,7 +278,7 @@ async function genBoard({ board, pieces, highlight = [] }) {
 
             //Highlight square
             for (let k = 0; k < highlight.length; k++) {
-                if (highlight[k] === `${letters[j].toLocaleLowerCase()}${board.length - i}`) {
+                if (highlight[k].to === `${letters[j].toLocaleLowerCase()}${board.length - i}`) {
                     color = "#E3E5E8"
                 }
             }
