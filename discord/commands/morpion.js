@@ -171,8 +171,8 @@ async function whoStart({ i18n, interaction, msg, opponent, client }) {
 
 async function startGame({ i18n, interaction, msg, opponent, client }) {
     let userData = {
-        id: interaction.user.id,
-        username: interaction.user.username,
+        id: await interaction.user.id,
+        username: await interaction.user.username,
         turn: opponent.turn ? false : true,
         emoji: "❌",
         customEmote: "855726987183915008",
@@ -180,8 +180,8 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
     }
     
     let opponentData = {
-        id: opponent.id,
-        username: opponent.username,
+        id: await opponent.id,
+        username: await opponent.username,
         turn: opponent.turn,
         emoji: "⭕",
         customEmote: "855726553919914004",
@@ -241,7 +241,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
                 gameId: await client.functions.genGameId({ gameName: "morpion", length: 30 }),
                 guildOrChat: {
                     type: "guild",
-                    data: interaction.guild
+                    data: await interaction.guild
                 },
                 plateform: "discord", 
                 user1: userData,
@@ -266,7 +266,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
                 gameId: await client.functions.genGameId({ gameName: "morpion", length: 30 }),
                 guildOrChat: {
                     type: "guild",
-                    data: interaction.guild
+                    data: await interaction.guild
                 },
                 plateform: "discord", 
                 user1: userData,

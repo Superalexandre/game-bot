@@ -239,12 +239,12 @@ export default class Memory extends Command {
                     gameId: await client.functions.genGameId({ gameName: "memory", length: 30 }),
                     guildOrChat: {
                         type: "guild",
-                        data: interaction.guild
+                        data: await interaction.guild
                     },
                     plateform: "discord", 
-                    user1: interaction.user,
+                    user1: await interaction.user,
                     gameName: "memory", 
-                    winnerId: interaction.user.id
+                    winnerId: await interaction.user.id
                 })
 
                 return await msg.edit({
@@ -259,10 +259,10 @@ export default class Memory extends Command {
                     gameId: await client.functions.genGameId({ gameName: "memory", length: 30 }),
                     guildOrChat: {
                         type: "guild",
-                        data: interaction.guild
+                        data: await interaction.guild
                     },
                     plateform: "discord", 
-                    user1: interaction.user,
+                    user1: await interaction.user,
                     gameName: "memory", 
                     winnerId: "loose"
                 })

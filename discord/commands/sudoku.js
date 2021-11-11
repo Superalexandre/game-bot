@@ -172,10 +172,10 @@ export default class Sudoku extends Command {
                         gameId: await client.functions.genGameId({ gameName: "sudoku", length: 30 }),
                         guildOrChat: {
                             type: "guild",
-                            data: interaction.guild
+                            data: await interaction.guild
                         },
                         plateform: "discord", 
-                        user1: interaction.user,
+                        user1: await interaction.user,
                         gameName: "sudoku", 
                         winnerId: "solo"
                     })    

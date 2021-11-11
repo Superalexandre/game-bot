@@ -71,14 +71,32 @@ export default class Ready {
                 continue
             }
 
+            //Test name with official regex
+            const regex = /^[\w-]{1,32}$/gi            
+
+            if (!regex.test(commandName)) {
+                client.logger.warn({ message: `Commande ${commandName} non crée, nom invalide !` })
+            
+                continue
+            }
+
             const command = new SlashCommandBuilder()
                 .setName(commandData.help.name)
                 .setDescription(commandData.help.description ?? "Aucune description fourni")
 
+            const optionsName = []
             if (commandData.config.options?.length > 0) {
                 for (let i = 0; i < commandData.config.options.length; i++) {
                     const option = commandData.config.options[i]
                 
+                    if (optionsName.includes(option.name)) {
+                        client.logger.warn({ message: `Commande ${commandName} non crée, option ${option.name} déjà présente !` })
+                    
+                        break
+                    }
+
+                    optionsName.push(option.name)
+
                     if (!option.name || !option.description) {
                         client.logger.error({ message: `Erreur valeur manquante (${option.name} | ${option.description})` })
 
@@ -133,6 +151,12 @@ async function createCommand(client, command, commandName, botData) {
 
     if (jsonRep?.message === "You are being rate limited.") {
         client.logger.warn({ message: `Commande ${commandName} non crée ratelimit (${jsonRep.retry_after} secondes)` })
+
+        return false
+    }
+
+    if (jsonRep.errors || jsonRep.message) {
+        client.logger.warn({ message: `Commande ${commandName} non crée erreur ${jsonRep.message}` })
 
         return false
     }

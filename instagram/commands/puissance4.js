@@ -132,7 +132,7 @@ async function startGame({ client, message, opponent, i18n }) {
                 gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
                 guildOrChat: {
                     type: "chat",
-                    data: message.chat
+                    data: await message.chat
                 },
                 plateform: "instagram", 
                 user1: userData, 
@@ -153,7 +153,7 @@ async function startGame({ client, message, opponent, i18n }) {
                 gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
                 guildOrChat: {
                     type: "chat",
-                    data: message.chat
+                    data: await message.chat
                 },
                 plateform: "instagram", 
                 user1: userData, 
