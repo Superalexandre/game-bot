@@ -432,93 +432,93 @@
             },
             "gameStop": "stopped the game, the word was :",
             "gameReady": "Your game is ready, to stop this one you can say `stop`, the word you are looking for has no accent!\nGood luck!",
-            "word": "",
-            "lettersSaid": "",
-            "noLetter": "",
+            "word": "Word :",
+            "lettersSaid": "Letter(s) already said",
+            "noLetter": "no letter",
             "result": {
                 "win": {
-                    "perfect": "",
-                    "normal": "",
-                    "word": ""
+                    "perfect": "Perfect! {{username}} found without any error!",
+                    "normal": "Bravo {{username}} won!",
+                    "word": "The word :"
                 },
-                "loose": ""
+                "loose": "Sorry {{username}} you lost!\nThe word was :"
             }
         },
         "puissance4": {
-            "goingToStart": "",
-            "settingUp": "",
-            "choice": "",
-            "random": "",
-            "revange": "",
-            "turnOf": "",
+            "goingToStart": "will start",
+            "settingUp": "Please wait a few seconds while the reactions are set up",
+            "choice": "Choice",
+            "random": "Random",
+            "revange": "Revenge No.",
+            "turnOf": "Turn of :",
             "error": {
-                "cantPlayHere": "",
-                "unknownError": ""
+                "cantPlayHere": "You can't play here",
+                "unknownError": "Unknown error : "
             },
             "win": {
-                "wellPlay": "",
-                "wonOver": ""
+                "wellPlay": "Wow well done",
+                "wonOver": "who won against"
             },
             "equality": {
-                "and": "",
-                "equality": ""
+                "and": "and",
+                "equality": "end in a tie :("
             },
-            "wantRevange": "",
-            "noMoreRevange": "",
+            "wantRevange": "{{username}} wants a rematch ({{number}}/2)",
+            "noMoreRevange": "{{username}} no longer wants revenge",
             "replay": {
-                "mainText": "",
-                "step": "",
-                "copyright": "",
-                "replayOf": "",
-                "versus": "",
-                "gameReplay": ""
+                "mainText": "Generating the replay please wait... This may take a few minutes",
+                "step": "Step :",
+                "copyright": "Replay by",
+                "replayOf": "Replay of",
+                "versus": "against",
+                "gameReplay": "Replay of the game :"
             }
         }
     },
     "insta": {
-        "noDescProvided": "",
-        "noUseProvided": "",
-        "noExampleProvided": "",
+        "noDescProvided": "No description provided",
+        "noUseProvided": "No use provided",
+        "noExampleProvided": "No examples provided",
         "eval": {
-            "description": "",
-            "usage": "",
-            "example": "",
-            "noArgs": ""
+            "description": "Allows you to execute code",
+            "usage": "{{prefix}}eval <Code>",
+            "example": "{{prefix}}eval console.log('Test')",
+            "noArgs": "Please enter an argument"
         },
         "puissance4": {
-            "description": "",
-            "usage": "",
-            "example": "",
+            "description": "Allows you to play connect 4 with your friends!",
+            "usage": "{{prefix}}connect4 <User name>",
+            "example": "{{prefix}}connect4 sudrefb",
             "error": {
-                "noUser": "",
-                "noGroup": "",
-                "sameUser": "",
-                "bot": "",
-                "notInGroup": "",
-                "alreadyGame": "",
-                "cantPlayHere": "",
-                "unknownError": ""
+                "noUser": "No users found",
+                "noGroup": "Oh no you have to be in a group to do this command",
+                "sameUser": "You can't play against yourself!",
+                "bot": "You can't play against me",
+                "notInGroup": "The person must be present in the group",
+                "alreadyGame": "Sorry @{{username}} a game is already in progress",
+                "cantPlayHere": "You can't play here ",
+                "unknownError": "Unknown error : "
             },
-            "opponentReady": "",
-            "userUndoGame": "",
-            "turnOf": "",
-            "gameStop": "",
+            "opponentReady": "@{{opponentUsername}} like this message whenever you are ready\n\n{{authorUsername}} if you want to cancel the request, like this message",
+            "userUndoGame": "{{authorUsername}} cancelled the party request",
+            "turnOf": "Turn of :",
+            "gameStop": "{{authorUsername}} has decided to stop the game\nMaybe a bad player?",
             "result": {
-                "equality": "",
-                "win": ""
+                "equality": "{{userDataUsername}} ({{userDataEmoji}}) and {{opponentDataUsername}} ({{opponentDataEmoji}}) end in a tie :(",
+                "win": "Wow well done {{winnerUsername}} ({{winnerEmoji}}) who won against {{looserUsername}} ({{looserEmoji}})"
             }
         },
         "help": {
-            "description": "",
-            "usage": "",
-            "example": "",
-            "title": "",
-            "listTitle": "",
-            "noCommand": "",
-            "alias": "",
-            "desc": "",
-            "use": "",
-            "exam": ""
+            "description": "Allows you to see the list of commands",
+            "usage": "{{prefix}}help (Command)",
+            "example": "{{prefix}}help (connect4)",
+            "title": "Ordering information :",
+            "listTitle": "List of orders :",
+            "noCommand": "No commands found for {{commandName}}",
+            "alias": "Alias",
+            "desc": "Description",
+            "use": "Usage",
+            "exam": "Example"
         }
     }
 }
