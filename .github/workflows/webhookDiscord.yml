@@ -15,15 +15,9 @@ jobs:
     - name: Run the GitHub Actions Status Embed Action
       uses: SebastiaanZ/github-status-embed-for-discord@main
       with:
-        # Discord webhook
-        webhook_id: "908461532378181663"  # Has to be provided as a string
-        webhook_token: ${{ env.WEBHOOK_TOKEN }}
+        webhook_id: "908461532378181663"
+        webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
 
-        # Optional arguments for PR-related events
-        # Note: There's no harm in including these lines for non-PR
-        # events, as non-existing paths in objects will evaluate to
-        # `null` silently and the github status embed action will
-        # treat them as absent.
         pr_author_login: ${{ github.event.pull_request.user.login }}
         pr_number: ${{ github.event.pull_request.number }}
         pr_title: ${{ github.event.pull_request.title }}
