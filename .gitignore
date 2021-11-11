@@ -10,3 +10,6 @@ config.js
 
 #Environment variables
 .env
+
+#Langage keys 
+localazy.keys.json
