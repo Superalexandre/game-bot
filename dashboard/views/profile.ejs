@@ -18,7 +18,7 @@
                         </div>
                         <div class="p-5">
                             <p class="dark:text-white text-black break-words">Identifiant unique : <%= profileData.accountId %></p>
-                            <p class="dark:text-white text-black break-words">Langue active : <%= profileData.lang.replace(/fr_FR/g, "Français") %> <a class="hover:text-black dark:hover:text-white font-bold <%= "text-" + req.color %>" href="/lang">Changer</a></p>
+                            <p class="dark:text-white text-black break-words">Langue active : <%= profileData.lang.replace(/fr-FR/g, "Français") %> <a class="hover:text-black dark:hover:text-white font-bold <%= "text-" + req.color %>" href="/lang">Changer</a></p>
                             <p class="dark:text-white text-black break-words">Compte crée le <%= req.functions.formatDate({ date: profileData.createdTimestamp }) %></p>
                         </div>
                     </div>

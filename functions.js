@@ -14,7 +14,7 @@ async function deleteAccount({ data }) {
     return { success: true }
 }
 
-async function createAccount({ data, lang = "fr_FR", plateformData = {} }) {
+async function createAccount({ data, lang = "fr-FR", plateformData = {} }) {
     if (!data) return { success: false, error: true, message: "No database provided" }
 
     const id = genId({ length: 30 })
@@ -143,11 +143,11 @@ function genGameId({ gameName = "", length = 30 }) {
 
 function formatDate({ date, locale, timezone }) {
     if (!date) date = Date.now()
-    if (!locale) locale = "fr_FR"
+    if (!locale) locale = "fr-FR"
     if (!timezone) timezone = "Europe/Paris"
 
     const config = {
-        "fr_FR": {
+        "fr-FR": {
             "at": "à",
             "locale": fr_locale
         }

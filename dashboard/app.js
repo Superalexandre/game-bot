@@ -314,7 +314,7 @@ async function init({ data, clients }) {
             if (!profileData) {
                 const newAccount = await functions.createAccount({
                     data,
-                    lang: "fr_FR",
+                    lang: "fr-FR",
                     plateformData: [
                         {
                             plateform: "discord",

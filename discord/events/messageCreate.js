@@ -39,7 +39,7 @@ export default class messageCreate {
 
         const userData = await client.data.users.get(message.author.accountID)
 
-        i18n.setLocale("fr_FR")
+        i18n.setLocale("fr-FR")
 
         if (mentionned && !message.reference) {
             const messageTime = (Date.now() - start) / 1000
