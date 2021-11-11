@@ -1,3 +1,4 @@
+name: webhookDiscord
 on:
   push:
     branches:
@@ -16,7 +17,7 @@ jobs:
       with:
         # Discord webhook
         webhook_id: "908461532378181663"  # Has to be provided as a string
-        webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
+        webhook_token: ${{ env.WEBHOOK_TOKEN }}
 
         # Optional arguments for PR-related events
         # Note: There's no harm in including these lines for non-PR
