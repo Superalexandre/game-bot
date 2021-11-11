@@ -138,8 +138,8 @@ export default class Uno extends Command {
             config: {
                 firstSpecialCard: true,
                 multipleCard: true,
-                outbid: false,
-                bluffing: true
+                outbid: true,
+                bluffing: false
             },
             activeSpecialCard: {
                 type: null,
