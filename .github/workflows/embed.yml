@@ -4,13 +4,21 @@ on:
     branches:
       - main
       - dev
+
+index: 1
+supports:
+  - repository
+
+formats:
+  - svg
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: lowlighter/metrics@latest
         with:
-          template: classic
+          template: repository
           user: Superalexandre
           repo: game-bot
           token: ${{ secrets.METRICS_TOKEN }}
