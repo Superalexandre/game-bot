@@ -201,8 +201,8 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
     ]
 
     userData = userData ? userData : {
-        id: interaction.user.id,
-        username: interaction.user.username,
+        id: await interaction.user.id,
+        username: await interaction.user.username,
         turn: starter.starterId === interaction.user.id ? true : false,
         emoji: "🔴",
         winEmoji: "<a:Sudref_Red_White:723485311467913239>"
@@ -307,13 +307,13 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
                 gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
                 guildOrChat: {
                     type: "guild",
-                    data: interaction.guild
+                    data: await interaction.guild
                 },
                 plateform: "discord", 
-                user1: userData,
-                user2: opponentData,
+                user1: await userData,
+                user2: await opponentData,
                 gameName: "puissance4", 
-                winnerId: winner.id
+                winnerId: await winner.id
             })
 
             await msg.edit({
@@ -333,11 +333,11 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
                 gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
                 guildOrChat: {
                     type: "guild",
-                    data: interaction.guild
+                    data: await interaction.guild
                 },
                 plateform: "discord", 
-                user1: userData,
-                user2: opponentData,
+                user1: await userData,
+                user2: await opponentData,
                 gameName: "puissance4", 
                 winnerId: "equality"
             })
