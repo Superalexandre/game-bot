@@ -13,3 +13,4 @@ jobs:
           template: classic
           user: Superalexandre
           repo: game-bot
+          token: ${{ secrets.METRICS_TOKEN }}
