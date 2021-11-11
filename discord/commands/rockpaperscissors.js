@@ -214,7 +214,7 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
                 const opponentChoice = i18n.__(`discord.rockpaperscissors.sign.${opponentData.choice}`)
 
                 return await msg.edit({
-                    content: i18n.__("rockpaperscissors.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username, userChoice, opponentChoice }), 
+                    content: i18n.__("discord.rockpaperscissors.result.equality", { userUsername: userData.username, opponentUsername: opponentData.username, userChoice, opponentChoice }), 
                     components: [] 
                 })
             } else {
