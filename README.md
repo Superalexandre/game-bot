@@ -3,6 +3,7 @@
 A fun discord bot
 
 [![CodeFactor](https://www.codefactor.io/repository/github/superalexandre/game-bot/badge?s=390f8bb32e42cacd0eabb8b92f9053ecb4a7b136)](https://www.codefactor.io/repository/github/superalexandre/game-bot)
+![Metrics](https://github.com/my-github-user/my-github-user/blob/main/github-metrics.svg)
 
 ## Global
 
