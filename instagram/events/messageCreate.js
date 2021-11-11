@@ -24,7 +24,7 @@ export default class messageCreate {
 
             const newAccount = await client.functions.createAccount({
                 data,
-                lang: "fr_FR",
+                lang: "fr-FR",
                 plateformData: [
                     {
                         plateform: "instagram",
@@ -50,7 +50,7 @@ export default class messageCreate {
         }
 
         message.author.account = userData
-        i18n.setLocale(userData.lang ?? "fr_FR")
+        i18n.setLocale(userData.lang ?? "fr-FR")
 
         await message.markSeen()
 
