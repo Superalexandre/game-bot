@@ -54,6 +54,9 @@
 
 ### Site
 
+- [ ] Traduction
+- [ ] Refaire le theme avec les cookies
+  - [ ] Message d'avertissement "Nous utilisons les cookies"
 - [ ] Page serveur
   - ? Faire une /server/id/images retourne l'image avec les stats ?
 - [ ] **❗ RGPD**
