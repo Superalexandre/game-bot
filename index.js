@@ -42,6 +42,7 @@ i18n.configure({
     locales: ["fr-FR", "en-GB", "de-DE"],
     directory: join(__dirname, "locales"),
     defaultLocale: config.defaultLocale,
+    retryInDefaultLocale: true,
     objectNotation: true,
     register: global,
     syncFiles: true,
