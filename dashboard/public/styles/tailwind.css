@@ -18,3 +18,30 @@ html, body {
 .dark .dark\:hover\:gradient-instagram:hover {
     @apply bg-clip-text bg-gradient-to-r from-instagram-one via-instagram-three to-instagram-six
 }
+
+/**
+ * Tailwind customizations
+ * Custom scrollbar
+ */
+
+/* width */
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: #4F545C;
+}
+  
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #37393F;
+    border-radius: 50px;
+}
+  
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #D3D7DB;
+}
