@@ -14,6 +14,6 @@ jobs:
           user: Superalexandre
           repo: game-bot
           plugin_followup: yes
-          plugin_followup_sections: repositories
+          plugin_followup_sections: repositories    
+          plugin_languages: yes
           token: ${{ secrets.METRICS_TOKEN }}
-        
