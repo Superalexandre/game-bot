@@ -96,6 +96,24 @@ async function init({ data, clients }) {
                 req, res
             })
         })
+        .get("/profile/settings", function(req, res) {
+            if (!req.user) {
+                req.app.locals.messages.push({
+                    type: "warn",
+                    message: "Vous devez être connecter pour faire ceci"
+                })
+
+                return res.redirect("/login")
+            }
+
+            res.render("settings", {
+                req,
+                res,
+                user: req.user,
+                profileData: req.user.profileData,
+                plateformData: req.user.profileData.plateformData
+            })
+        })
         .get("/profile/:id?", function(req, res) {
             if (req.params.id) {
                 res.render("viewProfile", {
