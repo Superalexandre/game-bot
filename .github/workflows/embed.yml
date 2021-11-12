@@ -1,6 +1,6 @@
 name: embed
 on:
-  push:
+  pull_request:
     branches:
       - main
       - dev
