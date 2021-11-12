@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <%- include("utils/header") %>
+    </head>
+    <body class="dark:bg-gray-primary bg-white-primary transition duration-500 ease-in-out">
+        <div>
+            <%- include("utils/navbar") %> 
+
+            <div>
+                <div class="group">
+                    <div class="dark:bg-gray-secondary bg-white-secondary m-8 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
+                        <div class="text-center">
+                            <p class="dark:text-white text-black font-bold text-xl">Langue</p>
+                        </div>
+                        <div class="flex items-center justify-center my-1">
+                            <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
+                        </div>
+                        <div class="p-5">
+                            <div>
+                                <input type="checkbox" id="lang-fr" checked class="dark:bg-gray-secondary bg-white-secondary" />
+                                <label for="lang-fr" class="dark:text-white text-black font-bold text-xl">Français</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="lang-en" class="dark:bg-gray-secondary bg-white-secondary" />
+                                <label for="lang-en" class="dark:text-white text-black font-bold text-xl">Anglais</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="lang-de" class="dark:bg-gray-secondary bg-white-secondary" />
+                                <label for="lang-de" class="dark:text-white text-black font-bold text-xl">Allemand</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
