@@ -39,7 +39,7 @@ Sentry.init({
 
 //* Config languages
 i18n.configure({
-    locales: ["fr-FR"],
+    locales: ["fr-FR", "en-GB", "de-DE"],
     directory: join(__dirname, "locales"),
     defaultLocale: config.defaultLocale,
     objectNotation: true,
