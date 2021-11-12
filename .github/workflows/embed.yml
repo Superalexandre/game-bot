@@ -13,4 +13,7 @@ jobs:
           template: repository
           user: Superalexandre
           repo: game-bot
+          plugin_followup: yes
+          plugin_followup_sections: repositories
           token: ${{ secrets.METRICS_TOKEN }}
+        
