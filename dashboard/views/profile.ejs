@@ -17,9 +17,9 @@
                             <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
                         </div>
                         <div class="p-5">
-                            <p class="dark:text-white text-black break-words"><%= res.__("dashboard.profile.uniqueId") %> : <%= profileData.accountId %></p>
-                            <p class="dark:text-white text-black break-words"><%= res.__("dashboard.profile.activeLang") %> : <%= res.__(`dashboard.profile.${profileData.lang}`) %> <a class="hover:text-black dark:hover:text-white font-bold <%= "text-" + req.color %>" href="/profile/settings"><%= res.__("dashboard.profile.change") %></a></p>
-                            <p class="dark:text-white text-black break-words"><%= res.__("dashboard.profile.createdAt") %> <%= req.functions.formatDate({ date: profileData.createdTimestamp }) %></p>
+                            <p class="dark:text-white text-black break-words"><i class="far fa-id-card"></i> <%= res.__("dashboard.profile.uniqueId") %> : <%= profileData.accountId %></p>
+                            <p class="dark:text-white text-black break-words"><i class="fas fa-language"></i> <%= res.__("dashboard.profile.activeLang") %> : <%= res.__(`dashboard.profile.${profileData.lang}`) %> <a class="hover:text-black dark:hover:text-white font-bold <%= "text-" + req.color %>" href="/profile/settings"><%= res.__("dashboard.profile.change") %> <i class="fas fa-cog"></i></a></p>
+                            <p class="dark:text-white text-black break-words"><i class="fas fa-clock"></i> <%= res.__("dashboard.profile.createdAt") %> <%= req.functions.formatDate({ date: profileData.createdTimestamp }) %></p>
                         </div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                                 <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
                             </div>
                             <div class="p-5">
-                                <p class="dark:text-white text-black">Information sur le compte <span class="font-bold"><%= plateform.data.username %></span></p>
+                                <p class="dark:text-white text-black"><%= res.__("dashboard.profile.infoUser") %> <span class="font-bold"><%= plateform.data.username %></span></p>
                                 <p class="dark:text-white text-black"><%= res.__("dashboard.profile.partyPlayed") %>
                                     <% if (plateform.plateform === "discord") { %>
                                         <span class="text-blurple">
