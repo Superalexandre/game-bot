@@ -3,14 +3,14 @@
     <head>
         <%- include("utils/header") %>
     </head>
-    <body class="dark:bg-gray-primary bg-white-primary">
+    <body class="dark:bg-gray-primary bg-white-primary transition duration-500 ease-in-out">
         <div>
             <%- include("utils/navbar") %> 
 
             <div>
                 <div class="text-center">
-                    <p class="dark:text-white text-black">Information sur le serveur <%= server.name %> (<%= server.id %>)</p>
-                    <p class="dark:text-white text-black"><%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> parties jouées</p>
+                    <p class="dark:text-white text-black"><%= req.__("dashboard.server.infoServer") %> <%= server.name %> (<%= server.id %>)</p>
+                    <p class="dark:text-white text-black"><%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> <%= req.__("dashboard.server.partyPlayed") %></p>
                 
                     <% 
                         let playedGame = {} 
@@ -46,12 +46,12 @@
                         const smallestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame.count[a] < countPlayerGame.count[b] ? a : b)
                     %>
 
-                    <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green"></i> Jeux le plus jouer <%= highestPlayedGame %> avec <%= playedGame[highestPlayedGame] %> parties</p>
-                    <p class="dark:text-white text-black"><i class="fas fa-arrow-down text-red"></i> Jeux le moins jouer <%= smallerPlayedGame %> avec <%= playedGame[smallerPlayedGame] %> parties</p>
-                    <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green"></i> Joueur qui a le plus jouer <a href="/server"><%= highestPlayerGame.username %></a> avec <%= countPlayerGame[highestPlayerGame.id] %> parties</p>
-                    <p class="dark:text-white text-black"><i class="fas fa-arrow-down text-red"></i> Joueur qui a le moins jouer <a><%= smallestPlayerGame.username %></a> avec <%= countPlayerGame[smallestPlayerGame.id] %> parties</p>
-                    <p class="dark:text-white text-black">Premiere partie jouer <%= firstPlayedGame %></p>
-                    <p class="dark:text-white text-black">Derniere partie jouer <%= lastPlayedGame %></p>
+                    <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green"></i><%= req.__("dashboard.server.highestPlayedGame") %> <%= highestPlayedGame %> <%= req.__("dashboard.server.with") %> <%= playedGame[highestPlayedGame] %> <%= req.__("dashboard.server.party") %></p>
+                    <p class="dark:text-white text-black"><i class="fas fa-arrow-down text-red"></i><%= req.__("dashboard.server.smallerPlayedGame") %> <%= smallerPlayedGame %> <%= req.__("dashboard.server.with") %> <%= playedGame[smallerPlayedGame] %> <%= req.__("dashboard.server.party") %></p>
+                    <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green"></i><%= req.__("dashboard.server.highestPlayerGame") %> <a href="/server"><%= highestPlayerGame.username %></a> <%= req.__("dashboard.server.with") %> <%= countPlayerGame[highestPlayerGame.id] %> <%= req.__("dashboard.server.party") %></p>
+                    <p class="dark:text-white text-black"><i class="fas fa-arrow-down text-red"></i><%= req.__("dashboard.server.smallerPlayerGame") %> <a><%= smallestPlayerGame.username %></a> <%= req.__("dashboard.server.with") %> <%= countPlayerGame[smallestPlayerGame.id] %> <%= req.__("dashboard.server.party") %></p>
+                    <p class="dark:text-white text-black"><%= req.__("dashboard.server.firstPlayedGame") %> <%= firstPlayedGame %></p>
+                    <p class="dark:text-white text-black"><%= req.__("dashboard.server.lastPlayedGame") %> <%= lastPlayedGame %></p>
                 </div>
             </div>
         </div>

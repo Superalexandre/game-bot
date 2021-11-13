@@ -520,5 +520,78 @@
             "use": "Usage",
             "exam": "Exemple"
         }
+    },
+    "dashboard": {
+        "errors": {
+            "mustBeLogin": "Vous devez être connecter pour faire ceci",
+            "serverNotFound": "Le serveur n'a pas été trouvé",
+            "chatNotFound": "Le tchat n'a pas été trouvé",
+            "gameNotFound": "Le jeu n'a pas été trouvé",
+            "notAllowed": "Vous n'êtes pas autoriser a faire ceci",
+            "connectionNotReleased": "La connexion via {{plateform}} n'est pas encore disponible",
+            "invalidKey": "La clé de connexion a expirer ou est invalide",
+            "missingData": "Des données sont manquantes",
+            "accountNotCreated": "Votre compte n'a pas plus être crée",
+            "loginSuccess": "Connecté avec succès",
+            "relogin": "Votre profile n'a pas été trouver (ou a expirer), veuillez vous reconnecter",
+            "logoutSucces": "Deconnecté avec succès",
+            "pageNotFound": "La page n'a pas été trouvé, nous vous avons redirigez ici"
+        },
+        "plateform": {
+            "insta": "Instagram",
+            "discord": "Discord",
+            "other": "Autre"
+        },
+        "navbar": {
+            "home": "Accueil",
+            "statistics": "Statistiques",
+            "profile": "Profile",
+            "logout": "Déconnexion",
+            "login": "Connexion"
+
+        },
+        "index": {
+            "addBot": "Ajouter le bot sur",
+            "playOn": "Joue sur"
+        },
+        "games": {
+            "info": "Informations sur la partie",
+            "game": "Jeux",
+            "makeOnServer": "Effectué sur le serveur",
+            "winner": "Gagnant",
+            "winnerNone": "Aucun",
+            "participant": "Participant",
+            "profileNotFound": "Profile pour {{username}} non trouvé",
+            "you": "(Vous)"
+        },
+        "profile": {
+            "globalInfo": "Informations globales",
+            "uniqueId": "Identifiant unique",
+            "activeLang": "Langue active",
+            "change": "Changer",
+            "createdAt": "Compte crée le",
+            "profile": "Profile",
+            "infoUser": "Information sur le compte",
+            "partyPlayed": "Partie jouée sur",
+            "lastGame": "Dernière partie",
+            "onServer": "Sur le serveur",
+            "versus": "Contre",
+            "noDataAboutGame": "Aucune donnée sur ou a été effecuté la partie",
+            "noDataSave": "Derniere partie : Aucune données enregistrer",
+            "addDiscordAccount": "Ajouter un compte Discord",
+            "addInstaAccount": "Ajouter un compte Instagram"
+        },
+        "server": {
+            "infoServer": "Informations sur le serveur",
+            "partyPlayed": "parties jouées",
+            "party": "parties",
+            "with": "avec",
+            "highestPlayedGame": "Le jeu le plus joué",
+            "smallerPlayedGame": "Le jeu le moins joué",
+            "highestPlayerGame": "Le joueur qui a le plus joué",
+            "smallerPlayerGame": "Le joueur qui a le moins joué",
+            "firstPlayedGame": "La première partie joué",
+            "lastPlayedGame": "La dernière partie joué"
+        }
     }
 }

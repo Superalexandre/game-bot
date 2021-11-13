@@ -11,15 +11,15 @@
                 <div class="group">
                     <div class="dark:bg-gray-secondary bg-white-secondary m-8 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
                         <div class="text-center">
-                            <p class="dark:text-white text-black font-bold text-xl">Informations globales</p>
+                            <p class="dark:text-white text-black font-bold text-xl"><%= res.__("dashboard.profile.globalInfo") %></p>
                         </div>
                         <div class="flex items-center justify-center my-1">
                             <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
                         </div>
                         <div class="p-5">
-                            <p class="dark:text-white text-black break-words">Identifiant unique : <%= profileData.accountId %></p>
-                            <p class="dark:text-white text-black break-words">Langue active : <%= profileData.lang.replace(/fr-FR/g, "Français") %> <a class="hover:text-black dark:hover:text-white font-bold <%= "text-" + req.color %>" href="/lang">Changer</a></p>
-                            <p class="dark:text-white text-black break-words">Compte crée le <%= req.functions.formatDate({ date: profileData.createdTimestamp }) %></p>
+                            <p class="dark:text-white text-black break-words"><%= res.__("dashboard.profile.uniqueId") %> : <%= profileData.accountId %></p>
+                            <p class="dark:text-white text-black break-words"><%= res.__("dashboard.profile.activeLang") %> : <%= profileData.lang.replace(/fr-FR/g, "Français") %> <a class="hover:text-black dark:hover:text-white font-bold <%= "text-" + req.color %>" href="/profile/settings"><%= res.__("dashboard.profile.change") %></a></p>
+                            <p class="dark:text-white text-black break-words"><%= res.__("dashboard.profile.createdAt") %> <%= req.functions.formatDate({ date: profileData.createdTimestamp }) %></p>
                         </div>
                     </div>
                 </div>
@@ -33,14 +33,14 @@
                                     <img class="my-0 mx-auto h-32 w-32" src="https://avatars.dicebear.com/api/bottts/<%= profileData.accountId %>.svg" />
                                 <% } %>
 
-                                <p class="dark:text-white text-black">Profile <%= plateform.plateform %></p>
+                                <p class="dark:text-white text-black"><%= res.__("dashboard.profile.profile") %> <%= plateform.plateform %></p>
                             </div>
                             <div class="flex items-center justify-center my-1">
                                 <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
                             </div>
                             <div class="p-5">
                                 <p class="dark:text-white text-black">Information sur le compte <span class="font-bold"><%= plateform.data.username %></span></p>
-                                <p class="dark:text-white text-black">Partie jouer sur 
+                                <p class="dark:text-white text-black"><%= res.__("dashboard.profile.partyPlayed") %>
                                     <% if (plateform.plateform === "discord") { %>
                                         <span class="text-blurple">
                                     <% } else if (plateform.plateform === "instagram") { %>
@@ -54,10 +54,10 @@
                                     <% let games = profileData.statistics.filter(pltf => pltf.plateform === plateform.plateform) %>
                                     <% let lastGame = games[games.length - 1] %>
 
-                                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/games/<%= lastGame.gameId.replace("game-", "") %>">Dernier partie (<%= lastGame.result %>) : <%= lastGame.gameName %><%= lastGame.versus && lastGame.versus !== "solo" ? ` | Contre : ${lastGame.versus.username}` : "" %></a>
+                                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/games/<%= lastGame.gameId.replace("game-", "") %>"><%= res.__("dashboard.profile.lastGame") %> (<%= lastGame.result %>) : <%= lastGame.gameName %><%= lastGame.versus && lastGame.versus !== "solo" ? ` | ${req.__("dashboard.profile.versus")} : ${lastGame.versus.username}` : "" %></a>
                                     
                                     <% if (lastGame.guildOrChat && lastGame.guildOrChat.type === "guild") { %>
-                                        <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/server/<%= lastGame.guildOrChat.data.id %>">Sur le serveur : <%= lastGame.guildOrChat.data.name %></a>
+                                        <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/server/<%= lastGame.guildOrChat.data.id %>"><%= res.__("dashboard.profile.onServer") %> : <%= lastGame.guildOrChat.data.name %></a>
                                     <% } else if (lastGame.guildOrChat && lastGame.guildOrChat.type === "chat") { %>
                                         <a>
                                             <!--
@@ -71,10 +71,10 @@
                                             -->
                                         </a>
                                     <% } else { %>
-                                        <p class="dark:text-white text-black">Aucun données sur ou a été éffectué la partie</p>
+                                        <p class="dark:text-white text-black"><%= req.__("dashboard.profile.noDataAboutGame") %></p>
                                     <% } %>
                                 <% } else { %>
-                                    <p class="dark:text-white text-black">Dernier partie : Aucune données enregistrer</p>
+                                    <p class="dark:text-white text-black"><%= req.__("dashboard.profile.noDataSave") %></p>
                                 <% } %>
 
                             </div>
@@ -85,8 +85,8 @@
                     <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-10/12"></div>
                 </div>
                 <div class="flex flex-col items-center justify-center">
-                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black text-xl" href="/api/instagram/mergeAccount">Ajouter un compte Discord</a>
-                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black text-xl" href="/api/discord/mergeAccount">Ajouter un compte Instagram</a>
+                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black text-xl" href="/api/instagram/mergeAccount"><%= req.__("dashboard.profile.addDiscordAccount") %></a>
+                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black text-xl" href="/api/discord/mergeAccount"><%= req.__("dashboard.profile.addInstaAccount") %></a>
                 </div>
             </div>
         </div>

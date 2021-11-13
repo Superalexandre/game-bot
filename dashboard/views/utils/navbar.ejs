@@ -3,12 +3,12 @@
 
     const color = colors[Math.floor(Math.random() * colors.length)]
 %>
-<nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6 dark:bg-gray-secondary bg-white-secondary">
+<nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6 dark:bg-gray-secondary bg-white-secondary transition duration-500 ease-in-out">
     <div class="flex items-center flex-shrink-0 <%= "text-" + req.color%> mr-6">
         <a href="/" class="uppercase font-bold hover:text-black dark:hover:text-white">
             <img class="h-16 inline-block mr-6 align-middle" src="../public/img/logos/Logo.png" alt="Logo"/>
             
-            <span class="hidden align-middle lg:inline-block">Accueil</span>
+            <span class="hidden align-middle lg:inline-block"><%= res.__("dashboard.navbar.home") %></span>
         </a>
     </div>
     <div class="block lg:hidden">
@@ -21,20 +21,20 @@
             <% if (req.user) { %>
                 <a href="/statistics" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
                     <i class="fas fa-chart-line"></i>
-                    Statistiques
+                    <%= res.__("dashboard.navbar.statistics") %>
                 </a>
                 <a href="/profile" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
                     <i class="fas fa-user"></i>
-                    Profile
+                    <%= res.__("dashboard.navbar.profile") %>
                 </a>
                 <a href="/api/discord/logout" class="p-10 align-middle lg:px-10 lg:py-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
                     <i class="fas fa-sign-out-alt"></i>
-                    Se deconnecter
+                    <%= res.__("dashboard.navbar.logout") %>
                 </a>
             <% } else { %>
                 <a href="/login" class="p-10 align-middle lg:p-0 block lg:inline-block uppercase font-bold <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
                     <i class="fas fa-sign-in-alt"></i>
-                    Se connecter
+                    <%= res.__("dashboard.navbar.login") %>
                 </a>
             <% } %>
 

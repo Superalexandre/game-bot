@@ -34,7 +34,9 @@
   - [X] Crée un compte
   - [X] ⚠️ **Merge compte**
     - [X] ⚠️ A test
-  - [X] Ajouter stats
+  - [ ] Ajouter stats
+    - [ ] ⚠️ Critical error
+      - Can't remake the eror
   - [X] **Probleme** insta redémarrage = plus id = restockage
     - [X] Donc il peut pas add les stats
   - [ ] Commande profile
@@ -52,6 +54,9 @@
 
 ### Site
 
+- [ ] Traduction
+- [ ] Refaire le theme avec les cookies
+  - [ ] Message d'avertissement "Nous utilisons les cookies"
 - [ ] Page serveur
   - ? Faire une /server/id/images retourne l'image avec les stats ?
 - [ ] **❗ RGPD**

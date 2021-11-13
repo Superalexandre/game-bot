@@ -3,18 +3,18 @@
     <head>
         <%- include("utils/header") %>
     </head>
-    <body class="dark:bg-gray-primary bg-white-primary">
+    <body class="dark:bg-gray-primary bg-white-primary transition duration-500 ease-in-out">
         <div>
             <%- include("utils/navbar") %> 
 
             <div>
                 <div class="text-center">
-                    <p class="dark:text-white text-black text-lg">Informations sur la partie <%= gameId %></p>
+                    <p class="dark:text-white text-black text-lg"><%= res.__("dashboard.games.info") %> <%= gameId %></p>
 
-                    <p class="dark:text-white text-black text-lg">Jeux : <%= game.gameName %></p>
+                    <p class="dark:text-white text-black text-lg"><%= res.__("dashboard.games.game") %> : <%= game.gameName %></p>
 
                     <% if (game.guildOrChat.type === "guild") { %>
-                        <a class="text-lg <%= "text-" + req.color %> dark:hover:text-white hover:text-black" href="/server/<%= game.guildOrChat.data.id %>">Effectué sur le serveur <%= game.guildOrChat.data.name %></a>
+                        <a class="text-lg <%= "text-" + req.color %> dark:hover:text-white hover:text-black" href="/server/<%= game.guildOrChat.data.id %>"><%= res.__("dashboard.games.makeOnServer") %> <%= game.guildOrChat.data.name %></a>
                     <% } else if (game.guildOrChat.type === "chat") { %>
                         <a class="text-lg <%= "text-" + req.color %> dark:hover:text-white hover:text-black" href="/chat/<%= game.guildOrChat.data.id %>"></a>
                     <% } %>
@@ -30,16 +30,16 @@
                     %>
 
                     <% if (winner) { %>
-                        <p class="dark:text-white text-black text-lg">Gagnant : <%= winner.username %></p>
+                        <p class="dark:text-white text-black text-lg"><%= res.__("dashboard.games.winner") %> : <%= winner.username %></p>
                     <% } else { %>
-                        <p class="dark:text-white text-black text-lg">Gagnant : Aucun</p>
+                        <p class="dark:text-white text-black text-lg"><%= res.__("dashboard.games.winner") %> : <%= res.__("dashboard.games.winnerNone") %></p>
                     <% } %>
                     
                     <div class="flex items-center justify-center my-5">
                         <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-10/12"></div>
                     </div>
 
-                    <p class="dark:text-white text-black text-xl font-bold">Participants</p>
+                    <p class="dark:text-white text-black text-xl font-bold"><%= res.__("dashboard.games.participant") %></p>
 
                     <div class="flex flex-row justify-center items-center flex-wrap md:flex-nowrap">
                         <% for (let i = 0; i < game.beetween.length; i++) { %>
@@ -48,7 +48,7 @@
                             <% const plateformData = userData.plateformData.find(pData => pData.plateform === game.plateform) %>
 
                             <% if (!userData) { %>
-                                <p>Profile pour <%= user.username %> non trouvé</p>
+                                <p><%= res.__("dashboard.games.profileNotFound", { username: user.username }) %></p>
                             <% } else { %>
                                 <a href="/profile/<%= userData.accountId %>" class="group w-80 m-3">
                                     <div class="dark:bg-gray-secondary bg-white-secondary rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
@@ -65,7 +65,7 @@
                                             <% } %>
                                             
                                             <%= user.username %>
-                                            <%= req.user && req.user.id === user.id ? " (Vous)" : "" %>
+                                            <%= req.user && req.user.id === user.id ? " " + res.__("dashboard.games.you") : "" %>
                                         </p>
                                     </div>
                                 </a>

@@ -12,6 +12,7 @@ import { fileURLToPath } from "url"
 import fetch from "node-fetch"
 import btoa from "btoa"
 import Logger from "../logger.js"
+import i18n from "i18n"
 
 const logger = new Logger({
     mode: "compact",
@@ -48,6 +49,7 @@ async function init({ data, clients }) {
         }))
         .use(passport.initialize())
         .use(passport.session())
+        .use(i18n.init)
         .use(async function(req, res, next) {
             if (!req.app.locals.messages) req.app.locals.messages = []
 
@@ -70,7 +72,7 @@ async function init({ data, clients }) {
                     
                     req.app.locals.messages.push({
                         type: "error",
-                        message: "Votre profil n'a pas été trouvé, veuillez vous reconnecter."
+                        message: res.__("dashboard.errors.relogin")
                     })
 
                     return res.redirect("/")
@@ -78,6 +80,15 @@ async function init({ data, clients }) {
 
                 req.session.user.profileData = profileData
             }
+  
+            if (!i18n.getLocales().includes(req.cookies.lang)) {
+                res.cookie("lang", "fr-FR", {
+                    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+                    httpOnly: true
+                })
+            }
+
+            i18n.setLocale(req.cookies.lang ?? "fr-FR")
 
             next()
         })
@@ -96,6 +107,24 @@ async function init({ data, clients }) {
                 req, res
             })
         })
+        .get("/profile/settings", function(req, res) {
+            if (!req.user) {
+                req.app.locals.messages.push({
+                    type: "warn",
+                    message: res.__("dashboard.errors.mustBeLogin")
+                })
+
+                return res.redirect("/login")
+            }
+
+            res.render("settings", {
+                req,
+                res,
+                user: req.user,
+                profileData: req.user.profileData,
+                plateformData: req.user.profileData.plateformData
+            })
+        })
         .get("/profile/:id?", function(req, res) {
             if (req.params.id) {
                 res.render("viewProfile", {
@@ -105,7 +134,7 @@ async function init({ data, clients }) {
                 if (!req.user) {
                     req.app.locals.messages.push({
                         type: "warn",
-                        message: "Vous devez être connecter pour faire ceci"
+                        message: res.__("dashboard.errors.mustBeLogin")
                     })
 
                     return res.redirect("/login")
@@ -124,7 +153,7 @@ async function init({ data, clients }) {
             if (!req.user) {
                 req.app.locals.messages.push({
                     type: "warn",
-                    message: "Vous devez être connecter pour faire ceci"
+                    message: res.__("dashboard.errors.mustBeLogin")
                 })
 
                 return res.redirect("/login")
@@ -140,7 +169,7 @@ async function init({ data, clients }) {
             if (!server) {
                 req.app.locals.messages.push({
                     type: "error",
-                    message: "Le serveur n'a pas été trouvé"
+                    message: res.__("dashboard.errors.serverNotFound")
                 })
 
                 return res.redirect("/")
@@ -158,7 +187,7 @@ async function init({ data, clients }) {
             if (!chat) {
                 req.app.locals.messages.push({
                     type: "error",
-                    message: "Le chat n'a pas été trouvé"
+                    message: res.__("dashboard.errors.chatNotFound")
                 })
 
                 return res.redirect("/")
@@ -174,7 +203,7 @@ async function init({ data, clients }) {
             if (!game) {
                 req.app.locals.messages.push({
                     type: "error",
-                    message: "Le jeu n'a pas été trouvé"
+                    message: res.__("dashboard.errors.gameNotFound")
                 })
 
                 return res.redirect("/")
@@ -196,7 +225,7 @@ async function init({ data, clients }) {
             if (!req.user) {
                 req.app.locals.messages.push({
                     type: "warn",
-                    message: "Vous devez être connecter pour faire ceci"
+                    message: res.__("dashboard.errors.mustBeLogin")
                 })
 
                 return res.redirect("/login")
@@ -205,7 +234,7 @@ async function init({ data, clients }) {
             if (!config.discord.ownerIds.includes(req.user.id) && !config.instagram.ownerIds.includes(req.user.id)) {
                 req.app.locals.messages.push({
                     type: "error",
-                    message: "Vous n'êtes pas autoriser a faire ceci"
+                    message: res.__("dashboard.errors.notAllowed")
                 })
 
                 return res.redirect("/login")
@@ -223,7 +252,7 @@ async function init({ data, clients }) {
 
             req.app.locals.messages.push({
                 type: "info",
-                message: "La connexion via Instagram n'est pas encore disponible"
+                message: res.__("dashboard.errors.connectionNotReleased", { plateform: "Instagram" })
             }) 
 
             res.redirect("/login")
@@ -262,7 +291,7 @@ async function init({ data, clients }) {
             if (token.error || !token.access_token) {
                 req.app.locals.messages.push({
                     type: "error",
-                    message: "La clé de connexion a expirer ou est invalide"
+                    message: res.__("dashboard.errors.invalidKey")
                 })   
 
                 return res.redirect("/login")
@@ -300,7 +329,7 @@ async function init({ data, clients }) {
             if (!userData.infos || !userData.servers) {
                 req.app.locals.messages.push({
                     type: "error",
-                    message: "Des informations sont manquantes"
+                    message: res.__("dashboard.errors.missingData")
                 })
 
                 return res.redirect("/login")
@@ -329,7 +358,7 @@ async function init({ data, clients }) {
 
                     req.app.locals.messages.push({
                         type: "error",
-                        message: "Votre compte n'a pas plus être crée"
+                        message: res.__("dashboard.errors.accountNotCreated")
                     })
 
                     return res.redirect("/login")
@@ -347,7 +376,7 @@ async function init({ data, clients }) {
 
             req.app.locals.messages.push({
                 type: "success",
-                message: "Connecté avec succès"
+                message: res.__("dashboard.errors.loginSuccess")
             })
 
             res.redirect("/")
@@ -358,7 +387,7 @@ async function init({ data, clients }) {
             
             req.app.locals.messages.push({
                 type: "success",
-                message: "Deconnecté avec succès"
+                message: res.__("dashboard.errors.logoutSucces")
             })
 
             res.redirect("/")
@@ -378,7 +407,7 @@ async function init({ data, clients }) {
         .use(function(req, res) {
             req.app.locals.messages.push({
                 type: "info",
-                message: "Nous vous avons redirigez ici la page été introuvable"
+                message: res.__("dashboard.errors.pageNotFound")
             })
 
             res.redirect("/")
