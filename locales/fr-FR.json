@@ -551,7 +551,14 @@
         },
         "index": {
             "addBot": "Ajouter le bot sur",
-            "playOn": "Joue sur"
+            "playOn": "Joue sur",
+            "img": "Image",
+            "littleText": "Petit texte"
+        },
+        "login": {
+            "connectWithDiscord": "Connexion avec Discord",
+            "connectWithInsta": "Connexion avec Instagram (Bientôt)",
+            "noAccount": "Pas de compte ?"
         },
         "games": {
             "info": "Informations sur la partie",
@@ -578,7 +585,11 @@
             "noDataAboutGame": "Aucune donnée sur ou a été effecuté la partie",
             "noDataSave": "Derniere partie : Aucune données enregistrer",
             "addDiscordAccount": "Ajouter un compte Discord",
-            "addInstaAccount": "Ajouter un compte Instagram"
+            "addInstaAccount": "Ajouter un compte Instagram",
+            "fr-FR": "Français",
+            "en-GB": "Anglais",
+            "es-ES": "Espagnol",
+            "de-DE": "Allemand"
         },
         "server": {
             "infoServer": "Informations sur le serveur",
@@ -596,7 +607,11 @@
             "fr-FR": "Français (France)",
             "en-GB": "Anglais (Angleterre)",
             "es-ES": "Espagnol (Espagne)",
-            "de-DE": "Allemand (Allemagne)"
+            "de-DE": "Allemand (Allemagne)",
+            "lang": "Langue",
+            "dangerous": "Zone dangereuse",
+            "deleteMyAccount": "Supprimer le compte",
+            "deleteAccount": "Supprimer le compte liés"
         }
     }
 }

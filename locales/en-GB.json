@@ -578,7 +578,11 @@
 			"noDataAboutGame": "No data on where the game was performed",
 			"noDataSave": "Last part: No data recorded",
 			"addDiscordAccount": "Add a Discord account",
-			"addInstaAccount": "Add Instagram Account"
+			"addInstaAccount": "Add Instagram Account",
+			"fr-FR": "French",
+			"en-GB": "English",
+            "es-ES": "Spanish",
+            "de-DE": "German"
 		},
 		"server": {
 			"infoServer": "Server Info",
