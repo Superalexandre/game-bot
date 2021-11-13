@@ -12,17 +12,17 @@
             <div class="text-center">
                 <div class="group">
                     <i class="fab fa-discord font-bold group text-blurple block group-hover:animate-rotate360"></i>
-                    <button class="font-bold text-blurple" onclick="location.href='/api/discord/login'">Connexion avec Discord</button>
+                    <button class="font-bold text-blurple" onclick="location.href='/api/discord/login'"><%= res.__("dashboard.login.connectWithDiscord") %></button>
                 </div>
                 <div>
                     <button class="font-bold text-transparent gradient-instagram">
                         <i class="fab fa-instagram"></i>
                         
-                        Connexion avec Instagram (Bientôt)
+                        <%= res.__("dashboard.login.connectWithInsta") %>
                     </button>
                 </div>
                 <div>
-                    <p>Je n'est pas de compte</p>
+                    <p><%= res.__("dashboard.login.noAccount") %></p>
                 </div>
             </div>
         </div>
