@@ -469,7 +469,19 @@
 		"settings": {
 			"fr-FR": "Français (France)",
 			"en-GB": "Anglais (Angletterre)",
-			"de-DE": "Allemand (Allemagne)"
+			"de-DE": "Allemand (Allemagne)",
+			"es-ES": "Espagnol (Espagne)"
+		},
+		"profile": {
+			"globalInfo": "Informations globales",
+			"uniqueId": "Identifiant unique",
+			"activeLang": "Langue active",
+			"change": "Changer",
+			"createdAt": "Compte crée le",
+			"profile": "Profile",
+			"partyPlayed": "Partie jouée sur",
+			"lastGame": "Dernière partie",
+			"onServer": "Sur le serveur"
 		}
 	}
 }
