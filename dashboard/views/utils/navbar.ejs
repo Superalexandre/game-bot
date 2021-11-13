@@ -59,8 +59,31 @@
         }
     })
 
-    if (localStorage.theme === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-        localStorage.theme = "dark"
+    //new function for set new cookie
+    function setCookie(name, value) {
+        let date = new Date();
+        date.setTime(date.getTime() + (365 * 24 * 60 * 60 * 1000))
+        
+        const expires = "; expires=" + date.toUTCString()
+
+        document.cookie = name + "=" + (value || "")  + expires + "; path=/"
+    }
+
+    //Get cookies
+    function getCookie(name) {
+        const nameEQ = name + "="
+        const ca = document.cookie.split(";")
+
+        for (let i = 0; i < ca.length; i++) {
+            const c = ca[i]
+            while (c.charAt(0) === " ") c = c.substring(1, c.length)
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length)
+        }
+
+        return null;
+    }
+
+    if (getCookie("theme") === "dark") {
         document.documentElement.classList.add("dark")        
     }
 
@@ -69,10 +92,10 @@
             const classList = document.documentElement.className.split(" ")
 
             if (classList.includes("dark")) {
-                localStorage.theme = "light"
+                setCookie("theme", "light")
                 document.documentElement.classList.remove("dark")
             } else {
-                localStorage.theme = "dark"
+                setCookie("theme", "dark")
                 document.documentElement.classList.add("dark")
             }
         })
