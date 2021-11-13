@@ -579,7 +579,19 @@
             "noDataAboutGame": "Aucune donnée sur ou a été effecuté la partie",
             "noDataSave": "Derniere partie : Aucune données enregistrer",
             "addDiscordAccount": "Ajouter un compte Discord",
-            "addInstaAccount": "Ajouter un compte Instagram",
+            "addInstaAccount": "Ajouter un compte Instagram"
+        },
+        "server": {
+            "infoServer": "Informations sur le serveur",
+            "partyPlayed": "parties jouées",
+            "party": "parties",
+            "with": "avec",
+            "highestPlayedGame": "Le jeu le plus joué",
+            "smallerPlayedGame": "Le jeu le moins joué",
+            "highestPlayerGame": "Le joueur qui a le plus joué",
+            "smallerPlayerGame": "Le joueur qui a le moins joué",
+            "firstPlayedGame": "La première partie joué",
+            "lastPlayedGame": "La dernière partie joué"
         }
     }
 }
