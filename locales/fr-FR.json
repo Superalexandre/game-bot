@@ -563,6 +563,23 @@
             "participant": "Participant",
             "profileNotFound": "Profile pour {{username}} non trouvé",
             "you": "(Vous)"
+        },
+        "profile": {
+            "globalInfo": "Informations globales",
+            "uniqueId": "Identifiant unique",
+            "activeLang": "Langue active",
+            "change": "Changer",
+            "createdAt": "Compte crée le",
+            "profile": "Profile",
+            "infoUser": "Information sur le compte",
+            "partyPlayed": "Partie jouée sur",
+            "lastGame": "Dernière partie",
+            "onServer": "Sur le serveur",
+            "versus": "Contre",
+            "noDataAboutGame": "Aucune donnée sur ou a été effecuté la partie",
+            "noDataSave": "Derniere partie : Aucune données enregistrer",
+            "addDiscordAccount": "Ajouter un compte Discord",
+            "addInstaAccount": "Ajouter un compte Instagram",
         }
     }
 }
