@@ -581,8 +581,8 @@
 			"addInstaAccount": "Add Instagram Account",
 			"fr-FR": "French",
 			"en-GB": "English",
-            "es-ES": "Spanish",
-            "de-DE": "German"
+			"es-ES": "Spanish",
+			"de-DE": "German"
 		},
 		"server": {
 			"infoServer": "Server Info",
@@ -599,8 +599,12 @@
 		"settings": {
 			"fr-FR": "French (France)",
 			"en-GB": "English (England)",
-            "es-ES": "Spanish (Spain)",
-            "de-DE": "German (Germany)"
+			"es-ES": "Spanish (Spain)",
+			"de-DE": "German (Germany)",
+			"lang": "Language",
+			"dangerous": "Dangerous area",
+			"deleteAccount": "Delete the linked account",
+			"deleteMyAccount": "Delete the account"
 		}
 	}
 }
