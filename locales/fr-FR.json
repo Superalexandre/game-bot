@@ -553,6 +553,16 @@
         "index": {
             "addBot": "Ajouter le bot sur",
             "playOn": "Joue sur"
+        },
+        "games": {
+            "info": "Informations sur la partie",
+            "game": "Jeux",
+            "makeOnServer": "Effectué sur le serveur",
+            "winner": "Gagnant",
+            "winnerNone": "Aucun",
+            "participant": "Participant",
+            "profileNotFound": "Profile pour {{username}} non trouvé",
+            "you": "(Vous)"
         }
     }
 }
