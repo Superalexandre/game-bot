@@ -54,7 +54,7 @@
                                     <% let games = profileData.statistics.filter(pltf => pltf.plateform === plateform.plateform) %>
                                     <% let lastGame = games[games.length - 1] %>
 
-                                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/games/<%= lastGame.gameId.replace("game-", "") %>"><%= res.__("dashboard.profile.lastGame") %> (<%= lastGame.result %>) : <%= lastGame.gameName %><%= lastGame.versus && lastGame.versus !== "solo" ? ` | ${req.__("dashboard.profile.versus")} : ${lastGame.versus.username}` : "" %></a>
+                                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/games/<%= lastGame.gameId.replace("game-", "") %>"><%= res.__("dashboard.profile.lastGame") %> (<%= lastGame.result %>) : <%= lastGame.gameName %><%= lastGame.versus && lastGame.versus !== "solo" ? ` | ${res.__("dashboard.profile.versus")} : ${lastGame.versus.username}` : "" %></a>
                                     
                                     <% if (lastGame.guildOrChat && lastGame.guildOrChat.type === "guild") { %>
                                         <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/server/<%= lastGame.guildOrChat.data.id %>"><%= res.__("dashboard.profile.onServer") %> : <%= lastGame.guildOrChat.data.name %></a>
@@ -71,10 +71,10 @@
                                             -->
                                         </a>
                                     <% } else { %>
-                                        <p class="dark:text-white text-black"><%= req.__("dashboard.profile.noDataAboutGame") %></p>
+                                        <p class="dark:text-white text-black"><%= res.__("dashboard.profile.noDataAboutGame") %></p>
                                     <% } %>
                                 <% } else { %>
-                                    <p class="dark:text-white text-black"><%= req.__("dashboard.profile.noDataSave") %></p>
+                                    <p class="dark:text-white text-black"><%= res.__("dashboard.profile.noDataSave") %></p>
                                 <% } %>
 
                             </div>
@@ -85,8 +85,8 @@
                     <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-10/12"></div>
                 </div>
                 <div class="flex flex-col items-center justify-center">
-                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black text-xl" href="/api/instagram/mergeAccount"><%= req.__("dashboard.profile.addDiscordAccount") %></a>
-                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black text-xl" href="/api/discord/mergeAccount"><%= req.__("dashboard.profile.addInstaAccount") %></a>
+                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black text-xl" href="/api/instagram/mergeAccount"><%= res.__("dashboard.profile.addDiscordAccount") %></a>
+                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black text-xl" href="/api/discord/mergeAccount"><%= res.__("dashboard.profile.addInstaAccount") %></a>
                 </div>
             </div>
         </div>
