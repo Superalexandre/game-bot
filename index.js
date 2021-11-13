@@ -45,7 +45,6 @@ i18n.configure({
     retryInDefaultLocale: true,
     objectNotation: true,
     register: global,
-    syncFiles: true,
 
     logDebugFn: function (message) {
         logger.log({ plateform: "i18n", message })
