@@ -592,6 +592,12 @@
             "smallerPlayerGame": "Le joueur qui a le moins joué",
             "firstPlayedGame": "La première partie joué",
             "lastPlayedGame": "La dernière partie joué"
+        },
+        "settings": {
+            "fr-FR": "Français (France)",
+            "en-GB": "Anglais (Angleterre)",
+            "es-ES": "Espagnol (Espagne)",
+            "de-DE": "Allemand (Allemagne)"
         }
     }
 }

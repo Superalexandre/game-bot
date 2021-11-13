@@ -435,37 +435,41 @@
 		},
 		"help": {}
 	},
-    "dashboard": {
-        "errors": {
-            "mustBeLogin": "Vous devez être connecter pour faire ceci",
-            "serverNotFound": "Le serveur n'a pas été trouvé",
-            "chatNotFound": "Le tchat n'a pas été trouvé",
-            "gameNotFound": "Le jeu n'a pas été trouvé",
-            "notAllowed": "Vous n'êtes pas autoriser a faire ceci",
-            "connectionNotReleased": "La connexion via {{plateform}} n'est pas encore disponible",
-            "invalidKey": "La clé de connexion a expirer ou est invalide",
-            "missingData": "Des données sont manquantes",
-            "accountNotCreated": "Votre compte n'a pas plus être crée",
-            "loginSuccess": "Connecté avec succès",
-            "relogin": "Votre profile n'a pas été trouver (ou a expirer), veuillez vous reconnecter",
-            "logoutSucces": "Deconnecté avec succès",
-            "pageNotFound": "La page n'a pas été trouvé, nous vous avons redirigez ici"
-        },
-        "plateform": {
-            "insta": "Instagram",
-            "discord": "Discord"
-        },
-        "navbar": {
-            "home": "Accueil",
-            "statistics": "Statistiques",
-            "profile": "Profile",
-            "logout": "Déconnexion",
-            "login": "Connexion"
-
-        },
-        "index": {
-            "addBot": "Ajouter le bot sur",
-            "playOn": "Joue sur"
-        }
-    }
+	"dashboard": {
+		"errors": {
+			"mustBeLogin": "Vous devez être connecter pour faire ceci",
+			"serverNotFound": "Le serveur n'a pas été trouvé",
+			"chatNotFound": "Le tchat n'a pas été trouvé",
+			"gameNotFound": "Le jeu n'a pas été trouvé",
+			"notAllowed": "Vous n'êtes pas autoriser a faire ceci",
+			"connectionNotReleased": "La connexion via {{plateform}} n'est pas encore disponible",
+			"invalidKey": "La clé de connexion a expirer ou est invalide",
+			"missingData": "Des données sont manquantes",
+			"accountNotCreated": "Votre compte n'a pas plus être crée",
+			"loginSuccess": "Connecté avec succès",
+			"relogin": "Votre profile n'a pas été trouver (ou a expirer), veuillez vous reconnecter",
+			"logoutSucces": "Deconnecté avec succès",
+			"pageNotFound": "La page n'a pas été trouvé, nous vous avons redirigez ici"
+		},
+		"plateform": {
+			"insta": "Instagram",
+			"discord": "Discord"
+		},
+		"navbar": {
+			"home": "Accueil",
+			"statistics": "Statistiques",
+			"profile": "Profile",
+			"logout": "Déconnexion",
+			"login": "Connexion"
+		},
+		"index": {
+			"addBot": "Ajouter le bot sur",
+			"playOn": "Joue sur"
+		},
+		"settings": {
+			"fr-FR": "Français (France)",
+			"en-GB": "Anglais (Angletterre)",
+			"de-DE": "Allemand (Allemagne)"
+		}
+	}
 }
