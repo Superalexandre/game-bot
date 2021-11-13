@@ -18,7 +18,7 @@
                         </div>
                         <div class="p-5">
                             <p class="dark:text-white text-black break-words"><%= res.__("dashboard.profile.uniqueId") %> : <%= profileData.accountId %></p>
-                            <p class="dark:text-white text-black break-words"><%= res.__("dashboard.profile.activeLang") %> : <%= profileData.lang.replace(/fr-FR/g, "Français") %> <a class="hover:text-black dark:hover:text-white font-bold <%= "text-" + req.color %>" href="/profile/settings"><%= res.__("dashboard.profile.change") %></a></p>
+                            <p class="dark:text-white text-black break-words"><%= res.__("dashboard.profile.activeLang") %> : <%= res.__(`dashboard.profile.${profileData.lang}`) %> <a class="hover:text-black dark:hover:text-white font-bold <%= "text-" + req.color %>" href="/profile/settings"><%= res.__("dashboard.profile.change") %></a></p>
                             <p class="dark:text-white text-black break-words"><%= res.__("dashboard.profile.createdAt") %> <%= req.functions.formatDate({ date: profileData.createdTimestamp }) %></p>
                         </div>
                     </div>
