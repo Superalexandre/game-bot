@@ -107,7 +107,7 @@ async function init({ data, clients }) {
                 req, res, i18n
             })
         })
-        .get("/profile/settings", function(req, res) {
+        .get("/profile/settings", async function(req, res) {
             if (!req.user) {
                 req.app.locals.messages.push({
                     type: "warn",
@@ -133,6 +133,8 @@ async function init({ data, clients }) {
                     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
                     httpOnly: true
                 })
+
+                await data.users.set(req.user.profileData.accountId, req.query.lang, "lang")
 
                 res.setLocale(req.query.lang)
 
