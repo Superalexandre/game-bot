@@ -17,22 +17,42 @@
                             <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
                         </div>
                         <div class="p-5">
-                            <div>
-                                <input type="checkbox" id="lang-fr" checked class="dark:bg-gray-secondary bg-white-secondary" />
-                                <label for="lang-fr" class="dark:text-white text-black font-bold text-xl">Français</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" id="lang-en" class="dark:bg-gray-secondary bg-white-secondary" />
-                                <label for="lang-en" class="dark:text-white text-black font-bold text-xl">Anglais</label>
-                            </div>
-                            <div>
-                                <input type="checkbox" id="lang-de" class="dark:bg-gray-secondary bg-white-secondary" />
-                                <label for="lang-de" class="dark:text-white text-black font-bold text-xl">Allemand</label>
-                            </div>
+                            <% i18n.getLocales().forEach(lang => { %>
+                                
+                                
+                                <div>
+                                    <input type="checkbox" id="lang-<%= lang %>" <%= res.getLocale() === lang ? "checked" : "" %> class="dark:bg-gray-secondary bg-white-secondary switchLang" />
+                                    <label for="lang-<%= lang %>" class="dark:text-white text-black font-bold text-xl"><%= res.__(`dashboard.settings.${lang}`) %></label>
+                                </div>
+                                <!--
+                                <div>
+                                    <input type="checkbox" id="lang-en-GB" class="dark:bg-gray-secondary bg-white-secondary switchLang" />
+                                    <label for="lang-en" class="dark:text-white text-black font-bold text-xl">Anglais</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" id="lang-de-DE" class="dark:bg-gray-secondary bg-white-secondary switchLang" />
+                                    <label for="lang-de" class="dark:text-white text-black font-bold text-xl">Allemand</label>
+                                </div>
+                                -->
+
+                            <% }) %>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <script>
+            const switchLang = document.querySelectorAll(".switchLang")
+            switchLang.forEach(function(elem) {
+                elem.addEventListener("change", function() {
+                    if (elem.checked) {
+                        [type, lang, country] = elem.id.split("-")
+
+
+                        window.location.href = `/profile/settings?lang=${lang}-${country}`
+                    }
+                })
+            })
+        </script>
     </body>
 </html>

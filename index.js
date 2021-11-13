@@ -39,7 +39,7 @@ Sentry.init({
 
 //* Config languages
 i18n.configure({
-    locales: ["fr-FR", "en-GB", "de-DE"],
+    locales: ["fr-FR", "en-GB", "de-DE", "es-ES"],
     directory: join(__dirname, "locales"),
     defaultLocale: config.defaultLocale,
     retryInDefaultLocale: true,
@@ -60,10 +60,8 @@ i18n.configure({
   
     missingKeyFn: function(locale, value) {
         logger.error({ plateform: "i18n", message: `MissingKey: La valeur ${value} est manquante dans la langue ${locale}` })
-
-        i18n.setLocale(locale)
     
-        return i18n.__("error.missingTranslation")
+        return value
     },
 
     mustacheConfig: {

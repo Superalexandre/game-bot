@@ -88,23 +88,23 @@ async function init({ data, clients }) {
                 })
             }
 
-            i18n.setLocale(req.cookies.lang ?? "fr-FR")
-
+            res.setLocale(req.cookies.lang ?? "fr-FR")
+            
             next()
         })
         .get("/", function(req, res) {
             res.render("index", {
-                req, res
+                req, res, i18n
             })
         })
         .get("/terms", function(req, res) {
             res.render("terms", {
-                req, res
+                req, res, i18n
             })
         })
         .get("/privacy", function(req, res) {
             res.render("privacy", {
-                req, res
+                req, res, i18n
             })
         })
         .get("/profile/settings", function(req, res) {
@@ -117,18 +117,46 @@ async function init({ data, clients }) {
                 return res.redirect("/login")
             }
 
+            if (req.query && req.query.lang) {
+                if (!i18n.getLocales().includes(req.query.lang)) {
+                    console.log("Invalid lang")
+
+                    req.app.locals.messages.push({
+                        type: "warn",
+                        message: "Langue saisi invalid"
+                    })
+
+                    return res.redirect("/profile/settings")
+                }
+
+                res.cookie("lang", req.query.lang, {
+                    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+                    httpOnly: true
+                })
+
+                res.setLocale(req.query.lang)
+
+                req.app.locals.messages.push({
+                    type: "success",
+                    message: "Langue changé"
+                })
+
+                return res.redirect("/profile/settings")
+            }
+
             res.render("settings", {
                 req,
                 res,
                 user: req.user,
                 profileData: req.user.profileData,
-                plateformData: req.user.profileData.plateformData
+                plateformData: req.user.profileData.plateformData,
+                i18n
             })
         })
         .get("/profile/:id?", function(req, res) {
             if (req.params.id) {
                 res.render("viewProfile", {
-                    req, res
+                    req, res, i18n
                 })
             } else {
                 if (!req.user) {
@@ -145,7 +173,8 @@ async function init({ data, clients }) {
                     res,
                     user: req.user,
                     profileData: req.user.profileData,
-                    plateformData: req.user.profileData.plateformData
+                    plateformData: req.user.profileData.plateformData,
+                    i18n
                 })
             }
         })
@@ -160,7 +189,7 @@ async function init({ data, clients }) {
             }
 
             res.render("statistics", {
-                req, res
+                req, res, i18n
             })
         })
         .get("/server/:id", function(req, res) {
@@ -178,7 +207,8 @@ async function init({ data, clients }) {
             res.render("server", {
                 req, 
                 res,
-                server
+                server,
+                i18n
             })
         })
         .get("/chat/:id", function(req, res) {
@@ -194,7 +224,7 @@ async function init({ data, clients }) {
             }
 
             res.render("chat", {
-                req, res
+                req, res, i18n
             })
         })
         .get("/games/:id", function(req, res) {
@@ -213,12 +243,13 @@ async function init({ data, clients }) {
                 req, 
                 res,
                 game,
-                gameId: req.params.id
+                gameId: req.params.id,
+                i18n
             })
         })
         .get("/login", function(req, res) {
             res.render("login", {
-                req, res
+                req, res, i18n
             })
         })
         .get("/admin", async function(req, res) {
