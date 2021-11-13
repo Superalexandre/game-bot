@@ -539,7 +539,8 @@
         },
         "plateform": {
             "insta": "Instagram",
-            "discord": "Discord"
+            "discord": "Discord",
+            "other": "Autre"
         },
         "navbar": {
             "home": "Accueil",
