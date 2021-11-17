@@ -36,12 +36,23 @@
                         </div>
                         <div class="p-5">
                             <% plateformData.forEach(plateform => { %>
-                                <div class="block lg:inline-block">
-                                    <button><%= res.__("dashboard.settings.deleteAccount") %> <%= plateform.plateform %></button>
+                                <div class="block lg:inline-block custom-button-container">
+                                    <!--
+
+border-2 p-5 border-red-dark m-5 dark:text-white text-dark
+
+                                    -->
+                                    <a class="custom-button">
+                                        <span class="custom-button-text">
+                                            <%= res.__("dashboard.settings.deleteAccount") %> <%= plateform.plateform %>
+                                        </span>
+                                    </a>
                                 </div>
                             <% }) %>
-                            <div class="block lg:inline-block">
-                                <button><%= res.__("dashboard.settings.deleteMyAccount") %></button>
+                            <div class="block lg:inline-block m-5">
+                                <button class="border-2 p-5 border-red-dark m-5 dark:text-white text-dark">
+                                    <%= res.__("dashboard.settings.deleteMyAccount") %>
+                                </button>
                             </div>
 
                         </div>
