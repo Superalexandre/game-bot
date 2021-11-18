@@ -59,6 +59,9 @@
 
 ### Site
 
+- [ ] **❗ Structures**
+  - [ ] Tout les traitements les passées en api
+  - [ ] Ratelimit
 - [X] Traduction
 - [ ] Refaire le theme avec les cookies
   - [ ] Message d'avertissement "Nous utilisons les cookies"
