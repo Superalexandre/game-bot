@@ -18,17 +18,22 @@
                         let firstPlayedGame = null
                         let lastPlayedGame = null
 
-                        req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).forEach(game => {
+                        const games = req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id)
+                        
+                        games.forEach(game => {
                             if (firstPlayedGame > game.date) firstPlayedGame = game.date
                             if (lastPlayedGame < game.date) lastPlayedGame = game.date
                             
                             playedGame[game.gameName] = (playedGame[game.gameName] || 0) + 1
                             
                             for (let i = 0; i < game.beetween.length; i++) {
-                                let player, { id, username } = game.beetween[i]
+                                const { id, username } = game.beetween[i]
 
-                                countPlayerGame[player.id].count = (countPlayerGame[player.id] || 0) + 1
-                                countPlayerGame[player.id].username = username
+                                console.log(countPlayerGame)
+
+                                countPlayerGame[id.toString()] = {}
+                                countPlayerGame[id.toString()].count = (countPlayerGame[id.toString()].count || 0) + 1
+                                countPlayerGame[id.toString()].username = username
                                 //countPlayerGame[player.id].id = player.id
                             }
                         })
@@ -40,10 +45,10 @@
                         const smallerPlayedGame = Object.keys(playedGame).reduce((a, b) => playedGame[a] < playedGame[b] ? a : b)
 
                         //Get highest player game
-                        const highestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame.count[a] > countPlayerGame.count[b] ? a : b)
+                        const highestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame[a].count > countPlayerGame[b].count ? a : b)
                     
                         //Get smallest player game
-                        const smallestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame.count[a] < countPlayerGame.count[b] ? a : b)
+                        const smallestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame[a].count < countPlayerGame[b].count ? a : b)
                     %>
 
                     <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green"></i><%= res.__("dashboard.server.highestPlayedGame") %> <%= highestPlayedGame %> <%= res.__("dashboard.server.with") %> <%= playedGame[highestPlayedGame] %> <%= res.__("dashboard.server.party") %></p>
