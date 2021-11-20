@@ -27,6 +27,7 @@
                             [], //5
                             [], //6
                         ]
+
                         let playedGame = {} 
                         let countPlayerGame = {}
                         let firstPlayedGame = null
@@ -58,6 +59,13 @@
                                 //countPlayerGame[player.id].id = player.id
                             }
                         })
+
+                        let maxParty = 0
+                        for (let i = 0; i < lastPlayedGames.length; i++) {
+                            console.log(lastPlayedGames[i].length, maxParty)
+
+                            if (lastPlayedGames[i].length > maxParty) maxParty = lastPlayedGames[i].length
+                        }
 
                         //Get highest played game
                         const highestPlayedGame = Object.keys(playedGame).reduce((a, b) => playedGame[a] > playedGame[b] ? a : b)
@@ -97,7 +105,32 @@
                         <table class="charts-css column show-labels reverse-data data-spacing-5 show-heading">
                             <caption class="dark:text-white text-black">Statistiques des 7 derniers jours</caption>
 
+                            <%
+                                const colors = ["red", "green", "blue", "yellow"]
+                                const filteredColors = colors.filter(color => color !== req.color)
+                                const colorsShuffle = shuffle(filteredColors)
+
+                                //Shuffle function
+                                function shuffle(array) {
+                                    for (let i = array.length - 1; i > 0; i--) {
+                                        const j = Math.floor(Math.random() * (i + 1));
+                                        [array[i], array[j]] = [array[j], array[i]]
+                                    }
+                                    return array
+                                }
+
+                                let j = 0
+                            %> 
                             <% lastPlayedGames.forEach((games, index) => { %>
+
+                                <% 
+                                    let color = colorsShuffle[j]
+                                    if (!color) {
+                                        j = 0
+                                        color = colorsShuffle[j]
+                                    }
+                                %>
+
                                 <tr>
                                     <th scope="row" class="dark:text-white text-black">
                                         <% if (index === 0) { %>
@@ -106,12 +139,13 @@
                                             <%= new Date().getDate() - index %>/<%= new Date().getMonth() + 1 %>
                                         <% } %>
                                     </th>
-                                    <td style="--size: calc(<%= games.length + 1 %>/10)">
-                                        <span class="data dark:text-white text-black" style="line-height: 1;">
+                                    <td style="--size: calc(<%= games.length + 1 %>/<%= maxParty + 1 %>)" class="bg-<%= color %>-important">
+                                        <span class="data dark:text-white text-black leading-none">
                                             <%= games.length %>
                                         </span> 
                                     </td>
                                 </tr>
+                                <% j++ %>
                             <% }) %>
                     </div>
                 </div>
