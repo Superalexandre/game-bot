@@ -4,7 +4,7 @@
         <%- include("utils/header") %>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
     </head>
-    <body class="dark:bg-gray-primary bg-white-primary transition duration-500 ease-in-out">
+    <body class="dark:bg-gray-primary bg-white-primary">
         <div>
             <%- include("utils/navbar") %> 
 
@@ -62,8 +62,6 @@
 
                         let maxParty = 0
                         for (let i = 0; i < lastPlayedGames.length; i++) {
-                            console.log(lastPlayedGames[i].length, maxParty)
-
                             if (lastPlayedGames[i].length > maxParty) maxParty = lastPlayedGames[i].length
                         }
 
@@ -132,7 +130,7 @@
                                 %>
 
                                 <tr>
-                                    <th scope="row" class="dark:text-white text-black">
+                                    <th scope="row" class="dark:text-white text-black z-10">
                                         <% if (index === 0) { %>
                                             <%= res.__("dashboard.server.today") %>
                                         <% } else { %> 
@@ -142,7 +140,7 @@
                                     <td style="--size: calc(<%= games.length + 1 %>/<%= maxParty + 1 %>)" class="bg-<%= color %>-important">
                                         <span class="data dark:text-white text-black leading-none">
                                             <%= games.length %>
-                                        </span> 
+                                        </span>
                                     </td>
                                 </tr>
                                 <% j++ %>
