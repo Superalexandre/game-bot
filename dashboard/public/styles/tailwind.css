@@ -19,6 +19,22 @@ html, body {
     @apply bg-clip-text bg-gradient-to-r from-instagram-one via-instagram-three to-instagram-six
 }
 
+.bg-blue-important {
+    @apply bg-blue !important
+}
+
+.bg-red-important {
+    @apply bg-red !important
+}
+
+.bg-green-important {
+    @apply bg-green !important
+}
+
+.bg-yellow-important {
+    @apply bg-yellow !important
+}
+
 /**
  * Tailwind customizations
  * Custom scrollbar
