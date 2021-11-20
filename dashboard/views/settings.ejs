@@ -42,15 +42,13 @@
 border-2 p-5 border-red-dark m-5 dark:text-white text-dark
 
                                     -->
-                                    <a class="custom-button">
-                                        <span class="custom-button-text">
-                                            <%= res.__("dashboard.settings.deleteAccount") %> <%= plateform.plateform %>
-                                        </span>
-                                    </a>
+                                    <button class="dark:text-white text-dark p-5 border-2 rounded-xl border-red-dark hover:transition transition duration-700 ease-in-out hover:bg-red-dark hover:text-white">
+                                        <%= res.__("dashboard.settings.deleteAccount") %> <%= plateform.plateform %> 
+                                    </button>
                                 </div>
                             <% }) %>
                             <div class="block lg:inline-block m-5">
-                                <button class="border-2 p-5 border-red-dark m-5 dark:text-white text-dark">
+                                <button class="dark:text-white text-dark p-5 border-2 rounded-xl border-red-dark hover:transition transition duration-700 ease-in-out hover:bg-red-dark hover:text-white">
                                     <%= res.__("dashboard.settings.deleteMyAccount") %>
                                 </button>
                             </div>
