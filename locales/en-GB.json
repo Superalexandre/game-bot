@@ -601,7 +601,8 @@
       "highestPlayerGame": "The player who played the most",
       "smallerPlayerGame": "The player who played the least",
       "firstPlayedGame": "The first part played",
-      "lastPlayedGame": "The last part played"
+      "lastPlayedGame": "The last part played",
+      "today": "Today"
     },
     "settings": {
       "fr-FR": "French (France)",
