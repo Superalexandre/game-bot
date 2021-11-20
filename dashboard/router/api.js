@@ -10,10 +10,10 @@ export default router
     .get("/instagram/login", function(_req, res) {
         res.redirect("https://api.instagram.com/oauth/authorize?client_id=406440530945557&redirect_uri=http://localhost:3000/api/instagram/callback&scope=user_profile&response_type=code")
     })
-    .get("/instagram/callback", function(req, res) {
+    .get("/instagram/callback", async function(req, res) {
         console.log(req.query)
 
-        req.app.locals.messages.push({
+        await req.app.locals.messages.push({
             type: "info",
             message: res.__("dashboard.errors.connectionNotReleased", { plateform: "Instagram" })
         }) 
@@ -51,7 +51,7 @@ export default router
         const token = await response.json()
             
         if (token.error || !token.access_token) {
-            req.app.locals.messages.push({
+            await req.app.locals.messages.push({
                 type: "error",
                 message: res.__("dashboard.errors.invalidKey")
             })   
@@ -118,7 +118,7 @@ export default router
             if (!newAccount.success) {
                 req.user = null
 
-                req.app.locals.messages.push({
+                await req.app.locals.messages.push({
                     type: "error",
                     message: res.__("dashboard.errors.accountNotCreated")
                 })
@@ -142,7 +142,6 @@ export default router
         })
 
         if (req.app.locals.redirect && req.app.locals.redirect.length > 0) {
-        
             const redirects = req.app.locals.redirect
             const redirect = redirects[redirects.length - 4]
 
@@ -157,10 +156,10 @@ export default router
         req.session.destroy()
         req.user = null
             
-        req.app.locals.messages.push({
+        await req.app.locals.messages.push({
             type: "success",
             message: res.__("dashboard.errors.logoutSucces")
         })
 
-        res.redirect("/")
+        return res.redirect("/")
     })
