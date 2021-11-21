@@ -7,8 +7,36 @@
         <div>
             <%- include("utils/navbar") %> 
 
-            <div class="text-center">
-                <p class="textTheme animationTheme">Statistiques de <%= req.user.username %></p>
+            <div>
+                <div class="group">
+                    <div class="bgTheme m-8 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
+                        <div class="text-center">
+                            <p class="textTheme font-bold text-xl">Parties jouées</p>
+                        </div>
+                        <div class="flex items-center justify-center my-1">
+                            <div class="bgSepTheme h-0.5 w-5/12"></div>
+                        </div>
+                        <div class="p-5">
+                            <% 
+                                const numberPlayedGame = {}
+
+                                profileData.statistics.forEach(stat => {
+                                    if(!numberPlayedGame[stat.gameName]) {
+                                        numberPlayedGame[stat.gameName] = 0
+                                    }
+                                    numberPlayedGame[stat.gameName]++
+                                })
+
+                                // Sort object by most played game
+                                const sortedNumberPlayedGame = Object.keys(numberPlayedGame).sort((a, b) => numberPlayedGame[b] - numberPlayedGame[a])
+                            %>
+
+                            <% sortedNumberPlayedGame.forEach(gameName => { %>
+                                <p class="textTheme"><%= gameName %> <%= numberPlayedGame[gameName] %> parties</p>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
