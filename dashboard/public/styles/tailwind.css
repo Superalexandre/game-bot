@@ -72,6 +72,10 @@ html, body {
     @apply dark:bg-gray-secondary bg-white-secondary;
 }
 
+.bgSepTheme {
+    @apply dark:bg-white-primary bg-gray-primary;
+}
+
 .animationTheme {
     @apply transition duration-500 ease-in-out;
 }
