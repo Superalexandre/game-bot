@@ -15,7 +15,7 @@
                         <p class="textTheme"><%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> <%= res.__("dashboard.server.partyPlayed") %></p>
                     </div>
                     <div class="flex items-center justify-center m-5">
-                        <div class="bgMainTheme h-0.5 w-11/12"></div>
+                        <div class="bgSepTheme h-0.5 w-11/12"></div>
                     </div>
                     <% 
                         let lastPlayedGames = [
@@ -83,21 +83,21 @@
                         <p class="textTheme"><i class="fas fa-arrow-down text-red pr-2"></i><%= res.__("dashboard.server.smallerPlayedGame") %> <%= smallerPlayedGame %> <%= res.__("dashboard.server.with") %> <%= playedGame[smallerPlayedGame] %> <%= res.__("dashboard.server.party") %></p>
                     </div>
                     <div class="flex items-center justify-center m-5">
-                        <div class="bgMainTheme h-0.5 w-11/12"></div>
+                        <div class="bgSepTheme h-0.5 w-11/12"></div>
                     </div>
                     <div>
                         <p class="textTheme"><i class="fas fa-arrow-up text-green pr-2"></i><%= res.__("dashboard.server.highestPlayerGame") %> <%= countPlayerGame[highestPlayerGame].username %> <%= res.__("dashboard.server.with") %> <%= countPlayerGame[highestPlayerGame].count %> <%= res.__("dashboard.server.party") %></p>
                         <p class="textTheme"><i class="fas fa-arrow-down text-red pr-2"></i><%= res.__("dashboard.server.smallerPlayerGame") %> <%= countPlayerGame[smallestPlayerGame].username %> <%= res.__("dashboard.server.with") %> <%= countPlayerGame[smallestPlayerGame].count %> <%= res.__("dashboard.server.party") %></p>
                     </div>
                     <div class="flex items-center justify-center m-5">
-                        <div class="bgMainTheme h-0.5 w-11/12"></div>
+                        <div class="bgSepTheme h-0.5 w-11/12"></div>
                     </div>
                     <div>
                         <p class="textTheme"><%= res.__("dashboard.server.firstPlayedGame") %> <%= req.functions.formatDate({ date: firstPlayedGame }) %></p>
                         <p class="textTheme"><%= res.__("dashboard.server.lastPlayedGame") %> <%= req.functions.formatDate({ date: lastPlayedGame }) %></p>
                     </div>
                     <div class="flex items-center justify-center m-5">
-                        <div class="bgMainTheme h-0.5 w-11/12"></div>
+                        <div class="bgSepTheme h-0.5 w-11/12"></div>
                     </div>
                     <div class="w-11/12 h-52 my-0 mx-auto">
                         <table class="charts-css column show-labels reverse-data data-spacing-5 show-heading">
