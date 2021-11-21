@@ -9,6 +9,7 @@
 ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
 
 [![CodeFactor](https://www.codefactor.io/repository/github/superalexandre/game-bot/badge?s=390f8bb32e42cacd0eabb8b92f9053ecb4a7b136)](https://www.codefactor.io/repository/github/superalexandre/game-bot)
+[![wakatime](https://wakatime.com/badge/user/558b9eef-be8b-4d64-a7d7-1035d9321022/project/f2b8313c-8b4f-46cd-92b4-189956d62da7.svg)](https://wakatime.com/badge/user/558b9eef-be8b-4d64-a7d7-1035d9321022/project/f2b8313c-8b4f-46cd-92b4-189956d62da7)
 
 ![Metrics](https://github.com/Superalexandre/game-bot/blob/main/github-metrics.svg)
 
