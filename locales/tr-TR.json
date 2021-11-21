@@ -589,7 +589,12 @@
         "fr-FR": "French",
         "en-GB": "English",
         "es-ES": "Spanish",
-        "de-DE": "German"
+        "de-DE": "German",
+        "result": {
+          "win": "gagné",
+          "loose": "perdue",
+          "equality": "égalité"
+        }
       },
       "server": {
         "infoServer": "Server Info",
