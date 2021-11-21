@@ -54,7 +54,7 @@
                                     <% let games = profileData.statistics.filter(pltf => pltf.plateform === plateform.plateform) %>
                                     <% let lastGame = games[games.length - 1] %>
 
-                                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/games/<%= lastGame.gameId.replace("game-", "") %>"><%= res.__("dashboard.profile.lastGame") %> (<%= lastGame.result %>) : <%= lastGame.gameName %><%= lastGame.versus && lastGame.versus !== "solo" ? ` | ${res.__("dashboard.profile.versus")} : ${lastGame.versus.username}` : "" %></a>
+                                    <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/games/<%= lastGame.gameId.replace("game-", "") %>"><%= res.__("dashboard.profile.lastGame") %> (<%= res.__(`dashboard.profile.result.${lastGame.result}`) %>) : <%= lastGame.gameName %><%= lastGame.versus && lastGame.versus !== "solo" ? ` | ${res.__("dashboard.profile.versus")} : ${lastGame.versus.username}` : "" %></a>
                                     
                                     <% if (lastGame.guildOrChat && lastGame.guildOrChat.type === "guild") { %>
                                         <a class="<%= "text-" + req.color %> dark:hover:text-white hover:text-black block" href="/server/<%= lastGame.guildOrChat.data.id %>"><%= res.__("dashboard.profile.onServer") %> : <%= lastGame.guildOrChat.data.name %></a>
