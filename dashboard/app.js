@@ -194,7 +194,11 @@ async function init({ data, clients }) {
             }
 
             res.render("statistics", {
-                req, res, i18n
+                req, 
+                res, 
+                i18n,
+                profileData: req.user.profileData,
+                plateformData: req.user.profileData.plateformData
             })
         })
         .get("/server/:id", function(req, res) {
@@ -228,9 +232,12 @@ async function init({ data, clients }) {
                 return res.redirect("/")
             }
 
+            res.redirect("/")
+            /*
             res.render("chat", {
                 req, res, i18n
             })
+            */
         })
         .get("/games/:id", function(req, res) {
             const game = req.data.games.get(req.params.id)
