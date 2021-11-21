@@ -3,7 +3,7 @@
     <head>
         <%- include("utils/header") %>
     </head>
-    <body class="dark:bg-gray-primary bg-white-primary transition duration-500 ease-in-out">
+    <body class="bgMainTheme animationTheme">
         <div>
             <%- include("utils/navbar") %> 
 
@@ -11,21 +11,21 @@
         
             <div>
                 <div class="mt-10 text-center">
-                    <a href="/api/discord/invite" class="group text-black dark:text-white hover:text-blurple dark:hover:text-blurple block lg:inline-block lg:mx-5">
+                    <a href="/api/discord/invite" class="group textTheme hover:text-blurple dark:hover:text-blurple block lg:inline-block lg:mx-5">
                         <i class="fab fa-discord group-hover:animate-rotate360"></i>
                         <%= res.__("dashboard.index.addBot") %> <span class="font-bold text-blurple"><%= res.__("dashboard.plateform.discord") %></span>
                     </a>
-                    <a href="https://www.instagram.com/sudrefb/" class="text-black dark:text-white hover:gradient-instagram dark:hover:gradient-instagram hover:text-transparent dark:hover:text-transparent block lg:inline-block lg:mx-5">
+                    <a href="https://www.instagram.com/sudrefb/" class="textTheme hover:gradient-instagram dark:hover:gradient-instagram hover:text-transparent dark:hover:text-transparent block lg:inline-block lg:mx-5">
                         <i class="fab fa-instagram"></i>
                         <%= res.__("dashboard.index.playOn") %> <span class="font-bold text-transparent gradient-instagram"><%= res.__("dashboard.plateform.insta") %></span>
                     </a>
                 </div>
                 <div class="flex items-center justify-center mt-10">
-                    <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-11/12"></div>
+                    <div class="bgMainTheme h-0.5 w-11/12"></div>
                 </div>
                 <div class="grid grid-cols-1 items-center justify-center">
                     <div class="group flex items-center justify-center">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 bg-white-secondary dark:bg-gray-secondary h-80 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 bgTheme h-80 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
                             <div class="flex items-center justify-center">
                                 <p><%= res.__("dashboard.index.img") %></p>
                             </div>
@@ -35,10 +35,10 @@
                         </div>
                     </div>
                     <div class="flex items-center justify-center">
-                        <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-11/12"></div>
+                        <div class="bgMainTheme h-0.5 w-11/12"></div>
                     </div>
                     <div class="group flex items-center justify-center">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 bg-white-secondary dark:bg-gray-secondary h-80 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 bgTheme h-80 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
                             <div class="flex items-center justify-center">
                                 <p><%= res.__("dashboard.index.img") %></p>
                             </div>

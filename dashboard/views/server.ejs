@@ -4,18 +4,18 @@
         <%- include("utils/header") %>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
     </head>
-    <body class="dark:bg-gray-primary bg-white-primary">
+    <body class="bgMainTheme animationTheme">
         <div>
             <%- include("utils/navbar") %> 
 
             <div>
                 <div class="text-center">
                     <div>
-                        <p class="dark:text-white text-black"><%= res.__("dashboard.server.infoServer") %> <%= server.name %> (<%= server.id %>)</p>
-                        <p class="dark:text-white text-black"><%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> <%= res.__("dashboard.server.partyPlayed") %></p>
+                        <p class="textTheme"><%= res.__("dashboard.server.infoServer") %> <%= server.name %> (<%= server.id %>)</p>
+                        <p class="textTheme"><%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> <%= res.__("dashboard.server.partyPlayed") %></p>
                     </div>
                     <div class="flex items-center justify-center m-5">
-                        <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-11/12"></div>
+                        <div class="bgMainTheme h-0.5 w-11/12"></div>
                     </div>
                     <% 
                         let lastPlayedGames = [
@@ -79,29 +79,29 @@
                     %>
 
                     <div>
-                        <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green pr-2"></i><%= res.__("dashboard.server.highestPlayedGame") %> <%= highestPlayedGame %> <%= res.__("dashboard.server.with") %> <%= playedGame[highestPlayedGame] %> <%= res.__("dashboard.server.party") %></p>
-                        <p class="dark:text-white text-black"><i class="fas fa-arrow-down text-red pr-2"></i><%= res.__("dashboard.server.smallerPlayedGame") %> <%= smallerPlayedGame %> <%= res.__("dashboard.server.with") %> <%= playedGame[smallerPlayedGame] %> <%= res.__("dashboard.server.party") %></p>
+                        <p class="textTheme"><i class="fas fa-arrow-up text-green pr-2"></i><%= res.__("dashboard.server.highestPlayedGame") %> <%= highestPlayedGame %> <%= res.__("dashboard.server.with") %> <%= playedGame[highestPlayedGame] %> <%= res.__("dashboard.server.party") %></p>
+                        <p class="textTheme"><i class="fas fa-arrow-down text-red pr-2"></i><%= res.__("dashboard.server.smallerPlayedGame") %> <%= smallerPlayedGame %> <%= res.__("dashboard.server.with") %> <%= playedGame[smallerPlayedGame] %> <%= res.__("dashboard.server.party") %></p>
                     </div>
                     <div class="flex items-center justify-center m-5">
-                        <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-11/12"></div>
+                        <div class="bgMainTheme h-0.5 w-11/12"></div>
                     </div>
                     <div>
-                        <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green pr-2"></i><%= res.__("dashboard.server.highestPlayerGame") %> <%= countPlayerGame[highestPlayerGame].username %> <%= res.__("dashboard.server.with") %> <%= countPlayerGame[highestPlayerGame].count %> <%= res.__("dashboard.server.party") %></p>
-                        <p class="dark:text-white text-black"><i class="fas fa-arrow-down text-red pr-2"></i><%= res.__("dashboard.server.smallerPlayerGame") %> <%= countPlayerGame[smallestPlayerGame].username %> <%= res.__("dashboard.server.with") %> <%= countPlayerGame[smallestPlayerGame].count %> <%= res.__("dashboard.server.party") %></p>
+                        <p class="textTheme"><i class="fas fa-arrow-up text-green pr-2"></i><%= res.__("dashboard.server.highestPlayerGame") %> <%= countPlayerGame[highestPlayerGame].username %> <%= res.__("dashboard.server.with") %> <%= countPlayerGame[highestPlayerGame].count %> <%= res.__("dashboard.server.party") %></p>
+                        <p class="textTheme"><i class="fas fa-arrow-down text-red pr-2"></i><%= res.__("dashboard.server.smallerPlayerGame") %> <%= countPlayerGame[smallestPlayerGame].username %> <%= res.__("dashboard.server.with") %> <%= countPlayerGame[smallestPlayerGame].count %> <%= res.__("dashboard.server.party") %></p>
                     </div>
                     <div class="flex items-center justify-center m-5">
-                        <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-11/12"></div>
+                        <div class="bgMainTheme h-0.5 w-11/12"></div>
                     </div>
                     <div>
-                        <p class="dark:text-white text-black"><%= res.__("dashboard.server.firstPlayedGame") %> <%= req.functions.formatDate({ date: firstPlayedGame }) %></p>
-                        <p class="dark:text-white text-black"><%= res.__("dashboard.server.lastPlayedGame") %> <%= req.functions.formatDate({ date: lastPlayedGame }) %></p>
+                        <p class="textTheme"><%= res.__("dashboard.server.firstPlayedGame") %> <%= req.functions.formatDate({ date: firstPlayedGame }) %></p>
+                        <p class="textTheme"><%= res.__("dashboard.server.lastPlayedGame") %> <%= req.functions.formatDate({ date: lastPlayedGame }) %></p>
                     </div>
                     <div class="flex items-center justify-center m-5">
-                        <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-11/12"></div>
+                        <div class="bgMainTheme h-0.5 w-11/12"></div>
                     </div>
                     <div class="w-11/12 h-52 my-0 mx-auto">
                         <table class="charts-css column show-labels reverse-data data-spacing-5 show-heading">
-                            <caption class="dark:text-white text-black">Statistiques des 7 derniers jours</caption>
+                            <caption class="textTheme">Statistiques des 7 derniers jours</caption>
 
                             <%
                                 const colors = ["red", "green", "blue", "yellow"]
@@ -130,7 +130,7 @@
                                 %>
 
                                 <tr>
-                                    <th scope="row" class="dark:text-white text-black z-10">
+                                    <th scope="row" class="textTheme z-10">
                                         <% if (index === 0) { %>
                                             <%= res.__("dashboard.server.today") %>
                                         <% } else { %> 
@@ -138,7 +138,7 @@
                                         <% } %>
                                     </th>
                                     <td style="--size: calc(<%= games.length + 1 %>/<%= maxParty + 1 %>)" class="bg-<%= color %>-important">
-                                        <span class="data dark:text-white text-black leading-none">
+                                        <span class="data textTheme leading-none">
                                             <%= games.length %>
                                         </span>
                                     </td>
