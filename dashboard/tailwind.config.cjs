@@ -45,13 +45,22 @@ module.exports = {
                         height: "auto",
                         width: "auto"
                     }
+                },
+                movingBars: {
+                    "0%": {
+                        transform: "translateY(100%)"
+                    },
+                    "15%": {
+                        transform: "translateY(0)"
+                    }
                 }
             },
             animation: {
                 rotate360: "rotate360 0.6s both",
                 rightToLeft: "rightToLeft 2s ease",
                 leftToRight: "leftToRight 2s ease",
-                hide: "hide 0.5s linear 3.5s forwards"
+                hide: "hide 0.5s linear 3.5s forwards",
+                movingBars: "movingBars 4s linear infinite"
             },
             colors: {
                 blurple: {

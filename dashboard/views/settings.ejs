@@ -1,41 +1,56 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<%= res.getLocale() %>">
     <head>
         <%- include("utils/header") %>
     </head>
-    <body class="dark:bg-gray-primary bg-white-primary transition duration-500 ease-in-out">
+    <body class="bgMainTheme animationTheme">
         <div>
             <%- include("utils/navbar") %> 
 
             <div>
                 <div class="group">
-                    <div class="dark:bg-gray-secondary bg-white-secondary m-8 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
+                    <div class="bgTheme m-8 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
                         <div class="text-center">
-                            <p class="dark:text-white text-black font-bold text-xl">Langue</p>
+                            <p class="textTheme font-bold text-xl"><i class="fas fa-language"></i> <%= res.__("dashboard.settings.lang") %></p>
                         </div>
                         <div class="flex items-center justify-center my-1">
-                            <div class="dark:bg-white-primary bg-gray-primary h-0.5 w-5/12"></div>
+                            <div class="bgMainTheme h-0.5 w-5/12"></div>
                         </div>
                         <div class="p-5">
                             <% i18n.getLocales().forEach(lang => { %>
-                                
-                                
                                 <div>
-                                    <input type="checkbox" id="lang-<%= lang %>" <%= res.getLocale() === lang ? "checked" : "" %> class="dark:bg-gray-secondary bg-white-secondary switchLang" />
-                                    <label for="lang-<%= lang %>" class="dark:text-white text-black font-bold text-xl"><%= res.__(`dashboard.settings.${lang}`) %></label>
+                                    <input type="checkbox" id="lang-<%= lang %>" <%= res.getLocale() === lang ? "checked" : "" %> class="bgTheme switchLang" />
+                                    <label for="lang-<%= lang %>" class="textTheme font-bold text-xl"><%= res.__(`dashboard.settings.${lang}`) %></label>
                                 </div>
-                                <!--
-                                <div>
-                                    <input type="checkbox" id="lang-en-GB" class="dark:bg-gray-secondary bg-white-secondary switchLang" />
-                                    <label for="lang-en" class="dark:text-white text-black font-bold text-xl">Anglais</label>
-                                </div>
-                                <div>
-                                    <input type="checkbox" id="lang-de-DE" class="dark:bg-gray-secondary bg-white-secondary switchLang" />
-                                    <label for="lang-de" class="dark:text-white text-black font-bold text-xl">Allemand</label>
-                                </div>
-                                -->
-
                             <% }) %>
+                        </div>
+                    </div>
+                    <div class="bgTheme m-8 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
+                        <div class="text-center">
+                            <p class="text-red-dark font-bold text-xl"><i class="fas fa-exclamation-triangle"></i> <%= res.__("dashboard.settings.dangerous") %></p>
+                        </div>
+                        <div class="flex items-center justify-center my-1">
+                            <div class="bgMainTheme h-0.5 w-5/12"></div>
+                        </div>
+                        <div class="p-5">
+                            <% plateformData.forEach(plateform => { %>
+                                <div class="block lg:inline-block custom-button-container">
+                                    <!--
+
+border-2 p-5 border-red-dark m-5 dark:text-white text-dark
+
+                                    -->
+                                    <button class="textTheme p-5 border-2 rounded-xl border-red-dark hover:transition transition duration-700 ease-in-out hover:bg-red-dark hover:text-white">
+                                        <%= res.__("dashboard.settings.deleteAccount") %> <%= plateform.plateform %> 
+                                    </button>
+                                </div>
+                            <% }) %>
+                            <div class="block lg:inline-block m-5">
+                                <button class="textTheme p-5 border-2 rounded-xl border-red-dark hover:transition transition duration-700 ease-in-out hover:bg-red-dark hover:text-white">
+                                    <%= res.__("dashboard.settings.deleteMyAccount") %>
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 </div>

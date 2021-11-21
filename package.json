@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@androz2091/insta.js": "^1.6.1",
-    "@discordjs/builders": "^0.7.0",
+    "@discordjs/builders": "^0.8.2",
     "@sentry/node": "^6.13.3",
     "btoa": "^1.2.1",
     "canvas": "^2.8.0",
@@ -25,7 +25,7 @@
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "date-fns-tz": "^1.1.6",
-    "discord.js": "^13.2.0",
+    "discord.js": "^13.3.0",
     "ejs": "^3.1.6",
     "enmap": "^5.8.7",
     "express": "^4.17.1",

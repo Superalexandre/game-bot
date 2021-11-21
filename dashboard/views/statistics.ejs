@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<%= res.getLocale() %>">
     <head>
         <%- include("utils/header") %>
     </head>
-    <body class="dark:bg-gray-primary bg-white-primary transition duration-500 ease-in-out">
+    <body class="bgMainTheme animationTheme">
         <div>
             <%- include("utils/navbar") %> 
 
             <div class="text-center">
-                <p>Pleins de graphe Monsieur <%= req.user.username %></p>
+                <p class="textTheme animationTheme">Statistiques de <%= req.user.username %></p>
             </div>
         </div>
     </body>

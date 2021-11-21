@@ -51,10 +51,18 @@
     - [ ] Voir ses données stockés => Sur le site => Page profile
     - [ ] Supprimer un compte respect des données => Sur le site => Page profile
 - [X] Sentry, gitguardian
+- [ ] Refaire les messages de #github
+- [ ] Auto rebuild pour tailwind (retirer les variables et tout)
+  - [ ] Uniquement branche main
+- [ ] Auto push sur le rasp
+  - [ ] Docker
 
 ### Site
 
-- [ ] Traduction
+- [ ] **❗ Structures**
+  - [ ] Tout les traitements les passées en api
+  - [ ] Ratelimit
+- [X] Traduction
 - [ ] Refaire le theme avec les cookies
   - [ ] Message d'avertissement "Nous utilisons les cookies"
 - [ ] Page serveur

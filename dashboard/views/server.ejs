@@ -1,37 +1,69 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<%= res.getLocale() %>">
     <head>
         <%- include("utils/header") %>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
     </head>
-    <body class="dark:bg-gray-primary bg-white-primary transition duration-500 ease-in-out">
+    <body class="bgMainTheme animationTheme">
         <div>
             <%- include("utils/navbar") %> 
 
             <div>
                 <div class="text-center">
-                    <p class="dark:text-white text-black"><%= req.__("dashboard.server.infoServer") %> <%= server.name %> (<%= server.id %>)</p>
-                    <p class="dark:text-white text-black"><%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> <%= req.__("dashboard.server.partyPlayed") %></p>
-                
+                    <div>
+                        <p class="textTheme"><%= res.__("dashboard.server.infoServer") %> <%= server.name %> (<%= server.id %>)</p>
+                        <p class="textTheme"><%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> <%= res.__("dashboard.server.partyPlayed") %></p>
+                    </div>
+                    <div class="flex items-center justify-center m-5">
+                        <div class="bgSepTheme h-0.5 w-11/12"></div>
+                    </div>
                     <% 
+                        let lastPlayedGames = [
+                            [], //0
+                            [], //1
+                            [], //2
+                            [], //3
+                            [], //4
+                            [], //5
+                            [], //6
+                        ]
+
                         let playedGame = {} 
                         let countPlayerGame = {}
                         let firstPlayedGame = null
                         let lastPlayedGame = null
 
-                        req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).forEach(game => {
-                            if (firstPlayedGame > game.date) firstPlayedGame = game.date
+                        const games = req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id)
+                        
+                        games.forEach(game => {
+                            if (firstPlayedGame > game.date || !firstPlayedGame) firstPlayedGame = game.date
                             if (lastPlayedGame < game.date) lastPlayedGame = game.date
                             
+                            // Dispatch gameDate by day
+                            const gameDate = new Date(game.date)
+                            const gameDay = gameDate.getDate()
+                            const todayDay = new Date().getDate()
+
+                            if (todayDay - gameDay <= 6) {
+                                lastPlayedGames[todayDay - gameDay].push(game)
+                            }
+
                             playedGame[game.gameName] = (playedGame[game.gameName] || 0) + 1
                             
                             for (let i = 0; i < game.beetween.length; i++) {
-                                let player, { id, username } = game.beetween[i]
+                                const { id, username } = game.beetween[i]
 
-                                countPlayerGame[player.id].count = (countPlayerGame[player.id] || 0) + 1
-                                countPlayerGame[player.id].username = username
+                                if (!countPlayerGame[id]) countPlayerGame[id] = {}
+                                countPlayerGame[id].count = (countPlayerGame[id].count || 0) + 1
+                                countPlayerGame[id].username = username
                                 //countPlayerGame[player.id].id = player.id
                             }
                         })
+
+                        let maxParty = 0
+                        for (let i = 0; i < lastPlayedGames.length; i++) {
+                            if (lastPlayedGames[i].length > maxParty) maxParty = lastPlayedGames[i].length
+                        }
 
                         //Get highest played game
                         const highestPlayedGame = Object.keys(playedGame).reduce((a, b) => playedGame[a] > playedGame[b] ? a : b)
@@ -40,18 +72,80 @@
                         const smallerPlayedGame = Object.keys(playedGame).reduce((a, b) => playedGame[a] < playedGame[b] ? a : b)
 
                         //Get highest player game
-                        const highestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame.count[a] > countPlayerGame.count[b] ? a : b)
+                        const highestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame[a].count > countPlayerGame[b].count ? a : b)
                     
                         //Get smallest player game
-                        const smallestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame.count[a] < countPlayerGame.count[b] ? a : b)
+                        const smallestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame[a].count < countPlayerGame[b].count ? a : b)
                     %>
 
-                    <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green"></i><%= req.__("dashboard.server.highestPlayedGame") %> <%= highestPlayedGame %> <%= req.__("dashboard.server.with") %> <%= playedGame[highestPlayedGame] %> <%= req.__("dashboard.server.party") %></p>
-                    <p class="dark:text-white text-black"><i class="fas fa-arrow-down text-red"></i><%= req.__("dashboard.server.smallerPlayedGame") %> <%= smallerPlayedGame %> <%= req.__("dashboard.server.with") %> <%= playedGame[smallerPlayedGame] %> <%= req.__("dashboard.server.party") %></p>
-                    <p class="dark:text-white text-black"><i class="fas fa-arrow-up text-green"></i><%= req.__("dashboard.server.highestPlayerGame") %> <a href="/server"><%= highestPlayerGame.username %></a> <%= req.__("dashboard.server.with") %> <%= countPlayerGame[highestPlayerGame.id] %> <%= req.__("dashboard.server.party") %></p>
-                    <p class="dark:text-white text-black"><i class="fas fa-arrow-down text-red"></i><%= req.__("dashboard.server.smallerPlayerGame") %> <a><%= smallestPlayerGame.username %></a> <%= req.__("dashboard.server.with") %> <%= countPlayerGame[smallestPlayerGame.id] %> <%= req.__("dashboard.server.party") %></p>
-                    <p class="dark:text-white text-black"><%= req.__("dashboard.server.firstPlayedGame") %> <%= firstPlayedGame %></p>
-                    <p class="dark:text-white text-black"><%= req.__("dashboard.server.lastPlayedGame") %> <%= lastPlayedGame %></p>
+                    <div>
+                        <p class="textTheme"><i class="fas fa-arrow-up text-green pr-2"></i><%= res.__("dashboard.server.highestPlayedGame") %> <%= highestPlayedGame %> <%= res.__("dashboard.server.with") %> <%= playedGame[highestPlayedGame] %> <%= res.__("dashboard.server.party") %></p>
+                        <p class="textTheme"><i class="fas fa-arrow-down text-red pr-2"></i><%= res.__("dashboard.server.smallerPlayedGame") %> <%= smallerPlayedGame %> <%= res.__("dashboard.server.with") %> <%= playedGame[smallerPlayedGame] %> <%= res.__("dashboard.server.party") %></p>
+                    </div>
+                    <div class="flex items-center justify-center m-5">
+                        <div class="bgSepTheme h-0.5 w-11/12"></div>
+                    </div>
+                    <div>
+                        <p class="textTheme"><i class="fas fa-arrow-up text-green pr-2"></i><%= res.__("dashboard.server.highestPlayerGame") %> <%= countPlayerGame[highestPlayerGame].username %> <%= res.__("dashboard.server.with") %> <%= countPlayerGame[highestPlayerGame].count %> <%= res.__("dashboard.server.party") %></p>
+                        <p class="textTheme"><i class="fas fa-arrow-down text-red pr-2"></i><%= res.__("dashboard.server.smallerPlayerGame") %> <%= countPlayerGame[smallestPlayerGame].username %> <%= res.__("dashboard.server.with") %> <%= countPlayerGame[smallestPlayerGame].count %> <%= res.__("dashboard.server.party") %></p>
+                    </div>
+                    <div class="flex items-center justify-center m-5">
+                        <div class="bgSepTheme h-0.5 w-11/12"></div>
+                    </div>
+                    <div>
+                        <p class="textTheme"><%= res.__("dashboard.server.firstPlayedGame") %> <%= req.functions.formatDate({ date: firstPlayedGame }) %></p>
+                        <p class="textTheme"><%= res.__("dashboard.server.lastPlayedGame") %> <%= req.functions.formatDate({ date: lastPlayedGame }) %></p>
+                    </div>
+                    <div class="flex items-center justify-center m-5">
+                        <div class="bgSepTheme h-0.5 w-11/12"></div>
+                    </div>
+                    <div class="w-11/12 h-52 my-0 mx-auto">
+                        <table class="charts-css column show-labels reverse-data data-spacing-5 show-heading">
+                            <caption class="textTheme">Statistiques des 7 derniers jours</caption>
+
+                            <%
+                                const colors = ["red", "green", "blue", "yellow"]
+                                const filteredColors = colors.filter(color => color !== req.color)
+                                const colorsShuffle = shuffle(filteredColors)
+
+                                //Shuffle function
+                                function shuffle(array) {
+                                    for (let i = array.length - 1; i > 0; i--) {
+                                        const j = Math.floor(Math.random() * (i + 1));
+                                        [array[i], array[j]] = [array[j], array[i]]
+                                    }
+                                    return array
+                                }
+
+                                let j = 0
+                            %> 
+                            <% lastPlayedGames.forEach((games, index) => { %>
+
+                                <% 
+                                    let color = colorsShuffle[j]
+                                    if (!color) {
+                                        j = 0
+                                        color = colorsShuffle[j]
+                                    }
+                                %>
+
+                                <tr>
+                                    <th scope="row" class="textTheme z-10">
+                                        <% if (index === 0) { %>
+                                            <%= res.__("dashboard.server.today") %>
+                                        <% } else { %> 
+                                            <%= new Date().getDate() - index %>/<%= new Date().getMonth() + 1 %>
+                                        <% } %>
+                                    </th>
+                                    <td style="--size: calc(<%= games.length + 1 %>/<%= maxParty + 1 %>)" class="bg-<%= color %>-important">
+                                        <span class="data textTheme leading-none">
+                                            <%= games.length %>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <% j++ %>
+                            <% }) %>
+                    </div>
                 </div>
             </div>
         </div>

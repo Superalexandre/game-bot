@@ -7,6 +7,7 @@ html, body {
     height: 100%;
 }
 
+/* Gradient */
 .gradient-instagram {
     @apply bg-clip-text bg-gradient-to-r from-instagram-one via-instagram-three to-instagram-six
 }
@@ -19,10 +20,22 @@ html, body {
     @apply bg-clip-text bg-gradient-to-r from-instagram-one via-instagram-three to-instagram-six
 }
 
-/**
- * Tailwind customizations
- * Custom scrollbar
- */
+/* Important background colors */
+.bg-blue-important {
+    @apply bg-blue !important
+}
+
+.bg-red-important {
+    @apply bg-red !important
+}
+
+.bg-green-important {
+    @apply bg-green !important
+}
+
+.bg-yellow-important {
+    @apply bg-yellow !important
+}
 
 /* width */
 ::-webkit-scrollbar {
@@ -44,4 +57,25 @@ html, body {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #D3D7DB;
+}
+
+/* Add text class */
+.textTheme {
+    @apply dark:text-white text-black;
+}
+
+.bgMainTheme {
+    @apply dark:bg-gray-primary bg-white-primary
+}
+
+.bgTheme {
+    @apply dark:bg-gray-secondary bg-white-secondary;
+}
+
+.bgSepTheme {
+    @apply dark:bg-white-primary bg-gray-primary;
+}
+
+.animationTheme {
+    @apply transition duration-500 ease-in-out;
 }

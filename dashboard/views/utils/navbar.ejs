@@ -1,8 +1,3 @@
-<%
-    const colors = ["text-red", "text-green", "text-blue", "text-yellow"]
-
-    const color = colors[Math.floor(Math.random() * colors.length)]
-%>
 <nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6 dark:bg-gray-secondary bg-white-secondary transition duration-500 ease-in-out">
     <div class="flex items-center flex-shrink-0 <%= "text-" + req.color%> mr-6">
         <a href="/" class="uppercase font-bold hover:text-black dark:hover:text-white">
@@ -59,8 +54,31 @@
         }
     })
 
-    if (localStorage.theme === "dark" || (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-        localStorage.theme = "dark"
+    //new function for set new cookie
+    function setCookie(name, value) {
+        let date = new Date();
+        date.setTime(date.getTime() + (365 * 24 * 60 * 60 * 1000))
+        
+        const expires = "; expires=" + date.toUTCString()
+
+        document.cookie = name + "=" + (value || "")  + expires + "; path=/"
+    }
+
+    //Get cookies
+    function getCookie(name) {
+        const nameEQ = name + "="
+        const ca = document.cookie.split(";")
+
+        for (let i = 0; i < ca.length; i++) {
+            const c = ca[i]
+            while (c.charAt(0) === " ") c = c.substring(1, c.length)
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length)
+        }
+
+        return null;
+    }
+
+    if (getCookie("theme") === "dark") {
         document.documentElement.classList.add("dark")        
     }
 
@@ -69,11 +87,13 @@
             const classList = document.documentElement.className.split(" ")
 
             if (classList.includes("dark")) {
-                localStorage.theme = "light"
+                setCookie("theme", "light")
                 document.documentElement.classList.remove("dark")
+                document.documentElement.classList.add("light")
             } else {
-                localStorage.theme = "dark"
+                setCookie("theme", "dark")
                 document.documentElement.classList.add("dark")
+                document.documentElement.classList.remove("light")
             }
         })
     })
