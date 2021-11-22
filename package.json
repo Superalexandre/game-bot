@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@androz2091/insta.js": "^1.6.1",
-    "@discordjs/builders": "^0.8.2",
+    "@discordjs/builders": "^0.7.0",
     "@sentry/node": "^6.13.3",
     "btoa": "^1.2.1",
     "canvas": "^2.8.0",
