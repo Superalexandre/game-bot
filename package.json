@@ -36,7 +36,7 @@
     "passport": "^0.5.0",
     "passport-discord": "^0.1.4",
     "path": "^0.12.7",
-    "postcss-cli": "^9.0.1",
+    "postcss-cli": "^9.0.2",
     "sudoku-umd": "^1.0.1"
   },
   "devDependencies": {
