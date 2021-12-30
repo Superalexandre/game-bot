@@ -112,7 +112,7 @@ export default class Sudoku extends Command {
 
         const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
     
-        collector.on("collect", async (button) => {
+        collector.on("collect", async(button) => {
             if (!button.user) await button.user.fetch()
             if (!interaction.user) await interaction.user.fetch()
 

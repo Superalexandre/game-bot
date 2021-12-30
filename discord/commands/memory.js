@@ -154,7 +154,7 @@ export default class Memory extends Command {
         }
 
         let findNumber = 0
-        collector.on("collect", async (button) => {
+        collector.on("collect", async(button) => {
             if (!button.user) await button.user.fetch()
             if (!interaction.user) await interaction.user.fetch()
 

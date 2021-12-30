@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import { Command } from "../structures/Command.js"
 import { MessageButton, MessageActionRow } from "discord.js"
@@ -1204,15 +1205,15 @@ function makeRows({ buttonsData, gameData, page, interaction, gameId, disable })
         let arrays = []
 
         for (let i = 0; i < arr.length; i += chunk) {
-            let tempArray;
-            tempArray = arr.slice(i, i + chunk);
+            let tempArray
+            tempArray = arr.slice(i, i + chunk)
             arrays.push(tempArray)
         }
 
         return arrays
     }
 
-    let arrays = splitIntoChunk(buttonsData, maxInRow);
+    let arrays = splitIntoChunk(buttonsData, maxInRow)
 
     let i = 0
     let ActionRow = []

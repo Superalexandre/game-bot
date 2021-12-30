@@ -23,7 +23,7 @@ export default async function init({ data }) {
 
         const events = files.filter((ext) => ext.split(".").pop() === "js")
 
-        for (let i = 0; i < events.length; i++)  {
+        for (let i = 0; i < events.length; i++) {
             const eventClass = await import("./events/" + events[i])
             const event = await new eventClass.default(client)
             const eventName = events[i].split(".")[0]

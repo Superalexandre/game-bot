@@ -630,7 +630,7 @@ async function makeGif({ client, i18n, msg, gameData }) {
                 const iLength = gameData.actions[i].length
 
                 const x = (width - (jLength * widthImage)) / 2
-                const y  = (height - (iLength * heightImage)) / 2
+                const y = (height - (iLength * heightImage)) / 2
             
                 ctx.beginPath()
                 ctx.arc(x + k * widthImage, y + j * heightImage, (height / 10) / 2, 0, Math.PI * 2, true)

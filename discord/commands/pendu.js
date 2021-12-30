@@ -151,7 +151,9 @@ async function startGame({ client, interaction, i18n, word }) {
 
         if (m.content === "stop") {
             await collector.stop()
-            await m.delete().catch(() => {})
+            await m.delete().catch(() => {
+                return
+            })
 
             return await msg.edit({
                 content: `${interaction.user.username} ${i18n.__("discord.hangman.gameStop")} ${word}`
@@ -167,7 +169,9 @@ async function startGame({ client, interaction, i18n, word }) {
         }
 
         if (lettersSaid.includes(m.content)) {
-            await m.delete().catch(() => {})
+            await m.delete().catch(() => {
+                return
+            })
             errorText = i18n.__("discord.hangman.error.alreadySaid")
 
             return await msg.edit({
@@ -177,11 +181,15 @@ async function startGame({ client, interaction, i18n, word }) {
 
         errorText = ""
         lettersSaid.push(m.content)
-        await m.delete().catch(() => {})
+        await m.delete().catch(() => {
+            return
+        })
 
         if (genWord(word, lettersSaid) === word) {
             await collector.stop()
-            await m.delete().catch(() => {})
+            await m.delete().catch(() => {
+                return
+            })
 
             await client.functions.gameStats({ 
                 data: client.data, 
@@ -205,7 +213,9 @@ async function startGame({ client, interaction, i18n, word }) {
 
         if (!pendu[error] && error >= 1) {
             await collector.stop()
-            await m.delete().catch(() => {})
+            await m.delete().catch(() => {
+                return
+            })
 
             await client.functions.gameStats({ 
                 data: client.data, 

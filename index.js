@@ -6,10 +6,9 @@ import { default as discordClient } from "./discord/index.js"
 import { default as instaClient } from "./instagram/index.js"
 import { default as dashboardInit } from "./dashboard/app.js"
 
-import { join } from "path"
+import { join, dirname } from "path"
 import config from "./config.js"
 
-import { dirname } from "path"
 import { fileURLToPath } from "url"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -46,15 +45,15 @@ i18n.configure({
     objectNotation: true,
     register: global,
 
-    logDebugFn: function (message) {
+    logDebugFn: function(message) {
         logger.log({ plateform: "i18n", message })
     },
 
-    logWarnFn: function (message) {
+    logWarnFn: function(message) {
         logger.warn({ plateform: "i18n", message, trace: true })
     },
   
-    logErrorFn: function (message) {
+    logErrorFn: function(message) {
         logger.error({ plateform: "i18n", message })
     },
   

@@ -84,7 +84,7 @@ export default class interactionCreate {
         
                 client.logger.error({ message: error })
             })
-        } catch(error) {
+        } catch (error) {
             /*
             interaction.reply({ 
                 content: i18n.__("error.errorOccured", { error: error.toString() }), 

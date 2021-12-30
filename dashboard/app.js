@@ -291,7 +291,7 @@ async function init({ data, clients }) {
             res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
         })
         .use("/api", routerApi)
-        // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
         .use((error, _req, res, next) => {
             if (!error.statusCode) error.statusCode = 500
 

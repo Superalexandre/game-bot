@@ -17,7 +17,7 @@ export default class Puissance4 extends Command {
 
         try {
             opponent = await client.fetchUser(args[0])
-        } catch(error) {
+        } catch (error) {
             return await message.chat.sendMessage(i18n.__("insta.puissance4.error.noUser"))
         }
 

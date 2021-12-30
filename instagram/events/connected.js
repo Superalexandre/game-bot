@@ -11,7 +11,9 @@ export default class connected {
         const pendingChat = client.cache.pendingChats
         for (const [chatId, chat] of pendingChat.entries()) {
         
-            await chat.approve().catch(() => {})
+            await chat.approve().catch(() => {
+                return
+            })
 
             client.logger.warn({ message: `Message approuvé ${chatId}` })
         }
