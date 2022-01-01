@@ -56,7 +56,7 @@
                                 if (!countPlayerGame[id]) countPlayerGame[id] = {}
                                 countPlayerGame[id].count = (countPlayerGame[id].count || 0) + 1
                                 countPlayerGame[id].username = username
-                                //countPlayerGame[player.id].id = player.id
+                                countPlayerGame[id].id = id
                             }
                         })
 
@@ -86,6 +86,7 @@
                         <div class="bgSepTheme h-0.5 w-11/12"></div>
                     </div>
                     <div>
+                        <%= console.log(countPlayerGame[highestPlayerGame]) %>
                         <p class="textTheme"><i class="fas fa-arrow-up text-green pr-2"></i><%= res.__("dashboard.server.highestPlayerGame") %> <%= countPlayerGame[highestPlayerGame].username %> <%= res.__("dashboard.server.with") %> <%= countPlayerGame[highestPlayerGame].count %> <%= res.__("dashboard.server.party") %></p>
                         <p class="textTheme"><i class="fas fa-arrow-down text-red pr-2"></i><%= res.__("dashboard.server.smallerPlayerGame") %> <%= countPlayerGame[smallestPlayerGame].username %> <%= res.__("dashboard.server.with") %> <%= countPlayerGame[smallestPlayerGame].count %> <%= res.__("dashboard.server.party") %></p>
                     </div>
