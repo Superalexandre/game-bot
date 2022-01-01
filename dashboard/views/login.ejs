@@ -4,25 +4,27 @@
         <%- include("utils/header") %>
     </head>
     <body class="bgMainTheme animationTheme">
-        <div>
+        <div class="flex flex-col flex-no-wrap content-center h-full">
             <%- include("utils/navbar") %> 
 
             <%- include("utils/notif") %>
 
-            <div class="text-center">
-                <div class="group">
-                    <i class="fab fa-discord font-bold group text-blurple block group-hover:animate-rotate360"></i>
-                    <button class="font-bold text-blurple" onclick="location.href='/api/discord/login'"><%= res.__("dashboard.login.connectWithDiscord") %></button>
-                </div>
-                <div>
-                    <button class="font-bold text-transparent gradient-instagram">
-                        <i class="fab fa-instagram"></i>
-                        
-                        <%= res.__("dashboard.login.connectWithInsta") %>
-                    </button>
-                </div>
-                <div>
-                    <p class="textTheme"><%= res.__("dashboard.login.noAccount") %></p>
+            <div class="flex h-screen flex-grow">
+                <div class="m-auto text-center">
+                    <div class="group">
+                        <i class="fab fa-discord font-bold group text-blurple block group-hover:animate-rotate360"></i>
+                        <button class="font-bold text-blurple" onclick="location.href='/api/discord/login'"><%= res.__("dashboard.login.connectWithDiscord") %></button>
+                    </div>
+                    <div>
+                        <button class="font-bold text-transparent gradient-instagram">
+                            <i class="fab fa-instagram"></i>
+                            
+                            <%= res.__("dashboard.login.connectWithInsta") %>
+                        </button>
+                    </div>
+                    <div>
+                        <p class="textTheme"><%= res.__("dashboard.login.noAccount") %></p>
+                    </div>
                 </div>
             </div>
         </div>
