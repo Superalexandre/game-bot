@@ -16,46 +16,27 @@
   "license": "ISC",
   "dependencies": {
     "@androz2091/insta.js": "^1.6.1",
-<<<<<<< HEAD
     "@discordjs/builders": "^0.11.0",
     "@sentry/node": "^6.16.1",
-=======
-    "@discordjs/builders": "^0.8.2",
-    "@sentry/node": "^6.16.0",
->>>>>>> e89521bb2635417e641776124088c0ee3ca284d3
     "btoa": "^1.2.1",
     "canvas": "^2.8.0",
     "chalk": "^5.0.0",
     "chess.js": "^0.12.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-<<<<<<< HEAD
     "date-fns-tz": "^1.2.2",
     "discord.js": "^13.5.0",
-=======
-    "date-fns-tz": "^1.1.6",
-    "discord.js": "^13.3.1",
->>>>>>> e89521bb2635417e641776124088c0ee3ca284d3
     "ejs": "^3.1.6",
     "enmap": "^5.8.7",
     "express": "^4.17.2",
     "express-session": "^1.17.2",
     "gifenc": "github:mattdesl/gifenc",
-<<<<<<< HEAD
     "i18n": "^0.13.4",
     "node-fetch": "^3.1.0",
     "passport": "^0.5.2",
     "passport-discord": "^0.1.4",
     "path": "^0.12.7",
     "postcss-cli": "^9.1.0",
-=======
-    "i18n": "^0.13.3",
-    "node-fetch": "^3.1.0",
-    "passport": "^0.5.0",
-    "passport-discord": "^0.1.4",
-    "path": "^0.12.7",
-    "postcss-cli": "^9.0.2",
->>>>>>> e89521bb2635417e641776124088c0ee3ca284d3
     "sudoku-umd": "^1.0.1"
   },
   "devDependencies": {
