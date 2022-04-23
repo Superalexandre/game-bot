@@ -14,7 +14,6 @@ import i18n from "i18n"
 import routerApi from "./router/api.js"
 
 const logger = new Logger({
-    mode: "compact",
     plateform: "Dashboard"
 })
 
@@ -299,7 +298,7 @@ async function init({ data, clients }) {
                 return res.status(301).json({ error: "301" })
             }
         
-            logger.error({ message: error.stack ?? error.toString() })
+            logger.error(error.stack ?? error.toString())
 
             return res?.status(500)?.json({ error: error.toString() })
         })
@@ -311,10 +310,10 @@ async function init({ data, clients }) {
 
             res.redirect("/")
         })
-        .listen(config.dashboard.port.HTTP, (err) => {
+        .listen(config.dashboard.http, (err) => {
             if (err) console.error(err)
 
-            logger.log({ message: "En ligne port " + config.dashboard.port.HTTP })
+            logger.log("En ligne port " + config.dashboard.http)
         })
 }
 

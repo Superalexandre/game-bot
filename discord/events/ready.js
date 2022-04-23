@@ -38,12 +38,12 @@ export default class Ready {
                     if (cmdData) {
                         await botData.delete("pendingCommands", commandData.help.name)
     
-                        client.logger.log({ message: `Commande ${commandData.help.name} supprimer des pendingCommands, mis a jour !` })    
+                        client.logger.log(`Commande ${commandData.help.name} supprimer des pendingCommands, mis a jour !`)    
                     
                         continue
                     }
 
-                    client.logger.log({ message: `${commandName} synchro !` })
+                    client.logger.log(`${commandName} synchro !`)
              
                     continue
                 }
@@ -53,7 +53,7 @@ export default class Ready {
                 const cmdData = await pendingCommands.find(cmdData => cmdData.name === commandName)
 
                 if (!cmdData) {
-                    client.logger.warn({ message: `Data introuvable pour la commande ${commandName} dans pendingCommands` })
+                    client.logger.warn(`Data introuvable pour la commande ${commandName} dans pendingCommands`)
                 
                     continue
                 } 
@@ -61,12 +61,12 @@ export default class Ready {
                 if (Date.now() - cmdData.edit > ONE_HOUR_IN_MILISECONDES) {
                     await botData.delete("pendingCommands", commandData.help.name)
 
-                    client.logger.log({ message: `Commande ${commandData.help.name} supprimer des pendingCommands, crée avec succès !` })
+                    client.logger.log(`Commande ${commandData.help.name} supprimer des pendingCommands, crée avec succès !`)
                 
                     continue
                 }
 
-                client.logger.warn({ message: `Commande ${commandData.help.name} en attente dans pendingCommands` })
+                client.logger.warn(`Commande ${commandData.help.name} en attente dans pendingCommands`)
 
                 continue
             }
@@ -75,7 +75,7 @@ export default class Ready {
             const regex = /^[\w-]{1,32}$/gi            
 
             if (!regex.test(commandName)) {
-                client.logger.warn({ message: `Commande ${commandName} non crée, nom invalide !` })
+                client.logger.warn(`Commande ${commandName} non crée, nom invalide !`)
             
                 continue
             }
@@ -90,7 +90,7 @@ export default class Ready {
                     const option = commandData.config.options[i]
                 
                     if (optionsName.includes(option.name)) {
-                        client.logger.warn({ message: `Commande ${commandName} non crée, option ${option.name} déjà présente !` })
+                        client.logger.warn(`Commande ${commandName} non crée, option ${option.name} déjà présente !`)
                     
                         break
                     }
@@ -98,7 +98,7 @@ export default class Ready {
                     optionsName.push(option.name)
 
                     if (!option.name || !option.description) {
-                        client.logger.error({ message: `Erreur valeur manquante (${option.name} | ${option.description})` })
+                        client.logger.error(`Erreur valeur manquante (${option.name} | ${option.description})`)
 
                         continue
                     }
@@ -118,7 +118,7 @@ export default class Ready {
                                 .addChoices(option.choices)
                                 .setRequired(option.required)
                         )
-                    } else client.logger.error({ message: `Erreur type ${option.type} introuvable` })
+                    } else client.logger.error(`Erreur type ${option.type} introuvable`)
                 }
             }
 
@@ -131,15 +131,15 @@ export default class Ready {
             }
         }
         
-        client.logger.log({ message: `Client prêt (${client.user.username}#${client.user.discriminator})` })
+        client.logger.log(`Client prêt (${client.user.username}#${client.user.discriminator})`)
     }
 }
 
-async function createCommand(client, command, commandName, botData) {
-    client.logger.warn({ message: `La commande ${commandName} n'est pas enregistrer !` })
+async function updateOrCreateCommand(type, client, command, commandName, botData) {
+    client.logger.warn(`La commande ${commandName} n'est pas enregistrer !`)
     
     const rep = await fetch(`${client.config.discord.apiURL}/applications/${client.config.discord.appId}/commands`, {
-        method: "POST",
+        method: type === "create" ? "POST" : "PATCH",
         body: JSON.stringify(command),
         headers: {
             "Authorization": "Bot " + client.config.discord.token,
@@ -150,49 +150,18 @@ async function createCommand(client, command, commandName, botData) {
     const jsonRep = await rep.json()
 
     if (jsonRep?.message === "You are being rate limited.") {
-        client.logger.warn({ message: `Commande ${commandName} non crée ratelimit (${jsonRep.retry_after} secondes)` })
+        client.logger.warn(`Commande ${commandName} non ${type} ratelimit (${jsonRep.retry_after} secondes)`)
 
         return false
     }
 
     if (jsonRep.errors || jsonRep.message) {
-        client.logger.warn({ message: `Commande ${commandName} non crée erreur ${jsonRep.message}` })
+        client.logger.warn(`Commande ${commandName} non ${type} erreur ${jsonRep.message}`)
 
         return false
     }
 
-    client.logger.log({ message: `Commande ${commandName} crée` })
-
-    await botData.push("pendingCommands", {
-        name: commandName,
-        edit: Date.now()
-    })
-
-    return true
-}
-
-
-async function updateCommand(client, command, commandName, commandId, botData) {
-    client.logger.warn({ message: `La commande ${commandName} n'est pas synchroniser` })
-    
-    const rep = await fetch(`${client.config.discord.apiURL}/applications/${client.config.discord.appId}/commands/${commandId}`, {
-        method: "PATCH",
-        body: JSON.stringify(command),
-        headers: {
-            "Authorization": "Bot " + client.config.discord.token,
-            "Content-Type": "application/json"
-        }
-    })
-    
-    const jsonRep = await rep.json()
-
-    if (jsonRep?.message === "You are being rate limited.") {
-        client.logger.warn({ message: `Commande ${commandName} non mise a jour ratelimit (${jsonRep.retry_after} secondes)` })
-
-        return false
-    }
-
-    client.logger.log({ message: `Commande ${commandName} mis a jour` })
+    client.logger.log(`Commande ${commandName} ${type}`)
 
     await botData.push("pendingCommands", {
         name: commandName,

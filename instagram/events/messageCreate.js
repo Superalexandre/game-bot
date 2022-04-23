@@ -71,16 +71,17 @@ export default class messageCreate {
                 userData,
                 i18n
             }).then(() => {
-                client.logger.commandLog({ interactionId: message.id, commandName: command.help.name, prefix })
+                console.log("Commande terminée")
+                // client.logger.commandLog({ interactionId: message.id, commandName: command.help.name, prefix })
             }).catch(error => {
                 message.chat.sendMessage(i18n.__("error.errorOccured", { error: error.toString() }))
 
-                client.logger.error({ message: error })
+                client.logger.error(error)
             })
         } catch (error) {
             message.chat.sendMessage(i18n.__("error.errorOccured", { error: error.toString() }))
 
-            client.logger.error({ message: error })
+            client.logger.error(error)
         }
     }
 }

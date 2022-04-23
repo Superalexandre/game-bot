@@ -9,7 +9,6 @@ const client = new Client({
 
 //* Logger
 const logger = new Logger({
-    mode: "compact",
     plateform: "Discord"
 })
 
@@ -18,8 +17,8 @@ export default async function init({ data }) {
     client.logger = logger
 
     readdir("./discord/events", async(err, files) => {
-        if (err) return client.logger.error({ message: err })
-        if (files.length <= 0) return client.logger.error({ message: "Aucun evenement n'a été trouvé" })
+        if (err) return client.logger.error(err)
+        if (files.length <= 0) return client.logger.error("Aucun evenement n'a été trouvé")
 
         const events = files.filter((ext) => ext.split(".").pop() === "js")
 
@@ -28,22 +27,22 @@ export default async function init({ data }) {
             const event = await new eventClass.default(client)
             const eventName = events[i].split(".")[0]
 
-            client.logger.log({ message: `Event ${eventName} chargé` })
+            client.logger.log(`Event ${eventName} chargé`)
 
             client.on(eventName, (...args) => event.run(...args))
         }
     })
 
     readdir("./discord/commands", async(err, commands) => {
-        if (err) return client.logger.error({ message: err })
+        if (err) return client.logger.error(err)
 
-        if (commands.length <= 0) return client.logger.error({ message: "Aucune commande n'a été trouvé" })
+        if (commands.length <= 0) return client.logger.error("Aucune commande n'a été trouvé")
 
         for (let i = 0; i < commands.length; i++) {
             const commandClass = await import("./commands/" + commands[i])
             const command = await new commandClass.default(client)
 
-            client.logger.log({ message: `Commande ${command.help.name} chargée` })
+            client.logger.log(`Commande ${command.help.name} chargée`)
 
             client.commands.set(command.help.name, command)
 
@@ -55,12 +54,12 @@ export default async function init({ data }) {
         }
     })
 
-    client.on("warn", (message) => client.logger.warn({ message: message, trace: true }))
-    client.on("error", (message) => client.logger.error({ message: message }))
+    client.on("warn", (message) => client.logger.warn(message))
+    client.on("error", (message) => client.logger.error(message))
 
-    client.logger.log({ message: "Connexion en cours..." })
+    client.logger.log("Connexion en cours...")
     await client.login(client.config.discord.token)
-    client.logger.log({ message: "Connexion effectué" })
+    client.logger.log("Connexion effectué")
 
     return client
 }

@@ -6,7 +6,7 @@ export default class connected {
     async run() {
         const client = this.client
     
-        client.logger.log({ message: `Client prêt (${client.user.username})` })
+        client.logger.log(`Client prêt (${client.user.username})`)
     
         const pendingChat = client.cache.pendingChats
         for (const [chatId, chat] of pendingChat.entries()) {
@@ -15,7 +15,7 @@ export default class connected {
                 return
             })
 
-            client.logger.warn({ message: `Message approuvé ${chatId}` })
+            client.logger.warn(`Message approuvé ${chatId}`)
         }
     }
 }
