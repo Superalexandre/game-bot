@@ -1,7 +1,7 @@
 module.exports = {
     content: [
-        "./web/views/*.ejs",
-        "./web/views/**/*.ejs"
+        "./dashboard/views/*.ejs",
+        "./dashboard/views/**/*.ejs"
     ],
     darkMode: "class",
     theme: {
