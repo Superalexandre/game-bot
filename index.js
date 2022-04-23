@@ -12,7 +12,7 @@ import config from "./config.js"
 import { fileURLToPath } from "url"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-import * as Sentry from "@sentry/node"
+// import * as Sentry from "@sentry/node"
 import Logger from "./logger.js"
 
 import Enmap from "enmap"
@@ -30,11 +30,11 @@ const data = {
     }
 }
 
-Sentry.init({
-    dsn: config.sentry.dsn,
-    release: "game-bot@1.0.0",
-    tracesSampleRate: 1.0
-})
+// Sentry.init({
+//     dsn: config.sentry.dsn,
+//     release: "game-bot@1.0.0",
+//     tracesSampleRate: 1.0
+// })
 
 //* Config languages
 i18n.configure({
@@ -46,19 +46,19 @@ i18n.configure({
     register: global,
 
     logDebugFn: function(message) {
-        logger.log({ plateform: "i18n", message })
+        logger.log(message, {plateform: "i18n" })
     },
 
     logWarnFn: function(message) {
-        logger.warn({ plateform: "i18n", message, trace: true })
+        logger.warn(message, { plateform: "i18n" })
     },
   
     logErrorFn: function(message) {
-        logger.error({ plateform: "i18n", message })
+        logger.error(message, { plateform: "i18n" })
     },
   
     missingKeyFn: function(locale, value) {
-        logger.error({ plateform: "i18n", message: `MissingKey: La valeur ${value} est manquante dans la langue ${locale}` })
+        logger.error(`MissingKey: La valeur ${value} est manquante dans la langue ${locale}`, { plateform: "i18n" })
     
         return value
     },
@@ -76,28 +76,36 @@ async function init() {
     }
 
     if (config.discord.start) {
-        const result = await discordClient({ data })
+        try {
+            const result = await discordClient({ data })
 
-        clients.discord = result
-    } else logger.warn({ plateform: "Discord", message: "Le bot discord n'est pas lancé" })
+            clients.discord = result
+        } catch (error) {
+            logger.error(error, { plateform: "discord" })
+        }
+    } else logger.warn("Le bot discord n'est pas lancé", { plateform: "Discord" })
 
     if (config.instagram.start) {
-        const result = await instaClient({ data })
+        try {
+            const result = await instaClient({ data })
 
-        clients.insta = result
-    } else logger.warn({ plateform: "Instagram", message: "Le bot instagram n'est pas lancé" })
+            clients.insta = result
+        } catch (error) {
+            logger.error(error, { plateform: "instagram" })
+        }
+    } else logger.warn("Le bot instagram n'est pas lancé", { plateform: "Instagram" })
 
     if (config.dashboard.start) {
         await dashboardInit({ data, clients })
-    } else logger.warn({ plateform: "Dashboard", message: "Le dashboard n'est pas lancé" })
+    } else logger.warn("Le dashboard n'est pas lancé", { plateform: "Dashboard" })
 }
 
 init()
 
 process.on("uncaughtException", (error) => {
-    return logger.error({ message: error })
+    return logger.error(error)
 })
 
 process.on("unhandledRejection", (error) => {
-    return logger.error({ message: error })
+    return logger.error(error)
 })

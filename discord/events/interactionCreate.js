@@ -67,12 +67,14 @@ export default class interactionCreate {
                     startMessageProcessing: start
                 }
             }).then(() => {
-                client.logger.commandLog({ 
-                    interactionId: interaction.id,
-                    commandName: cmd.help.name,
-                    prefix: "/" 
-                    /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/
-                })
+                
+                console.log("Commande terminée")
+                // client.logger.commandLog({ 
+                //     interactionId: interaction.id,
+                //     commandName: cmd.help.name,
+                //     prefix: "/" 
+                //     /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/
+                // })
             }).catch(error => {
                 /*
                 interaction.reply({ 
@@ -82,7 +84,7 @@ export default class interactionCreate {
                 })
                 */
         
-                client.logger.error({ message: error })
+                client.logger.error(error)
             })
         } catch (error) {
             /*
@@ -93,7 +95,7 @@ export default class interactionCreate {
             })
             */
         
-            client.logger.error({ message: error })
+            client.logger.error(error)
         }
     }
 }

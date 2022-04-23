@@ -1,8 +1,8 @@
 import Logger from "./logger.js"
 import DateFns from "date-fns-tz"
 import { fr as fr_locale } from "date-fns/locale/index.js"
+
 const logger = new Logger({
-    mode: "compact",
     plateform: "Global"
 })
 
@@ -34,7 +34,7 @@ async function createAccount({ data, lang = "fr-FR", plateformData = {} }) {
 
     if (!account) return { success: false, error: true, message: `Account ${id} didn't create` }
 
-    logger.log({ message: `Nouveau compte sur ${plateformData[0].plateform} (${id})` })
+    logger.log(`Nouveau compte sur ${plateformData[0].plateform} (${id})`)
 
     return { success: true, error: false, account }
 }
@@ -54,7 +54,7 @@ async function mergeAccount({ data, id1, id2 }) {
 
     await data.users.delete(deletedAccount.accountId)
 
-    logger.log({ message: `Merge account ${id1} + ${id2}` })
+    logger.log(`Merge account ${id1} + ${id2}`)
 
     return { success: true, error: false, newAccount }
 }
@@ -141,28 +141,16 @@ function genGameId({ gameName = "", length = 30 }) {
     return random
 }
 
-function formatDate({ date, locale, timezone }) {
-    if (!date) date = Date.now()
-    if (!locale) locale = "fr-FR"
-    if (!timezone) timezone = "Europe/Paris"
-
-    const config = {
-        "fr-FR": {
-            "at": "à",
-            "locale": fr_locale
-        }
-    }
-
-
+function formatDate(date = Date.now(), timezone = "Europe/Paris", format = "dd'/'MM'/'yy pp") {
     const dateZonedTime = DateFns.utcToZonedTime(date, timezone)
 
-    return DateFns.format(dateZonedTime, `EEEE dd LLLL yyyy '${config[locale].at}' pp`, {
+    return DateFns.format(dateZonedTime, format, {
         timeZone: timezone,
-        locale: config[locale].locale
+        locale: fr_locale
     })
 }
 
-export default {
+export {
     createAccount,
     deleteAccount,
     genId,
