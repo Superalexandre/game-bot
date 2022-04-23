@@ -304,24 +304,24 @@ async function init({ data, clients }) {
             res.redirect("/")
         })
       
-        /* HTTPS */
-        if (fs.existsSync(config.dashboard.key) && fs.existsSync(config.dashboard.cert) && fs.existsSync(config.dashboard.ca)) {
-            const httpsServer = https.createServer({
-                key: fs.readFileSync(config.dashboard.key),
-                cert: fs.readFileSync(config.dashboard.cert),
-                ca: fs.readFileSync(config.dashboard.ca)
-            }, app)
+    /* HTTPS */
+    if (fs.existsSync(config.dashboard.key) && fs.existsSync(config.dashboard.cert) && fs.existsSync(config.dashboard.ca)) {
+        const httpsServer = https.createServer({
+            key: fs.readFileSync(config.dashboard.key),
+            cert: fs.readFileSync(config.dashboard.cert),
+            ca: fs.readFileSync(config.dashboard.ca)
+        }, app)
 
-            httpsServer.listen(config.dashboard.https, async() => {
-                await logger.log("Serveur web HTTPS démarré port : " + config.dashboard.https)
-            })
-        } else await logger.warn("Serveur HTTPS pas lancé : aucune clé : key/cert/ca n'existe")
-
-        const httpServer = http.createServer(app)
-
-        httpServer.listen(config.dashboard.http, async() => {
-            await logger.log("Serveur web http démarré port : " + config.dashboard.http)
+        httpsServer.listen(config.dashboard.https, async() => {
+            await logger.log("Serveur web HTTPS démarré port : " + config.dashboard.https)
         })
-    }
+    } else await logger.warn("Serveur HTTPS pas lancé : aucune clé : key/cert/ca n'existe")
+
+    const httpServer = http.createServer(app)
+
+    httpServer.listen(config.dashboard.http, async() => {
+        await logger.log("Serveur web http démarré port : " + config.dashboard.http)
+    })
+}
 
 export default init
