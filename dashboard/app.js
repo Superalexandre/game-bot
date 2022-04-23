@@ -5,28 +5,21 @@ import cors from "cors"
 import session from "express-session"
 import passport from "passport"
 import config from "../config.js"
-import functions from "../functions.js"
+import * as functions from "../functions.js"
 import ejs from "ejs"
 import { fileURLToPath } from "url"
 //import Enmap from "enmap"
 import Logger from "../logger.js"
 import i18n from "i18n"
 import routerApi from "./router/api.js"
+import fs from "fs"
+
+import https from "https"
+import http from "http"
 
 const logger = new Logger({
     plateform: "Dashboard"
 })
-
-/*
-const CopyData = {
-    users: new Enmap({ name: "users" }),
-    games: new Enmap({ name: "games" }),
-    discord: {
-        bot: new Enmap({ name: "discordBot" })
-    }
-}
-*/
-
 
 async function init({ data, clients }) {
     const app = express()
@@ -310,11 +303,25 @@ async function init({ data, clients }) {
 
             res.redirect("/")
         })
-        .listen(config.dashboard.http, (err) => {
-            if (err) console.error(err)
+      
+        /* HTTPS */
+        if (fs.existsSync(config.dashboard.key) && fs.existsSync(config.dashboard.cert) && fs.existsSync(config.dashboard.ca)) {
+            const httpsServer = https.createServer({
+                key: fs.readFileSync(config.dashboard.key),
+                cert: fs.readFileSync(config.dashboard.cert),
+                ca: fs.readFileSync(config.dashboard.ca)
+            }, app)
 
-            logger.log("En ligne port " + config.dashboard.http)
+            httpsServer.listen(config.dashboard.https, async() => {
+                await logger.log("Serveur web HTTPS démarré port : " + config.dashboard.https)
+            })
+        } else await logger.warn("Serveur HTTPS pas lancé : aucune clé : key/cert/ca n'existe")
+
+        const httpServer = http.createServer(app)
+
+        httpServer.listen(config.dashboard.http, async() => {
+            await logger.log("Serveur web http démarré port : " + config.dashboard.http)
         })
-}
+    }
 
 export default init

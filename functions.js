@@ -141,28 +141,16 @@ function genGameId({ gameName = "", length = 30 }) {
     return random
 }
 
-function formatDate({ date, locale, timezone }) {
-    if (!date) date = Date.now()
-    if (!locale) locale = "fr-FR"
-    if (!timezone) timezone = "Europe/Paris"
-
-    const config = {
-        "fr-FR": {
-            "at": "à",
-            "locale": fr_locale
-        }
-    }
-
-
+function formatDate(date = Date.now(), timezone = "Europe/Paris", format = "dd'/'MM'/'yy pp") {
     const dateZonedTime = DateFns.utcToZonedTime(date, timezone)
 
-    return DateFns.format(dateZonedTime, `EEEE dd LLLL yyyy '${config[locale].at}' pp`, {
+    return DateFns.format(dateZonedTime, format, {
         timeZone: timezone,
-        locale: config[locale].locale
+        locale: fr_locale
     })
 }
 
-export default {
+export {
     createAccount,
     deleteAccount,
     genId,

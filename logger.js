@@ -1,4 +1,4 @@
-import { formateDate } from "./functions/functions.js"
+import { formatDate } from "./functions.js"
 import chalk from "chalk"
 
 export default class Logger {
@@ -25,7 +25,7 @@ export default class Logger {
 
         const plateform = findedArgs.toReturn.plateform ?? this.plateform
 
-        console.log(`[${formateDate()}]${chalk.bgGreen("[LOG]")}${getColorPlateform(plateform)} ${message}`, ...args)
+        console.log(`[${formatDate()}]${chalk.bgGreen("[LOG]")}${getColorPlateform(plateform)} ${message}`, ...args)
     
         return { message, args, logged: true }
     }
@@ -46,7 +46,7 @@ export default class Logger {
 
         const plateform = findedArgs.toReturn.plateform ?? this.plateform
 
-        console.log(`[${formateDate()}]${chalk.bgBlue("[INFO]")}${getColorPlateform(plateform)} ${message}`, ...args)
+        console.log(`[${formatDate()}]${chalk.bgBlue("[INFO]")}${getColorPlateform(plateform)} ${message}`, ...args)
 
         return { message, args, logged: true }
     }
@@ -67,7 +67,7 @@ export default class Logger {
 
         const plateform = findedArgs.toReturn.plateform ?? this.plateform
 
-        console.log(`[${formateDate()}]${chalk.bgYellow("[WARN]")}${getColorPlateform(plateform)} ${message}`, ...args)
+        console.log(`[${formatDate()}]${chalk.bgYellow("[WARN]")}${getColorPlateform(plateform)} ${message}`, ...args)
     
         return { message, args, logged: true }
     }
@@ -91,7 +91,7 @@ export default class Logger {
         const fromFunction = findedArgs.toReturn.fromFunction ?? false
         const plateform = findedArgs.toReturn.plateform ?? this.plateform
 
-        console.log(`[${formateDate()}]${chalk.bgRed(`[ERROR]`)}${chalk.bgMagenta(`${fromFunction ? `[${fromFunction}]` : ""}`)}${getColorPlateform(plateform)} ${error.toString()}`, ...args)
+        console.log(`[${formatDate()}]${chalk.bgRed(`[ERROR]`)}${chalk.bgMagenta(`${fromFunction ? `[${fromFunction}]` : ""}`)}${getColorPlateform(plateform)} ${error.toString()}`, ...args)
 
         if (trace) console.log(error)
     

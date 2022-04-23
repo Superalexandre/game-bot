@@ -3,7 +3,7 @@ import { Client as InstaClient, Message } from "@androz2091/insta.js"
 import LikeCollector from "./LikeCollector.js"
 
 import config from "../../config.js"
-import functions from "../../functions.js"
+import * as functions from "../../functions.js"
 
 export class Client extends InstaClient {
     constructor(options) {

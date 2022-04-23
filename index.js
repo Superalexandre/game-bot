@@ -12,7 +12,7 @@ import config from "./config.js"
 import { fileURLToPath } from "url"
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-import * as Sentry from "@sentry/node"
+// import * as Sentry from "@sentry/node"
 import Logger from "./logger.js"
 
 import Enmap from "enmap"
@@ -30,11 +30,11 @@ const data = {
     }
 }
 
-Sentry.init({
-    dsn: config.sentry.dsn,
-    release: "game-bot@1.0.0",
-    tracesSampleRate: 1.0
-})
+// Sentry.init({
+//     dsn: config.sentry.dsn,
+//     release: "game-bot@1.0.0",
+//     tracesSampleRate: 1.0
+// })
 
 //* Config languages
 i18n.configure({
@@ -76,15 +76,23 @@ async function init() {
     }
 
     if (config.discord.start) {
-        const result = await discordClient({ data })
+        try {
+            const result = await discordClient({ data })
 
-        clients.discord = result
+            clients.discord = result
+        } catch(error) {
+            logger.error(error, { plateform: "discord" })
+        }
     } else logger.warn("Le bot discord n'est pas lancé", { plateform: "Discord" })
 
     if (config.instagram.start) {
-        const result = await instaClient({ data })
+        try {
+            const result = await instaClient({ data })
 
-        clients.insta = result
+            clients.insta = result
+        } catch(error) {
+            logger.error(error, { plateform: "instagram" })
+        }
     } else logger.warn("Le bot instagram n'est pas lancé", { plateform: "Instagram" })
 
     if (config.dashboard.start) {
