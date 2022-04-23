@@ -123,11 +123,11 @@ export default class Ready {
             }
 
             if (type === "create") {
-                await createCommand(client, command, commandName, botData)
+                await updateOrCreateCommand(type, client, command, commandName, botData)
             } else if (type === "update") {
                 const slashCommand = slashCommandList.filter(cmd => cmd.name === commandName)[0]
                 
-                await updateCommand(client, command, commandName, slashCommand.id, botData)
+                await updateOrCreateCommand(type, client, command, commandName, slashCommand.id, botData)
             }
         }
         

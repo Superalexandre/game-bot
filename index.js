@@ -80,7 +80,7 @@ async function init() {
             const result = await discordClient({ data })
 
             clients.discord = result
-        } catch(error) {
+        } catch (error) {
             logger.error(error, { plateform: "discord" })
         }
     } else logger.warn("Le bot discord n'est pas lancé", { plateform: "Discord" })
@@ -90,7 +90,7 @@ async function init() {
             const result = await instaClient({ data })
 
             clients.insta = result
-        } catch(error) {
+        } catch (error) {
             logger.error(error, { plateform: "instagram" })
         }
     } else logger.warn("Le bot instagram n'est pas lancé", { plateform: "Instagram" })

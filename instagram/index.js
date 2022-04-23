@@ -1,5 +1,4 @@
 import { Client } from "./structures/Client.js"
-import config from "../config.js"
 import Logger from "../logger.js"
 import { readdir } from "fs"
 
