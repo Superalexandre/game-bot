@@ -25,7 +25,7 @@ export default router
     })
         
     .get("/discord/login", function(_req, res) {
-        res.redirect("https://discord.com/api/oauth2/authorize?client_id=848272310557343795&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fdiscord%2Fcallback&response_type=code&scope=email%20identify%20guilds")
+        res.redirect(config.discord.loginURL)
     })
     .get("/discord/callback", async function(req, res) {
         if (!req.query.code) return res.redirect("/login")
@@ -51,6 +51,8 @@ export default router
         const token = await response.json()
             
         if (token.error || !token.access_token) {
+            req.app.locals.messages = []
+
             await req.app.locals.messages.push({
                 type: "error",
                 message: res.__("dashboard.errors.invalidKey")

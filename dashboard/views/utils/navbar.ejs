@@ -1,4 +1,4 @@
-<nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6 dark:bg-gray-secondary bg-white-secondary transition duration-500 ease-in-out">
+<nav class="flex items-center justify-between flex-wrap p-6 dark:bg-gray-secondary bg-white-secondary transition duration-500 ease-in-out">
     <div class="flex items-center flex-shrink-0 <%= "text-" + req.color%> mr-6">
         <a href="/" class="uppercase font-bold hover:text-black dark:hover:text-white">
             <img class="h-16 inline-block mr-6 align-middle" src="../public/img/logos/Logo.png" alt="Logo"/>
@@ -7,7 +7,7 @@
         </a>
     </div>
     <div class="block lg:hidden">
-        <button class="mobileButton flex items-center px-3 py-2 text-teal-200 border-teal-400 <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
+        <button class="mobileButton flex items-center px-3 py-2 <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
             <i class="fas fa-bars "></i>
         </button>
     </div>

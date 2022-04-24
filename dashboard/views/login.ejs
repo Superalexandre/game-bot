@@ -13,14 +13,14 @@
                 <div class="m-auto text-center">
                     <div class="group">
                         <i class="fab fa-discord font-bold group text-blurple block group-hover:animate-rotate360"></i>
-                        <button class="font-bold text-blurple" onclick="location.href='/api/discord/login'"><%= res.__("dashboard.login.connectWithDiscord") %></button>
+                        <a class="font-bold text-blurple" href='/api/discord/login'><%= res.__("dashboard.login.connectWithDiscord") %></a>
                     </div>
                     <div>
-                        <button class="font-bold text-transparent gradient-instagram">
+                        <a class="font-bold text-transparent gradient-instagram">
                             <i class="fab fa-instagram"></i>
                             
                             <%= res.__("dashboard.login.connectWithInsta") %>
-                        </button>
+                        </a>
                     </div>
                     <div>
                         <p class="textTheme"><%= res.__("dashboard.login.noAccount") %></p>
