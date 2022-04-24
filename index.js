@@ -25,6 +25,7 @@ const logger = new Logger({
 const data = {
     users: new Enmap({ name: "users" }),
     games: new Enmap({ name: "games" }),
+    sync: new Enmap({ name: "sync" }),
     discord: {
         bot: new Enmap({ name: "discordBot" })
     }
