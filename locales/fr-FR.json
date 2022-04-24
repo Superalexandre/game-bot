@@ -607,7 +607,8 @@
 			"smallerPlayerGame": "Le joueur qui a le moins joué",
 			"firstPlayedGame": "La première partie joué",
 			"lastPlayedGame": "La dernière partie joué",
-			"today": "Aujourd'hui"
+			"today": "Aujourd'hui",
+			"noGamePlayed": "dashboard.server.noGamePlayed"
 		},
 		"settings": {
 			"fr-FR": "Français (France)",
