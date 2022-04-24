@@ -114,7 +114,7 @@ async function init({ data, clients }) {
 
             if (req.query && req.query.lang) {
                 if (!i18n.getLocales().includes(req.query.lang)) {
-                    console.log("Invalid lang")
+                    req.logger.error("Invalid lang")
 
                     req.app.locals.messages.push({
                         type: "warn",
