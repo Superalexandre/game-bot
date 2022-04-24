@@ -150,6 +150,29 @@ function formatDate(date = Date.now(), timezone = "Europe/Paris", format = "dd'/
     })
 }
 
+/**
+ * @description Function for convert day date (5) to string (05)
+ * 
+ * @param {Date} date
+ * 
+ * @returns {String} Day date
+ * 
+ */
+function formatDay(date) {
+    return ("0" + date.getDate()).slice(-2)
+}
+
+/**
+ * @description Function for convert month date (5) to string (05)
+ * 
+ * @param {Date} date
+ *
+ * @returns {String} Month date
+ */
+function formatMonth(date) {
+    return ("0" + (date.getMonth() + 1)).slice(-2)
+}
+
 export {
     createAccount,
     deleteAccount,
@@ -157,5 +180,7 @@ export {
     genGameId,
     gameStats,
     mergeAccount,
-    formatDate
+    formatDate,
+    formatDay,
+    formatMonth
 }
