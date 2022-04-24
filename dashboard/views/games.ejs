@@ -19,7 +19,7 @@
                         <a class="text-lg <%= "text-" + req.color %> dark:hover:text-white hover:text-black" href="/chat/<%= game.guildOrChat.data.id %>"></a>
                     <% } %>
                     
-                    <p class="dark:text-white text-black text-lg">Joué le <%= req.functions.formatDate({ date: game.date }) %></p>
+                    <p class="dark:text-white text-black text-lg">Joué le <%= req.functions.formatDate(game.date) %></p>
 
                     <%
                     let winner
