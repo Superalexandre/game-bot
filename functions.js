@@ -45,6 +45,12 @@ async function mergeAccount({ data, id1, id2 }) {
     const account1 = await data.users.get(id1)
     const account2 = await data.users.get(id2)
 
+    if (!account1 || !account2) {
+        logger.log(`Merge account failed: ${id1} or ${id2} not found`)
+     
+        return { success: false, error: true, message: "Provided id is not in database" }
+    }
+
     const newAccount = account1.createdTimestamp < account2.createdTimestamp ? account1 : account2
     const deletedAccount = account1.createdTimestamp < account2.createdTimestamp ? account2 : account1
     

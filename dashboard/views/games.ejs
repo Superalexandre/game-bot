@@ -5,7 +5,7 @@
 
         <meta name="description" content="Game of <%= game.gameName %> play the <%= req.functions.formatDate(game.date) %> with <%= game.beetween.map(user => user.username).join(", ")%>">
 
-        <meta name="theme-color" content="<%= req.color %>">
+        <meta name="theme-color" content="<%= req.config.colors[req.color] %>">
 
         <%- include("utils/header") %>
     </head>

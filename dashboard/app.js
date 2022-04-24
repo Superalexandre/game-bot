@@ -50,6 +50,7 @@ async function init({ data, clients }) {
             req.discordClient = clients?.discord
             req.logger = logger
             req.data = data
+            req.config = config
             req.functions = functions
 
             const colors = ["red", "green", "blue", "yellow"]

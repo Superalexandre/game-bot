@@ -5,7 +5,7 @@
 
         <meta name="description" content="Server <%= server.name %>, <%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> party played">
 
-        <meta name="theme-color" content="<%= req.color %>">
+        <meta name="theme-color" content="<%= req.config.colors[req.color] %>">
 
         <%- include("utils/header") %>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
@@ -82,7 +82,7 @@
                         
                             //Get smallest player game
                             const smallestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame[a].count < countPlayerGame[b].count ? a : b)
-                        }
+                        } else consle.log(games)
                     %>
 
                     <div>
