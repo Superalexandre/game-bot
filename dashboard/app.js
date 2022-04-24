@@ -277,7 +277,7 @@ async function init({ data, clients }) {
 
             const JSONdata = await req.data.users.export()
             
-            res.send(JSON.parse(JSONdata))
+            res.send(JSONdata)
         })
         .get("/invite", function(_req, res) {
             res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
