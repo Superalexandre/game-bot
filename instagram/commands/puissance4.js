@@ -141,7 +141,9 @@ async function startGame({ client, message, opponent, i18n }) {
                 winnerId: winner.id
             })
 
-            return await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji, looserUsername: looser.username, looserEmoji: looser.emoji })}\n` + formatedBoard.string)
+            const msg = await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.win", { winnerUsername: winner.username, winnerEmoji: winner.emoji, looserUsername: looser.username, looserEmoji: looser.emoji })}\n` + formatedBoard.string)
+        
+            return endGame({ msg, message, opponent })
         }
 
         if (formatedBoard.allFill) {
@@ -162,10 +164,23 @@ async function startGame({ client, message, opponent, i18n }) {
                 winnerId: "equality"
             })
 
-            return await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.equality", { userDataUsername: userData.username, userDataEmoji: userData.emoji, opponentDataUsername: opponentData.username, opponentDataEmoji: opponentData.emoji })}\n` + formatedBoard.string)
+            const msg = await message.chat.sendMessage(`${i18n.__("insta.puissance4.result.equality", { userDataUsername: userData.username, userDataEmoji: userData.emoji, opponentDataUsername: opponentData.username, opponentDataEmoji: opponentData.emoji })}\n` + formatedBoard.string)
+        
+            return endGame({ msg, message, opponent })
         }
 
         await message.chat.sendMessage(text(userData, opponentData) + formatedBoard.string)
+    })
+}
+
+async function endGame({ msg, message, opponent }) {
+    const likeFilter = (like) => [opponent.id, message.author.id].includes(like.id)
+    const likeCollector = msg.createLikeCollector(msg, { filter: likeFilter })
+
+    likeCollector.on("likeAdded", async() => {
+        await likeCollector.end()
+
+        return opponentReady({ message, opponent })
     })
 }
 

@@ -111,5 +111,11 @@ module.exports = {
             display: ["dark"]
         }
     },
+    safelist: [
+        "text-blue",
+        "text-red",
+        "text-green",
+        "text-yellow"
+    ],
     plugins: []
 }
