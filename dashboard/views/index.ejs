@@ -4,7 +4,7 @@
         <title>Game Bot</title>
 
         <meta name="description" content="A lot of funny game ! In multiple langage">
-        <meta name="theme-color" content="<%= req.color %>">
+        <meta name="theme-color" content="<%= req.config.colors[req.color] %>">
 
         <%- include("utils/header") %>
     </head>
