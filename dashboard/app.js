@@ -282,6 +282,40 @@ async function init({ data, clients }) {
         .get("/invite", function(_req, res) {
             res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
         })
+        .get("/sync/:code/:plateform", async function(req, res) {
+            if (!req.user) {
+                req.app.locals.messages.push({
+                    type: "warn",
+                    message: res.__("dashboard.errors.mustBeLogin")
+                })
+
+                return res.redirect("/login")
+            }
+
+            if (!req.params.code || !req.params.plateform) {
+                req.app.locals.messages.push({
+                    type: "error",
+                    message: "Une erreur est survenue"
+                })
+
+                return res.redirect("/profile")
+            }
+
+            if (!await req.data.sync.get(req.params.code)) {
+                req.app.locals.messages.push({
+                    type: "error",
+                    message: "Ce code n'existe pas"
+                })
+                
+                return res.redirect("/profile")
+            }
+
+            res.render("sync", {
+                req, res, i18n,
+                code: req.params.code,
+                type: req.params.plateform
+            })
+        })
         .use("/api", routerApi)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
         .use((error, _req, res, next) => {
