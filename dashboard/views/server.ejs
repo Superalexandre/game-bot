@@ -138,7 +138,6 @@
                                             <% 
                                                 let date = new Date() 
                                                 date.setDate(date.getDate() - index)
-                                                date.setMonth(date.getMonth() + 1)
                                             %>
 
                                             <%= req.functions.formatDay(date) %>/<%= req.functions.formatMonth(date) %>
