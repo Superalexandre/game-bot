@@ -24,8 +24,7 @@
 				"you": "Vous ({{username}})",
 				"opponent": "{{username}}",
 				"random": "Aléatoire"
-			},
-			"oppponentNotReady": "Une erreur de traduction est servenue !"
+			}
 		},
 		"rockpaperscissors": {
 			"mainText": "C'est le moment des choix ! (Attention, après vous ne pourrez plus changer)\n\n{{userUsername}} {{userChoice}}\n{{opponentUsername}} {{opponentChoice}}",
@@ -519,6 +518,18 @@
 			"desc": "Description",
 			"use": "Usage",
 			"exam": "Exemple"
+		},
+		"link": {
+			"description": "Permet de synchroniser votre compte",
+			"usage": "{{prefix}}link <Code>",
+			"example": "{{prefix}}link 123456789",
+			"noArgs": "Veuillez saisir un argument",
+			"success": "Votre compte a été synchronisé avec succès",
+			"error": {
+				"invalidCode": "Code invalide",
+				"invalidAccount": "Compte invalide",
+				"sameAccount": "Pas de panique ! Votre compte est déjà synchronisé"
+			}
 		}
 	},
 	"dashboard": {
