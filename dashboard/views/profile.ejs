@@ -19,7 +19,7 @@
                         <div class="p-5">
                             <p class="textTheme break-words"><i class="far fa-id-card"></i> <%= res.__("dashboard.profile.uniqueId") %> : <%= profileData.accountId %></p>
                             <p class="textTheme break-words"><i class="fas fa-language"></i> <%= res.__("dashboard.profile.activeLang") %> : <%= res.__(`dashboard.profile.${profileData.lang}`) %> <a class="hover:text-black dark:hover:text-white font-bold <%= "text-" + req.color %>" href="/profile/settings"><%= res.__("dashboard.profile.change") %> <i class="fas fa-cog"></i></a></p>
-                            <p class="textTheme break-words"><i class="fas fa-clock"></i> <%= res.__("dashboard.profile.createdAt") %> <%= req.functions.formatDate({ date: profileData.createdTimestamp }) %></p>
+                            <p class="textTheme break-words"><i class="fas fa-clock"></i> <%= res.__("dashboard.profile.createdAt") %> <%= req.functions.formatDate(profileData.createdTimestamp) %></p>
                         </div>
                     </div>
                 </div>

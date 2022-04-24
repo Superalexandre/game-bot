@@ -3,7 +3,7 @@ import fetch from "node-fetch"
 import btoa from "btoa"
 import express from "express"
 import config from "../../config.js"
-import functions from "../../functions.js"
+import * as functions from "../../functions.js"
 const router = express.Router()
 
 export default router
