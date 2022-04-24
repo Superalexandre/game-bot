@@ -134,7 +134,11 @@
                                         <% if (index === 0) { %>
                                             <%= res.__("dashboard.server.today") %>
                                         <% } else { %> 
-                                            <%= new Date().getDate() - index %>/<%= new Date().getMonth() + 1 %>
+                                            <%= const date = new Date() %>
+                                            <%= date.setDate(date.getDate() - index) %>
+                                            <%= date.setMonth(date.getMonth() + 1) %>
+
+                                            <%= req.functions.formatDay(date) %>/<%= req.functions.formatMonth(date) %>
                                         <% } %>
                                     </th>
                                     <td style="--size: calc(<%= games.length + 1 %>/<%= maxParty + 1 %>)" class="bg-<%= color %>-important">
