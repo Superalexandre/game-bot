@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="<%= res.getLocale() %>">
     <head>
+        <title>Game Bot | Server</title>
+
+        <meta name="description" content="Server <%= server.name %>, <%= req.data.games.filter(game => game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> party played">
+
+        <meta name="theme-color" content="<%= req.color %>">
+
         <%- include("utils/header") %>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
     </head>
