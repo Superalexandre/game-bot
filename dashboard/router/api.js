@@ -165,3 +165,14 @@ export default router
 
         return res.redirect("/")
     })
+    .get("/instagram/mergeAccount", async function(req, res) {
+        // Gen new id
+        const id = req.functions.genId({ length: 8 })
+        
+        await req.data.sync.set(id, {
+            account: req.user.profileData.accountId,
+            date: Date.now()
+        })
+
+        res.redirect(`/sync/${id}/instagram`)
+    })

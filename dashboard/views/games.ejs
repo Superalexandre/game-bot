@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="<%= res.getLocale() %>">
     <head>
+        <title>Game Bot | Games</title>
+
+        <meta name="description" content="Game of <%= game.gameName %> play the <%= req.functions.formatDate(game.date) %> with <%= game.beetween.map(user => user.username).join(", ")%>">
+
+        <meta name="theme-color" content="<%= req.color %>">
+
         <%- include("utils/header") %>
     </head>
     <body class="dark:bg-gray-primary bg-white-primary transition duration-500 ease-in-out">
