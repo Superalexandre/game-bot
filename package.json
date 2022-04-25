@@ -27,7 +27,7 @@
     "date-fns-tz": "^1.2.2",
     "discord.js": "^13.5.0",
     "ejs": "^3.1.6",
-    "enmap": "^5.8.7",
+    "enmap": "^5.8.13",
     "express": "^4.17.2",
     "express-session": "^1.17.2",
     "gifenc": "github:mattdesl/gifenc",
