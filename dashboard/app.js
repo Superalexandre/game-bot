@@ -16,6 +16,7 @@ import fs from "fs"
 
 import https from "https"
 import http from "http"
+import { Server } from "socket.io"
 
 const logger = new Logger({
     plateform: "Dashboard"
@@ -232,7 +233,13 @@ async function init({ data, clients }) {
             })
             */
         })
-        .get("/games/:id", function(req, res) {
+        .get("/games/:id?", function(req, res) {
+            if (!req.params.id) {
+                return res.render("createGame", {
+                    req, res, i18n
+                })
+            }
+            
             const game = req.data.games.get(req.params.id)
 
             if (!game) {
@@ -317,18 +324,52 @@ async function init({ data, clients }) {
                 type: req.params.plateform
             })
         })
+        .get("/play/:id?", async function(req, res) {
+            if (!req.params.id) return res.redirect("/games")
+            
+            const game = req.data.games.get(req.params.id)
+
+            if (!game) {
+                req.app.locals.messages.push({
+                    type: "error",
+                    message: "Aucune partie trouvée essayez d'en créer une"
+                })
+
+                return res.redirect("/games")
+            }
+
+            if (game.game === "puissance4") {
+                res.render("games/puissance4", {
+                    req, res, i18n,
+                    game, id: req.params.id
+                })
+            } else {
+                req.app.locals.messages.push({
+                    type: "error",
+                    message: "Ce jeu n'est pas encore disponible"
+                })
+
+                await req.data.games.delete(game.id)
+
+                return res.redirect("/games")
+            }
+
+        })
         .use("/api", routerApi)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-        .use((error, _req, res, next) => {
-            if (!error.statusCode) error.statusCode = 500
+        .use((error, req, res, next) => {
+            if (!error) return
 
-            if (error.statusCode === 301) {
-                return res.status(301).json({ error: "301" })
-            }
-        
             logger.error(error.stack ?? error.toString())
 
-            return res?.status(500)?.json({ error: error.toString() })
+            console.log(error)
+
+            res?.status(error.statusCode ?? 500)?.render("error", {
+                req, res, i18n,
+                code: error.statusCode
+            })
+
+            // return res?.status(500)?.json({ error: error.toString() })
         })
         .use(function(req, res) {
             req.app.locals.messages.push({
@@ -354,9 +395,280 @@ async function init({ data, clients }) {
 
     const httpServer = http.createServer(app)
 
+    const io = new Server(httpServer)
+
+    io.on("connect", socket => {
+        socket.on("join", async function(socketData) {
+            if (!socketData || !socketData.gameId) return logger.error("Une erreur est survenue (no socket or gameId)")
+
+            const game = await data.games.get(socketData.gameId)
+
+            if (!game) {
+                socket.emit("error", {
+                    message: "Aucune partie trouvée"
+                })
+
+                return
+            }
+
+            if (game.users.length >= 2) {
+                socket.emit("error", {
+                    message: "La partie est pleine"
+                })
+
+                return
+            }
+
+            if (game.users.find(player => player.id === socket.id)) {
+                socket.emit("error", {
+                    message: "Vous êtes déjà dans cette partie"
+                })
+
+                return
+            }
+
+            const player = {
+                id: socket.id,
+                username: socketData.username,
+                color: game.users.length <= 0 ? "red" : "yellow",
+                colorEmote: game.users.length <= 0 ? "🔴" : "🟡",
+                winEmoji: game.users.length <= 0 ? "🔴" : "🟡",
+                isTurn: game.users.length <= 0 ? true : false
+            }
+
+            data.games.push(socketData.gameId, player, "users")
+            
+            await socket.join(data.gameId)
+
+            io.in(data.gameId).emit("joined", {
+                id: socket.id,
+                board: game.board,
+                player,
+                playerNumber: game.users.length + 1
+            })
+
+            socket.on("play", async function(socketPlayData) {
+                if (!socketPlayData || !socketPlayData.gameId) return logger.error("Une erreur est survenue (no socket or gameId)")
+
+                const game = await data.games.get(socketPlayData.gameId)
+
+                if (!game) {
+                    socket.emit("error", {
+                        message: "Aucune partie trouvée"
+                    })
+
+                    return
+                }
+
+                if (game.users.length < 2) {
+                    socket.emit("error", {
+                        message: "La partie n'est pas encore pleine"
+                    })
+
+                    return
+                }
+
+                const player = game.users.find(player => player.id === socket.id)
+
+                if (!player) {
+                    socket.emit("error", {
+                        message: "Vous n'êtes pas dans cette partie"
+                    })
+
+                    return
+                }
+
+                if (!player.isTurn) {
+                    socket.emit("error", {
+                        message: "Ce n'est pas à votre tour"
+                    })
+
+                    return
+                }
+
+                if (socketPlayData.column < 0 || socketPlayData.column > 6) {
+                    socket.emit("error", {
+                        message: "La colonne n'existe pas"
+                    })
+
+                    return
+                }
+
+                const result = add({ board: game.board, column: socketPlayData.column, emoji: player.colorEmote })
+
+                if (result.error) {
+                    socket.emit("error", {
+                        message: result.error === "col_full" ? "La colonne est pleine" : "Une erreur est survenue"
+                    })
+
+                    return
+                }
+
+                const check = checkWin({
+                    board: result.board,
+                    userData: game.users[0],
+                    opponentData: game.users[1]
+                })
+
+                if (check.win) {
+                    io.in(data.gameId).emit("play", {
+                        board: result.board,
+                        column: socketPlayData.column,
+                        win: true
+                    })
+                
+                    // Disabled all players turn
+                    for (let i = 0; i < game.users.length; i++) {
+                        const user = game.users[i]
+
+                        const newUser = {
+                            ...user,
+                            isTurn: false
+                        }
+
+                        await data.games.set(socketPlayData.gameId, newUser, `users.${i}`)
+                    }
+
+                    return
+                }
+
+                if (check.allFill) {
+                    io.in(data.gameId).emit("play", {
+                        board: result.board,
+                        column: socketPlayData.column,
+                        allFill: true
+                    })
+
+                    // Disabled all players turn
+                    for (let i = 0; i < game.users.length; i++) {
+                        const user = game.users[i]
+
+                        const newUser = {
+                            ...user,
+                            isTurn: false
+                        }
+
+                        await data.games.set(socketPlayData.gameId, newUser, `users.${i}`)
+                    }
+
+                    return
+                }
+
+                // Change player turn
+                for (let i = 0; i < game.users.length; i++) {
+                    const user = game.users[i]
+                    const isTurn = player.color === user.color ? false : true
+
+                    const newUser = {
+                        ...user,
+                        isTurn
+                    }
+
+                    await data.games.set(socketPlayData.gameId, newUser, `users.${i}`)
+                }
+
+                await data.games.set(socketPlayData.gameId, result.board, "board")
+
+                // Send play to other player
+                io.in(data.gameId).emit("play", {
+                    player,
+                    board: result.board
+                })
+            })
+        })
+    })
+
     httpServer.listen(config.dashboard.http, async() => {
         await logger.log("Serveur web http démarré port : " + config.dashboard.http)
     })
 }
 
 export default init
+
+
+function add({ board, emoji, column }) {
+    let placed = false
+
+    board.reverse()
+
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board[i].length; j++) {
+            if (!placed && j === parseInt(column) && board[i][j] === "⚪") {
+                board[i][j] = emoji
+
+                placed = true
+            }
+        }
+    }
+    
+    board.reverse()
+    
+    if (!placed) return { error: "col_full", board }
+
+    return { error: false, board }
+}
+
+function checkWin({ board, userData, opponentData }) {
+    let win = false
+    let winner = ""
+    let allFill = true
+    let winnerUser = ""
+
+    for (let i = 0; i < board.length; i++) {   
+        for (let j = 0; j < board[i].length; j++) {
+            if (board[i][j] === "⚪") allFill = false
+
+            //* Horizontal
+            if (!win && board[i][j] !== "⚪" && board[i][j] === board[i][j + 1] && board[i][j + 1] === board[i][j + 2] && board[i][j + 2] === board[i][j + 3]) {
+                winner = board[i][j]
+
+                winnerUser = opponentData.emoji === winner ? opponentData : userData
+
+                board[i][j] = winnerUser.winEmoji
+                board[i][j + 1] = winnerUser.winEmoji
+                board[i][j + 2] = winnerUser.winEmoji
+                board[i][j + 3] = winnerUser.winEmoji
+
+                win = true
+            //* Vertical
+            } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j] && board[i + 2]?.[j] === board[i + 3]?.[j]) {
+                winner = board[i][j]
+
+                winnerUser = opponentData.emoji === winner ? opponentData : userData
+
+                board[i][j] = winnerUser.winEmoji
+                board[i + 1][j] = winnerUser.winEmoji
+                board[i + 2][j] = winnerUser.winEmoji
+                board[i + 3][j] = winnerUser.winEmoji
+
+                win = true
+            //* Diagonal Left top => Bottom right 
+            } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2] && board[i + 2]?.[j + 2] === board[i + 3]?.[j + 3]) {
+                winner = board[i][j]
+
+                winnerUser = opponentData.emoji === winner ? opponentData : userData
+
+                board[i][j] = winnerUser.winEmoji
+                board[i + 1][j + 1] = winnerUser.winEmoji
+                board[i + 2][j + 2] = winnerUser.winEmoji
+                board[i + 3][j + 3] = winnerUser.winEmoji
+
+                win = true
+            //* Diagonal Right top => Bottom left
+            } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2] && board[i + 2]?.[j - 2] === board[i + 3]?.[j - 3]) {
+                winner = board[i][j]
+
+                winnerUser = opponentData.emoji === winner ? opponentData : userData
+
+                board[i][j] = winnerUser.winEmoji
+                board[i + 1][j - 1] = winnerUser.winEmoji
+                board[i + 2][j - 2] = winnerUser.winEmoji
+                board[i + 3][j - 3] = winnerUser.winEmoji
+
+                win = true
+            }
+        }
+    }
+
+    return { board, win, winner, allFill }
+}

@@ -72,17 +72,17 @@
                             }
 
                             //Get highest played game
-                            const highestPlayedGame = Object.keys(playedGame).reduce((a, b) => playedGame[a] > playedGame[b] ? a : b)
+                            highestPlayedGame = Object.keys(playedGame).reduce((a, b) => playedGame[a] > playedGame[b] ? a : b)
                         
                             //Get smaller played game
-                            const smallerPlayedGame = Object.keys(playedGame).reduce((a, b) => playedGame[a] < playedGame[b] ? a : b)
+                            smallerPlayedGame = Object.keys(playedGame).reduce((a, b) => playedGame[a] < playedGame[b] ? a : b)
 
                             //Get highest player game
-                            const highestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame[a].count > countPlayerGame[b].count ? a : b)
+                            highestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame[a].count > countPlayerGame[b].count ? a : b)
                         
                             //Get smallest player game
-                            const smallestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame[a].count < countPlayerGame[b].count ? a : b)
-                        } else consle.log(games)
+                            smallestPlayerGame = Object.keys(countPlayerGame).reduce((a, b) => countPlayerGame[a].count < countPlayerGame[b].count ? a : b)
+                        }
                     %>
 
                     <div>

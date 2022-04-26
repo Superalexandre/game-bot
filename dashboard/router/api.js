@@ -176,3 +176,40 @@ export default router
 
         res.redirect(`/sync/${id}/instagram`)
     })
+    .post("/createGame", async function(req, res) {
+        if (!req.body.type || !req.body.game) res.json({ success: false, error: true, message: "Incomplet request" })
+        if (req.body.type === "account" && !req.user) res.json({ success: false, error: true, message: "You must be logged in to create an account game" })
+        if (req.body.type === "ano" && !req.body.username) res.json({ success: false, error: true, message: "You must provide a username" })
+
+        const id = req.functions.genId({ length: 8 })
+
+        /*
+        
+        {    
+                type: req.body.type,
+                id: req.body.username ?? req.user.profileData.accountId,
+                username: req.body.username ?? req.user.profileData.plateformData[0].data.username
+            }
+        
+        */
+
+            
+        await req.data.games.set(id, {
+            id,
+            game: req.body.game,
+            date: Date.now(),
+            createdBy: req.body.username ?? req.user.profileData.plateformData[0].data.username,
+            users: [],
+            board: [
+                ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"]
+            ]
+        })
+
+        req.app.locals.username = req.body.username ?? req.user.profileData.plateformData[0].data.username
+
+        res.json({ success: true, id })
+    })

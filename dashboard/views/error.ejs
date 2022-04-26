@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="<%= res.getLocale() %>">
+    <head>
+        <title>Game Bot | Error</title>
+        
+        <meta name="theme-color" content="<%= req.color %>">
+
+        <%- include("utils/header") %>
+    </head>
+    <body class="bgMainTheme animationTheme">
+        <div class="flex flex-col flex-no-wrap content-center h-full">
+            <%- include("utils/navbar") %> 
+
+            <%- include("utils/notif") %>
+
+            <div class="flex h-screen flex-grow">
+                <div class="m-auto text-center">
+                    <div>
+                        <p class="dark:text-white text-black">Aïe nous sommes désolé mais une erreur de type <%= code %> est survenue</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

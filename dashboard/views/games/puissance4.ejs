@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="<%= res.getLocale() %>">
+    <head>
+        <title>Game Bot | Puissance4</title>
+        
+        <meta name="theme-color" content="<%= req.color %>">
+
+        <%- include("../utils/header") %>
+    </head>
+    <body class="bgMainTheme animationTheme">
+        <div class="flex flex-col flex-no-wrap content-center h-full">
+            <%- include("../utils/navbar") %> 
+
+            <%- include("../utils/notif") %>
+
+            <p>Partie de <%= game.createdBy %> | Nombre de joueur <span id="playerNumber"></span>/2</p>
+            <div class="content-grid flex flex-col"></div>
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            // Get the gameId from the url
+            const gameId = window.location.pathname.split("/")[2]
+            const socket = io()
+
+            socket.on("connect", () => {
+                socket.emit("join", { 
+                    gameId,
+                    username: "<%= req.app.locals.username %>"
+                })
+            })
+
+            socket.on("error", ({ message }) => {
+                document.querySelector(".all-notif")
+                    .insertAdjacentHTML("beforeend", `
+                        <div class="notif notif-0 text-center ml-auto animate-rightToLeft">
+                            <div class="p-2 bg-red items-center text-white leading-none flex lg:inline-flex">
+                                <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </span>
+                                <span class="font-semibold mr-2 text-left flex-auto">
+                                    ${message}
+                                </span>
+                            </div>
+                        </div>
+                    `)
+
+                refreshNotif()
+            })
+
+            socket.on("joined", (data) => {
+                // Add a notification
+                document.querySelector(".all-notif")
+                    .insertAdjacentHTML("beforeend", `
+                        <div class="notif notif-0 text-center ml-auto animate-rightToLeft">
+                            <div class="p-2 bg-green items-center text-white leading-none flex lg:inline-flex">
+                                <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span class="font-semibold mr-2 text-left flex-auto">
+                                    ${socket.id === data.id ? "Vous avez rejoind la partie" : `${data.player.username} a rejoin la partie`}
+                                </span>
+                            </div>
+                        </div>
+                    `)
+                
+                refreshNotif()
+
+                // Update the player number
+                document.querySelector("#playerNumber").innerText = `${data.playerNumber}`
+
+                refreshBoard(data.board)
+            })
+
+            // Recieve when play
+            socket.on("play", (data) => {
+                refreshBoard(data.board)
+            })
+
+            async function refreshNotif() {
+                document.querySelectorAll(".notif").forEach(async(div, index) => {
+                    await sleep(5000 + index * 400)
+                    div.classList.add("animate-leftToRight")
+                    await sleep(2000)
+                    div.remove()
+                })
+            }
+
+            function refreshBoard(board) {
+                // Remove all the content
+                document.querySelector(".content-grid").innerHTML = ""
+
+                // Add all board to .content-grid
+                for (let i = 0; i < board.length; i++) {
+                    // Create a div
+                    const mainDiv = document.createElement(`div`)
+
+                    mainDiv.classList.add(`${i}`)
+
+                    // Add the div to .content-grid
+                    document.querySelector(".content-grid").appendChild(mainDiv)
+
+                    for (let j = 0; j < board[i].length; j++) {                        
+                        // Create a div
+                        const div = document.createElement("div")
+
+                        div.classList.add(`${i}-${j}`)
+
+                        const button = document.createElement("button")
+                        button.innerHTML = board[i][j]
+                        button.id = `${i}-${j}`
+                        button.classList.add("play")
+
+                        mainDiv.appendChild(button)
+                    }
+                }
+
+                document.querySelectorAll(".play").forEach(button => {
+                    button.addEventListener("click", () => {
+                        const [row, column] = button.id.split("-")
+                        
+                        socket.emit("play", {
+                            column,
+                            gameId
+                        })
+                    })
+                })
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms))
+            }
+        </script>
+    </body>
+</html>

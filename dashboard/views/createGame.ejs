@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="<%= res.getLocale() %>">
+    <head>
+        <title>Game Bot | Create a game</title>
+        
+        <meta name="theme-color" content="<%= req.color %>">
+
+        <%- include("utils/header") %>
+    </head>
+    <body class="bgMainTheme animationTheme">
+        <div class="flex flex-col flex-no-wrap content-center h-full">
+            <%- include("utils/navbar") %> 
+
+            <%- include("utils/notif") %>
+
+            <p class="dark:text-white font-bold text-center text-3xl">Crée une partie de :</p>
+
+            <div class="select-account hidden fixed z-20 overflow-y-auto inset-0">  
+                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                    <div class="relative inline-block align-bottom dark:bg-gray-secondary bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                        <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                            <p class="text-2xl dark:text-white text-center m-2">Creer une partie de <span id="select-account-title"></span></p>
+                            <div class="flex flex-col flex-nowrap justify-center items-center">
+                                <div class="w-5/6 h-12 flex m-2">
+                                    <% if (req.user) { %>
+                                        <button id="play-account" class="dark:bg-gray-primary bg-white w-full h-full hover:text-black text-white rounded-2xl flex items-center justify-center">Jouer avec votre compte <i class="pl-2 fa-solid fa-user"></i></button>
+                                    <% } else { %>
+                                        <a id="play-account" class="dark:bg-gray-primary bg-white w-full h-full hover:text-black text-white rounded-2xl flex items-center justify-center" href="/login">Jouer avec votre compte (Se connecter) <i class="pl-2 fa-solid fa-user"></i></a>
+                                    <% } %>
+                                </div>
+                                <div class="w-5/6 h-12 flex m-2">
+                                    <button class="dark:bg-gray-primary bg-white w-full h-full hover:text-black text-white rounded-2xl flex items-center justify-center" id="play-ano">Jouer anonymement <i class="pl-2 fa-solid fa-user-secret"></i></button>
+                                </div>
+                                <div class="play-ano-container hidden">
+                                    <div class="flex">
+                                        <input type="text" placeholder="Pseudonyme" class="my-3 p-2 focus:outline-none inline-block" id="play-ano-username">
+                                        <div class="text-green text-4xl my-auto ml-1 hidden" id="play-ano-success">
+                                            <i class="fa-solid fa-check"></i>
+                                        </div>
+                                        <div class="text-red text-4xl inline-block my-auto ml-1" id="play-ano-error">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </div>
+                                    </div>
+                                    <button class="bg-green rounded-xl text-white text-center mx-auto hidden w-36 h-10" id="play-ano-submit-valid">Creer la partie</button>
+                                    <button class="hover:cursor-not-allowed bg-red rounded-xl block text-white text-center mx-auto w-36 h-10" id="play-ano-submit-notvalid">Creer la partie</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                            <button class="select-account-back w-full h-full bg-red hover:text-black text-white rounded-2xl">Retour <i class="pl-2 fa-solid fa-arrow-left"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 items-center justify-center">
+                <div class="group flex items-center justify-center">
+                    <div class="grid grid-cols-1 bgTheme h-40 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
+                        <a id="monopoly" class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white" href="">Monopoly</a>
+                    </div>
+                </div>
+                <div class="group flex items-center justify-center">
+                    <div class="grid grid-cols-1 bgTheme h-40 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
+                        <a id="puissance4" class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white" href="">Puissance4</a>
+                    </div>
+                </div>
+                <div class="group flex items-center justify-center">
+                    <div class="grid grid-cols-1 bgTheme h-40 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
+                        <a id="morpion" class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white" href="">Morpion</a>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center lg:col-span-3 col-span-1">
+                    <div class="bgSepTheme h-0.5 w-11/12"></div>
+                </div>
+            </div>
+        </div>
+        <script>
+            window.onload = function() {
+                document.querySelectorAll(".createGame").forEach(button => {
+                    button.addEventListener("click", function(e) {
+                        e.preventDefault()
+                        const game = this.id
+
+                        const title = document.querySelector("#select-account-title")
+                        title.innerHTML = game
+
+                        document.querySelector(".select-account").classList.remove("hidden")
+                    })
+                })
+
+                document.querySelector(".select-account-back").addEventListener("click", function(e) {
+                    e.preventDefault()
+
+                    document.querySelector(".select-account").classList.add("hidden")
+                })
+
+                document.querySelector("#play-ano").addEventListener("click", function() {
+                    const container = document.querySelector(".play-ano-container")
+
+                    if (container.classList.contains("hidden")) {
+                        container.classList.remove("hidden")
+                    } else {
+                        container.classList.add("hidden")
+                    }
+                })
+
+                document.querySelector("#play-ano-username").addEventListener("keyup", function(e) {
+                    const input = document.querySelector("#play-ano-username")
+                    // const button = document.querySelector("#play-ano")
+                    const error = document.querySelector("#play-ano-error")
+                    const success = document.querySelector("#play-ano-success")
+
+                    const buttonInvalid = document.querySelector("#play-ano-submit-notvalid")
+                    const buttonValid = document.querySelector("#play-ano-submit-valid")
+
+                    if (input.value.length > 3) {
+                        error.classList.add("hidden")
+                        error.classList.remove("inline-block")
+
+                        success.classList.remove("hidden")
+                        success.classList.add("inline-block")
+
+                        buttonValid.classList.remove("hidden")
+                        buttonValid.classList.add("block")
+
+                        buttonInvalid.classList.add("hidden")
+                        buttonInvalid.classList.remove("block")
+                    } else {
+                        error.classList.remove("hidden")
+                        error.classList.add("inline-block")
+                        
+                        success.classList.add("hidden")
+                        success.classList.remove("inline-block")
+
+                        buttonValid.classList.add("hidden")
+                        buttonValid.classList.remove("block")
+
+                        buttonInvalid.classList.remove("hidden")
+                        buttonInvalid.classList.add("block")
+                    }
+                })
+
+                document.querySelector("#play-account").addEventListener("click", function() {
+                    createGame({ 
+                        type: "account",
+                        game: document.querySelector("#select-account-title").innerHTML
+                    })
+                })
+
+                document.querySelector("#play-ano-submit-valid").addEventListener("click", function() {
+                    createGame({
+                        type: "ano",
+                        username: document.querySelector("#play-ano-username").value,
+                        game: document.querySelector("#select-account-title").innerHTML
+                    })
+                })
+            }
+
+            async function createGame({ type, username, game }) {
+                // Fetch post api
+                const data = { type, username, game }
+
+                const response = await fetch("/api/createGame", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                })
+
+                const json = await response.json()
+
+                if (json.success) {
+                    window.location.href = `/play/${json.id}`
+                } else {
+                    alert(json.error)
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -52,13 +52,16 @@
     - [ ] Voir ses données stockés => Sur le site => Page profile
     - [ ] Supprimer un compte respect des données => Sur le site => Page profile
 - [X] Sentry, gitguardian
-- [ ] Refaire les messages de #github
-- [ ] Auto rebuild pour tailwind (retirer les variables et tout)
-  - [ ] Uniquement branche main
-- [ ] Auto push sur le rasp
-  - [ ] Docker
 
 ### Site
+
+- [ ] Games
+  - [ ] Quand on rentre son pseudo leger décallage
+  - [ ] Puissance4
+    - [ ] Design
+    - [ ] Voir a qui s'est le tour
+    - [ ] Fini voir plus facilement
+  - [ ] Api pseudo refaire c'est bizarre
 
 - [ ] **❗ Structures**
   - [ ] Tout les traitements les passées en api
@@ -162,7 +165,6 @@
 ### Release
 
 - [X] Logo
-- [ ] Release (Prévue 16 janvier anniv Sudref)
 
 ### Sodoku
 
