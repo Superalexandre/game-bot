@@ -104,9 +104,9 @@ async function init() {
 init()
 
 process.on("uncaughtException", (error) => {
-    return logger.error(error)
+    return logger.error(error, { trace: true })
 })
 
 process.on("unhandledRejection", (error) => {
-    return logger.error(error)
+    return logger.error(error, { trace: true })
 })
