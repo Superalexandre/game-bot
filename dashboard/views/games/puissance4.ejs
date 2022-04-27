@@ -13,8 +13,16 @@
 
             <%- include("../utils/notif") %>
 
-            <p>Partie de <%= game.createdBy %> | Nombre de joueur <span id="playerNumber"></span>/2</p>
-            <div class="content-grid flex flex-col"></div>
+            <p class="text-center dark:text-white">Partie de <%= game.createdBy %> | Nombre de joueur <span id="playerNumber"></span>/2</p>
+            <p class="text-center dark:text-white result-turn">Attente de joueur</p>
+            
+            <div class="flex h-screen flex-grow">
+                <div class="m-auto text-center">
+                    <div class="content-grid flex flex-col">
+                        <!-- <button class="rounded-full w-7 h-7"></button> -->
+                    </div>
+                </div>
+            </div>
         </div>
         <script src="/socket.io/socket.io.js"></script>
         <script>
@@ -25,7 +33,7 @@
             socket.on("connect", () => {
                 socket.emit("join", { 
                     gameId,
-                    username: "<%= req.app.locals.username %>"
+                    username: "<%= res.app.locals.username %>"
                 })
             })
 
@@ -68,12 +76,42 @@
                 // Update the player number
                 document.querySelector("#playerNumber").innerText = `${data.playerNumber}`
 
+                // Update player turn
+                if (data.canStart) document.querySelector(".result-turn").innerText = data.isTurnId === socket.id ? "C'est a vous de jouer" : "C'est à l'adversaire de jouer"
+
                 refreshBoard(data.board)
             })
 
             // Recieve when play
             socket.on("play", (data) => {
                 refreshBoard(data.board)
+
+                if (data.win !== undefined && data.win) {
+                    document.querySelector(".result-turn").innerText = `${data.winnerId === socket.id ? "Vous avez gagner !" : "Vous avez perdu !"}`
+                
+                    return
+                }
+
+                if (data.allFill !== undefined && data.allFill) {
+                    document.querySelector(".all-notif")
+                        .insertAdjacentHTML("beforeend", `
+                            <div class="notif notif-0 text-center ml-auto animate-rightToLeft">
+                                <div class="p-2 bg-green items-center text-white leading-none flex lg:inline-flex">
+                                    <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                    <span class="font-semibold mr-2 text-left flex-auto">
+                                        La partie est terminée
+                                    </span>
+                                </div>
+                            </div>
+                        `)
+
+                    return
+                }
+
+                // Update the player turn
+                document.querySelector(".result-turn").innerText = `${data.isTurn === socket.id ? "C'est a vous de jouer" : "C'est à l'adversaire de jouer"}`
             })
 
             async function refreshNotif() {
@@ -106,9 +144,10 @@
                         div.classList.add(`${i}-${j}`)
 
                         const button = document.createElement("button")
-                        button.innerHTML = board[i][j]
+                        const bgColor = board[i][j] === "⚪" ? "bg-white" : board[i][j] === "🔴" ? "bg-red" : "bg-yellow"
+
                         button.id = `${i}-${j}`
-                        button.classList.add("play")
+                        button.classList.add("play", "rounded-full", "w-7", "h-7", bgColor)
 
                         mainDiv.appendChild(button)
                     }

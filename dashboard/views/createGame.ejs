@@ -114,7 +114,14 @@
                     const buttonInvalid = document.querySelector("#play-ano-submit-notvalid")
                     const buttonValid = document.querySelector("#play-ano-submit-valid")
 
-                    if (input.value.length > 3) {
+                    // Check enter
+                    if (e.keyCode === 13) {
+                        e.preventDefault()
+                        
+                        if (input.value.length > 3 && input.value.length < 15) buttonValid.click()
+                    }
+
+                    if (input.value.length > 3 && input.value.length < 15) {
                         error.classList.add("hidden")
                         error.classList.remove("inline-block")
 
@@ -174,7 +181,7 @@
                 if (json.success) {
                     window.location.href = `/play/${json.id}`
                 } else {
-                    alert(json.error)
+                    console.log("ERROR :", json)
                 }
             }
         </script>
