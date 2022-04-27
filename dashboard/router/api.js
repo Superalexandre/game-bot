@@ -7,30 +7,30 @@ import * as functions from "../../functions.js"
 const router = express.Router()
 
 export default router
-    .get("/instagram/login", function(_req, res) {
-        res.redirect("https://api.instagram.com/oauth/authorize?client_id=406440530945557&redirect_uri=http://localhost:3000/api/instagram/callback&scope=user_profile&response_type=code")
+    .get("/instagram/login", (_req, res) => {
+        res.redirect(303, "https://api.instagram.com/oauth/authorize?client_id=406440530945557&redirect_uri=http://localhost:3000/api/instagram/callback&scope=user_profile&response_type=code")
     })
-    .get("/instagram/callback", async function(req, res) {
+    .get("/instagram/callback", (req, res) => {
         console.log(req.query)
 
-        await req.app.locals.messages.push({
+        await res.app.locals.messages.push({
             type: "info",
             message: res.__("dashboard.errors.connectionNotReleased", { plateform: "Instagram" })
         }) 
 
-        res.redirect("/login")
+        res.redirect(303, "/login")
     })
-    .get("/discord/invite", function(_req, res) {
-        res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
+    .get("/discord/invite", (req, res) => {
+        res.redirect(303, "https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
     })
         
-    .get("/discord/login", function(_req, res) {
-        res.redirect(config.discord.loginURL)
+    .get("/discord/login", (req, res) => {
+        res.redirect(303, config.discord.loginURL)
     })
-    .get("/discord/callback", async function(req, res) {
-        if (!req.query.code) return res.redirect("/login")
+    .get("/discord/callback", async(req, res) => {
+        if (!req.query.code) return res.redirect(303, "/login")
 
-        if (req.query.guild_id) return res.redirect(`/server/${req.query.guild_id}`)
+        if (req.query.guild_id) return res.redirect(303, `/server/${req.query.guild_id}`)
 
         const data = await req.data
         const parameters = new URLSearchParams()
@@ -51,14 +51,14 @@ export default router
         const token = await response.json()
             
         if (token.error || !token.access_token) {
-            req.app.locals.messages = []
+            res.app.locals.messages = []
 
-            await req.app.locals.messages.push({
+            await res.app.locals.messages.push({
                 type: "error",
                 message: res.__("dashboard.errors.invalidKey")
             })   
 
-            return res.redirect("/login")
+            return res.redirect(303, "/login")
         }
 
         const userData = {
@@ -91,12 +91,12 @@ export default router
         }
 
         if (!userData.infos || !userData.servers) {
-            req.app.locals.messages.push({
+            res.app.locals.messages.push({
                 type: "error",
                 message: res.__("dashboard.errors.missingData")
             })
 
-            return res.redirect("/login")
+            return res.redirect(303, "/login")
         }
 
         const guilds = []
@@ -120,12 +120,12 @@ export default router
             if (!newAccount.success) {
                 req.user = null
 
-                await req.app.locals.messages.push({
+                await res.app.locals.messages.push({
                     type: "error",
                     message: res.__("dashboard.errors.accountNotCreated")
                 })
 
-                return res.redirect("/login")
+                return res.redirect(303, "/login")
             }
 
             profileData = newAccount.account
@@ -138,34 +138,34 @@ export default router
             ... { guilds } 
         }
 
-        req.app.locals.messages.push({
+        res.app.locals.messages.push({
             type: "success",
             message: res.__("dashboard.errors.loginSuccess")
         })
 
-        if (req.app.locals.redirect && req.app.locals.redirect.length > 0) {
-            const redirects = req.app.locals.redirect
+        if (res.app.locals.redirect && res.app.locals.redirect.length > 0) {
+            const redirects = res.app.locals.redirect
             const redirect = redirects[redirects.length - 4]
 
-            if (!redirect) return res.redirect("/")
+            if (!redirect) return res.redirect(303, "/")
 
-            return res.redirect(redirect)
+            return res.redirect(303, redirect)
         }
 
-        res.redirect("/")
+        res.redirect(303, "/")
     })
-    .get("/discord/logout", async function(req, res) {
+    .get("/discord/logout", async(req, res) => {
         req.session.destroy()
         req.user = null
             
-        await req.app.locals.messages.push({
+        await res.app.locals.messages.push({
             type: "success",
             message: res.__("dashboard.errors.logoutSucces")
         })
 
-        return res.redirect("/")
+        return res.redirect(303, "/")
     })
-    .get("/instagram/mergeAccount", async function(req, res) {
+    .get("/instagram/mergeAccount", async(req, res) => {
         // Gen new id
         const id = req.functions.genId({ length: 8 })
         
@@ -176,23 +176,13 @@ export default router
 
         res.redirect(`/sync/${id}/instagram`)
     })
-    .post("/createGame", async function(req, res) {
+    .post("/createGame", async(req, res) => {
         if (!req.body.type || !req.body.game) res.json({ success: false, error: true, message: "Incomplet request" })
         if (req.body.type === "account" && !req.user) res.json({ success: false, error: true, message: "You must be logged in to create an account game" })
         if (req.body.type === "ano" && !req.body.username) res.json({ success: false, error: true, message: "You must provide a username" })
+        if (req.body.username.length <= 3 || req.body.username.length >= 16) res.json({ success: false, error: true, message: "Username must be between 3 and 16 characters" })
 
-        const id = req.functions.genId({ length: 8 })
-
-        /*
-        
-        {    
-                type: req.body.type,
-                id: req.body.username ?? req.user.profileData.accountId,
-                username: req.body.username ?? req.user.profileData.plateformData[0].data.username
-            }
-        
-        */
-
+        const id = req.functions.genId({ length: 5, onlyNumber: true, withDate: false })
             
         await req.data.games.set(id, {
             id,
@@ -209,7 +199,7 @@ export default router
             ]
         })
 
-        req.app.locals.username = req.body.username ?? req.user.profileData.plateformData[0].data.username
+        res.app.locals.username = req.body.username ?? req.user.profileData.plateformData[0].data.username
 
         res.json({ success: true, id })
     })
