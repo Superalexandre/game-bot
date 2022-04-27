@@ -57,10 +57,10 @@
 
 - [ ] Games
   - [ ] Quand on rentre son pseudo leger décallage
-  - [ ] Puissance4
-    - [ ] Design
-    - [ ] Voir a qui s'est le tour
-    - [ ] Fini voir plus facilement
+  - [X] Puissance4
+    - [X] Design
+    - [X] Voir a qui s'est le tour
+    - [X] Fini voir plus facilement
   - [ ] Api pseudo refaire c'est bizarre
 
 - [ ] **❗ Structures**
