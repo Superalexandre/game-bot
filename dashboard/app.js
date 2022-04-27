@@ -18,6 +18,15 @@ import https from "https"
 import http from "http"
 import { Server } from "socket.io"
 
+import rateLimit from 'express-rate-limit'
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100, 
+    standardHeaders: true,
+    legacyHeaders: false
+})
+
 const logger = new Logger({
     plateform: "Dashboard"
 })
@@ -31,6 +40,7 @@ async function init({ data, clients }) {
         .set("view engine", "ejs")
         .set("views", join(__dirname, "/views"))
         .use("/public", staticExpress(join(__dirname, "/public")))
+        .use(limiter)
         .use(cookieParser())
         .use(cors())
         .use(json())
@@ -84,7 +94,8 @@ async function init({ data, clients }) {
             if (!i18n.getLocales().includes(req.cookies.lang)) {
                 res.cookie("lang", "fr-FR", {
                     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-                    httpOnly: true
+                    httpOnly: true,
+                    secure: true
                 })
             }
 
@@ -133,7 +144,8 @@ async function init({ data, clients }) {
 
                 res.cookie("lang", req.query.lang, {
                     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-                    httpOnly: true
+                    httpOnly: true,
+                    secure: true
                 })
 
                 await data.users.set(req.user.profileData.accountId, req.query.lang, "lang")
