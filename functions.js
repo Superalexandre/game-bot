@@ -120,14 +120,22 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId, ga
     return { success: true, error: false, user1Data, user2Data: user2Data ? user2Data : "" }
 }
 
-function genId({ length = 30 }) {
+function genId({ length = 30, onlyNumber = false, onlyLetter = false, withDate = true }) {
     let random = ""
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    let characters = ""
+
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    const numbers = "0123456789"
+
+    if (onlyNumber) characters = numbers
+    if (onlyLetter) characters = letters
+    if (!onlyNumber && !onlyLetter) characters = letters + numbers
+
     const stringDate = Date.now().toString()
     for (let i = 0; i < length; i++) {
         random += characters.charAt(Math.floor(Math.random() * characters.length))
 
-        random += stringDate[i] ? stringDate[i] : ""
+        if (withDate) random += stringDate[i] ? stringDate[i] : ""
     }
 
     return random
