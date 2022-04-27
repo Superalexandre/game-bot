@@ -10,7 +10,7 @@ export default router
     .get("/instagram/login", (_req, res) => {
         res.redirect(303, "https://api.instagram.com/oauth/authorize?client_id=406440530945557&redirect_uri=http://localhost:3000/api/instagram/callback&scope=user_profile&response_type=code")
     })
-    .get("/instagram/callback", (req, res) => {
+    .get("/instagram/callback", async(req, res) => {
         console.log(req.query)
 
         await res.app.locals.messages.push({
