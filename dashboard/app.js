@@ -1,5 +1,5 @@
 import express, { json, urlencoded, static as staticExpress } from "express"
-import { join, dirname } from "path"
+import { resolve, join, dirname } from "path"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import session from "express-session"
@@ -38,14 +38,19 @@ async function init({ data, clients }) {
         .use(session({ 
             secret: config.dashboard.secret,
             resave: false,
-            saveUninitialized: false
+            saveUninitialized: false,
+            cookie: {
+                // One year 
+                maxAge: 1000 * 60 * 60 * 24 * 365,
+                secure: true
+            }
         }))
         .use(passport.initialize())
         .use(passport.session())
         .use(i18n.init)
-        .use(async function(req, res, next) {
-            if (!req.app.locals.messages) req.app.locals.messages = []
-            if (!req.app.locals.redirect) req.app.locals.redirect = []
+        .use(async(req, res, next) => {
+            if (!res.app.locals.messages) res.app.locals.messages = []
+            if (!res.app.locals.redirect) res.app.locals.redirect = []
 
             req.instaClient = clients?.instaClient
             req.discordClient = clients?.discord
@@ -65,12 +70,12 @@ async function init({ data, clients }) {
                     req.user = null
                     req.session.destroy()
                     
-                    req.app.locals.messages.push({
+                    res.app.locals.messages.push({
                         type: "error",
                         message: res.__("dashboard.errors.relogin")
                     })
 
-                    return res.redirect("/")
+                    return res.redirect(303, "/")
                 }
 
                 req.session.user.profileData = profileData
@@ -85,45 +90,45 @@ async function init({ data, clients }) {
 
             res.setLocale(req.cookies.lang ?? "fr-FR")
             
-            req.app.locals.redirect.push(req.url)
+            res.app.locals.redirect.push(req.url)
 
             next()
         })
-        .get("/", function(req, res) {
+        .get("/", (req, res) => {
             res.render("index", {
                 req, res, i18n
             })
         })
-        .get("/terms", function(req, res) {
+        .get("/terms", (req, res) => {
             res.render("terms", {
                 req, res, i18n
             })
         })
-        .get("/privacy", function(req, res) {
+        .get("/privacy", (req, res) => {
             res.render("privacy", {
                 req, res, i18n
             })
         })
-        .get("/profile/settings", async function(req, res) {
+        .get("/profile/settings", async(req, res) => {
             if (!req.user) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "warn",
                     message: res.__("dashboard.errors.mustBeLogin")
                 })
 
-                return res.redirect("/login")
+                return res.redirect(303, "/login")
             }
 
             if (req.query && req.query.lang) {
                 if (!i18n.getLocales().includes(req.query.lang)) {
                     req.logger.error("Invalid lang")
 
-                    req.app.locals.messages.push({
+                    res.app.locals.messages.push({
                         type: "warn",
                         message: "Langue saisi invalid"
                     })
 
-                    return res.redirect("/profile/settings")
+                    return res.redirect(303, "/profile/settings")
                 }
 
                 res.cookie("lang", req.query.lang, {
@@ -135,12 +140,12 @@ async function init({ data, clients }) {
 
                 res.setLocale(req.query.lang)
 
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "success",
                     message: "Langue changé"
                 })
 
-                return res.redirect("/profile/settings")
+                return res.redirect(303, "/profile/settings")
             }
 
             res.render("settings", {
@@ -152,19 +157,19 @@ async function init({ data, clients }) {
                 i18n
             })
         })
-        .get("/profile/:id?", function(req, res) {
+        .get("/profile/:id?", (req, res) => {
             if (req.params.id) {
                 res.render("viewProfile", {
                     req, res, i18n
                 })
             } else {
                 if (!req.user) {
-                    req.app.locals.messages.push({
+                    res.app.locals.messages.push({
                         type: "warn",
                         message: res.__("dashboard.errors.mustBeLogin")
                     })
 
-                    return res.redirect("/login")
+                    return res.redirect(303, "/login")
                 }
 
                 res.render("profile", {
@@ -177,14 +182,14 @@ async function init({ data, clients }) {
                 })
             }
         })
-        .get("/statistics", function(req, res) {
+        .get("/statistics", (req, res) => {
             if (!req.user) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "warn",
                     message: res.__("dashboard.errors.mustBeLogin")
                 })
 
-                return res.redirect("/login")
+                return res.redirect(303, "/login")
             }
 
             res.render("statistics", {
@@ -195,16 +200,16 @@ async function init({ data, clients }) {
                 plateformData: req.user.profileData.plateformData
             })
         })
-        .get("/server/:id", function(req, res) {
+        .get("/server/:id", (req, res) => {
             const server = req.discordClient.guilds.cache.get(req.params.id)
 
             if (!server) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "error",
                     message: res.__("dashboard.errors.serverNotFound")
                 })
 
-                return res.redirect("/")
+                return res.redirect(303, "/")
             }
 
             res.render("server", {
@@ -214,26 +219,26 @@ async function init({ data, clients }) {
                 i18n
             })
         })
-        .get("/chat/:id", function(req, res) {
+        .get("/chat/:id", (req, res) => {
             const chat = req.instaClient.chats.cache.get(req.params.id)
 
             if (!chat) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "error",
                     message: res.__("dashboard.errors.chatNotFound")
                 })
 
-                return res.redirect("/")
+                return res.redirect(303, "/")
             }
 
-            res.redirect("/")
+            res.redirect(303, "/")
             /*
             res.render("chat", {
                 req, res, i18n
             })
             */
         })
-        .get("/games/:id?", function(req, res) {
+        .get("/games/:id?", (req, res) => {
             if (!req.params.id) {
                 return res.render("createGame", {
                     req, res, i18n
@@ -243,12 +248,12 @@ async function init({ data, clients }) {
             const game = req.data.games.get(req.params.id)
 
             if (!game) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "error",
                     message: res.__("dashboard.errors.gameNotFound")
                 })
 
-                return res.redirect("/")
+                return res.redirect(303, "/")
             }
 
             res.render("games", {
@@ -259,63 +264,63 @@ async function init({ data, clients }) {
                 i18n
             })
         })
-        .get("/login", function(req, res) {
+        .get("/login", (req, res) => {
             res.render("login", {
                 req, res, i18n
             })
         })
-        .get("/admin", async function(req, res) {
+        .get("/admin", async(req, res) => {
             if (!req.user) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "warn",
                     message: res.__("dashboard.errors.mustBeLogin")
                 })
 
-                return res.redirect("/login")
+                return res.redirect(303, "/login")
             }
 
             if (!config.discord.ownerIds.includes(req.user.id) && !config.instagram.ownerIds.includes(req.user.id)) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "error",
                     message: res.__("dashboard.errors.notAllowed")
                 })
 
-                return res.redirect("/login")
+                return res.redirect(303, "/login")
             }
 
             const JSONdata = await req.data.users.export()
             
             res.send(JSONdata)
         })
-        .get("/invite", function(_req, res) {
-            res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
+        .get("/invite", (_req, res) => {
+            res.redirect(303, "https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
         })
-        .get("/sync/:code/:plateform", async function(req, res) {
+        .get("/sync/:code/:plateform", async(req, res) => {
             if (!req.user) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "warn",
                     message: res.__("dashboard.errors.mustBeLogin")
                 })
 
-                return res.redirect("/login")
+                return res.redirect(303, "/login")
             }
 
             if (!req.params.code || !req.params.plateform) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "error",
                     message: "Une erreur est survenue"
                 })
 
-                return res.redirect("/profile")
+                return res.redirect(303, "/profile")
             }
 
             if (!await req.data.sync.get(req.params.code)) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "error",
                     message: "Ce code n'existe pas"
                 })
                 
-                return res.redirect("/profile")
+                return res.redirect(303, "/profile")
             }
 
             res.render("sync", {
@@ -324,18 +329,18 @@ async function init({ data, clients }) {
                 type: req.params.plateform
             })
         })
-        .get("/play/:id?", async function(req, res) {
-            if (!req.params.id) return res.redirect("/games")
+        .get("/play/:id?", async(req, res) => {
+            if (!req.params.id) return res.redirect(303, "/games")
             
             const game = req.data.games.get(req.params.id)
 
             if (!game) {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "error",
                     message: "Aucune partie trouvée essayez d'en créer une"
                 })
 
-                return res.redirect("/games")
+                return res.redirect(303, "/games")
             }
 
             if (game.game === "puissance4") {
@@ -344,14 +349,14 @@ async function init({ data, clients }) {
                     game, id: req.params.id
                 })
             } else {
-                req.app.locals.messages.push({
+                res.app.locals.messages.push({
                     type: "error",
                     message: "Ce jeu n'est pas encore disponible"
                 })
 
                 await req.data.games.delete(game.id)
 
-                return res.redirect("/games")
+                return res.redirect(303, "/games")
             }
 
         })
@@ -371,21 +376,21 @@ async function init({ data, clients }) {
 
             // return res?.status(500)?.json({ error: error.toString() })
         })
-        .use(function(req, res) {
-            req.app.locals.messages.push({
+        .use((req, res) => {
+            res.app.locals.messages.push({
                 type: "info",
                 message: res.__("dashboard.errors.pageNotFound")
             })
 
-            res.redirect("/")
+            res.redirect(303, "/")
         })
       
     /* HTTPS */
     if (fs.existsSync(config.dashboard.key) && fs.existsSync(config.dashboard.cert) && fs.existsSync(config.dashboard.ca)) {
         const httpsServer = https.createServer({
-            key: fs.readFileSync(config.dashboard.key),
-            cert: fs.readFileSync(config.dashboard.cert),
-            ca: fs.readFileSync(config.dashboard.ca)
+            key: fs.readFileSync(resolve(config.dashboard.key)),
+            cert: fs.readFileSync(resolve(config.dashboard.cert)),
+            ca: fs.readFileSync(resolve(config.dashboard.ca))
         }, app)
 
         httpsServer.listen(config.dashboard.https, async() => {
@@ -443,6 +448,8 @@ async function init({ data, clients }) {
             io.in(data.gameId).emit("joined", {
                 id: socket.id,
                 board: game.board,
+                canStart: game.users.length === 1,
+                isTurnId: game.users.find(player => player.isTurn)?.id,
                 player,
                 playerNumber: game.users.length + 1
             })
@@ -514,7 +521,8 @@ async function init({ data, clients }) {
                     io.in(data.gameId).emit("play", {
                         board: result.board,
                         column: socketPlayData.column,
-                        win: true
+                        win: true,
+                        winnerId: check.winnerUser.id
                     })
                 
                     // Disabled all players turn
@@ -555,9 +563,12 @@ async function init({ data, clients }) {
                 }
 
                 // Change player turn
+                let playerTurnId
                 for (let i = 0; i < game.users.length; i++) {
                     const user = game.users[i]
                     const isTurn = player.color === user.color ? false : true
+
+                    if (isTurn) playerTurnId = user.id
 
                     const newUser = {
                         ...user,
@@ -572,6 +583,7 @@ async function init({ data, clients }) {
                 // Send play to other player
                 io.in(data.gameId).emit("play", {
                     player,
+                    isTurn: playerTurnId,
                     board: result.board
                 })
             })
@@ -670,5 +682,5 @@ function checkWin({ board, userData, opponentData }) {
         }
     }
 
-    return { board, win, winner, allFill }
+    return { board, win, winner, allFill, winnerUser }
 }
