@@ -25,17 +25,17 @@
                             <div class="flex flex-col flex-nowrap justify-center items-center">
                                 <div class="w-5/6 h-12 flex m-2">
                                     <% if (req.user) { %>
-                                        <button id="play-account" class="dark:bg-gray-primary bg-white w-full h-full hover:text-black text-white rounded-2xl flex items-center justify-center">Jouer avec votre compte <i class="pl-2 fa-solid fa-user"></i></button>
+                                        <button id="play-account" class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center">Jouer avec votre compte <i class="pl-2 fa-solid fa-user"></i></button>
                                     <% } else { %>
-                                        <a id="play-account" class="dark:bg-gray-primary bg-white w-full h-full hover:text-black text-white rounded-2xl flex items-center justify-center" href="/login">Jouer avec votre compte (Se connecter) <i class="pl-2 fa-solid fa-user"></i></a>
+                                        <a id="play-account" class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center" href="/login">Jouer avec votre compte (Se connecter) <i class="pl-2 fa-solid fa-user"></i></a>
                                     <% } %>
                                 </div>
                                 <div class="w-5/6 h-12 flex m-2">
-                                    <button class="dark:bg-gray-primary bg-white w-full h-full hover:text-black text-white rounded-2xl flex items-center justify-center" id="play-ano">Jouer anonymement <i class="pl-2 fa-solid fa-user-secret"></i></button>
+                                    <button class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center" id="play-ano">Jouer anonymement <i class="pl-2 fa-solid fa-user-secret"></i></button>
                                 </div>
                                 <div class="play-ano-container hidden">
                                     <div class="flex">
-                                        <input type="text" placeholder="Pseudonyme" class="my-3 p-2 focus:outline-none inline-block" id="play-ano-username">
+                                        <input type="text" placeholder="Pseudonyme" class="my-3 p-2 focus:outline-none inline-block dark:bg-gray-primary bg-white-secondary dark:text-white" id="play-ano-username">
                                         <div class="text-green text-4xl my-auto ml-1 hidden" id="play-ano-success">
                                             <i class="fa-solid fa-check"></i>
                                         </div>
@@ -43,8 +43,8 @@
                                             <i class="fa-solid fa-xmark"></i>
                                         </div>
                                     </div>
-                                    <button class="bg-green rounded-xl text-white text-center mx-auto hidden w-36 h-10" id="play-ano-submit-valid">Creer la partie</button>
-                                    <button class="hover:cursor-not-allowed bg-red rounded-xl block text-white text-center mx-auto w-36 h-10" id="play-ano-submit-notvalid">Creer la partie</button>
+                                    <button class="bg-green rounded-xl text-white text-center mx-auto hidden w-36 h-10 hover:text-black" id="play-ano-submit-valid">Creer la partie</button>
+                                    <button class="hover:cursor-not-allowed bg-red rounded-xl block text-white text-center mx-auto w-36 h-10 hover:text-black" id="play-ano-submit-notvalid">Creer la partie</button>
                                 </div>
                             </div>
                         </div>

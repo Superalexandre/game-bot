@@ -144,10 +144,10 @@
                         div.classList.add(`${i}-${j}`)
 
                         const button = document.createElement("button")
-                        const bgColor = board[i][j] === "⚪" ? "bg-white" : board[i][j] === "🔴" ? "bg-red" : "bg-yellow"
+                        const bgColor = board[i][j] === "⚪" ? ["dark:bg-white", "bg-white-secondary"] : board[i][j] === "🔴" ? ["bg-red"] : ["bg-yellow"]
 
                         button.id = `${i}-${j}`
-                        button.classList.add("play", "rounded-full", "w-7", "h-7", bgColor)
+                        button.classList.add("play", "rounded-full", "w-7", "h-7", ...bgColor)
 
                         mainDiv.appendChild(button)
                     }
