@@ -1,6 +1,7 @@
 {
   "error": {
     "missingTranslation": "A translation error occurred!",
+    "unknownError": "An unknown error is occured!",
     "errorOccured": "An unknown error has occurred\n```{{error}}```",
     "unknowCommand": "This command is not found",
     "invalidOpponent": "The seized opponent is invalid!"
@@ -24,8 +25,7 @@
         "you": "You ({{username}})",
         "opponent": "{{username}}",
         "random": "Random"
-      },
-      "oppponentNotReady": "A translation error occurred!"
+      }
     },
     "rockpaperscissors": {
       "mainText": "It's time to choose! (Be careful, after that you won't be able to change)\n\n{{userUsername}} {{userChoice}}\n{{opponentUsername}} {{opponentChoice}}",
@@ -519,6 +519,18 @@
       "desc": "Description",
       "use": "Usage",
       "exam": "Example"
+    },
+    "link": {
+      "description": "Allows you to synchronize your account",
+      "usage": "{{prefix}}link <Code>",
+      "example": "{{prefix}}link 123456789",
+      "noArgs": "Please enter an argument",
+      "success": "Your account has been successfully synchronized",
+      "error": {
+        "invalidCode": "Invalid code",
+        "invalidAccount": "Invalid account",
+        "sameAccount": "Do not panic ! Your account is already synchronized"
+      }
     }
   },
   "dashboard": {
@@ -590,16 +602,16 @@
       "en-GB": "English",
       "es-ES": "Spanish",
       "de-DE": "German",
-			"result": {
-				"win": "win",
-				"loose": "loose",
-				"equality": "equality"
-			}
+      "result": {
+        "win": "win",
+        "loose": "loose",
+        "equality": "equality"
+      }
     },
     "server": {
       "infoServer": "Server Info",
       "partyPlayed": "games played",
-      "party": "parts",
+      "party": "game",
       "with": "with",
       "highestPlayedGame": "The most played game",
       "smallerPlayedGame": "The least played game",
@@ -607,7 +619,8 @@
       "smallerPlayerGame": "The player who played the least",
       "firstPlayedGame": "The first part played",
       "lastPlayedGame": "The last part played",
-      "today": "Today"
+      "today": "Today",
+      "noGamePlayed": "No games played"
     },
     "settings": {
       "fr-FR": "French (France)",
@@ -618,6 +631,19 @@
       "dangerous": "Dangerous area",
       "deleteMyAccount": "Delete the account",
       "deleteAccount": "Delete the linked account"
+    },
+    "sync": {
+      "sync": "Synchronization",
+      "codeIs": "The code is",
+      "sendTo": "Send !link {{code}} to the bot ({{instagramAt}}) to validate the synchronization"
+    },
+    "stats": {
+      "statistics": "Statistics",
+      "gamePlayed": "Games played",
+      "game": "games",
+      "games": {
+        "pendu": "Hangman"
+      }
     }
   }
 }
