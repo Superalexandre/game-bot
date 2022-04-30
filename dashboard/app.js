@@ -146,7 +146,7 @@ async function init({ data, clients }) {
 
                 req.session.messages.push({
                     type: "success",
-                    message: "Langue changé"
+                    message: i18n.__("dashboard.profile.switchedLang")
                 })
 
                 return res.redirect("/profile/settings")
