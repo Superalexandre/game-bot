@@ -21,6 +21,7 @@
                     <div class="content-grid flex flex-col">
                         <!-- <button class="rounded-full w-7 h-7"></button> -->
                     </div>
+                    <button class="bg-blue text-white hover:text-black rounded-xl mx-auto w-36 h-10 hidden rematch">Revanche</button>
                 </div>
             </div>
         </div>
@@ -82,9 +83,60 @@
                 refreshBoard(data.board)
             })
 
+            // Revieve when rematch is requested
+            socket.on("rematch", (data) => {
+                if (data.type === "started") {
+                    // Add a notification
+                    document.querySelector(".all-notif")
+                        .insertAdjacentHTML("beforeend", `
+                            <div class="notif notif-0 text-center ml-auto animate-rightToLeft">
+                                <div class="p-2 bg-green items-center text-white leading-none flex lg:inline-flex">
+                                    <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
+                                        <i class="fas fa-check"></i>
+                                    </span>
+                                    <span class="font-semibold mr-2 text-left flex-auto">
+                                        La partie recommence !
+                                    </span>
+                                </div>
+                            </div>
+                        `)
+                    
+                    return refreshNotif()
+                }
+
+                // Add a notification
+                document.querySelector(".all-notif")
+                    .insertAdjacentHTML("beforeend", `
+                        <div class="notif notif-0 text-center ml-auto animate-rightToLeft">
+                            <div class="p-2 bg-green items-center text-white leading-none flex lg:inline-flex">
+                                <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span class="font-semibold mr-2 text-left flex-auto">
+                                    ${socket.id === data.player.id ? "Vous avez demander la revanche" : `${data.player.username} a demandé la revanche`}
+                                </span>
+                            </div>
+                        </div>
+                    `)
+                
+                refreshNotif()
+            })
+
+            const rematchButton = document.querySelector(".rematch")
+
+            rematchButton.addEventListener("click", () => {
+                socket.emit("rematch", {
+                    gameId
+                })
+            })
+
             // Recieve when play
             socket.on("play", (data) => {
                 refreshBoard(data.board)
+                
+                if (data.finish) {
+                    rematchButton.classList.remove("hidden")
+                } else rematchButton.classList.add("hidden")
 
                 if (data.win !== undefined && data.win) {
                     document.querySelector(".result-turn").innerText = `${data.winnerId === socket.id ? "Vous avez gagner !" : "Vous avez perdu !"}`
@@ -142,8 +194,6 @@
                         const div = document.createElement("div")
 
                         div.classList.add(`${i}-${j}`)
-
-                        console.log(board[i][j])
 
                         const button = document.createElement("button")
                         const bgColor = 
