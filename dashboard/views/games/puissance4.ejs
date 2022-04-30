@@ -33,7 +33,7 @@
             socket.on("connect", () => {
                 socket.emit("join", { 
                     gameId,
-                    username: "<%= res.app.locals.username %>"
+                    username: "<%= req.session.username %>"
                 })
             })
 
