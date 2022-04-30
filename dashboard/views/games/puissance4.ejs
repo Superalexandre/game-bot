@@ -37,7 +37,7 @@
                 })
             })
 
-            socket.on("error", ({ message }) => {
+            socket.on("error", (data) => {
                 document.querySelector(".all-notif")
                     .insertAdjacentHTML("beforeend", `
                         <div class="notif notif-0 text-center ml-auto animate-rightToLeft">
@@ -46,7 +46,7 @@
                                     <i class="fas fa-exclamation-triangle"></i>
                                 </span>
                                 <span class="font-semibold mr-2 text-left flex-auto">
-                                    ${message}
+                                    ${data.errorType === "notTurn" && data.finish ? "La partie est fini" : data.message}
                                 </span>
                             </div>
                         </div>
@@ -143,8 +143,15 @@
 
                         div.classList.add(`${i}-${j}`)
 
+                        console.log(board[i][j])
+
                         const button = document.createElement("button")
-                        const bgColor = board[i][j] === "⚪" ? ["dark:bg-white", "bg-white-secondary"] : board[i][j] === "🔴" ? ["bg-red"] : ["bg-yellow"]
+                        const bgColor = 
+                            board[i][j] === "⚪" ? ["dark:bg-white", "bg-white-secondary"] : 
+                            board[i][j] === "🔴" ? ["bg-red"] : 
+                            board[i][j] === "🟡" ? ["bg-yellow"] :
+                            board[i][j] === "🔴_win" ? ["bg-red", "animate-pulse"] :
+                            board[i][j] === "🟡_win" ? ["bg-yellow", "animate-pulse"] : ["bg-white"]
 
                         button.id = `${i}-${j}`
                         button.classList.add("play", "rounded-full", "w-7", "h-7", ...bgColor)
