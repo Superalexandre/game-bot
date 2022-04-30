@@ -11,6 +11,8 @@
         <div>
             <%- include("utils/navbar") %> 
 
+            <%- include("utils/notif") %>
+
             <% if (type === "instagram" || !code) { %>
                 <p class="dark:text-white text-black"><%= res.__("dashboard.sync.codeIs") %> <%= code %></p>
                 <p class="dark:text-white text-black"><%= res.__("dashboard.sync.sendTo", { code, instagramAt: "@sudrefb" }) %></p>
