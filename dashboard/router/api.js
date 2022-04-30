@@ -179,17 +179,27 @@ export default router
         res.redirect(`/sync/${id}/instagram`)
     })
     .post("/createGame", async(req, res) => {
+        const gameConfig = {
+            puissance4: {
+                type: "puissance4",
+                maxPlayers: 2
+            }
+        }
+        
         if (!req.body.type || !req.body.game) return res.json({ success: false, error: true, message: "Incomplet request" })
         if (req.body.type === "account" && !req.user) return res.json({ success: false, error: true, message: "You must be logged in to create an account game" })
         if (req.body.type === "ano" && !req.body.username) return res.json({ success: false, error: true, message: "You must provide a username" })
         if (req.body.username && (req.body.username.length <= 3 || req.body.username.length >= 16)) return res.json({ success: false, error: true, message: "Username must be between 3 and 16 characters" })
+
+        if (!gameConfig[req.body.game]) return res.json({ success: false, error: true, message: "Game not found" })
 
         const id = req.functions.genId({ length: 5, onlyNumber: true, withDate: false })
             
         await req.data.games.set(id, {
             id,
             finished: false,
-            game: req.body.game,
+            maxPlayers: gameConfig[req.body.game].maxPlayers,
+            game: gameConfig[req.body.game].type,
             date: Date.now(),
             createdBy: req.body.username ?? req.user.profileData.plateformData[0].data.username,
             users: [],
