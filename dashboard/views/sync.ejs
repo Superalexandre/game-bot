@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= res.getLocale() %>">
     <head>
-        <title>Game Bot | Sync</title>
+        <title>Game Bot | <%= res.__("dashboard.sync.sync") %></title>
 
         <meta name="theme-color" content="<%= req.config.colors[req.color] %>">
 
@@ -12,10 +12,10 @@
             <%- include("utils/navbar") %> 
 
             <% if (type === "instagram" || !code) { %>
-                <p>Votre code est <%= code %></p>
-                <p>Envoyer !link <%= code %> au bot (@sudrefb) pour valider la synchronisation</p>
+                <p class="dark:text-white text-black"><%= res.__("dashboard.sync.codeIs") %> <%= code %></p>
+                <p class="dark:text-white text-black"><%= res.__("dashboard.sync.sendTo", { code, instagramAt: "@sudrefb" }) %></p>
             <% } else { %> 
-                <p>Aie une erreur ave votre synchronisation est survenue</p>
+                <p class="dark:text-white text-black"><%= res.__("error.unknownError") %></p>
             <% } %> 
         </div>
     </body>

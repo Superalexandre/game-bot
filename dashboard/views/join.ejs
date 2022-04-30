@@ -30,11 +30,11 @@
                     <div class="play-ano-container text-center">
                         <div class="mx-auto">
                             <input type="text" placeholder="Pseudonyme" class="my-3 p-2 focus:outline-none inline-block dark:bg-gray-secondary bg-white-secondary dark:text-white" id="play-ano-username" value="<%= req.session.username ?? '' %>">
-                            <div class="text-green text-4xl my-auto ml-1 hidden" id="play-ano-success">
-                                <i class="fa-solid fa-check"></i>
+                            <div class="text-green text-4xl my-auto ml-1 hidden w-10 h-10" id="play-ano-success">
+                                <i class="fa-solid fa-check w-full h-full"></i>
                             </div>
-                            <div class="text-red text-4xl inline-block my-auto ml-1" id="play-ano-error">
-                                <i class="fa-solid fa-xmark"></i>
+                            <div class="text-red text-4xl inline-block my-auto ml-1 w-10 h-10" id="play-ano-error">
+                                <i class="fa-solid fa-xmark w-full h-full"></i>
                             </div>
                         </div>
                         <button class="bg-green rounded-xl text-white text-center mx-auto hidden w-36 h-10 hover:text-black" id="play-ano-submit-valid">Rejoindre la partie</button>

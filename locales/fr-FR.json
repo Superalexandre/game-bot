@@ -1,6 +1,7 @@
 {
 	"error": {
 		"missingTranslation": "Une erreur de traduction est servenue !",
+		"unknownError": "Une erreur inconnue est servenue !",
 		"errorOccured": "Une erreur inconnue est survenue\n```{{error}}```",
 		"unknowCommand": "Cette commande est introuvable",
 		"invalidOpponent": "L'adversaire saisi est invalide !"
@@ -630,6 +631,19 @@
 			"dangerous": "Zone dangereuse",
 			"deleteMyAccount": "Supprimer le compte",
 			"deleteAccount": "Supprimer le compte liés"
+		},
+		"sync": {
+			"sync": "Synchronisation",
+			"codeIs": "Le code est",
+			"sendTo": "Envoyer !link {{code}} au bot ({{instagramAt}}) pour valider la synchronisation"
+		},
+		"stats": {
+			"statistics": "Statistiques",
+			"gamePlayed": "Parties jouées",
+			"game": "parties",
+			"games": {
+				"pendu": "Pendu"
+			}
 		}
 	}
 }

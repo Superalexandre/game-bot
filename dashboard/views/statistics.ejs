@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= res.getLocale() %>">
     <head>
-        <title>Game Bot | Statistics</title>
+        <title>Game Bot | <%= res.__("dashbord.stats.statistics")%></title>
 
         <meta name="theme-color" content="<%= req.color %>">
 
@@ -15,7 +15,7 @@
                 <div class="group">
                     <div class="bgTheme m-8 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md">
                         <div class="text-center">
-                            <p class="textTheme font-bold text-xl">Parties jouées</p>
+                            <p class="textTheme font-bold text-xl"><%= res.__("dashboard.stats.gamePlayed") %></p>
                         </div>
                         <div class="flex items-center justify-center my-1">
                             <div class="bgSepTheme h-0.5 w-5/12"></div>
@@ -36,7 +36,7 @@
                             %>
 
                             <% sortedNumberPlayedGame.forEach(gameName => { %>
-                                <p class="textTheme"><%= gameName %> <%= numberPlayedGame[gameName] %> parties</p>
+                                <p class="textTheme"><%= res.__(`dashboard.stats.games.${gameName}`) %> <%= numberPlayedGame[gameName] %> <%= res.__("dashboard.stats.game") %></p>
                             <% }) %>
                         </div>
                     </div>

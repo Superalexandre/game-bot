@@ -55,17 +55,14 @@
 
 ### Site
 
-- [ ] Games
-  - [ ] Quand on rentre son pseudo leger décallage
+- [X] Games
+  - [X] Quand on rentre son pseudo leger décallage
   - [X] Puissance4
     - [X] Design
     - [X] Voir a qui s'est le tour
     - [X] Fini voir plus facilement
-  - [ ] Api pseudo refaire c'est bizarre
+  - [X] Api pseudo refaire c'est bizarre
 
-- [ ] **❗ Structures**
-  - [ ] Tout les traitements les passées en api
-  - [ ] Ratelimit
 - [X] Traduction
 - [ ] Refaire le theme avec les cookies
   - [ ] Message d'avertissement "Nous utilisons les cookies"

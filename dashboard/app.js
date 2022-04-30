@@ -260,9 +260,10 @@ async function init({ data, clients }) {
             })
         })
         .get("/login", (req, res) => {
-            res.render("login", {
-                req, res, i18n
-            })
+            res.redirect("/api/discord/login")
+            // res.render("login", {
+            //     req, res, i18n
+            // })
         })
         .get("/admin", checkAccount, async(req, res) => {
             if (!config.discord.ownerIds.includes(req.user.id) && !config.instagram.ownerIds.includes(req.user.id)) {
@@ -353,6 +354,15 @@ async function init({ data, clients }) {
                 return res.redirect("/games")
             }
 
+            if (game.users.length >= game.maxPlayers) {
+                req.session.messages.push({
+                    type: "error",
+                    message: "Cette partie est pleine"
+                })
+
+                return res.redirect("/games")
+            }
+
             res.render("join", {
                 req, res, i18n,
                 game, id: req.params.id
@@ -365,14 +375,10 @@ async function init({ data, clients }) {
 
             logger.error(error.stack ?? error.toString())
 
-            console.log(error)
-
             res?.status(error.statusCode ?? 500)?.render("error", {
                 req, res, i18n,
                 code: error.statusCode
             })
-
-            // return res?.status(500)?.json({ error: error.toString() })
         })
         .use((req, res) => {
             req.session.messages.push({
@@ -400,50 +406,45 @@ async function init({ data, clients }) {
 
     const io = new Server(httpServer)
 
-    io.on("connect", socket => {
+    io.on("connect", (socket) => {
         socket.on("join", async function(socketData) {
             if (!socketData || !socketData.gameId) return logger.error("Une erreur est survenue (no socket or gameId)")
 
             const game = await data.games.get(socketData.gameId)
 
             if (!game) {
-                socket.emit("error", {
+                return socket.emit("error", {
                     message: "Aucune partie trouvée"
                 })
-
-                return
             }
 
-            if (game.users.length >= 2) {
-                socket.emit("error", {
+            if (game.users.length >= game.maxPlayers) {
+                return socket.emit("error", {
                     message: "La partie est pleine"
                 })
-
-                return
             }
 
             if (game.users.find(player => player.id === socket.id)) {
-                socket.emit("error", {
+                return socket.emit("error", {
                     message: "Vous êtes déjà dans cette partie"
                 })
-
-                return
             }
 
             const player = {
                 id: socket.id,
+                rematch: false,
                 username: socketData.username,
                 color: game.users.length <= 0 ? "red" : "yellow",
                 colorEmote: game.users.length <= 0 ? "🔴" : "🟡",
-                winEmoji: game.users.length <= 0 ? "🔴" : "🟡",
+                winEmoji: game.users.length <= 0 ? "🔴_win" : "🟡_win",
                 isTurn: game.users.length <= 0 ? true : false
             }
 
             data.games.push(socketData.gameId, player, "users")
             
-            await socket.join(data.gameId)
+            await socket.join(socketData.gameId)
 
-            io.in(data.gameId).emit("joined", {
+            io.in(socketData.gameId).emit("joined", {
                 id: socket.id,
                 board: game.board,
                 canStart: game.users.length === 1,
@@ -452,61 +453,131 @@ async function init({ data, clients }) {
                 playerNumber: game.users.length + 1
             })
 
+            socket.on("rematch", async function(socketRematchData) {
+                if (!socketRematchData || !socketRematchData.gameId) return logger.error("Une erreur est survenue (no socket or gameId)")
+
+                let game = await data.games.get(socketRematchData.gameId)
+
+                if (!game) {
+                    return socket.emit("error", {
+                        message: "Aucune partie trouvée"
+                    })
+                }
+
+                const player = game.users.find(player => player.id === socket.id)
+
+                if (!player) {
+                    return socket.emit("error", {
+                        message: "Vous n'êtes pas dans cette partie"
+                    })
+                }
+
+                if (!game.finished) {
+                    return socket.emit("error", {
+                        message: "La partie n'est pas terminée"
+                    })
+                }
+
+                const indexUser = game.users.findIndex(player => player.id === socket.id)
+                await data.games.set(socketRematchData.gameId, true, `users.${indexUser}.rematch`)
+
+                game = await data.games.get(socketRematchData.gameId)
+
+                // Check if all players want to rematch
+                if (game.users.length === game.users.filter(player => player.rematch).length) {
+                    // Reset board
+                    const board = [
+                        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
+                        ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"]
+                    ]
+                    
+                    await data.games.set(socketRematchData.gameId, board, "board")
+                    await data.games.set(socketRematchData.gameId, false, "finished")
+
+                    let firstUser
+                    // Reset users
+                    for (let i = 0; i < game.users.length; i++) {
+                        const user = game.users[i]
+
+                        const newUser = {
+                            ...user,
+                            rematch: false,
+                            isTurn: i === 0 ? true : false
+                        }
+
+                        if (i === 0) firstUser = newUser
+
+                        await data.games.set(socketRematchData.gameId, newUser, `users.${i}`)
+                    }
+                    
+                    io.in(socketRematchData.gameId).emit("rematch", {
+                        type: "started"
+                    })
+
+                    return io.in(socketRematchData.gameId).emit("play", {
+                        gameId: socketRematchData.gameId,
+                        player: firstUser,
+                        isTurn: firstUser.id,
+                        board
+                    })
+                }
+
+                if (!player.rematch) {
+                    io.in(socketRematchData.gameId).emit("rematch", {
+                        type: "ask",
+                        player  
+                    })
+                }
+            })
+
             socket.on("play", async function(socketPlayData) {
                 if (!socketPlayData || !socketPlayData.gameId) return logger.error("Une erreur est survenue (no socket or gameId)")
 
                 const game = await data.games.get(socketPlayData.gameId)
 
                 if (!game) {
-                    socket.emit("error", {
+                    return socket.emit("error", {
                         message: "Aucune partie trouvée"
                     })
-
-                    return
                 }
 
                 if (game.users.length < 2) {
-                    socket.emit("error", {
+                    return socket.emit("error", {
                         message: "La partie n'est pas encore pleine"
                     })
-
-                    return
                 }
 
                 const player = game.users.find(player => player.id === socket.id)
 
                 if (!player) {
-                    socket.emit("error", {
+                    return socket.emit("error", {
                         message: "Vous n'êtes pas dans cette partie"
                     })
-
-                    return
                 }
 
                 if (!player.isTurn) {
-                    socket.emit("error", {
-                        message: "Ce n'est pas à votre tour"
+                    return socket.emit("error", {
+                        message: "Ce n'est pas à votre tour",
+                        errorType: "notTurn",
+                        finish: game.finished
                     })
-
-                    return
                 }
 
                 if (socketPlayData.column < 0 || socketPlayData.column > 6) {
-                    socket.emit("error", {
+                    return socket.emit("error", {
                         message: "La colonne n'existe pas"
                     })
-
-                    return
                 }
 
                 const result = add({ board: game.board, column: socketPlayData.column, emoji: player.colorEmote })
 
                 if (result.error) {
-                    socket.emit("error", {
+                    return socket.emit("error", {
                         message: result.error === "col_full" ? "La colonne est pleine" : "Une erreur est survenue"
                     })
-
-                    return
                 }
 
                 const check = checkWin({
@@ -516,13 +587,16 @@ async function init({ data, clients }) {
                 })
 
                 if (check.win) {
-                    io.in(data.gameId).emit("play", {
+                    io.in(socketPlayData.gameId).emit("play", {
                         board: result.board,
                         column: socketPlayData.column,
                         win: true,
-                        winnerId: check.winnerUser.id
+                        winnerId: check.winnerUser.id,
+                        finish: true
                     })
                 
+                    await data.games.set(socketPlayData.gameId, true, "finished")
+
                     // Disabled all players turn
                     for (let i = 0; i < game.users.length; i++) {
                         const user = game.users[i]
@@ -539,11 +613,14 @@ async function init({ data, clients }) {
                 }
 
                 if (check.allFill) {
-                    io.in(data.gameId).emit("play", {
+                    io.in(socketPlayData.gameId).emit("play", {
                         board: result.board,
                         column: socketPlayData.column,
-                        allFill: true
+                        allFill: true,
+                        finish: true
                     })
+
+                    await data.games.set(socketPlayData.gameId, true, "finished")
 
                     // Disabled all players turn
                     for (let i = 0; i < game.users.length; i++) {
@@ -579,7 +656,7 @@ async function init({ data, clients }) {
                 await data.games.set(socketPlayData.gameId, result.board, "board")
 
                 // Send play to other player
-                io.in(data.gameId).emit("play", {
+                io.in(socketPlayData.gameId).emit("play", {
                     player,
                     isTurn: playerTurnId,
                     board: result.board
@@ -631,7 +708,7 @@ function checkWin({ board, userData, opponentData }) {
             if (!win && board[i][j] !== "⚪" && board[i][j] === board[i][j + 1] && board[i][j + 1] === board[i][j + 2] && board[i][j + 2] === board[i][j + 3]) {
                 winner = board[i][j]
 
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
+                winnerUser = opponentData.colorEmote === winner ? opponentData : userData
 
                 board[i][j] = winnerUser.winEmoji
                 board[i][j + 1] = winnerUser.winEmoji
@@ -643,7 +720,7 @@ function checkWin({ board, userData, opponentData }) {
             } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j] && board[i + 2]?.[j] === board[i + 3]?.[j]) {
                 winner = board[i][j]
 
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
+                winnerUser = opponentData.colorEmote === winner ? opponentData : userData
 
                 board[i][j] = winnerUser.winEmoji
                 board[i + 1][j] = winnerUser.winEmoji
@@ -655,7 +732,7 @@ function checkWin({ board, userData, opponentData }) {
             } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2] && board[i + 2]?.[j + 2] === board[i + 3]?.[j + 3]) {
                 winner = board[i][j]
 
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
+                winnerUser = opponentData.colorEmote === winner ? opponentData : userData
 
                 board[i][j] = winnerUser.winEmoji
                 board[i + 1][j + 1] = winnerUser.winEmoji
@@ -667,7 +744,7 @@ function checkWin({ board, userData, opponentData }) {
             } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2] && board[i + 2]?.[j - 2] === board[i + 3]?.[j - 3]) {
                 winner = board[i][j]
 
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
+                winnerUser = opponentData.colorEmote === winner ? opponentData : userData
 
                 board[i][j] = winnerUser.winEmoji
                 board[i + 1][j - 1] = winnerUser.winEmoji
