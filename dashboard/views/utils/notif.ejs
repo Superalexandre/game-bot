@@ -60,11 +60,7 @@ function getTextColor(type) {
             await sleep(5000 + index * 400)
 
             await div.classList.add("animate-leftToRight")
-
-            await sleep(2000)
-
-            await div.classList.add("hidden")
-            await div.remove()
+            await div.classList.remove("animate-rightToLeft")
         })
     }
 </script>
