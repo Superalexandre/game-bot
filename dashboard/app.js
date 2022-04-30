@@ -260,9 +260,10 @@ async function init({ data, clients }) {
             })
         })
         .get("/login", (req, res) => {
-            res.render("login", {
-                req, res, i18n
-            })
+            res.redirect("/api/discord/login")
+            // res.render("login", {
+            //     req, res, i18n
+            // })
         })
         .get("/admin", checkAccount, async(req, res) => {
             if (!config.discord.ownerIds.includes(req.user.id) && !config.instagram.ownerIds.includes(req.user.id)) {
