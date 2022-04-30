@@ -59,11 +59,12 @@ function getTextColor(type) {
         document.querySelectorAll(".notif").forEach(async(div, index) => {
             await sleep(5000 + index * 400)
 
-            div.classList.add("animate-leftToRight")
+            await div.classList.add("animate-leftToRight")
 
             await sleep(2000)
 
-            div.remove()
+            await div.classList.add("hidden")
+            await div.remove()
         })
     }
 </script>
