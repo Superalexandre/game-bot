@@ -7,19 +7,6 @@ import * as functions from "../../functions.js"
 const router = express.Router()
 
 export default router
-    .get("/instagram/login", (_req, res) => {
-        res.redirect("https://api.instagram.com/oauth/authorize?client_id=406440530945557&redirect_uri=http://localhost:3000/api/instagram/callback&scope=user_profile&response_type=code")
-    })
-    .get("/instagram/callback", async(req, res) => {
-        console.log(req.query)
-
-        await req.session.messages.push({
-            type: "info",
-            message: res.__("dashboard.errors.connectionNotReleased", { plateform: "Instagram" })
-        }) 
-
-        res.redirect("/login")
-    })
     .get("/discord/invite", (req, res) => {
         res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
     })
