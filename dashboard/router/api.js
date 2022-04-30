@@ -188,6 +188,7 @@ export default router
             
         await req.data.games.set(id, {
             id,
+            finished: false,
             game: req.body.game,
             date: Date.now(),
             createdBy: req.body.username ?? req.user.profileData.plateformData[0].data.username,
