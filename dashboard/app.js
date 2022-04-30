@@ -435,7 +435,7 @@ async function init({ data, clients }) {
                 username: socketData.username,
                 color: game.users.length <= 0 ? "red" : "yellow",
                 colorEmote: game.users.length <= 0 ? "🔴" : "🟡",
-                winEmoji: game.users.length <= 0 ? "🔴" : "🟡",
+                winEmoji: game.users.length <= 0 ? "🔴_win" : "🟡_win",
                 isTurn: game.users.length <= 0 ? true : false
             }
 
@@ -443,7 +443,7 @@ async function init({ data, clients }) {
             
             await socket.join(data.gameId)
 
-            io.in(data.gameId).emit("joined", {
+            socket.nsp.to(data.gameId).emit("joined", {
                 id: socket.id,
                 board: game.board,
                 canStart: game.users.length === 1,
@@ -485,7 +485,9 @@ async function init({ data, clients }) {
 
                 if (!player.isTurn) {
                     socket.emit("error", {
-                        message: "Ce n'est pas à votre tour"
+                        message: "Ce n'est pas à votre tour",
+                        errorType: "notTurn",
+                        finish: game.finished
                     })
 
                     return
@@ -516,13 +518,16 @@ async function init({ data, clients }) {
                 })
 
                 if (check.win) {
-                    io.in(data.gameId).emit("play", {
+                    socket.nsp.to(data.gameId).emit("play", {
                         board: result.board,
                         column: socketPlayData.column,
                         win: true,
-                        winnerId: check.winnerUser.id
+                        winnerId: check.winnerUser.id,
+                        finish: true
                     })
                 
+                    await data.games.set(socketPlayData.gameId, true, "finished")
+
                     // Disabled all players turn
                     for (let i = 0; i < game.users.length; i++) {
                         const user = game.users[i]
@@ -535,15 +540,21 @@ async function init({ data, clients }) {
                         await data.games.set(socketPlayData.gameId, newUser, `users.${i}`)
                     }
 
+                    // Leave the socket
+                    socket.leave(data.gameId)
+
                     return
                 }
 
                 if (check.allFill) {
-                    io.in(data.gameId).emit("play", {
+                    socket.nsp.to(data.gameId).emit("play", {
                         board: result.board,
                         column: socketPlayData.column,
-                        allFill: true
+                        allFill: true,
+                        finish: true
                     })
+
+                    await data.games.set(socketPlayData.gameId, true, "finished")
 
                     // Disabled all players turn
                     for (let i = 0; i < game.users.length; i++) {
@@ -579,7 +590,7 @@ async function init({ data, clients }) {
                 await data.games.set(socketPlayData.gameId, result.board, "board")
 
                 // Send play to other player
-                io.in(data.gameId).emit("play", {
+                socket.nsp.to(data.gameId).emit("play", {
                     player,
                     isTurn: playerTurnId,
                     board: result.board
@@ -631,7 +642,7 @@ function checkWin({ board, userData, opponentData }) {
             if (!win && board[i][j] !== "⚪" && board[i][j] === board[i][j + 1] && board[i][j + 1] === board[i][j + 2] && board[i][j + 2] === board[i][j + 3]) {
                 winner = board[i][j]
 
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
+                winnerUser = opponentData.colorEmote === winner ? opponentData : userData
 
                 board[i][j] = winnerUser.winEmoji
                 board[i][j + 1] = winnerUser.winEmoji
@@ -643,7 +654,7 @@ function checkWin({ board, userData, opponentData }) {
             } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j] && board[i + 1]?.[j] === board[i + 2]?.[j] && board[i + 2]?.[j] === board[i + 3]?.[j]) {
                 winner = board[i][j]
 
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
+                winnerUser = opponentData.colorEmote === winner ? opponentData : userData
 
                 board[i][j] = winnerUser.winEmoji
                 board[i + 1][j] = winnerUser.winEmoji
@@ -655,7 +666,7 @@ function checkWin({ board, userData, opponentData }) {
             } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j + 1] && board[i + 1]?.[j + 1] === board[i + 2]?.[j + 2] && board[i + 2]?.[j + 2] === board[i + 3]?.[j + 3]) {
                 winner = board[i][j]
 
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
+                winnerUser = opponentData.colorEmote === winner ? opponentData : userData
 
                 board[i][j] = winnerUser.winEmoji
                 board[i + 1][j + 1] = winnerUser.winEmoji
@@ -667,7 +678,7 @@ function checkWin({ board, userData, opponentData }) {
             } else if (!win && board[i][j] !== "⚪" && board[i][j] === board[i + 1]?.[j - 1] && board[i + 1]?.[j - 1] === board[i + 2]?.[j - 2] && board[i + 2]?.[j - 2] === board[i + 3]?.[j - 3]) {
                 winner = board[i][j]
 
-                winnerUser = opponentData.emoji === winner ? opponentData : userData
+                winnerUser = opponentData.colorEmote === winner ? opponentData : userData
 
                 board[i][j] = winnerUser.winEmoji
                 board[i + 1][j - 1] = winnerUser.winEmoji
