@@ -39,7 +39,7 @@ const data = {
 
 //* Config languages
 i18n.configure({
-    locales: ["fr-FR", "en-GB", "de-DE", "es-ES"],
+    locales: ["fr-FR", "en-GB"/*, "de-DE", "es-ES"*/],
     directory: join(__dirname, "locales"),
     defaultLocale: config.defaultLocale,
     retryInDefaultLocale: true,
