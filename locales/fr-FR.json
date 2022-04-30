@@ -620,7 +620,7 @@
 			"firstPlayedGame": "La première partie joué",
 			"lastPlayedGame": "La dernière partie joué",
 			"today": "Aujourd'hui",
-			"noGamePlayed": "dashboard.server.noGamePlayed"
+			"noGamePlayed": "Aucune partie joué"
 		},
 		"settings": {
 			"fr-FR": "Français (France)",
