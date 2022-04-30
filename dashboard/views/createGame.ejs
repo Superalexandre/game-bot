@@ -25,17 +25,17 @@
                             <div class="flex flex-col flex-nowrap justify-center items-center">
                                 <div class="w-5/6 h-12 flex m-2">
                                     <% if (req.user) { %>
-                                        <button id="play-account" class="dark:bg-gray-primary bg-white w-full h-full hover:text-black text-white rounded-2xl flex items-center justify-center">Jouer avec votre compte <i class="pl-2 fa-solid fa-user"></i></button>
+                                        <button id="play-account" class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center">Jouer avec votre compte <i class="pl-2 fa-solid fa-user"></i></button>
                                     <% } else { %>
-                                        <a id="play-account" class="dark:bg-gray-primary bg-white w-full h-full hover:text-black text-white rounded-2xl flex items-center justify-center" href="/login">Jouer avec votre compte (Se connecter) <i class="pl-2 fa-solid fa-user"></i></a>
+                                        <a id="play-account" class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center" href="/login">Jouer avec votre compte (Se connecter) <i class="pl-2 fa-solid fa-user"></i></a>
                                     <% } %>
                                 </div>
                                 <div class="w-5/6 h-12 flex m-2">
-                                    <button class="dark:bg-gray-primary bg-white w-full h-full hover:text-black text-white rounded-2xl flex items-center justify-center" id="play-ano">Jouer anonymement <i class="pl-2 fa-solid fa-user-secret"></i></button>
+                                    <button class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center" id="play-ano">Jouer anonymement <i class="pl-2 fa-solid fa-user-secret"></i></button>
                                 </div>
                                 <div class="play-ano-container hidden">
                                     <div class="flex">
-                                        <input type="text" placeholder="Pseudonyme" class="my-3 p-2 focus:outline-none inline-block" id="play-ano-username">
+                                        <input type="text" placeholder="Pseudonyme" class="my-3 p-2 focus:outline-none inline-block dark:bg-gray-primary bg-white-secondary dark:text-white" id="play-ano-username" value="<%= req.session.username ?? '' %>">
                                         <div class="text-green text-4xl my-auto ml-1 hidden" id="play-ano-success">
                                             <i class="fa-solid fa-check"></i>
                                         </div>
@@ -43,8 +43,8 @@
                                             <i class="fa-solid fa-xmark"></i>
                                         </div>
                                     </div>
-                                    <button class="bg-green rounded-xl text-white text-center mx-auto hidden w-36 h-10" id="play-ano-submit-valid">Creer la partie</button>
-                                    <button class="hover:cursor-not-allowed bg-red rounded-xl block text-white text-center mx-auto w-36 h-10" id="play-ano-submit-notvalid">Creer la partie</button>
+                                    <button class="bg-green rounded-xl text-white text-center mx-auto hidden w-36 h-10 hover:text-black" id="play-ano-submit-valid">Creer la partie</button>
+                                    <button class="hover:cursor-not-allowed bg-red rounded-xl block text-white text-center mx-auto w-36 h-10 hover:text-black" id="play-ano-submit-notvalid">Creer la partie</button>
                                 </div>
                             </div>
                         </div>
@@ -99,6 +99,7 @@
                     const container = document.querySelector(".play-ano-container")
 
                     if (container.classList.contains("hidden")) {
+                        checkValid()
                         container.classList.remove("hidden")
                     } else {
                         container.classList.add("hidden")
@@ -107,45 +108,16 @@
 
                 document.querySelector("#play-ano-username").addEventListener("keyup", function(e) {
                     const input = document.querySelector("#play-ano-username")
-                    // const button = document.querySelector("#play-ano")
-                    const error = document.querySelector("#play-ano-error")
-                    const success = document.querySelector("#play-ano-success")
-
-                    const buttonInvalid = document.querySelector("#play-ano-submit-notvalid")
                     const buttonValid = document.querySelector("#play-ano-submit-valid")
-
+                    
                     // Check enter
                     if (e.keyCode === 13) {
                         e.preventDefault()
-                        
+                            
                         if (input.value.length > 3 && input.value.length < 15) buttonValid.click()
                     }
 
-                    if (input.value.length > 3 && input.value.length < 15) {
-                        error.classList.add("hidden")
-                        error.classList.remove("inline-block")
-
-                        success.classList.remove("hidden")
-                        success.classList.add("inline-block")
-
-                        buttonValid.classList.remove("hidden")
-                        buttonValid.classList.add("block")
-
-                        buttonInvalid.classList.add("hidden")
-                        buttonInvalid.classList.remove("block")
-                    } else {
-                        error.classList.remove("hidden")
-                        error.classList.add("inline-block")
-                        
-                        success.classList.add("hidden")
-                        success.classList.remove("inline-block")
-
-                        buttonValid.classList.add("hidden")
-                        buttonValid.classList.remove("block")
-
-                        buttonInvalid.classList.remove("hidden")
-                        buttonInvalid.classList.add("block")
-                    }
+                    checkValid()
                 })
 
                 document.querySelector("#play-account").addEventListener("click", function() {
@@ -162,6 +134,42 @@
                         game: document.querySelector("#select-account-title").innerHTML
                     })
                 })
+            }
+
+            async function checkValid() {
+                const input = document.querySelector("#play-ano-username")
+                // const button = document.querySelector("#play-ano")
+                const error = document.querySelector("#play-ano-error")
+                const success = document.querySelector("#play-ano-success")
+
+                const buttonInvalid = document.querySelector("#play-ano-submit-notvalid")
+                const buttonValid = document.querySelector("#play-ano-submit-valid")
+
+                if (input.value.length > 3 && input.value.length < 15) {
+                    error.classList.add("hidden")
+                    error.classList.remove("inline-block")
+
+                    success.classList.remove("hidden")
+                    success.classList.add("inline-block")
+
+                    buttonValid.classList.remove("hidden")
+                    buttonValid.classList.add("block")
+
+                    buttonInvalid.classList.add("hidden")
+                    buttonInvalid.classList.remove("block")
+                } else {
+                    error.classList.remove("hidden")
+                    error.classList.add("inline-block")
+                        
+                    success.classList.add("hidden")
+                    success.classList.remove("inline-block")
+
+                    buttonValid.classList.add("hidden")
+                    buttonValid.classList.remove("block")
+
+                    buttonInvalid.classList.remove("hidden")
+                    buttonInvalid.classList.add("block")
+                }
             }
 
             async function createGame({ type, username, game }) {

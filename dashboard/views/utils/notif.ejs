@@ -35,8 +35,8 @@ function getTextColor(type) {
 %>
 
 <div class="all-notif fixed bottom-4 flex flex-col right-3 space-y-2">
-    <% res.app.locals.messages.forEach((message, i) => { %>
-        <% res.app.locals.messages = res.app.locals.messages.filter(msg => msg !== message) %>
+    <% req.session.messages.forEach((message, i) => { %>
+        <% req.session.messages = req.session.messages.filter(msg => msg !== message) %>
         <div class="notif notif-<%= i %> text-center ml-auto animate-rightToLeft">
             <div class="p-2 <%= getBgColor(message.type) %> items-center text-white leading-none flex lg:inline-flex">
                 <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
@@ -59,11 +59,8 @@ function getTextColor(type) {
         document.querySelectorAll(".notif").forEach(async(div, index) => {
             await sleep(5000 + index * 400)
 
-            div.classList.add("animate-leftToRight")
-
-            await sleep(2000)
-
-            div.remove()
+            await div.classList.add("animate-leftToRight")
+            await div.classList.remove("animate-rightToLeft")
         })
     }
 </script>

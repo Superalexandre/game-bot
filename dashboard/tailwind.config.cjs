@@ -17,6 +17,7 @@ module.exports = {
                 },
                 rightToLeft: {
                     "0%": {
+                        opacity: 1,
                         transform: "translateX(200%)"
                     },
                     "100%": {
@@ -28,6 +29,8 @@ module.exports = {
                         transform: "translateX(0)"
                     },
                     "100%": {
+                        opacity: 0,
+                        display: "none",
                         transform: "translateX(200%)"
                     }
                 },
@@ -56,7 +59,7 @@ module.exports = {
             animation: {
                 rotate360: "rotate360 0.6s both",
                 rightToLeft: "rightToLeft 2s ease",
-                leftToRight: "leftToRight 2s ease",
+                leftToRight: "leftToRight 2s ease forwards",
                 hide: "hide 0.5s linear 3.5s forwards",
                 movingBars: "movingBars 4s linear infinite"
             },
