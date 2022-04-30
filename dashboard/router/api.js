@@ -67,7 +67,7 @@ export default router
         }
 
         if (!userData.infos) {
-            const response = await fetch("https://discordapp.com/api/users/@me", {
+            const response = await fetch("https://discord.com/api/users/@me", {
                 method: "GET",
                 headers: { 
                     Authorization: `Bearer ${token.access_token}` 
@@ -80,7 +80,7 @@ export default router
         }
             
         if (!userData.servers) {
-            const response = await fetch("https://discordapp.com/api/users/@me/guilds", {
+            const response = await fetch("https://discord.com/api/users/@me/guilds", {
                 method: "GET",
                 headers: { Authorization: `Bearer ${token.access_token}` }
             })
