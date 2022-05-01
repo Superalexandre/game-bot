@@ -535,6 +535,7 @@
   },
   "dashboard": {
     "errors": {
+      "occured": "An error has occurred",
       "mustBeLogin": "You must be logged in to do this",
       "serverNotFound": "The server was not found",
       "chatNotFound": "Chat was not found",
@@ -582,6 +583,15 @@
       "profileNotFound": "Profile for {{username}} not found",
       "you": "(You)"
     },
+    "createGame": {
+      "title": "Create a game",
+      "create": "Create a game of",
+      "createGame": "Create the game",
+      "playWithAccount": "Play with your account",
+      "playWithAccountNeedLogin": "Play with your account (Login)",
+      "playAnonymous": "Play anonymously",
+      "back": "Back"
+    },
     "profile": {
       "globalInfo": "Global information",
       "uniqueId": "Unique id",
@@ -599,6 +609,7 @@
       "addDiscordAccount": "Add a Discord account",
       "addInstaAccount": "Add Instagram Account",
       "switchedLang": "Language changed successfully",
+      "invalidLang": "Invalid input language",
       "fr-FR": "French",
       "en-GB": "English",
       "es-ES": "Spanish",
@@ -636,7 +647,8 @@
     "sync": {
       "sync": "Synchronization",
       "codeIs": "The code is",
-      "sendTo": "Send !link {{code}} to the bot ({{instagramAt}}) to validate the synchronization"
+      "sendTo": "Send !link {{code}} to the bot ({{instagramAt}}) to validate the synchronization",
+      "codeNotExist": "The code does not exist"
     },
     "stats": {
       "statistics": "Statistics",
@@ -647,6 +659,7 @@
       }
     },
     "connect4": {
+      "title": "Connect 4",
       "noGameFound": "No game found",
       "gameFull": "The game is full",
       "alreadyInGame": "You are already in a game",
@@ -655,7 +668,36 @@
       "isNotFull": "The game is not full",
       "notYourTurn": "It's not your turn",
       "invalidColumn": "Column does not exist",
-      "columnFull": "The column is full"
+      "columnFull": "The column is full",
+      "gameOf": "Game of",
+      "playerNumber": "Number of player",
+      "waitPlayer": "Waiting for player",
+      "rematch": "Rematch",
+      "gameOver": "The game is over",
+      "asJoin": "joined the party",
+      "youJoin": "You have joined the game",
+      "yourTurn": "It's your turn",
+      "otherTurn": "It's up to the opponent to play",
+      "gameRestart": "The game restart",
+      "youAskRematch": "You asked for a rematch",
+      "otherAskRematch": "asked for revenge",
+      "youWin": "You have won",
+      "youLoose": "You lost"
+    },
+    "join": {
+      "title": "Join",
+      "noGameFoundCreate": "No games found, try creating one",
+      "gameFull": "The game is full",
+      "joinGame": "You will join the game of {{type}} created by {{createdBy}}",
+      "joinTheGame": "Join the game",
+      "playWithAccount": "Play with your account",
+      "playWithAccountNeedLogin": "Play with your account (Log in)",
+      "playAnonymous": "Play anonymously",
+      "back": "Back"
+    },
+    "play": {
+      "noGameFoundCreate": "No games found, try creating one",
+      "thisGameNotSupported": "This game is not available"
     }
   }
 }
