@@ -535,6 +535,7 @@
 	},
 	"dashboard": {
 		"errors": {
+			"occured": "Une erreur est survenue",
 			"mustBeLogin": "Vous devez être connecter pour faire ceci",
 			"serverNotFound": "Le serveur n'a pas été trouvé",
 			"chatNotFound": "Le tchat n'a pas été trouvé",
@@ -582,6 +583,15 @@
 			"profileNotFound": "Profile pour {{username}} non trouvé",
 			"you": "(Vous)"
 		},
+		"createGame": {
+			"title": "Créer une partie",
+			"create": "Créer une partie de",
+			"createGame": "Créer la partie",
+			"playWithAccount": "Jouer avec votre compte",
+			"playWithAccountNeedLogin": "Jouer avec votre compte (Se connecter)",
+			"playAnonymous": "Jouer anonymement",
+			"back": "Retour"
+		},
 		"profile": {
 			"globalInfo": "Informations globales",
 			"uniqueId": "Identifiant unique",
@@ -599,6 +609,7 @@
 			"addDiscordAccount": "Ajouter un compte Discord",
 			"addInstaAccount": "Ajouter un compte Instagram",
 			"switchedLang": "Langue changé avec succès",
+			"invalidLang": "Langue saisie invalide",
 			"fr-FR": "Français",
 			"en-GB": "Anglais",
 			"es-ES": "Espagnol",
@@ -636,7 +647,8 @@
 		"sync": {
 			"sync": "Synchronisation",
 			"codeIs": "Le code est",
-			"sendTo": "Envoyer !link {{code}} au bot ({{instagramAt}}) pour valider la synchronisation"
+			"sendTo": "Envoyer !link {{code}} au bot ({{instagramAt}}) pour valider la synchronisation",
+			"codeNotExist": "Le code n'existe pas"
 		},
 		"stats": {
 			"statistics": "Statistiques",
@@ -647,6 +659,7 @@
 			}
 		},
 		"connect4": {
+			"title": "Puissance 4",
 			"noGameFound": "Aucune partie trouvé",
 			"gameFull": "La partie est pleine",
 			"alreadyInGame": "Vous êtes déjà dans une partie",
@@ -655,7 +668,36 @@
 			"isNotFull": "La partie n'est pas pleine",
 			"notYourTurn": "C'est pas votre tour",
 			"invalidColumn": "La colonne n'existe pas",
-			"columnFull": "La colonne est pleine"
+			"columnFull": "La colonne est pleine",
+			"gameOf": "Partie de",
+			"playerNumber": "Nombre de joueur",
+			"waitPlayer": "En attente de joueur",
+			"rematch": "Revanche",
+			"gameOver": "La partie est terminée",
+			"asJoin": "a rejoint la partie",
+			"youJoin": "Vous avez rejoint la partie",
+			"yourTurn": "C'est votre tour",
+			"otherTurn": "C'est à l'adversaire de jouer",
+			"gameRestart": "La partie recommence",
+			"youAskRematch": "Vous avez demandé une revanche",
+			"otherAskRematch": "a demandé une revanche",
+			"youWin": "Vous avez gagné",
+			"youLoose": "Vous avez perdu"
+		},
+		"join": {
+			"title": "Rejoindre",
+			"noGameFoundCreate": "Aucune partie trouvé, essayez d'en créer une",
+			"gameFull": "La partie est pleine",
+			"joinGame": "Vous allez rejoindre la partie de {{type}} créer par {{createdBy}}",
+			"joinTheGame": "Rejoindre la partie",
+			"playWithAccount": "Jouer avec votre compte",
+			"playWithAccountNeedLogin": "Jouer avec votre compte (Se connecter)",
+			"playAnonymous": "Jouer anonymement",
+			"back": "Retour"
+		},
+		"play": {
+			"noGameFoundCreate": "Aucune partie trouvé, essayez d'en créer une",
+			"thisGameNotSupported": "Ce jeu n'est pas disponible"
 		}
 	}
 }
