@@ -8,7 +8,7 @@
     </div>
     <div class="block lg:hidden">
         <button class="mobileButton flex items-center px-3 py-2 <%= "text-" + req.color %> hover:text-black dark:hover:text-white">
-            <i class="fas fa-bars "></i>
+            <i class="fas fa-bars"></i>
         </button>
     </div>
     <div class="mobileToHidden hidden w-full flex-grow lg:flex lg:items-center lg:w-auto">
@@ -43,6 +43,15 @@
         </div>
     </div>
 </nav>
+<!--
+<div class="cookies fixed w-full h-20 bg-red bottom-0">
+    <div class="flex">
+        <p class="mx-auto my-0">On utilise des cookies</p>
+
+        <button class="bg-green">Compris</button>
+    </div>
+</div>
+-->
 <script>
     document.querySelector(".mobileButton").addEventListener("click", (click) => {
         const classList = document.querySelector(".mobileToHidden").className.split(" ")

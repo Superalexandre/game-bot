@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= res.getLocale() %>">
     <head>
-        <title>Game Bot | Join</title>
+        <title>Game Bot | <%= res.__("dashboard.join.title") %></title>
         
         <meta name="theme-color" content="<%= req.color %>">
 
@@ -15,17 +15,17 @@
 
             <div class="flex h-screen flex-grow">
                 <div class="m-auto text-center">
-                    <p class="text-black dark:text-white text-2xl text-center">Vous allez rejoindre la partie de <%= game.game %> crée par <%= game.createdBy %></p>
+                    <p class="text-black dark:text-white text-2xl text-center"><%= res.__("dashboard.join.joinGame", { type: game.game, createdBy: game.createdBy }) %></p>
 
                     <div class="h-12 flex m-2">
                         <% if (req.user) { %>
-                            <button id="play-account" class="dark:bg-gray-secondary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center">Jouer avec votre compte <i class="pl-2 fa-solid fa-user"></i></button>
+                            <button id="play-account" class="dark:bg-gray-secondary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center"><%= res.__("dashboard.join.playWithAccount") %> <i class="pl-2 fa-solid fa-user"></i></button>
                         <% } else { %>
-                            <a id="play-account" class="dark:bg-gray-secondary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center" href="/login">Jouer avec votre compte (Se connecter) <i class="pl-2 fa-solid fa-user"></i></a>
+                            <a id="play-account" class="dark:bg-gray-secondary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center" href="/login"><%= res.__("dashboard.join.playWithAccountNeedLogin") %> <i class="pl-2 fa-solid fa-user"></i></a>
                         <% } %>
                     </div>
                     <div class="h-12 flex">
-                        <p class="w-full h-full dark:text-white text-black rounded-2xl flex items-center justify-center" id="play-ano">Jouer anonymement <i class="px-2 fa-solid fa-user-secret"></i> :</p>
+                        <p class="w-full h-full dark:text-white text-black rounded-2xl flex items-center justify-center" id="play-ano"><%= res.__("dashboard.join.playAnonymous") %> <i class="px-2 fa-solid fa-user-secret"></i> :</p>
                     </div>
                     <div class="play-ano-container text-center">
                         <div class="mx-auto">
@@ -37,8 +37,8 @@
                                 <i class="fa-solid fa-xmark w-full h-full"></i>
                             </div>
                         </div>
-                        <button class="bg-green rounded-xl text-white text-center mx-auto hidden w-36 h-10 hover:text-black" id="play-ano-submit-valid">Rejoindre la partie</button>
-                        <button class="hover:cursor-not-allowed bg-red rounded-xl block text-white text-center mx-auto w-36 h-10 hover:text-black" id="play-ano-submit-notvalid">Rejoindre la partie</button>
+                        <button class="bg-green rounded-xl text-white text-center mx-auto hidden w-36 h-10 hover:text-black" id="play-ano-submit-valid"><%= res.__("dashboard.join.joinTheGame") %></button>
+                        <button class="hover:cursor-not-allowed bg-red rounded-xl block text-white text-center mx-auto w-36 h-10 hover:text-black" id="play-ano-submit-notvalid"><%= res.__("dashboard.join.joinTheGame") %></button>
                     </div>
                 </div>
             </div>
