@@ -645,6 +645,17 @@
 			"games": {
 				"pendu": "Pendu"
 			}
+		},
+		"connect4": {
+			"noGameFound": "Aucune partie trouvé",
+			"gameFull": "La partie est pleine",
+			"alreadyInGame": "Vous êtes déjà dans une partie",
+			"notInThisGame": "Vous n'êtes pas dans cette partie",
+			"isNotFinished": "La partie n'est pas finie",
+			"isNotFull": "La partie n'est pas pleine",
+			"notYourTurn": "C'est pas votre tour",
+			"invalidColumn": "La colonne n'existe pas",
+			"columnFull": "La colonne est pleine"
 		}
 	}
 }
