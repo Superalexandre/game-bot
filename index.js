@@ -6,11 +6,8 @@ import { default as discordClient } from "./discord/index.js"
 import { default as instaClient } from "./instagram/index.js"
 import { default as dashboardInit } from "./dashboard/app.js"
 
-import { join, dirname } from "path"
 import config from "./config.js"
 
-import { fileURLToPath } from "url"
-const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // import * as Sentry from "@sentry/node"
 import Logger from "./logger.js"
@@ -38,37 +35,7 @@ const data = {
 // })
 
 //* Config languages
-i18n.configure({
-    locales: ["fr-FR", "en-GB"/*, "de-DE", "es-ES"*/],
-    directory: join(__dirname, "locales"),
-    defaultLocale: config.defaultLocale,
-    retryInDefaultLocale: true,
-    objectNotation: true,
-    register: global,
-
-    logDebugFn: function(message) {
-        logger.log(message, {plateform: "i18n" })
-    },
-
-    logWarnFn: function(message) {
-        logger.warn(message, { plateform: "i18n" })
-    },
-  
-    logErrorFn: function(message) {
-        logger.error(message, { plateform: "i18n" })
-    },
-  
-    missingKeyFn: function(locale, value) {
-        logger.error(`MissingKey: La valeur ${value} est manquante dans la langue ${locale}`, { plateform: "i18n" })
-    
-        return value
-    },
-
-    mustacheConfig: {
-        tags: ["{{", "}}"],
-        disable: false
-    }
-})
+i18n.configure(config.locale(logger))
 
 async function init() {
     const clients = {

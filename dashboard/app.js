@@ -1,6 +1,7 @@
 import express, { json, urlencoded, static as staticExpress } from "express"
 import { resolve, join, dirname } from "path"
 import cookieParser from "cookie-parser"
+import cookie from "cookie"
 import cors from "cors"
 import session from "express-session"
 import passport from "passport"
@@ -8,9 +9,8 @@ import config from "../config.js"
 import * as functions from "../functions.js"
 import ejs from "ejs"
 import { fileURLToPath } from "url"
-//import Enmap from "enmap"
 import Logger from "../logger.js"
-import i18n from "i18n"
+import i18n, { I18n } from "i18n"
 import routerApi from "./router/api.js"
 import fs from "fs"
 import { checkAccount } from "./checkAccount/checkAccount.js"
@@ -52,8 +52,7 @@ async function init({ data, clients }) {
             saveUninitialized: false,
             cookie: {
                 // One year 
-                maxAge: 1000 * 60 * 60 * 24 * 365//,
-                // secure: true
+                maxAge: 1000 * 60 * 60 * 24 * 365
             }
         }))
         .use(passport.initialize())
@@ -128,7 +127,7 @@ async function init({ data, clients }) {
 
                     req.session.messages.push({
                         type: "warn",
-                        message: "Langue saisi invalid"
+                        message: res.__("dashboard.profile.invalidLang")
                     })
 
                     return res.redirect("/profile/settings")
@@ -146,7 +145,7 @@ async function init({ data, clients }) {
 
                 req.session.messages.push({
                     type: "success",
-                    message: "Langue changé"
+                    message: i18n.__("dashboard.profile.switchedLang")
                 })
 
                 return res.redirect("/profile/settings")
@@ -227,11 +226,6 @@ async function init({ data, clients }) {
             }
 
             res.redirect("/")
-            /*
-            res.render("chat", {
-                req, res, i18n
-            })
-            */
         })
         .get("/games/:id?", (req, res) => {
             if (!req.params.id) {
@@ -261,9 +255,6 @@ async function init({ data, clients }) {
         })
         .get("/login", (req, res) => {
             res.redirect("/api/discord/login")
-            // res.render("login", {
-            //     req, res, i18n
-            // })
         })
         .get("/admin", checkAccount, async(req, res) => {
             if (!config.discord.ownerIds.includes(req.user.id) && !config.instagram.ownerIds.includes(req.user.id)) {
@@ -286,7 +277,7 @@ async function init({ data, clients }) {
             if (!req.params.code || !req.params.plateform) {
                 req.session.messages.push({
                     type: "error",
-                    message: "Une erreur est survenue"
+                    message: res.__("dashboard.errors.occured")
                 })
 
                 return res.redirect("/profile")
@@ -295,7 +286,7 @@ async function init({ data, clients }) {
             if (!await req.data.sync.get(req.params.code)) {
                 req.session.messages.push({
                     type: "error",
-                    message: "Ce code n'existe pas"
+                    message: res.__("dashboard.sync.codeNotExist")
                 })
                 
                 return res.redirect("/profile")
@@ -315,7 +306,7 @@ async function init({ data, clients }) {
             if (!game) {
                 req.session.messages.push({
                     type: "error",
-                    message: "Aucune partie trouvée essayez d'en créer une"
+                    message: res.__("dashboard.play.noGameFoundCreate")
                 })
 
                 return res.redirect("/games")
@@ -331,7 +322,7 @@ async function init({ data, clients }) {
             } else {
                 req.session.messages.push({
                     type: "error",
-                    message: "Ce jeu n'est pas encore disponible"
+                    message: res.__("dashboard.play.thisGameNotSupported")
                 })
 
                 await req.data.games.delete(game.id)
@@ -348,7 +339,7 @@ async function init({ data, clients }) {
             if (!game) {
                 req.session.messages.push({
                     type: "error",
-                    message: "Aucune partie trouvée essayez d'en créer une"
+                    message: res.__("dashboard.join.noGameFoundCreate")
                 })
 
                 return res.redirect("/games")
@@ -357,7 +348,7 @@ async function init({ data, clients }) {
             if (game.users.length >= game.maxPlayers) {
                 req.session.messages.push({
                     type: "error",
-                    message: "Cette partie est pleine"
+                    message: res.__("dashboard.join.gameFull")
                 })
 
                 return res.redirect("/games")
@@ -407,6 +398,16 @@ async function init({ data, clients }) {
     const io = new Server(httpServer)
 
     io.on("connect", (socket) => {
+        socket.i18n = new I18n(config.locale(logger))
+
+        // Get language from cookie
+        const cookies = socket.handshake.headers.cookie
+        const parsedCookies = cookies ? cookie.parse(cookies) : {}
+        const lang = parsedCookies.lang ?? config.defaultLocale
+
+        // Init language
+        socket.i18n.setLocale(lang)
+
         socket.on("join", async function(socketData) {
             if (!socketData || !socketData.gameId) return logger.error("Une erreur est survenue (no socket or gameId)")
 
@@ -414,19 +415,19 @@ async function init({ data, clients }) {
 
             if (!game) {
                 return socket.emit("error", {
-                    message: "Aucune partie trouvée"
+                    message: socket.i18n.__("dashboard.connect4.noGameFound")
                 })
             }
 
             if (game.users.length >= game.maxPlayers) {
                 return socket.emit("error", {
-                    message: "La partie est pleine"
+                    message: socket.i18n.__("dashboard.connect4.gameFull")
                 })
             }
 
             if (game.users.find(player => player.id === socket.id)) {
                 return socket.emit("error", {
-                    message: "Vous êtes déjà dans cette partie"
+                    message: socket.i18n.__("dashboard.connect4.alreadyInGame")
                 })
             }
 
@@ -460,7 +461,7 @@ async function init({ data, clients }) {
 
                 if (!game) {
                     return socket.emit("error", {
-                        message: "Aucune partie trouvée"
+                        message: socket.i18n.__("dashboard.connect4.noGameFound")
                     })
                 }
 
@@ -468,13 +469,13 @@ async function init({ data, clients }) {
 
                 if (!player) {
                     return socket.emit("error", {
-                        message: "Vous n'êtes pas dans cette partie"
+                        message: socket.i18n.__("dashboard.connect4.notInThisGame")
                     })
                 }
 
                 if (!game.finished) {
                     return socket.emit("error", {
-                        message: "La partie n'est pas terminée"
+                        message: socket.i18n.__("dashboard.connect4.isNotFinished")
                     })
                 }
 
@@ -540,13 +541,13 @@ async function init({ data, clients }) {
 
                 if (!game) {
                     return socket.emit("error", {
-                        message: "Aucune partie trouvée"
+                        message: socket.i18n.__("dashboard.connect4.noGameFound")
                     })
                 }
 
                 if (game.users.length < 2) {
                     return socket.emit("error", {
-                        message: "La partie n'est pas encore pleine"
+                        message: socket.i18n.__("dashboard.connect4.isNotFull")
                     })
                 }
 
@@ -554,13 +555,13 @@ async function init({ data, clients }) {
 
                 if (!player) {
                     return socket.emit("error", {
-                        message: "Vous n'êtes pas dans cette partie"
+                        message: socket.i18n.__("dashboard.connect4.notInThisGame")
                     })
                 }
 
                 if (!player.isTurn) {
                     return socket.emit("error", {
-                        message: "Ce n'est pas à votre tour",
+                        message: socket.i18n.__("dashboard.connect4.notYourTurn"),
                         errorType: "notTurn",
                         finish: game.finished
                     })
@@ -568,7 +569,7 @@ async function init({ data, clients }) {
 
                 if (socketPlayData.column < 0 || socketPlayData.column > 6) {
                     return socket.emit("error", {
-                        message: "La colonne n'existe pas"
+                        message: socket.i18n.__("dashboard.connect4.invalidColumn")
                     })
                 }
 
@@ -576,7 +577,7 @@ async function init({ data, clients }) {
 
                 if (result.error) {
                     return socket.emit("error", {
-                        message: result.error === "col_full" ? "La colonne est pleine" : "Une erreur est survenue"
+                        message: result.error === "col_full" ? socket.i18n.__("dashboard.connect4.columnFull") : socket.i18n.__("dashboard.connect4.invalidColumn")
                     })
                 }
 

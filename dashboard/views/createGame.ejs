@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= res.getLocale() %>">
     <head>
-        <title>Game Bot | Create a game</title>
+        <title>Game Bot | <%= res.__("dashboard.createGame.title") %></title>
         
         <meta name="theme-color" content="<%= req.color %>">
 
@@ -13,7 +13,7 @@
 
             <%- include("utils/notif") %>
 
-            <p class="dark:text-white font-bold text-center text-3xl">Crée une partie de :</p>
+            <p class="dark:text-white font-bold text-center text-3xl"><%= res.__("dashboard.createGame.create") %> :</p>
 
             <div class="select-account hidden fixed z-20 overflow-y-auto inset-0">  
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -21,17 +21,17 @@
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
                     <div class="relative inline-block align-bottom dark:bg-gray-secondary bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                         <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                            <p class="text-2xl dark:text-white text-center m-2">Creer une partie de <span id="select-account-title"></span></p>
+                            <p class="text-2xl dark:text-white text-center m-2"><%= res.__("dashboard.createGame.create") %> <span id="select-account-title"></span></p>
                             <div class="flex flex-col flex-nowrap justify-center items-center">
                                 <div class="w-5/6 h-12 flex m-2">
                                     <% if (req.user) { %>
-                                        <button id="play-account" class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center">Jouer avec votre compte <i class="pl-2 fa-solid fa-user"></i></button>
+                                        <button id="play-account" class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center"><%= res.__("dashboard.createGame.playWithAccount") %> <i class="pl-2 fa-solid fa-user"></i></button>
                                     <% } else { %>
-                                        <a id="play-account" class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center" href="/login">Jouer avec votre compte (Se connecter) <i class="pl-2 fa-solid fa-user"></i></a>
+                                        <a id="play-account" class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center" href="/login"><%= res.__("dashboard.createGame.playWithAccountNeedLogin") %> <i class="pl-2 fa-solid fa-user"></i></a>
                                     <% } %>
                                 </div>
                                 <div class="w-5/6 h-12 flex m-2">
-                                    <button class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center" id="play-ano">Jouer anonymement <i class="pl-2 fa-solid fa-user-secret"></i></button>
+                                    <button class="dark:bg-gray-primary bg-white-secondary w-full h-full dark:hover:text-black dark:text-white hover:text-white rounded-2xl flex items-center justify-center" id="play-ano"><%= res.__("dashboard.createGame.playAnonymous") %> <i class="pl-2 fa-solid fa-user-secret"></i></button>
                                 </div>
                                 <div class="play-ano-container hidden">
                                     <div class="flex">
@@ -43,13 +43,13 @@
                                             <i class="fa-solid fa-xmark w-full h-full"></i>
                                         </div>
                                     </div>
-                                    <button class="bg-green rounded-xl text-white text-center mx-auto hidden w-36 h-10 hover:text-black" id="play-ano-submit-valid">Creer la partie</button>
-                                    <button class="hover:cursor-not-allowed bg-red rounded-xl block text-white text-center mx-auto w-36 h-10 hover:text-black" id="play-ano-submit-notvalid">Creer la partie</button>
+                                    <button class="bg-green rounded-xl text-white text-center mx-auto hidden w-36 h-10 hover:text-black" id="play-ano-submit-valid"><%= res.__("dashboard.createGame.createGame") %></button>
+                                    <button class="hover:cursor-not-allowed bg-red rounded-xl block text-white text-center mx-auto w-36 h-10 hover:text-black" id="play-ano-submit-notvalid"><%= res.__("dashboard.createGame.createGame") %></button>
                                 </div>
                             </div>
                         </div>
                         <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                            <button class="select-account-back w-full h-full bg-red hover:text-black text-white rounded-2xl">Retour <i class="pl-2 fa-solid fa-arrow-left"></i></button>
+                            <button class="select-account-back w-full h-full bg-red hover:text-black text-white rounded-2xl"><%= res.__("dashboard.createGame.back") %> <i class="pl-2 fa-solid fa-arrow-left"></i></button>
                         </div>
                     </div>
                 </div>
@@ -57,17 +57,17 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 items-center justify-center">
                 <div class="group flex items-center justify-center">
                     <div class="grid grid-cols-1 bgTheme h-40 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
-                        <a id="monopoly" class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white" href="">Monopoly</a>
+                        <a id="monopoly" class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white hover:cursor-pointer"></a>
                     </div>
                 </div>
                 <div class="group flex items-center justify-center">
                     <div class="grid grid-cols-1 bgTheme h-40 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
-                        <a id="puissance4" class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white" href="">Puissance4</a>
+                        <a id="puissance4" class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white hover:cursor-pointer"><%= res.__("dashboard.connect4.title") %></a>
                     </div>
                 </div>
                 <div class="group flex items-center justify-center">
                     <div class="grid grid-cols-1 bgTheme h-40 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
-                        <a id="morpion" class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white" href="">Morpion</a>
+                        <a id="morpion" class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white hover:cursor-pointer"></a>
                     </div>
                 </div>
                 <div class="flex items-center justify-center lg:col-span-3 col-span-1">
