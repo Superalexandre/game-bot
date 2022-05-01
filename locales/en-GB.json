@@ -598,6 +598,7 @@
       "noDataSave": "Last part: No data recorded",
       "addDiscordAccount": "Add a Discord account",
       "addInstaAccount": "Add Instagram Account",
+      "switchedLang": "Language changed successfully",
       "fr-FR": "French",
       "en-GB": "English",
       "es-ES": "Spanish",
@@ -644,6 +645,17 @@
       "games": {
         "pendu": "Hangman"
       }
+    },
+    "connect4": {
+      "noGameFound": "No game found",
+      "gameFull": "The game is full",
+      "alreadyInGame": "You are already in a game",
+      "notInThisGame": "You are not in this part",
+      "isNotFinished": "The game is not over",
+      "isNotFull": "The game is not full",
+      "notYourTurn": "It's not your turn",
+      "invalidColumn": "Column does not exist",
+      "columnFull": "The column is full"
     }
   }
 }
