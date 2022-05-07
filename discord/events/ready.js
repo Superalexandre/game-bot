@@ -64,21 +64,24 @@ async function checkCommand({ client }) {
                 continue
             }
 
-            let { description, name } = command
-
-            // Check if the command has same data
-            if (description === commandData.help.description && name === commandData.help.name) continue
-            
             // Check options
-            if (commandData.options) {
-                for (let i = 0; i < commandData.options.length; i++) {
-                    const option = commandData.options[i]
+            let sameOptions = true
+            if (commandData.config.options) {
+                for (let i = 0; i < commandData.config.options.length; i++) {
+                    const option = commandData.config.options[i]
                     const { name, description, required, choices } = option
 
                     if (command.options[i].name === name && command.options[i].description === description && command.options[i].required === required && command.options[i].choices === choices) continue
+                
+                    sameOptions = false
+                    client.logger.warn(`Commande ${commandName} : option non identique`)
                 }
             }
 
+            let { description, name } = command
+            // Check if the command has same data
+            if (sameOptions && description === commandData.help.description && name === commandData.help.name) continue
+            
             // Update the command
             updateCommand({
                 client,
