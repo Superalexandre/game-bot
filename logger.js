@@ -97,6 +97,20 @@ export default class Logger {
     
         return { error, args, logged: true }
     }
+
+    async commandLog(message, ...args) {
+        if (!message) return
+
+        const { args: argsResult, toReturn } = findArgs(["plateform", "prefix"], ...args)
+        args = argsResult
+
+        const plateform = toReturn.plateform ?? this.plateform
+        const prefix = toReturn.prefix ?? "!"
+
+        console.log(`[${formatDate()}]${chalk.bgBlue("[LOG - COMMAND]")}${getColorPlateform(plateform)} ${prefix}${message}`)
+    
+        return { logged: true }
+    }
 }
 
 function getColorPlateform(plateform) {

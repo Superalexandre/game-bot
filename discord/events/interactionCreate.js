@@ -67,14 +67,11 @@ export default class interactionCreate {
                     startMessageProcessing: start
                 }
             }).then(() => {
-                
-                console.log("Commande terminée")
-                // client.logger.commandLog({ 
-                //     interactionId: interaction.id,
-                //     commandName: cmd.help.name,
-                //     prefix: "/" 
-                //     /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/
-                // })
+                client.logger.commandLog(cmd.help.name, { 
+                    interactionId: interaction.id,
+                    prefix: "/" 
+                    /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/
+                })
             }).catch(async(error) => {
                 /*
                 interaction.reply({ 

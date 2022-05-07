@@ -52,7 +52,7 @@ export default class messageCreate {
         message.author.account = userData
         i18n.setLocale(userData.lang ?? "fr-FR")
 
-        await message.markSeen()
+        // await message.markSeen()
 
         if (!message.content.startsWith(prefix)) return
 
@@ -71,8 +71,7 @@ export default class messageCreate {
                 userData,
                 i18n
             }).then(() => {
-                console.log("Commande terminée")
-                // client.logger.commandLog({ interactionId: message.id, commandName: command.help.name, prefix })
+                await client.logger.commandLog(command.help.name, { interactionId: message.id, prefix })
             }).catch(error => {
                 message.chat.sendMessage(i18n.__("error.errorOccured", { error: error.toString() }))
 
