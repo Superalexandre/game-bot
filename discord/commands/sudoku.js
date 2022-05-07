@@ -117,7 +117,7 @@ export default class Sudoku extends Command {
             if (!interaction.user) await interaction.user.fetch()
 
             if (button.user.id !== interaction.user.id) return await button.reply({
-                content: i18n.__("discord.global.notYourGame", { gameName: "memory" }),
+                content: i18n.__("discord.global.notYourGame", { gameName: "sudoku" }),
                 ephemeral: true
             })
 

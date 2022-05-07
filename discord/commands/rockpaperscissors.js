@@ -109,7 +109,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
             await button?.deferUpdate()
 
             return await msg.edit({
-                content: i18n.__("discord.global.opponentNotReady", { username: opponent.username, gameName: "puissance4" }),
+                content: i18n.__("discord.global.opponentNotReady", { username: opponent.username, gameName: "rockpaperscissors" }),
                 components: []
             })
         } else {

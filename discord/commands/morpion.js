@@ -108,7 +108,7 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
             await collector.stop()
 
             return await msg.edit({
-                content: i18n.__("discord.global.opponentNotReady", { username: opponent.username, gameName: "puissance4" }),
+                content: i18n.__("discord.global.opponentNotReady", { username: opponent.username, gameName: "morpion" }),
                 components: []
             })
         } else {
