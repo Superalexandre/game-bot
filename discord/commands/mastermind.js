@@ -6,6 +6,7 @@ export default class Mastermind extends Command {
         super(client, {
             name: "mastermind",
             description: "Jouez au mastermind facilement !",
+            debug: true,
             options: [
                 {
                     type: "USER",
@@ -147,8 +148,14 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
         return `Vous devez choisir la suite de couleur pour votre adversaire\n\n${opponentData.color.length === 5 ? `✅ ${userData.username} a choisi` : `❌ ${userData.username} n'a pas encore choisi`}\n${userData.color.length === 5 ? `✅ ${opponentData.username} a choisi` : `❌ ${opponentData.username} n'a pas encore choisi`}`
     }
 
+    const colorsEmote = {
+        "red": "🟥", 
+        "green": "🟩", 
+        "blue": "🟦", 
+        "gray": "⬜"
+    }
     const personalText = (colors) => {
-        return `Vous devez choisir une suite de 5 couleurs, vous avez choisi ${colors.join(", ")} (Reste ${5 - colors.length} couleurs)`
+        return `Vous devez choisir une suite de 5 couleurs, vous avez choisi ${colors.map(color => colorsEmote[color]).join("")} (Reste ${5 - colors.length} couleurs)`
     }
 
     const msgColor = await msg.channel.send({
@@ -176,9 +183,14 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
         .setLabel("Gris")
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_gray`)
         
-        
+    const back = new MessageButton()
+        .setStyle("DANGER")
+        .setLabel("Supprimer")
+        .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_back`)
+
     const colors = new MessageActionRow().addComponents(red, blue, green, gray)
-    
+    const backRow = new MessageActionRow().addComponents(back)
+
     const collector = await msgColor.createMessageComponentCollector({ componentType: "BUTTON" })
     const collectorSelect = new InteractionCollector(client, { componentType: "BUTTON" })
 
@@ -196,7 +208,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
             await button.reply({
                 content: personalText(data.color),
                 ephemeral: true,
-                components: [ colors ]
+                components: [ colors, backRow ]
             })
         }
     })
@@ -207,7 +219,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
 
         const ids = btn.customId.split("_")
         const color = ids[ids.length - 1]
-        const colorsName = ["red", "blue", "green", "gray"]
+        const colorsName = ["red", "blue", "green", "gray", "back"]
         if (ids[1] !== "mastermind" || !colorsName.includes(color)) return
 
         const gameId = ids[ids.length - 2]
@@ -226,13 +238,26 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
             ephemeral: true
         })
 
+        if (color === "back") {
+            // remove last color
+            data.color.pop()
+
+            await btn?.deferUpdate()
+            
+            return await btn.editReply({
+                content: personalText(data.color),
+                ephemeral: true,
+                components: [ colors, backRow ]
+            })
+        }
+
         data.color.push(color)
         await btn?.deferUpdate()
 
         await btn.editReply({
             content: personalText(data.color),
             ephemeral: true,
-            components: [ colors ]
+            components: [ colors, backRow ]
         })
 
         if (opponentData.color.length === 5 && userData.color.length === 5) {
