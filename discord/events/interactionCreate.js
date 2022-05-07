@@ -75,7 +75,7 @@ export default class interactionCreate {
                 //     prefix: "/" 
                 //     /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/
                 // })
-            }).catch(error => {
+            }).catch(async(error) => {
                 /*
                 interaction.reply({ 
                     content: i18n.__("error.errorOccured", { error: error.toString() }), 
@@ -84,7 +84,7 @@ export default class interactionCreate {
                 })
                 */
         
-                client.logger.error(error)
+                await client.logger.error(error)
             })
         } catch (error) {
             /*
@@ -95,7 +95,7 @@ export default class interactionCreate {
             })
             */
         
-            client.logger.error(error)
+            await client.logger.error(error)
         }
     }
 }

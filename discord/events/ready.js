@@ -8,7 +8,7 @@ export default class Ready {
 
         await checkCommand({ client })
 
-        client.logger.log(`Client prêt (${client.user.username}#${client.user.discriminator})`)
+        await client.logger.log(`Client prêt (${client.user.username}#${client.user.discriminator})`)
     }
 }
 
@@ -29,7 +29,7 @@ async function checkCommand({ client }) {
         if (type === "create") {
             pendingCommands.push(commandName)
             botData.set("pendingCommands", pendingCommands)
-            client.logger.log(`Commande ${commandName} en attente de création`)
+            await client.logger.log(`Commande ${commandName} en attente de création`)
         
             createCommand({
                 client,
@@ -46,11 +46,11 @@ async function checkCommand({ client }) {
         if (pendingCommand && Date.now() - pendingCommand.edit.getTime() > ONE_HOUR_IN_MILLISECONDS) {
             pendingCommands.splice(pendingCommands.indexOf(pendingCommand), 1)
             botData.set("pendingCommands", pendingCommands)
-            client.logger.log(`Commande ${commandName} supprimée`)
+            await client.logger.log(`Commande ${commandName} supprimée`)
 
             continue
         } else if (pendingCommand) {
-            client.logger.warn(`Commande ${commandName} en cooldown`)
+            await client.logger.warn(`Commande ${commandName} en cooldown`)
         
             continue
         }
@@ -60,7 +60,7 @@ async function checkCommand({ client }) {
             const command = await commands.find(cmd => cmd.name === commandName)
 
             if (!command) {
-                client.logger.error(`Commande ${commandName} introuvable`)
+                await client.logger.error(`Commande ${commandName} introuvable`)
                 continue
             }
 
@@ -77,7 +77,7 @@ async function checkCommand({ client }) {
                     if (command.options[i].name === name && command.options[i].description === description && command.options[i].required === required && command.options[i].choices === choices) continue
                 
                     sameOptions = false
-                    client.logger.warn(`Commande ${commandName} : option non identique`)
+                    await client.logger.warn(`Commande ${commandName} : option non identique`)
                 }
             }
 

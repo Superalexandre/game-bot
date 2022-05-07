@@ -8,6 +8,6 @@ export default class pendingRequest {
 
         await chat.approve()
 
-        client.logger.log(`Message approuvé ${chat.id}`)
+        await client.logger.log(`Message approuvé ${chat.id}`)
     }
 }

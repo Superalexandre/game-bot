@@ -24,7 +24,7 @@ export default async function init({ data }) {
             const event = await new eventClass.default(client)
             const eventName = events[i].split(".")[0]
 
-            client.logger.log(`Event ${eventName} chargé`)
+            await client.logger.log(`Event ${eventName} chargé`)
 
             client.on(eventName, (...args) => event.run(...args))
         }
@@ -39,7 +39,7 @@ export default async function init({ data }) {
             const commandClass = await import("./commands/" + commands[i])
             const command = await new commandClass.default(client)
 
-            client.logger.log(`Commande ${command.help.name} chargée`)
+            await client.logger.log(`Commande ${command.help.name} chargée`)
 
             client.commands.set(command.help.name, command)
 
@@ -49,10 +49,10 @@ export default async function init({ data }) {
         }
     })
 
-    client.on("warn", (message) => client.logger.warn(message))
-    client.on("error", (message) => client.logger.error(message))
+    client.on("warn", async(message) => await client.logger.warn(message))
+    client.on("error", async(message) => await client.logger.error(message))
 
-    logger.log("Connexion en cours...")
+    await logger.log("Connexion en cours...")
     client.login(client.config.instagram.username, client.config.instagram.password)
 
     return client

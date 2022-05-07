@@ -123,7 +123,7 @@ async function init({ data, clients }) {
         .get("/profile/settings", checkAccount, async(req, res) => {
             if (req.query && req.query.lang) {
                 if (!i18n.getLocales().includes(req.query.lang)) {
-                    req.logger.error("Invalid lang")
+                    await req.logger.error("Invalid lang")
 
                     req.session.messages.push({
                         type: "warn",
@@ -364,7 +364,7 @@ async function init({ data, clients }) {
         .use((error, req, res, next) => {
             if (!error) return
 
-            logger.error(error.stack ?? error.toString())
+            await logger.error(error.stack ?? error.toString())
 
             res?.status(error.statusCode ?? 500)?.render("error", {
                 req, res, i18n,

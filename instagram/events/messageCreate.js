@@ -81,7 +81,7 @@ export default class messageCreate {
         } catch (error) {
             message.chat.sendMessage(i18n.__("error.errorOccured", { error: error.toString() }))
 
-            client.logger.error(error)
+            await client.logger.error(error)
         }
     }
 }
