@@ -196,12 +196,15 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
             await collector.stop()
 
             if (opponentData.choice === userData.choice) {  
+                const gameId = await client.functions.genGameId({ gameName: "rockpaperscissors", length: 30 })
+                const guild = await interaction.guild.fetch()
+
                 await client.functions.gameStats({ 
                     data: client.data, 
-                    gameId: await client.functions.genGameId({ gameName: "rockpaperscissors", length: 30 }),
+                    gameId,
                     guildOrChat: {
                         type: "guild",
-                        data: await interaction.guild
+                        data: guild
                     },
                     plateform: "discord", 
                     user1: userData,
@@ -221,12 +224,15 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
                 const winner = win[opponentData.choice] === userData.choice ? opponentData : userData
                 const looser = win[opponentData.choice] === userData.choice ? userData : opponentData
 
+                const gameId = await client.functions.genGameId({ gameName: "rockpaperscissors", length: 30 }) 
+                const guild = await interaction.guild.fetch()
+
                 await client.functions.gameStats({ 
                     data: client.data, 
-                    gameId: await client.functions.genGameId({ gameName: "rockpaperscissors", length: 30 }),
+                    gameId,
                     guildOrChat: {
                         type: "guild",
-                        data: await interaction.guild
+                        data: guild
                     },
                     plateform: "discord", 
                     user1: userData,

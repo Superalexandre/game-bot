@@ -127,9 +127,11 @@ async function startGame({ client, message, opponent, i18n }) {
             const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
             const looser = formatedBoard.winnerUser.id === userData.id ? opponentData : userData
 
+            const gameId = await client.functions.genGameId({ gameName: "puissance4", length: 30 })
+
             await client.functions.gameStats({ 
                 data: client.data, 
-                gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
+                gameId,
                 guildOrChat: {
                     type: "chat",
                     data: await message.chat
@@ -150,9 +152,11 @@ async function startGame({ client, message, opponent, i18n }) {
             message.chat.puissance4 = false
             await collector.end()
 
+            const gameId = await client.functions.genGameId({ gameName: "puissance4", length: 30 })
+
             await client.functions.gameStats({ 
                 data: client.data, 
-                gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
+                gameId,
                 guildOrChat: {
                     type: "chat",
                     data: await message.chat

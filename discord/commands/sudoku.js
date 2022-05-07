@@ -167,15 +167,19 @@ export default class Sudoku extends Command {
                     await button.deferUpdate()
                     collector.stop()
 
+                    const gameId = await client.functions.genGameId({ gameName: "sudoku", length: 30 })
+                    const guild = await interaction.guild.fetch()
+                    const user = await interaction.user.fetch()
+
                     await client.functions.gameStats({ 
                         data: client.data, 
-                        gameId: await client.functions.genGameId({ gameName: "sudoku", length: 30 }),
+                        gameId,
                         guildOrChat: {
                             type: "guild",
-                            data: await interaction.guild
+                            data: guild
                         },
                         plateform: "discord", 
-                        user1: await interaction.user,
+                        user1: user,
                         gameName: "sudoku", 
                         winnerId: "solo"
                     })    

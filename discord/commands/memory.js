@@ -234,17 +234,21 @@ export default class Memory extends Command {
             if (win) {
                 await collector.stop()
   
+                const gameId = await client.functions.genGameId({ gameName: "memory", length: 30 }) 
+                const guild = await interaction.guild.fetch()
+                const user = await interaction.user.fetch()
+
                 await client.functions.gameStats({ 
                     data: client.data, 
-                    gameId: await client.functions.genGameId({ gameName: "memory", length: 30 }),
+                    gameId,
                     guildOrChat: {
                         type: "guild",
-                        data: await interaction.guild
+                        data: guild
                     },
                     plateform: "discord", 
-                    user1: await interaction.user,
+                    user1: user,
                     gameName: "memory", 
-                    winnerId: await interaction.user.id
+                    winnerId: user.id
                 })
 
                 return await msg.edit({
@@ -254,15 +258,19 @@ export default class Memory extends Command {
             } else if (clickNumber === 0) {
                 await collector.stop()
                 
+                const gameId = await client.functions.genGameId({ gameName: "memory", length: 30 })
+                const guild = await interaction.guild.fetch()
+                const user = await interaction.user.fetch()
+
                 await client.functions.gameStats({ 
                     data: client.data, 
-                    gameId: await client.functions.genGameId({ gameName: "memory", length: 30 }),
+                    gameId,
                     guildOrChat: {
                         type: "guild",
-                        data: await interaction.guild
+                        data: guild
                     },
                     plateform: "discord", 
-                    user1: await interaction.user,
+                    user1: user,
                     gameName: "memory", 
                     winnerId: "loose"
                 })

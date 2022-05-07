@@ -40,6 +40,8 @@ export default class Morpion extends Command {
 
         const readyComponents = new MessageActionRow().addComponents(ready, notReady)
 
+        if (!opponent.user) await opponent.fetch()
+
         const msg = await interaction.channel.send({
             content: i18n.__("discord.global.opponentReady", { userId: opponent.id, gameName: "morpion" }),
             components: [ readyComponents ]
@@ -171,8 +173,8 @@ async function whoStart({ i18n, interaction, msg, opponent, client }) {
 
 async function startGame({ i18n, interaction, msg, opponent, client }) {
     let userData = {
-        id: await interaction.user.id,
-        username: await interaction.user.username,
+        id: interaction.user.id,
+        username: interaction.user.username,
         turn: opponent.turn ? false : true,
         emoji: "❌",
         customEmote: "855726987183915008",
@@ -180,8 +182,8 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
     }
     
     let opponentData = {
-        id: await opponent.id,
-        username: await opponent.username,
+        id: opponent.id,
+        username: opponent.username,
         turn: opponent.turn,
         emoji: "⭕",
         customEmote: "855726553919914004",
@@ -236,12 +238,15 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
         if (!genBoard.win && genBoard.allFill) {
             await collector.stop()
 
+            const gameId = await client.functions.genGameId({ gameName: "morpion", length: 30 })
+            const guild = await interaction.guild.fetch()
+
             await client.functions.gameStats({ 
                 data: client.data, 
-                gameId: await client.functions.genGameId({ gameName: "morpion", length: 30 }),
+                gameId,
                 guildOrChat: {
                     type: "guild",
-                    data: await interaction.guild
+                    data: guild
                 },
                 plateform: "discord", 
                 user1: userData,
@@ -261,12 +266,15 @@ async function startGame({ i18n, interaction, msg, opponent, client }) {
 
             const winner = genBoard.winner === userData.emoji ? userData : opponentData
 
+            const gameId = await client.functions.genGameId({ gameName: "morpion", length: 30 })
+            const guild = await interaction.guild.fetch()
+
             await client.functions.gameStats({ 
                 data: client.data, 
-                gameId: await client.functions.genGameId({ gameName: "morpion", length: 30 }),
+                gameId,
                 guildOrChat: {
                     type: "guild",
-                    data: await interaction.guild
+                    data: guild
                 },
                 plateform: "discord", 
                 user1: userData,
