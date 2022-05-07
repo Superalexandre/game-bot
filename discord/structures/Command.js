@@ -12,6 +12,7 @@ export class Command {
         //example = (i18n) => i18n.__("discord.noExampleProvided"),
         //aliases = [],
         enabled = true,
+        debug = false,
         //ownerOnly = false,
         //slowmode = 3,
         options = undefined,
@@ -48,6 +49,7 @@ export class Command {
         this.config = {
             enabled,
             options,
+            debug,
             //ownerOnly,
             //slowmode,
             botPerms,
