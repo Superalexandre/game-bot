@@ -64,6 +64,9 @@ async function checkCommand({ client }) {
                 continue
             }
 
+            let sameDebug = true
+            if (!command.guildId && commandData.config.debug || command.guildId !== client.config.discord.debugGuild) sameDebug = false
+
             // Check options
             let sameOptions = true
             if (commandData.config.options) {
@@ -80,7 +83,7 @@ async function checkCommand({ client }) {
 
             let { description, name } = command
             // Check if the command has same data
-            if (sameOptions && description === commandData.help.description && name === commandData.help.name) continue
+            if (sameDebug && sameOptions && description === commandData.help.description && name === commandData.help.name) continue
             
             // Update the command
             updateCommand({
@@ -88,7 +91,8 @@ async function checkCommand({ client }) {
                 botData,
                 command,
                 commandName,
-                commandData
+                commandData,
+                debug: !sameDebug
             })
         
             continue
@@ -108,13 +112,17 @@ async function createCommand({ client, botData, commandName, commandData }) {
     return true
 }
 
-async function updateCommand({ client, botData, command, commandName, commandData }) {
+async function updateCommand({ client, botData, command, commandName, commandData, debug }) {
     const newCommand = {
         ...command,
         ...commandData
     }
     
-    await client.application.commands.edit(command.id, newCommand)
+    if (debug) {
+        await client.application.commands.edit(command.id, newCommand)
+    } else {
+        await client.application.commands.edit(command.id, newCommand, client.config.discord.debugGuild)
+    } 
 
     const pendingCommands = await botData.get("pendingCommands")
     pendingCommands.push({
