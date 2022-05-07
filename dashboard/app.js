@@ -361,7 +361,7 @@ async function init({ data, clients }) {
         })
         .use("/api", routerApi)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-        .use((error, req, res, next) => {
+        .use(async(error, req, res, next) => {
             if (!error) return
 
             await logger.error(error.stack ?? error.toString())
