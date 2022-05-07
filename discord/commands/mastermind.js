@@ -1,5 +1,5 @@
 import { Command } from "../structures/Command.js"
-import { MessageButton, MessageActionRow } from "discord.js"
+import { MessageButton, MessageActionRow, InteractionCollector, ButtonInteraction } from "discord.js"
 
 export default class Mastermind extends Command {
     constructor(client) {
@@ -54,12 +54,12 @@ async function playWithBot({ i18n, interaction, client }) {
     const yes = new MessageButton()
         .setStyle("SUCCESS")
         .setLabel(i18n.__("discord.global.yes"))
-        .setCustomId(`game_morpion_${interaction.user.id}_yes`)
+        .setCustomId(`game_mastermind_${interaction.user.id}_yes`)
 
     const no = new MessageButton()
         .setStyle("DANGER")
         .setLabel(i18n.__("discord.global.no"))
-        .setCustomId(`game_morpion_${interaction.user.id}_no`)
+        .setCustomId(`game_mastermind_${interaction.user.id}_no`)
 
     const row = new MessageActionRow().addComponents(yes, no)
 
@@ -116,69 +116,141 @@ async function opponentReady({ i18n, interaction, msg, opponent, client }) {
             await collector.stop()
             await button?.deferUpdate()
 
-            return whoStart({ i18n, interaction, msg, opponent, client })
+            return selectColor({ i18n, interaction, msg, opponent, client })
         }
     })
 }
 
+async function selectColor({ i18n, interaction, msg, opponent, client }) {
+    const uniqueId = client.functions.genId({ length: 10, withDate: false })
 
-async function whoStart({ i18n, interaction, msg, opponent, client }) {
-    const userStart = new MessageButton()
+    let userData = {
+        id: interaction.user.id,
+        username: interaction.user.username,
+        color: []
+    }
+    
+    let opponentData = {
+        id: opponent.id,
+        username: opponent.username,
+        color: []
+    }
+
+    const select = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel(i18n.__("discord.global.start.you", { username: interaction.user.username }))
-        .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_user`)
+        .setLabel("Commencer a choisir")
+        .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_select`)
 
-    const opponentStart = new MessageButton()
-        .setStyle("PRIMARY")
-        .setLabel(i18n.__("discord.global.start.opponent", { username: opponent.username }))
-        .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_opponent`)
+    const row = new MessageActionRow().addComponents(select) 
 
-    const random = new MessageButton()
-        .setStyle("PRIMARY")
-        .setLabel(i18n.__("discord.global.start.random"))
-        .setCustomId(`game_morpion_${interaction.user.id}_${opponent.id}_random`)
+    const text = () => {
+        return `Vous devez choisir la suite de couleur pour votre adversaire\n\n${opponentData.color.length === 5 ? `✅ ${userData.username} a choisi` : `❌ ${userData.username} n'a pas encore choisi`}\n${userData.color.length === 5 ? `✅ ${opponentData.username} a choisi` : `❌ ${opponentData.username} n'a pas encore choisi`}`
+    }
 
-    const row = new MessageActionRow().addComponents(userStart, opponentStart, random) 
+    const personalText = (colors) => {
+        return `Vous devez choisir une suite de 5 couleurs, vous avez choisi ${colors.join(", ")} (Reste ${5 - colors.length} couleurs)`
+    }
 
-    await msg.edit({
-        content: i18n.__("discord.global.whoStart", { username: interaction.user.username }),
+    const msgColor = await msg.channel.send({
+        content: text(),
         components: [ row ]
     })
 
-    const collector = await msg.createMessageComponentCollector({ componentType: "BUTTON" })
+    const red = new MessageButton()
+        .setStyle("DANGER")
+        .setLabel("Rouge")
+        .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_red`)
+
+    const blue = new MessageButton()
+        .setStyle("PRIMARY")
+        .setLabel("Bleu")
+        .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_blue`)
+
+    const green = new MessageButton()
+        .setStyle("SUCCESS")
+        .setLabel("Vert")
+        .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_green`)
+
+    const gray = new MessageButton()
+        .setStyle("SECONDARY")
+        .setLabel("Gris")
+        .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_gray`)
+        
+        
+    const colors = new MessageActionRow().addComponents(red, blue, green, gray)
+    
+    const collector = await msgColor.createMessageComponentCollector({ componentType: "BUTTON" })
+    const collectorSelect = new InteractionCollector(client, { componentType: "BUTTON" })
 
     collector.on("collect", async(button) => {
         if (!button.user) await button.user.fetch()
 
-        if (button.user.id !== interaction.user.id) return await button.reply({
+        if (![interaction.user.id, opponent.id].includes(button.user.id)) return await button.reply({
+            content: i18n.__("discord.global.notYourGame", { gameName: "mastermind" }),
+            ephemeral: true
+        })
+        
+        const data = button.user.id === interaction.user.id ? opponentData : userData
+
+        if (button.customId.endsWith("select")) {
+            await button.reply({
+                content: personalText(data.color),
+                ephemeral: true,
+                components: [ colors ]
+            })
+        }
+    })
+
+    collectorSelect.on("collect", async(btn) => {
+        if (!(btn instanceof ButtonInteraction)) return 
+        if (!btn.user) await btn.user.fetch()
+
+        const ids = btn.customId.split("_")
+        const color = ids[ids.length - 1]
+        const colorsName = ["red", "blue", "green", "gray"]
+        if (ids[1] !== "mastermind" || !colorsName.includes(color)) return
+
+        const gameId = ids[ids.length - 2]
+
+        if (gameId !== uniqueId) return
+
+        if (![interaction.user.id, opponent.id].includes(btn.user.id)) return await btn.reply({
             content: i18n.__("discord.global.notYourGame", { gameName: "mastermind" }),
             ephemeral: true
         })
 
-        if (button.customId.endsWith("opponent")) {
-            opponent.turn = true
-        } else if (button.customId.endsWith("user")) {
-            opponent.turn = false
-        } else if (button.customId.endsWith("random")) {
-            const random = Math.floor(Math.random() * (2 - 1 + 1)) + 1
+        const data = btn.user.id === interaction.user.id ? opponentData : userData
 
-            opponent.turn = random === 1 ? true : false
-        } else return button.reply({ content: "Erreur inconnue" })
-    
-        await collector.stop()
-        await button?.deferUpdate()
-        return selectColor({ i18n, interaction, msg, opponent, client })
+        if (data.color.length >= 5) return await btn.reply({
+            content: "Vous avez déjà choisi 5 couleurs",
+            ephemeral: true
+        })
+
+        data.color.push(color)
+        await btn?.deferUpdate()
+
+        await btn.editReply({
+            content: personalText(data.color),
+            ephemeral: true,
+            components: [ colors ]
+        })
+
+        if (opponentData.color.length === 5 && userData.color.length === 5) {
+            await collector.stop()
+            collectorSelect.stop()
+
+            return startGame({ i18n, interaction, msg, opponent, client, userData, opponentData })
+        }
+
+        if (data.color.length === 5) {
+            return await msgColor.edit({
+                content: text(),
+                components: [ row ]
+            })
+        }
     })
 }
 
-async function selectColor({ i18n, interaction, msg, opponent, client }) {
-    let color = []
-
-
-
-    return startGame({ i18n, interaction, msg, opponent, client, color })
-}
-
-async function startGame({ /* i18n, interaction, msg, opponent, client, */ color }) {
-    return console.log(color)
+async function startGame({ /* i18n, interaction, msg, opponent, client, */ userData, opponentData }) {
+    return console.log(`${userData.username} doit trouver ${userData.color} et ${opponentData.username} doit trouver ${opponentData.color}`)
 }
