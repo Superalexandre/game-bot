@@ -45,12 +45,6 @@ export default async function init({ data }) {
             await client.logger.log(`Commande ${command.help.name} chargée`)
 
             client.commands.set(command.help.name, command)
-
-            /*
-            for (let j = 0; j < command.help.aliases.length; j++) {
-                client.aliases.set(command.help.aliases[j], command.help.name)  
-            }
-            */
         }
     })
 
