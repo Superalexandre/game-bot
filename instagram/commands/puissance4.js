@@ -13,25 +13,27 @@ export default class Puissance4 extends Command {
     }
 
     async run({ client, message, args, i18n }) {
-        let opponent
+        if (!message.chat.isGroup) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.noGroup"))
+        if (message.chat.game) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.alreadyGame", { username: message.author.username }))
+        // ! TRANSLATE
+        if (!args[0]) return await message.chat.sendMessage("Merci de saisir l'arobase de la personne (qui doit etre dans le groupe) que tu veux affronter")
 
+        let opponent
         try {
             opponent = await client.fetchUser(args[0])
         } catch (error) {
-            return await message.chat.sendMessage(i18n.__("insta.puissance4.error.noUser"))
+            try {
+                opponent = await client.fetchUser(args[0].replace(/@/, ""))
+            } catch (error) {
+                return await message.chat.sendMessage(i18n.__("insta.puissance4.error.noUser"))
+            }
         }
 
-        if (!message.chat.isGroup) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.noGroup"))
-    
+        if (!message.chat.users.has(opponent.id)) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.notInGroup"))
+
         if (message.author.id === opponent.id) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.sameUser"))
 
         if (opponent.id === client.user.id) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.bot"))
-    
-        if (!message.chat.users.has(opponent.id)) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.notInGroup"))
-
-        if (message.chat.puissance4) return await message.chat.sendMessage(i18n.__("insta.puissance4.error.alreadyGame", { username: message.author.username }))
-
-        return opponentReady({ client, message, opponent, i18n })
     }
 }
 
@@ -50,9 +52,8 @@ async function opponentReady({ client, message, opponent, i18n }) {
     })
 }
 
-// eslint-disable-next-line no-unused-vars
 async function startGame({ client, message, opponent, i18n }) {
-    message.chat.puissance4 = true
+    message.chat.game = true
 
     let board = [
         ["⚪", "⚪", "⚪", "⚪", "⚪", "⚪", "⚪"],
@@ -94,7 +95,7 @@ async function startGame({ client, message, opponent, i18n }) {
 
     collector.on("message", async(msg) => {
         if (msg.content.toLowerCase() === "stop") {
-            message.chat.puissance4 = false
+            message.chat.game = false
             await collector.end()
 
             return await message.chat.sendMessage(i18n.__("insta.puissance4.gameStop", { authorUsername: msg.author.username }))
@@ -121,7 +122,7 @@ async function startGame({ client, message, opponent, i18n }) {
         const formatedBoard = genBoard({ board, userData, opponentData })
 
         if (formatedBoard.win) {
-            message.chat.puissance4 = false
+            message.chat.game = false
             await collector.end()
 
             const winner = formatedBoard.winnerUser.id === userData.id ? userData : opponentData
@@ -149,7 +150,7 @@ async function startGame({ client, message, opponent, i18n }) {
         }
 
         if (formatedBoard.allFill) {
-            message.chat.puissance4 = false
+            message.chat.game = false
             await collector.end()
 
             const gameId = await client.functions.genGameId({ gameName: "puissance4", length: 30 })
