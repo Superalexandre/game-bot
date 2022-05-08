@@ -6,6 +6,7 @@ export default class Eval extends Command {
         super(client, {
             name: "eval",
             description: "Commande reserver a l'administration",
+            debug: true,
             options: [
                 {
                     type: "STRING",
