@@ -21,7 +21,7 @@
                     <div class="content-grid flex flex-col">
                         <!-- <button class="rounded-full w-7 h-7"></button> -->
                     </div>
-                    <button class="bg-blue text-white hover:text-black rounded-xl mx-auto w-36 h-10 hidden rematch"><%= res.__("dashboard.connect4.rematch") %>></button>
+                    <button class="bg-blue text-white hover:text-black rounded-xl mx-auto w-36 h-10 hidden rematch"><%= res.__("dashboard.connect4.rematch") %></button>
                 </div>
             </div>
         </div>
@@ -75,10 +75,10 @@
                 refreshNotif()
 
                 // Update the player number
-                document.querySelector("#playerNumber").innerText = `${data.playerNumber}`
+                document.querySelector("#playerNumber").textContent = `${data.playerNumber}`
 
                 // Update player turn
-                if (data.canStart) document.querySelector(".result-turn").innerText = data.isTurnId === socket.id ? "<%= res.__('dashboard.connect4.yourTurn') %>" : "<%= res.__('dashboard.connect4.otherTurn') %>"
+                if (data.canStart) document.querySelector(".result-turn").textContent = data.isTurnId === socket.id ? `<%= res.__("dashboard.connect4.yourTurn") %>` : "<%= res.__('dashboard.connect4.otherTurn') %>"
 
                 refreshBoard(data.board)
             })
@@ -139,7 +139,7 @@
                 } else rematchButton.classList.add("hidden")
 
                 if (data.win !== undefined && data.win) {
-                    document.querySelector(".result-turn").innerText = `${data.winnerId === socket.id ? "<%= res.__('dashboard.connect4.youWin') %>" : "<%= res.__('dashboard.connect4.youLoose') %>"}`
+                    document.querySelector(".result-turn").textContent = `${data.winnerId === socket.id ? "<%= res.__('dashboard.connect4.youWin') %>" : "<%= res.__('dashboard.connect4.youLoose') %>"}`
                 
                     return
                 }
@@ -163,7 +163,7 @@
                 }
 
                 // Update the player turn
-                document.querySelector(".result-turn").innerText = `${data.isTurn === socket.id ? "<%= res.__('dashboard.connect4.yourTurn') %>" : "<%= res.__('dashboard.connect4.otherTurn') %>"}`
+                document.querySelector(".result-turn").textContent = `${data.isTurn === socket.id ? `<%= res.__("dashboard.connect4.yourTurn") %>` : "<%= res.__('dashboard.connect4.otherTurn') %>"}`
             })
 
             async function refreshNotif() {
@@ -177,7 +177,7 @@
 
             function refreshBoard(board) {
                 // Remove all the content
-                document.querySelector(".content-grid").innerHTML = ""
+                document.querySelector(".content-grid").textContent = ""
 
                 // Add all board to .content-grid
                 for (let i = 0; i < board.length; i++) {
