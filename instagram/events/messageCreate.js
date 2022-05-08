@@ -70,7 +70,7 @@ export default class messageCreate {
                 argsOptions,
                 userData,
                 i18n
-            }).then(() => {
+            }).then(async() => {
                 await client.logger.commandLog(command.help.name, { interactionId: message.id, prefix })
             }).catch(error => {
                 message.chat.sendMessage(i18n.__("error.errorOccured", { error: error.toString() }))
