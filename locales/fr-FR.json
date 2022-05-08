@@ -590,7 +590,8 @@
 			"playWithAccount": "Jouer avec votre compte",
 			"playWithAccountNeedLogin": "Jouer avec votre compte (Se connecter)",
 			"playAnonymous": "Jouer anonymement",
-			"back": "Retour"
+			"back": "Retour",
+			"username": "Pseudonyme"
 		},
 		"profile": {
 			"globalInfo": "Informations globales",
@@ -676,8 +677,8 @@
 			"gameOver": "La partie est terminée",
 			"asJoin": "a rejoint la partie",
 			"youJoin": "Vous avez rejoint la partie",
-			"yourTurn": "C'est votre tour",
-			"otherTurn": "C'est à l'adversaire de jouer",
+			"yourTurn": "C\\'est votre tour",
+			"otherTurn": "C\\'est à l\\'adversaire de jouer",
 			"gameRestart": "La partie recommence",
 			"youAskRematch": "Vous avez demandé une revanche",
 			"otherAskRematch": "a demandé une revanche",
@@ -693,7 +694,8 @@
 			"playWithAccount": "Jouer avec votre compte",
 			"playWithAccountNeedLogin": "Jouer avec votre compte (Se connecter)",
 			"playAnonymous": "Jouer anonymement",
-			"back": "Retour"
+			"back": "Retour",
+			"username": "Pseudonyme"
 		},
 		"play": {
 			"noGameFoundCreate": "Aucune partie trouvé, essayez d'en créer une",
