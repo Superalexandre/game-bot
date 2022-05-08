@@ -65,7 +65,20 @@ async function checkCommand({ client }) {
             }
 
             let sameDebug = true
-            if (!command.guildId && commandData.config.debug || command.guildId !== client.config.discord.debugGuild) sameDebug = false
+            if (!command.guildId && commandData.config.debug) {
+                console.log(command)
+
+                await client.logger.warn(`Commande ${commandName} en mode debug, création`)
+
+                return createCommand({
+                    client,
+                    botData,
+                    commandName,
+                    commandData,
+                    debug: true
+                })
+            }
+            if (commandData.config.debug && command.guildId !== client.config.discord.debugGuild) sameDebug = false
 
             // Check options
             let sameOptions = true
@@ -73,18 +86,37 @@ async function checkCommand({ client }) {
                 for (let i = 0; i < commandData.config.options.length; i++) {
                     const option = commandData.config.options[i]
                     const { name, description, required, choices } = option
+                    const commandChoices = command.options[i]?.choices
 
-                    if (command.options[i].name === name && command.options[i].description === description && command.options[i].required === required && command.options[i].choices === choices) continue
+                    if (commandChoices && choices) {
+                        if (choices.length !== commandChoices.length) {
+                            sameOptions = false
+                            
+                            continue
+                        }
+
+                        for (let i = 0; i < choices.length; i++) {
+                            const name = choices[i][0]
+                            const value = choices[i][1]
+
+                            if (!commandChoices.some(choice => choice.name === name && choice.value === value)) sameOptions = false
+                        }
+                    }
+
+                    if (command.options[i].name === name && command.options[i].description === description && command.options[i].required === required) continue
                 
                     sameOptions = false
                     await client.logger.warn(`Commande ${commandName} : option non identique`)
                 }
             }
 
+            
             let { description, name } = command
             // Check if the command has same data
             if (sameDebug && sameOptions && description === commandData.help.description && name === commandData.help.name) continue
             
+            await client.logger.warn(`${commandName} : sameDebug ${sameDebug} sameOptions ${sameOptions} description ${description === commandData.help.description} name ${name === commandData.help.name}`)
+
             // Update the command
             updateCommand({
                 client,
@@ -100,14 +132,29 @@ async function checkCommand({ client }) {
     }
 }
 
-async function createCommand({ client, botData, commandName, commandData }) {
-    await client.application.commands.create(commandData)
+async function createCommand({ client, botData, commandName, commandData, debug }) {
+    const commandObject = {
+        name: commandName,
+        description: commandData.help.description,
+        options: commandData.config.options
+    }
+    
+    if (debug) {
+        await client.application.commands.create(commandObject, client.config.discord.debugGuild)
+    } else {
+        await client.application.commands.create(commandObject)
+        
+        const pendingCommands = await botData.get("pendingCommands")
+        pendingCommands.push({
+            name: commandName,
+            type: "create",
+            edit: new Date()
+        })
 
-    const pendingCommands = await botData.get("pendingCommands")
-    pendingCommands.push(commandName, 1)
-    await botData.set("pendingCommands", pendingCommands)
+        await botData.set("pendingCommands", pendingCommands)
+    }
 
-    await client.logger.log(`Commande ${commandName} créée`)
+    await client.logger.log(`Commande ${commandName} créée ${debug ? "en mode debug" : ""}`)
 
     return true
 }
@@ -119,18 +166,19 @@ async function updateCommand({ client, botData, command, commandName, commandDat
     }
     
     if (debug) {
-        await client.application.commands.edit(command.id, newCommand)
-    } else {
         await client.application.commands.edit(command.id, newCommand, client.config.discord.debugGuild)
-    } 
+    } else {
+        await client.application.commands.edit(command.id, newCommand)
 
-    const pendingCommands = await botData.get("pendingCommands")
-    pendingCommands.push({
-        name: commandName,
-        type: "update",
-        edit: new Date()
-    })
-    await botData.set("pendingCommands", pendingCommands)
+        const pendingCommands = await botData.get("pendingCommands")
+        pendingCommands.push({
+            name: commandName,
+            type: "update",
+            edit: new Date()
+        })
+
+        await botData.set("pendingCommands", pendingCommands)    
+    } 
 
     await client.logger.log(`Commande ${commandName} mise à jour`)
 
