@@ -47,7 +47,7 @@
                                     <i class="fas fa-exclamation-triangle"></i>
                                 </span>
                                 <span class="font-semibold mr-2 text-left flex-auto">
-                                    ${data.errorType === "notTurn" && data.finish ? "<%= res.__('dashboard.connect4.gameOver') %>" : data.message}
+                                    ${data.errorType === "notTurn" && data.finish ? data.texts["gameOver"] : data.message}
                                 </span>
                             </div>
                         </div>
@@ -66,7 +66,7 @@
                                     <i class="fas fa-check"></i>
                                 </span>
                                 <span class="font-semibold mr-2 text-left flex-auto">
-                                    ${socket.id === data.id ? "<%= res.__('dashboard.connect4.youJoin') %>" : `${data.player.username} <%= res.__('dashboard.connect4.asJoin') %>`}
+                                    ${socket.id === data.id ? data.texts["youJoin"] : `${data.player.username} ${data.texts["asJoin"]}`}
                                 </span>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                 document.querySelector("#playerNumber").textContent = `${data.playerNumber}`
 
                 // Update player turn
-                if (data.canStart) document.querySelector(".result-turn").textContent = data.isTurnId === socket.id ? `<%= res.__("dashboard.connect4.yourTurn") %>` : "<%= res.__('dashboard.connect4.otherTurn') %>"
+                if (data.canStart) document.querySelector(".result-turn").textContent = data.isTurnId === socket.id ? data.texts["yourTurn"] : data.texts["otherTurn"]
 
                 refreshBoard(data.board)
             })
@@ -95,7 +95,7 @@
                                         <i class="fas fa-check"></i>
                                     </span>
                                     <span class="font-semibold mr-2 text-left flex-auto">
-                                        <%= res.__("dashboard.connect4.gameRestart") %>
+                                        ${data.texts["gameRestart"]}
                                     </span>
                                 </div>
                             </div>
@@ -113,7 +113,7 @@
                                     <i class="fas fa-check"></i>
                                 </span>
                                 <span class="font-semibold mr-2 text-left flex-auto">
-                                    ${socket.id === data.player.id ? "<%= res.__('dashboard.connect4.youAskRematch') %>" : `${data.player.username} <%= res.__('dashboard.connect4.otherAskRematch') %>`}
+                                    ${socket.id === data.player.id ? data.texts["youAskRematch"] : `${data.player.username} ${data.texts["otherAskRematch"]}`}
                                 </span>
                             </div>
                         </div>
@@ -139,7 +139,7 @@
                 } else rematchButton.classList.add("hidden")
 
                 if (data.win !== undefined && data.win) {
-                    document.querySelector(".result-turn").textContent = `${data.winnerId === socket.id ? "<%= res.__('dashboard.connect4.youWin') %>" : "<%= res.__('dashboard.connect4.youLoose') %>"}`
+                    document.querySelector(".result-turn").textContent = data.winnerId === socket.id ? data.texts["youWin"] : data.texts["youLoose"]
                 
                     return
                 }
@@ -153,7 +153,7 @@
                                         <i class="fas fa-check"></i>
                                     </span>
                                     <span class="font-semibold mr-2 text-left flex-auto">
-                                        <%= res.__('dashboard.connect4.gameOver') %>
+                                        ${data.texts["gameOver"]}
                                     </span>
                                 </div>
                             </div>
@@ -163,7 +163,7 @@
                 }
 
                 // Update the player turn
-                document.querySelector(".result-turn").textContent = `${data.isTurn === socket.id ? `<%= res.__("dashboard.connect4.yourTurn") %>` : "<%= res.__('dashboard.connect4.otherTurn') %>"}`
+                document.querySelector(".result-turn").textContent = data.isTurn === socket.id ? data.texts["yourTurn"] : data.texts["otherTurn"]
             })
 
             async function refreshNotif() {
