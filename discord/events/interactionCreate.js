@@ -46,8 +46,8 @@ export default class interactionCreate {
             ephemeral: true
         })
 
-        await interaction.deferReply({
-            //content: "Partie lancée ✅",
+        await interaction.reply({
+            content: "Votre partie a été lancé, vous pouvez supprimer ce message",
             ephemeral: true
         })
 
@@ -67,35 +67,15 @@ export default class interactionCreate {
                     startMessageProcessing: start
                 }
             }).then(() => {
-                
-                console.log("Commande terminée")
-                // client.logger.commandLog({ 
-                //     interactionId: interaction.id,
-                //     commandName: cmd.help.name,
-                //     prefix: "/" 
-                //     /*message, prefix, cmd.help.name, messageTime, ((Date.now() - start) / 1000) - messageTime*/
-                // })
-            }).catch(error => {
-                /*
-                interaction.reply({ 
-                    content: i18n.__("error.errorOccured", { error: error.toString() }), 
-                    ephemeral: true,
-                    allowedMentions: { repliedUser: false } 
+                client.logger.commandLog(cmd.help.name, { 
+                    interactionId: interaction.id,
+                    prefix: "/"
                 })
-                */
-        
-                client.logger.error(error)
+            }).catch(async(error) => {
+                await client.logger.error(error)
             })
         } catch (error) {
-            /*
-            interaction.reply({ 
-                content: i18n.__("error.errorOccured", { error: error.toString() }), 
-                ephemeral: true,
-                allowedMentions: { repliedUser: false } 
-            })
-            */
-        
-            client.logger.error(error)
+            await client.logger.error(error)
         }
     }
 }

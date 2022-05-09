@@ -302,18 +302,21 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
             winner.win = numberWin + 1
             looser.loose = numberLoose + 1
 
+            const gameId = await client.functions.genGameId({ gameName: "puissance4", length: 30 })
+            const guild = await interaction.guild.fetch()
+
             await client.functions.gameStats({ 
                 data: client.data, 
-                gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
+                gameId,
                 guildOrChat: {
                     type: "guild",
-                    data: await interaction.guild
+                    data: guild
                 },
                 plateform: "discord", 
-                user1: await userData,
-                user2: await opponentData,
+                user1: userData,
+                user2: opponentData,
                 gameName: "puissance4", 
-                winnerId: await winner.id
+                winnerId: winner.id
             })
 
             await msg.edit({
@@ -328,16 +331,19 @@ async function startGame({ i18n, interaction, msg, button, opponent, starter, cl
             await collector.stop()
             await msg.reactions.removeAll()
 
+            const gameId = await client.functions.genGameId({ gameName: "puissance4", length: 30 })
+            const guild = await interaction.guild.fetch()
+
             await client.functions.gameStats({ 
                 data: client.data, 
-                gameId: await client.functions.genGameId({ gameName: "puissance4", length: 30 }),
+                gameId,
                 guildOrChat: {
                     type: "guild",
-                    data: await interaction.guild
+                    data: guild
                 },
                 plateform: "discord", 
-                user1: await userData,
-                user2: await opponentData,
+                user1: userData,
+                user2: opponentData,
                 gameName: "puissance4", 
                 winnerId: "equality"
             })

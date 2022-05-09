@@ -29,7 +29,7 @@
                     </div>
                     <div class="play-ano-container text-center">
                         <div class="mx-auto">
-                            <input type="text" placeholder="Pseudonyme" class="my-3 p-2 focus:outline-none inline-block dark:bg-gray-secondary bg-white-secondary dark:text-white" id="play-ano-username" value="<%= req.session.username ?? '' %>">
+                            <input type="text" placeholder="<%= res.__("dashboard.join.username") %>" class="my-3 p-2 focus:outline-none inline-block dark:bg-gray-secondary bg-white-secondary dark:text-white" id="play-ano-username" value="<%= req.session.username ?? '' %>">
                             <div class="text-green text-4xl my-auto ml-1 hidden w-10 h-10" id="play-ano-success">
                                 <i class="fa-solid fa-check w-full h-full"></i>
                             </div>

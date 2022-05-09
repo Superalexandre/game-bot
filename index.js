@@ -49,9 +49,9 @@ async function init() {
 
             clients.discord = result
         } catch (error) {
-            logger.error(error, { plateform: "discord" })
+            await logger.error(error, { plateform: "discord" })
         }
-    } else logger.warn("Le bot discord n'est pas lancé", { plateform: "Discord" })
+    } else await logger.warn("Le bot discord n'est pas lancé", { plateform: "Discord" })
 
     if (config.instagram.start) {
         try {
@@ -59,13 +59,13 @@ async function init() {
 
             clients.insta = result
         } catch (error) {
-            logger.error(error, { plateform: "instagram" })
+            await logger.error(error, { plateform: "instagram" })
         }
-    } else logger.warn("Le bot instagram n'est pas lancé", { plateform: "Instagram" })
+    } else await logger.warn("Le bot instagram n'est pas lancé", { plateform: "Instagram" })
 
     if (config.dashboard.start) {
         await dashboardInit({ data, clients })
-    } else logger.warn("Le dashboard n'est pas lancé", { plateform: "Dashboard" })
+    } else await logger.warn("Le dashboard n'est pas lancé", { plateform: "Dashboard" })
 }
 
 init()

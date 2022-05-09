@@ -35,7 +35,7 @@
                                 </div>
                                 <div class="play-ano-container hidden">
                                     <div class="flex">
-                                        <input type="text" placeholder="Pseudonyme" class="my-3 p-2 focus:outline-none inline-block dark:bg-gray-primary bg-white-secondary dark:text-white" id="play-ano-username" value="<%= req.session.username ?? '' %>">
+                                        <input type="text" placeholder="<%= res.__("dashboard.createGame.username") %>" class="my-3 p-2 focus:outline-none inline-block dark:bg-gray-primary bg-white-secondary dark:text-white" id="play-ano-username" value="<%= req.session.username ?? '' %>">
                                         <div class="text-green text-4xl my-auto ml-1 hidden w-10 h-10" id="play-ano-success">
                                             <i class="fa-solid fa-check w-full h-full"></i>
                                         </div>
@@ -83,7 +83,7 @@
                         const game = this.id
 
                         const title = document.querySelector("#select-account-title")
-                        title.innerHTML = game
+                        title.textContent = game
 
                         document.querySelector(".select-account").classList.remove("hidden")
                     })
@@ -123,7 +123,7 @@
                 document.querySelector("#play-account").addEventListener("click", function() {
                     createGame({ 
                         type: "account",
-                        game: document.querySelector("#select-account-title").innerHTML
+                        game: document.querySelector("#select-account-title").textContent
                     })
                 })
 
@@ -131,7 +131,7 @@
                     createGame({
                         type: "ano",
                         username: document.querySelector("#play-ano-username").value,
-                        game: document.querySelector("#select-account-title").innerHTML
+                        game: document.querySelector("#select-account-title").textContent
                     })
                 })
             }

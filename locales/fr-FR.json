@@ -590,7 +590,8 @@
 			"playWithAccount": "Jouer avec votre compte",
 			"playWithAccountNeedLogin": "Jouer avec votre compte (Se connecter)",
 			"playAnonymous": "Jouer anonymement",
-			"back": "Retour"
+			"back": "Retour",
+			"username": "Pseudonyme"
 		},
 		"profile": {
 			"globalInfo": "Informations globales",
@@ -693,7 +694,8 @@
 			"playWithAccount": "Jouer avec votre compte",
 			"playWithAccountNeedLogin": "Jouer avec votre compte (Se connecter)",
 			"playAnonymous": "Jouer anonymement",
-			"back": "Retour"
+			"back": "Retour",
+			"username": "Pseudonyme"
 		},
 		"play": {
 			"noGameFoundCreate": "Aucune partie trouvé, essayez d'en créer une",

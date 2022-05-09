@@ -34,7 +34,7 @@ async function createAccount({ data, lang = "fr-FR", plateformData = {} }) {
 
     if (!account) return { success: false, error: true, message: `Account ${id} didn't create` }
 
-    logger.log(`Nouveau compte sur ${plateformData[0].plateform} (${id})`)
+    await logger.log(`Nouveau compte sur ${plateformData[0].plateform} (${id})`)
 
     return { success: true, error: false, account }
 }
@@ -46,7 +46,7 @@ async function mergeAccount({ data, id1, id2 }) {
     const account2 = await data.users.get(id2)
 
     if (!account1 || !account2) {
-        logger.log(`Merge account failed: ${id1} or ${id2} not found`)
+        await logger.log(`Merge account failed: ${id1} or ${id2} not found`)
      
         return { success: false, error: true, message: "Provided id is not in database" }
     }
@@ -60,7 +60,7 @@ async function mergeAccount({ data, id1, id2 }) {
 
     await data.users.delete(deletedAccount.accountId)
 
-    logger.log(`Merge account ${id1} + ${id2}`)
+    await logger.log(`Merge account ${id1} + ${id2}`)
 
     return { success: true, error: false, newAccount }
 }

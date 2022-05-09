@@ -191,17 +191,21 @@ async function startGame({ client, interaction, i18n, word }) {
                 return
             })
 
+            const gameId = await client.functions.genGameId({ gameName: "pendu", length: 30 })
+            const guild = await interaction.guild.fetch()
+            const user = await interaction.user.fetch()
+
             await client.functions.gameStats({ 
                 data: client.data, 
-                gameId: await client.functions.genGameId({ gameName: "pendu", length: 30 }),
+                gameId,
                 guildOrChat: {
                     type: "guild",
-                    data: await interaction.guild
+                    data: guild
                 },
                 plateform: "discord", 
-                user1: await interaction.user,
+                user1: user,
                 gameName: "pendu", 
-                winnerId: await interaction.user.id
+                winnerId: user.id
             })
 
             return await msg.edit({
@@ -217,15 +221,19 @@ async function startGame({ client, interaction, i18n, word }) {
                 return
             })
 
+            const gameId = await client.functions.genGameId({ gameName: "pendu", length: 30 })
+            const guild = await interaction.guild.fetch()
+            const user = await interaction.user.fetch()
+
             await client.functions.gameStats({ 
                 data: client.data, 
-                gameId: await client.functions.genGameId({ gameName: "pendu", length: 30 }),
+                gameId,
                 guildOrChat: {
                     type: "guild",
-                    data: await interaction.guild
+                    data: guild
                 },
                 plateform: "discord", 
-                user1: await interaction.user,
+                user1: user,
                 gameName: "pendu", 
                 winnerId: "loose"
             })

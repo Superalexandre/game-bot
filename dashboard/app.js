@@ -123,7 +123,7 @@ async function init({ data, clients }) {
         .get("/profile/settings", checkAccount, async(req, res) => {
             if (req.query && req.query.lang) {
                 if (!i18n.getLocales().includes(req.query.lang)) {
-                    req.logger.error("Invalid lang")
+                    await req.logger.error("Invalid lang")
 
                     req.session.messages.push({
                         type: "warn",
@@ -361,10 +361,10 @@ async function init({ data, clients }) {
         })
         .use("/api", routerApi)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-        .use((error, req, res, next) => {
+        .use(async(error, req, res, next) => {
             if (!error) return
 
-            logger.error(error.stack ?? error.toString())
+            await logger.error(error.stack ?? error.toString())
 
             res?.status(error.statusCode ?? 500)?.render("error", {
                 req, res, i18n,
@@ -431,6 +431,19 @@ async function init({ data, clients }) {
                 })
             }
 
+            const texts = {
+                gameOver: socket.i18n.__("dashboard.connect4.gameOver"),
+                youJoin: socket.i18n.__("dashboard.connect4.youJoin"),
+                asJoin: socket.i18n.__("dashboard.connect4.asJoin"),
+                yourTurn: socket.i18n.__("dashboard.connect4.yourTurn"),
+                otherTurn: socket.i18n.__("dashboard.connect4.otherTurn"),
+                gameRestart: socket.i18n.__("dashboard.connect4.gameRestart"),
+                youAskRematch: socket.i18n.__("dashboard.connect4.youAskRematch"),
+                otherAskRematch: socket.i18n.__("dashboard.connect4.otherAskRematch"),
+                youWin: socket.i18n.__("dashboard.connect4.youWin"),
+                youLoose: socket.i18n.__("dashboard.connect4.youLoose")
+            }
+
             const player = {
                 id: socket.id,
                 rematch: false,
@@ -451,7 +464,8 @@ async function init({ data, clients }) {
                 canStart: game.users.length === 1,
                 isTurnId: game.users.find(player => player.isTurn)?.id,
                 player,
-                playerNumber: game.users.length + 1
+                playerNumber: game.users.length + 1,
+                texts
             })
 
             socket.on("rematch", async function(socketRematchData) {
@@ -515,21 +529,24 @@ async function init({ data, clients }) {
                     }
                     
                     io.in(socketRematchData.gameId).emit("rematch", {
-                        type: "started"
+                        type: "started",
+                        texts
                     })
 
                     return io.in(socketRematchData.gameId).emit("play", {
                         gameId: socketRematchData.gameId,
                         player: firstUser,
                         isTurn: firstUser.id,
-                        board
+                        board,
+                        texts
                     })
                 }
 
                 if (!player.rematch) {
                     io.in(socketRematchData.gameId).emit("rematch", {
                         type: "ask",
-                        player  
+                        player,
+                        texts
                     })
                 }
             })
@@ -593,7 +610,8 @@ async function init({ data, clients }) {
                         column: socketPlayData.column,
                         win: true,
                         winnerId: check.winnerUser.id,
-                        finish: true
+                        finish: true,
+                        texts
                     })
                 
                     await data.games.set(socketPlayData.gameId, true, "finished")
@@ -618,7 +636,8 @@ async function init({ data, clients }) {
                         board: result.board,
                         column: socketPlayData.column,
                         allFill: true,
-                        finish: true
+                        finish: true,
+                        texts
                     })
 
                     await data.games.set(socketPlayData.gameId, true, "finished")
@@ -660,7 +679,8 @@ async function init({ data, clients }) {
                 io.in(socketPlayData.gameId).emit("play", {
                     player,
                     isTurn: playerTurnId,
-                    board: result.board
+                    board: result.board,
+                    texts
                 })
             })
         })
