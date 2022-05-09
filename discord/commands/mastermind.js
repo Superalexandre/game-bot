@@ -129,16 +129,18 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
         id: interaction.user.id,
         username: interaction.user.username,
         color: [],
-        isGuessing: [],
-        life: 12
+        guess: [],
+        asGuess: [],
+        life: 2
     }
     
     let opponentData = {
         id: opponent.id,
         username: opponent.username,
         color: [],
-        isGuessing: [],
-        life: 12
+        guess: [],
+        asGuess: [],
+        life: 2
     }
 
     const select = new MessageButton()
@@ -159,7 +161,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
     }
     const personalText = (colors) => `Vous devez choisir une suite de 5 couleurs, vous avez choisi ${colors.map(color => colorsEmote[color]).join("")} (Reste ${5 - colors.length} couleurs)`
 
-    const msgColor = await msg.channel.send({
+    const msgColor = await msg.edit({
         content: text(),
         components: [ row ]
     })
@@ -255,30 +257,41 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
         data.color.push(color)
         await btn?.deferUpdate()
 
-        await btn.editReply({
-            content: personalText(data.color),
-            ephemeral: true,
-            components: [ colors, backRow ]
-        })
-
         if (opponentData.color.length === 5 && userData.color.length === 5) {
             await collector.stop()
             collectorSelect.stop()
+
+            await btn.editReply({
+                content: `Votre choix a bien été pris en compte\n\n${data.color.map(color => colorsEmote[color]).join("")}`,
+                ephemeral: true,
+                components: []
+            })
 
             return startGame({ i18n, interaction, msg, opponent, client, userData, opponentData, uniqueId })
         }
 
         if (data.color.length === 5) {
+            await btn.editReply({
+                content: `Votre choix a bien été pris en compte\n\n${data.color.map(color => colorsEmote[color]).join("")}`,
+                ephemeral: true,
+                components: []
+            })
+
             return await msgColor.edit({
                 content: text(),
                 components: [ row ]
             })
         }
+
+        await btn.editReply({
+            content: personalText(data.color),
+            ephemeral: true,
+            components: [ colors, backRow ]
+        })
     })
 }
 
 async function startGame({ i18n, interaction, msg, opponent, client, userData, opponentData, uniqueId }) {
-    console.log("start game")
     const guess = new MessageButton()
         .setStyle("PRIMARY")
         .setLabel("Proposer la suite de couleurs")
@@ -286,6 +299,16 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
 
     const row = new MessageActionRow().addComponents(guess)
     
+    
+    const colorsEmote = {
+        "red": "🟥", 
+        "green": "🟩", 
+        "blue": "🟦", 
+        "gray": "⬜"
+    }
+
+    const personalText = (data) => `${data.asGuess.map(guess => `${guess.guess.map(color => colorsEmote[color]).join("")} - ${guess.correct}/5`).join("\n")}\nVous devez devenier la suite de 5 couleurs que votre adversaire vous a imposer, vous avez choisi ${data.guess.map(color => colorsEmote[color]).join("")} (Reste ${5 - data.guess.length} couleurs) vous avez encore ${data.life} vies`
+
     const guessMessage = await msg.edit({
         content: "La partie commence !",
         components: [ row ]
@@ -332,8 +355,10 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
 
         if (button.customId !== `game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_guess`) return
 
+        const data = button.user.id === interaction.user.id ? userData : opponentData
+
         await button.reply({
-            content: "Proposez une suite de couleurs",
+            content: personalText(data),
             ephemeral: true,
             components: [ colors, backRow ]
         })
@@ -348,7 +373,7 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
         const colorsName = ["red", "blue", "green", "gray", "back"]
         if (ids[1] !== "mastermind" || !colorsName.includes(color)) return
 
-        const isGuess = ids[ids.length - 1] === "guess"
+        const isGuess = ids[ids.length - 2] === "guess"
         if (!isGuess) return
 
         const gameId = ids[ids.length - 3]
@@ -362,12 +387,22 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
         const data = btn.user.id === interaction.user.id ? userData : opponentData
         const dataO = btn.user.id === interaction.user.id ? opponentData : userData
 
-        const colorsEmote = {
-            "red": "🟥", 
-            "green": "🟩", 
-            "blue": "🟦", 
-            "gray": "⬜"
+                     
+        if (color === "back") {
+            // remove last color
+            data.guess.pop()
+
+            await btn?.deferUpdate()
+                
+            return await btn.editReply({
+                content: personalText(data),
+                ephemeral: true,
+                components: [ colors, backRow ]
+            })
         }
+
+        data.guess.push(color)
+        await btn?.deferUpdate()
 
         if (data.guess.length >= 5) {
             // Check guess with colors and what is wrong
@@ -379,73 +414,67 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
 
             for (let i = 0; i < guess.length; i++) {
                 if (guess[i] === color[i]) correct++
-                else if (color.includes(guess[i])) wrong.push(i)
+                else wrong.push(i)
             }
 
             if (correct === 5) {
                 await collector.stop()
                 collectorGuess.stop()
 
-                await btn.reply({
+                await btn.editReply({
                     content: "Vous avez gagné !",
+                    components: [],
                     ephemeral: true
                 })
 
                 return msg.edit({
-                    content: `${btn.user.username} a gagné avec la suite ${data.color.map(color => colorsEmote[color])}\n${dataO.username} avait ${dataO.color.map(color => colorsEmote[color])}`,
+                    content: `${btn.user.username} a gagné avec la suite ${data.color.map(color => colorsEmote[color]).join("")}\n${dataO.username} avait ${dataO.color.map(color => colorsEmote[color]).join("")}`,
                     components: []
                 })
             }
 
+            data.asGuess.push({
+                guess: data.guess,
+                correct,
+                wrong
+            })
             data.guess = []
             data.life = data.life - 1
 
             if (data.life === 0) {
+                await btn.editReply({
+                    content: "Vous avez perdu !",
+                    components: [],
+                    ephemeral: true
+                })
+
                 if (dataO.life === 0) {
                     await collector.stop()
                     collectorGuess.stop()
                  
-                    await msg.edit({
+                    return await msg.edit({
                         content: "Tout les deux perdus",
                         components: []
                     })
                 }
 
-                return await btn.reply({
-                    content: "Vous avez perdu !",
-                    ephemeral: true
+                return await msg.edit({
+                    content: `${btn.user.username} a perdu avec la suite ${data.color.map(color => colorsEmote[color]).join("")}\nEn attente de ${dataO.username}`,
+                    components: [ row ]
                 })
             }
 
-            await btn.reply({
-                content: `Vous avez ${correct} couleurs correctes et ${wrong.length} couleurs incorrectes`,
-                ephemeral: true,
-                components: [ colors, backRow ]
-            })
-        } else {             
-            const personalText = (colors) => `Vous devez choisir une suite de 5 couleurs, vous avez choisi ${colors.map(color => colorsEmote[color]).join("")} (Reste ${5 - colors.length} couleurs)`
-   
-            if (color === "back") {
-                // remove last color
-                data.guess.pop()
-
-                await btn?.deferUpdate()
-                
-                return await btn.editReply({
-                    content: personalText(data.color),
-                    ephemeral: true,
-                    components: [ colors, backRow ]
-                })
-            }
-
-            data.guess.push(color)
-            await btn?.deferUpdate()
-
-            await btn.editReply({
-                content: personalText(data.color),
+            return await btn.editReply({
+                content: personalText(data),
                 ephemeral: true,
                 components: [ colors, backRow ]
             })
         }
+
+        await btn.editReply({
+            content: personalText(data),
+            ephemeral: true,
+            components: [ colors, backRow ]
+        })
     })
 }
