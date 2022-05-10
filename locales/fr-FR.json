@@ -7,6 +7,7 @@
 		"invalidOpponent": "L'adversaire saisi est invalide !"
 	},
 	"discord": {
+		"partyLaunched": "Votre partie a été lancée, vous pouvez supprimer ce message.",
 		"noDescProvided": "Aucune description fournie",
 		"noUseProvided": "Aucun usage fourni",
 		"noExampleProvided": "Aucun exemple fourni",
@@ -473,6 +474,22 @@
 				"versus": "contre",
 				"gameReplay": "Replay de la partie :"
 			}
+		},
+		"mastermind": {
+			"chooseColor": "Vous devez choisir la suite de couleur pour votre adversaire\n\n",
+			"asChoose": "✅ {{username}} a choisi",
+			"asNotChoose": "❌ {{username}} n'a pas encore choisi",
+			"needToChoose": "Vous devez choisir une suite de 4 couleurs, vous avez choisi {{colors}} (Reste {{colorsLeft}} couleurs)",
+			"alreadyChoose": "Vous avez déjà choisi 4 couleurs",
+			"choicesTaken": "Votre choix a bien été pris en compte\n\n{{colors}}",
+			"propose": "Proposer la suite de couleur",
+			"partyStart": "La partie commence !",
+			"youWin": "Vous avez gagné",
+			"youLoose": "Vous avez perdu",
+			"allLoose": "Vous avez tout les deux perdu",
+			"oneLoose": "{{username}} a perdu avec la suite {{colors}}\nEn attente de {{opponentUsername}}",
+			"oneWin": "{{username}} a gagné avec la suite {{colors}}\n{{opponentUsername}} avait {{opponentColors}}",
+			"startToSelect": "Commencer à choisir"
 		}
 	},
 	"insta": {
@@ -656,7 +673,8 @@
 			"gamePlayed": "Parties jouées",
 			"game": "parties",
 			"games": {
-				"pendu": "Pendu"
+				"pendu": "Pendu",
+				"morpion": "Morpion"
 			}
 		},
 		"connect4": {

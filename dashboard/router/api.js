@@ -19,6 +19,7 @@ export default router
 
         if (req.query.guild_id) return res.redirect(`/server/${req.query.guild_id}`)
 
+        req.session.messages = []
         const data = await req.data
         const parameters = new URLSearchParams()
                 
@@ -38,8 +39,6 @@ export default router
         const token = await response.json()
             
         if (token.error || !token.access_token) {
-            req.session.messages = []
-
             await req.session.messages.push({
                 type: "error",
                 message: res.__("dashboard.errors.invalidKey")
@@ -125,8 +124,6 @@ export default router
             ... { guilds } 
         }
 
-        // console.log(req.session.user)
-
         req.session.messages.push({
             type: "success",
             message: res.__("dashboard.errors.loginSuccess")
@@ -144,7 +141,7 @@ export default router
         res.redirect("/")
     })
     .get("/discord/logout", async(req, res) => {
-        req.session.destroy()
+        req.session.user = null
         req.user = null
             
         await req.session.messages.push({

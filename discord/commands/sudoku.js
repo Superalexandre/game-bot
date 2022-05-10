@@ -294,9 +294,7 @@ async function genInfo({ grid, emotes, interaction, highlightedLine, highlighted
 
             let color = "blue"
 
-            if (i === highlightedLine - 1 && highlightedLine && !highlightedColumn) {
-                color = "green"
-            } else if (i === highlightedLine - 1 && j === highlightedColumn - 1 && highlightedLine && highlightedColumn) {
+            if ((i === highlightedLine - 1 && highlightedLine && !highlightedColumn) || (i === highlightedLine - 1 && j === highlightedColumn - 1 && highlightedLine && highlightedColumn)) {
                 color = "green"
             }
 
@@ -304,7 +302,7 @@ async function genInfo({ grid, emotes, interaction, highlightedLine, highlighted
 
             color = type === "placed" ? "yellow" : type === "false" ? "red" : color
 
-            if (!isNaN(value)) value = parseInt(value)
+            if (!Number.isNaN(value)) value = parseInt(value)
 
             if (allFilled) allFilled = value !== "."
 
