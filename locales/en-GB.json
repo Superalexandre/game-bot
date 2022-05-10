@@ -548,7 +548,8 @@
 			"loginSuccess": "Successfully connected",
 			"relogin": "Your profile was not found (or has expired), please reconnect",
 			"logoutSucces": "Disconnected successfully",
-			"pageNotFound": "The page was not found, we have redirected you here"
+			"pageNotFound": "The page was not found, we have redirected you here",
+			"noGameFound": "No game found"
 		},
 		"plateform": {
 			"insta": "Instagram",
@@ -661,7 +662,6 @@
 		},
 		"connect4": {
 			"title": "Connect 4",
-			"noGameFound": "No game found",
 			"gameFull": "The game is full",
 			"alreadyInGame": "You are already in a game",
 			"notInThisGame": "You are not in this part",
