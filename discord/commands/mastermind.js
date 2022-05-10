@@ -150,7 +150,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
 
     const row = new MessageActionRow().addComponents(select) 
 
-    const text = () => `Vous devez choisir la suite de couleur pour votre adversaire\n\n${opponentData.color.length === 5 ? `✅ ${userData.username} a choisi` : `❌ ${userData.username} n'a pas encore choisi`}\n${userData.color.length === 5 ? `✅ ${opponentData.username} a choisi` : `❌ ${opponentData.username} n'a pas encore choisi`}`
+    const text = () => `${i18n.__("discord.mastermind.chooseColor")}${opponentData.color.length === 5 ? i18n.__("discord.mastermind.asChoose", { username: userData.username }) : i18n.__("discord.mastermind.asNotChoose", { username: userData.username })}\n${userData.color.length === 5 ? i18n.__("discord.mastermind.asChoose", { username: opponentData.username }) : i18n.__("discord.mastermind.asChoose", { username: opponentData.username })}`
     
 
     const colorsEmote = {
@@ -159,7 +159,8 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
         "blue": "🟦", 
         "gray": "⬜"
     }
-    const personalText = (colors) => `Vous devez choisir une suite de 5 couleurs, vous avez choisi ${colors.map(color => colorsEmote[color]).join("")} (Reste ${5 - colors.length} couleurs)`
+
+    const personalText = (colors) => i18n.__("discord.mastermind.needToChoose", { colors: colors.map(color => colorsEmote[color]).join(""), colorsLeft: 5 - colors.length })
 
     const msgColor = await msg.edit({
         content: text(),
@@ -237,7 +238,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
         const data = btn.user.id === interaction.user.id ? opponentData : userData
 
         if (data.color.length >= 5) return await btn.reply({
-            content: "Vous avez déjà choisi 5 couleurs",
+            content: i18n.__("discord.mastermind.alreadyChoose"),
             ephemeral: true
         })
 
@@ -262,7 +263,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
             collectorSelect.stop()
 
             await btn.editReply({
-                content: `Votre choix a bien été pris en compte\n\n${data.color.map(color => colorsEmote[color]).join("")}`,
+                content: i18n.__("discord.mastermind.choicesTaken", { colors: data.color.map(color => colorsEmote[color]).join("") }),
                 ephemeral: true,
                 components: []
             })
@@ -272,7 +273,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
 
         if (data.color.length === 5) {
             await btn.editReply({
-                content: `Votre choix a bien été pris en compte\n\n${data.color.map(color => colorsEmote[color]).join("")}`,
+                content: i18n.__("discord.mastermind.choicesTaken", { colors: data.color.map(color => colorsEmote[color]).join("") }),
                 ephemeral: true,
                 components: []
             })
@@ -294,7 +295,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
 async function startGame({ i18n, interaction, msg, opponent, client, userData, opponentData, uniqueId }) {
     const guess = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel("Proposer la suite de couleurs")
+        .setLabel(i18n.__("discord.mastermind.propose"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_guess`)
 
     const row = new MessageActionRow().addComponents(guess)
@@ -307,10 +308,11 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
         "gray": "⬜"
     }
 
+    // !
     const personalText = (data) => `${data.asGuess.map(guess => `${guess.guess.map(color => colorsEmote[color]).join("")} - ${guess.correct}/5`).join("\n")}\nVous devez devenier la suite de 5 couleurs que votre adversaire vous a imposer, vous avez choisi ${data.guess.map(color => colorsEmote[color]).join("")} (Reste ${5 - data.guess.length} couleurs) vous avez encore ${data.life} vies`
 
     const guessMessage = await msg.edit({
-        content: "La partie commence !",
+        content: i18n.__("discord.mastermind.partyStart"),
         components: [ row ]
     })
 
@@ -422,13 +424,13 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
                 collectorGuess.stop()
 
                 await btn.editReply({
-                    content: "Vous avez gagné !",
+                    content: i18n.__("discord.mastermind.youWin"),
                     components: [],
                     ephemeral: true
                 })
 
                 return msg.edit({
-                    content: `${btn.user.username} a gagné avec la suite ${data.color.map(color => colorsEmote[color]).join("")}\n${dataO.username} avait ${dataO.color.map(color => colorsEmote[color]).join("")}`,
+                    content: i18n.__("discord.mastermind.oneWin", { username: btn.user.username, colors: data.color.map(color => colorsEmote[color]).join(""), opponentUsername: dataO.username, opponentColors: dataO.color.map(color => colorsEmote[color]).join("") }),
                     components: []
                 })
             }
@@ -443,7 +445,7 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
 
             if (data.life === 0) {
                 await btn.editReply({
-                    content: "Vous avez perdu !",
+                    content: i18n.__("discord.mastermind.youLoose"),
                     components: [],
                     ephemeral: true
                 })
@@ -453,13 +455,13 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
                     collectorGuess.stop()
                  
                     return await msg.edit({
-                        content: "Tout les deux perdus",
+                        content: i18n.__("discord.mastermind.allLoose"),
                         components: []
                     })
                 }
 
                 return await msg.edit({
-                    content: `${btn.user.username} a perdu avec la suite ${data.color.map(color => colorsEmote[color]).join("")}\nEn attente de ${dataO.username}`,
+                    content: i18n.__("discord.mastermind.oneLoose", { username: btn.user.username, colors: data.color.map(color => colorsEmote[color]).join(""), opponentUsername: dataO.username }),
                     components: [ row ]
                 })
             }
