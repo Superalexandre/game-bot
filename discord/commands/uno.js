@@ -172,7 +172,7 @@ export default class Uno extends Command {
 
             if (user.id === interaction.user.id) return await interaction.channel.send(`Ne t'inquiete pas ${user.username}, tu es deja dans la partie pas besoin de te mentionner`)
         
-            if (!user) return await interaction.channel.send(`Aie le membre ${user.username} est invalide :(`)
+            if (!user) return await interaction.channel.send(`Aie un membre est invalide :(`)
         
             if (players.includes(user.id)) return await interaction.channel.send(`Le membre ${user.username} est deja dans la partie`)
         
@@ -1445,7 +1445,7 @@ async function switchMultipleTurn(playersData, turn, toAdd, clockwise, user) {
     let newTurnNumber = null
 
     for (let i = turn; i < j; i++) {
-        const newTurn = await switchTurn(playersData, turn, i, clockwise)
+        const newTurn = switchTurn(playersData, turn, i, clockwise)
     
         console.log("newTurn", newTurn)
 
