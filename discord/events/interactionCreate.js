@@ -47,7 +47,7 @@ export default class interactionCreate {
         })
 
         await interaction.reply({
-            content: "Votre partie a été lancé, vous pouvez supprimer ce message",
+            content: i18n.__("discord.partyLaunched"),
             ephemeral: true
         })
 
