@@ -150,7 +150,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
 
     const row = new MessageActionRow().addComponents(select) 
 
-    const text = () => `${i18n.__("discord.mastermind.chooseColor")}${opponentData.color.length === 5 ? i18n.__("discord.mastermind.asChoose", { username: userData.username }) : i18n.__("discord.mastermind.asNotChoose", { username: userData.username })}\n${userData.color.length === 5 ? i18n.__("discord.mastermind.asChoose", { username: opponentData.username }) : i18n.__("discord.mastermind.asNotChoose", { username: opponentData.username })}`
+    const text = () => `${i18n.__("discord.mastermind.chooseColor")}${opponentData.color.length === 4 ? i18n.__("discord.mastermind.asChoose", { username: userData.username }) : i18n.__("discord.mastermind.asNotChoose", { username: userData.username })}\n${userData.color.length === 4 ? i18n.__("discord.mastermind.asChoose", { username: opponentData.username }) : i18n.__("discord.mastermind.asNotChoose", { username: opponentData.username })}`
     
     const colorsEmote = {
         "red": "🟥", 
@@ -159,7 +159,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
         "gray": "⬜"
     }
 
-    const personalText = (colors) => i18n.__("discord.mastermind.needToChoose", { colors: colors.map(color => colorsEmote[color]).join(""), colorsLeft: 5 - colors.length })
+    const personalText = (colors) => i18n.__("discord.mastermind.needToChoose", { colors: colors.map(color => colorsEmote[color]).join(""), colorsLeft: 4 - colors.length })
 
     const msgColor = await msg.edit({
         content: text(),
@@ -236,7 +236,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
 
         const data = btn.user.id === interaction.user.id ? opponentData : userData
 
-        if (data.color.length >= 5) return await btn.reply({
+        if (data.color.length >= 4) return await btn.reply({
             content: i18n.__("discord.mastermind.alreadyChoose"),
             ephemeral: true
         })
@@ -257,7 +257,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
         data.color.push(color)
         await btn?.deferUpdate()
 
-        if (opponentData.color.length === 5 && userData.color.length === 5) {
+        if (opponentData.color.length === 4 && userData.color.length === 4) {
             await collector.stop()
             collectorSelect.stop()
 
@@ -270,7 +270,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
             return startGame({ i18n, interaction, msg, opponent, client, userData, opponentData, uniqueId })
         }
 
-        if (data.color.length === 5) {
+        if (data.color.length === 4) {
             await btn.editReply({
                 content: i18n.__("discord.mastermind.choicesTaken", { colors: data.color.map(color => colorsEmote[color]).join("") }),
                 ephemeral: true,
@@ -308,7 +308,7 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
     }
 
     // !
-    const personalText = (data) => `${data.asGuess.map(guess => `${guess.guess.map(color => colorsEmote[color]).join("")} - ${guess.correct}/5`).join("\n")}\nVous devez devenier la suite de 5 couleurs que votre adversaire vous a imposer, vous avez choisi ${data.guess.map(color => colorsEmote[color]).join("")} (Reste ${5 - data.guess.length} couleurs) vous avez encore ${data.life} vies`
+    const personalText = (data) => `${data.asGuess.map(guess => `${guess.guess.map(color => colorsEmote[color]).join("")} - ${guess.correct}/4`).join("\n")}\nVous devez devenier la suite de 4 couleurs que votre adversaire vous a imposer, vous avez choisi ${data.guess.map(color => colorsEmote[color]).join("")} (Reste ${4 - data.guess.length} couleurs) vous avez encore ${data.life} vies`
 
     const guessMessage = await msg.edit({
         content: i18n.__("discord.mastermind.partyStart"),
@@ -405,7 +405,7 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
         data.guess.push(color)
         await btn?.deferUpdate()
 
-        if (data.guess.length >= 5) {
+        if (data.guess.length >= 4) {
             // Check guess with colors and what is wrong
             const guess = data.guess
             const color = data.color
@@ -418,7 +418,7 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
                 else wrong.push(i)
             }
 
-            if (correct === 5) {
+            if (correct === 4) {
                 await collector.stop()
                 collectorGuess.stop()
 
