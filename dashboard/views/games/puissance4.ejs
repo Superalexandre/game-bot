@@ -30,6 +30,7 @@
             // Get the gameId from the url
             const gameId = window.location.pathname.split("/")[2]
             const socket = io()
+            let texts
 
             socket.on("connect", () => {
                 socket.emit("join", { 
@@ -47,7 +48,7 @@
                                     <i class="fas fa-exclamation-triangle"></i>
                                 </span>
                                 <span class="font-semibold mr-2 text-left flex-auto">
-                                    ${data.errorType === "notTurn" && data.finish ? data.texts["gameOver"] : data.message}
+                                    ${data.errorType === "notTurn" && data.finish ? texts["gameOver"] : data.message}
                                 </span>
                             </div>
                         </div>
@@ -57,6 +58,8 @@
             })
 
             socket.on("joined", (data) => {
+                if (!texts) texts = data.texts
+
                 // Add a notification
                 document.querySelector(".all-notif")
                     .insertAdjacentHTML("beforeend", `
@@ -66,7 +69,7 @@
                                     <i class="fas fa-check"></i>
                                 </span>
                                 <span class="font-semibold mr-2 text-left flex-auto">
-                                    ${socket.id === data.id ? data.texts["youJoin"] : `${data.player.username} ${data.texts["asJoin"]}`}
+                                    ${socket.id === data.id ? texts["youJoin"] : `${data.player.username} ${texts["asJoin"]}`}
                                 </span>
                             </div>
                         </div>
@@ -78,7 +81,7 @@
                 document.querySelector("#playerNumber").textContent = `${data.playerNumber}`
 
                 // Update player turn
-                if (data.canStart) document.querySelector(".result-turn").textContent = data.isTurnId === socket.id ? data.texts["yourTurn"] : data.texts["otherTurn"]
+                if (data.canStart) document.querySelector(".result-turn").textContent = data.isTurnId === socket.id ? texts["yourTurn"] : texts["otherTurn"]
 
                 refreshBoard(data.board)
             })
@@ -95,7 +98,7 @@
                                         <i class="fas fa-check"></i>
                                     </span>
                                     <span class="font-semibold mr-2 text-left flex-auto">
-                                        ${data.texts["gameRestart"]}
+                                        ${texts["gameRestart"]}
                                     </span>
                                 </div>
                             </div>
@@ -113,7 +116,7 @@
                                     <i class="fas fa-check"></i>
                                 </span>
                                 <span class="font-semibold mr-2 text-left flex-auto">
-                                    ${socket.id === data.player.id ? data.texts["youAskRematch"] : `${data.player.username} ${data.texts["otherAskRematch"]}`}
+                                    ${socket.id === data.player.id ? texts["youAskRematch"] : `${data.player.username} ${texts["otherAskRematch"]}`}
                                 </span>
                             </div>
                         </div>
@@ -139,7 +142,7 @@
                 } else rematchButton.classList.add("hidden")
 
                 if (data.win !== undefined && data.win) {
-                    document.querySelector(".result-turn").textContent = data.winnerId === socket.id ? data.texts["youWin"] : data.texts["youLoose"]
+                    document.querySelector(".result-turn").textContent = data.winnerId === socket.id ? texts["youWin"] : texts["youLoose"]
                 
                     return
                 }
@@ -153,7 +156,7 @@
                                         <i class="fas fa-check"></i>
                                     </span>
                                     <span class="font-semibold mr-2 text-left flex-auto">
-                                        ${data.texts["gameOver"]}
+                                        ${texts["gameOver"]}
                                     </span>
                                 </div>
                             </div>
@@ -163,7 +166,7 @@
                 }
 
                 // Update the player turn
-                document.querySelector(".result-turn").textContent = data.isTurn === socket.id ? data.texts["yourTurn"] : data.texts["otherTurn"]
+                document.querySelector(".result-turn").textContent = data.isTurn === socket.id ? texts["yourTurn"] : texts["otherTurn"]
             })
 
             async function refreshNotif() {
