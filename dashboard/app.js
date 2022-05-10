@@ -120,37 +120,41 @@ async function init({ data, clients }) {
                 req, res, i18n
             })
         })
-        .get("/profile/settings", checkAccount, async(req, res) => {
-            if (req.query && req.query.lang) {
-                if (!i18n.getLocales().includes(req.query.lang)) {
-                    await req.logger.error("Invalid lang")
+        .get("/lang", async(req, res) => {
+            if (!req.query || !req.query.lang) return res.redirect("/")
+           
+            const redirects = req.session.redirect
+            const redirect = redirects[redirects.length - 2]
 
-                    req.session.messages.push({
-                        type: "warn",
-                        message: res.__("dashboard.profile.invalidLang")
-                    })
-
-                    return res.redirect("/profile/settings")
-                }
-
-                res.cookie("lang", req.query.lang, {
-                    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-                    httpOnly: true,
-                    secure: true
-                })
-
-                await data.users.set(req.user.profileData.accountId, req.query.lang, "lang")
-
-                res.setLocale(req.query.lang)
+            if (!i18n.getLocales().includes(req.query.lang)) {
+                await req.logger.error("Invalid lang")
 
                 req.session.messages.push({
-                    type: "success",
-                    message: i18n.__("dashboard.profile.switchedLang")
+                    type: "warn",
+                    message: res.__("dashboard.profile.invalidLang")
                 })
 
-                return res.redirect("/profile/settings")
+                return res.redirect(redirect ?? "/")
             }
 
+            res.cookie("lang", req.query.lang, {
+                expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+                httpOnly: true,
+                secure: true
+            })
+
+            if (req.user && req.user.profileData) await data.users.set(req.user.profileData.accountId, req.query.lang, "lang")
+            
+            res.setLocale(req.query.lang)
+
+            req.session.messages.push({
+                type: "success",
+                message: res.__("dashboard.profile.switchedLang")
+            })
+
+            return res.redirect(redirect ?? "/")
+        })
+        .get("/profile/settings", checkAccount, async(req, res) => {
             res.render("settings", {
                 req,
                 res,
