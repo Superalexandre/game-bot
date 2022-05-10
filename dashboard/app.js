@@ -365,6 +365,11 @@ async function init({ data, clients }) {
                 game, id: req.params.id
             })
         })
+        .get("/monopoly", async(req, res) => {
+            res.render("games/monopoly", {
+                req, res, i18n
+            })
+        })
         .use("/api", routerApi)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
         .use(async(error, req, res, next) => {
