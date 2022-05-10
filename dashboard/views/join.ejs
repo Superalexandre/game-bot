@@ -110,7 +110,7 @@
                 const json = await response.json()
 
                 if (json.success) {
-                    window.location.href = `/play/${json.id}`
+                    window.location.href = `/play/` + json.id
                 } else {
                     console.log("ERROR :", json)
                 }
