@@ -9,3 +9,6 @@ config.js
 
 #Environment variables
 .env
+
+# Analytics
+.dccache
