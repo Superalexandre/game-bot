@@ -7,6 +7,7 @@
 		"invalidOpponent": "L'adversaire saisi est invalide !"
 	},
 	"discord": {
+		"partyLaunched": "Votre partie a été lancée, vous pouvez supprimer ce message.",
 		"noDescProvided": "Aucune description fournie",
 		"noUseProvided": "Aucun usage fourni",
 		"noExampleProvided": "Aucun exemple fourni",
@@ -478,8 +479,8 @@
 			"chooseColor": "Vous devez choisir la suite de couleur pour votre adversaire\n\n",
 			"asChoose": "✅ {{username}} a choisi",
 			"asNotChoose": "❌ {{username}} n'a pas encore choisi",
-			"needToChoose": "Vous devez choisir une suite de 5 couleurs, vous avez choisi {{colors}} (Reste {{colorsLeft}} couleurs)",
-			"alreadyChoose": "Vous avez déjà choisi 5 couleurs",
+			"needToChoose": "Vous devez choisir une suite de 4 couleurs, vous avez choisi {{colors}} (Reste {{colorsLeft}} couleurs)",
+			"alreadyChoose": "Vous avez déjà choisi 4 couleurs",
 			"choicesTaken": "Votre choix a bien été pris en compte\n\n{{colors}}",
 			"propose": "Proposer la suite de couleur",
 			"partyStart": "La partie commence !",
@@ -672,7 +673,8 @@
 			"gamePlayed": "Parties jouées",
 			"game": "parties",
 			"games": {
-				"pendu": "Pendu"
+				"pendu": "Pendu",
+				"morpion": "Morpion"
 			}
 		},
 		"connect4": {
