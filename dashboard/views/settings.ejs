@@ -70,8 +70,8 @@ border-2 p-5 border-red-dark m-5 dark:text-white text-dark
                         [type, lang, country] = elem.id.split("-")
 
 
-                        window.location.href = `/profile/settings?lang=${lang}-${country}`
-                    }
+                        window.location.href = `/lang?lang=${lang}-${country}`
+                    } else elem.checked = true
                 })
             })
         </script>
