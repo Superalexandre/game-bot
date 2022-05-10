@@ -131,7 +131,7 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
         color: [],
         guess: [],
         asGuess: [],
-        life: 2
+        life: 12
     }
     
     let opponentData = {
@@ -140,19 +140,18 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
         color: [],
         guess: [],
         asGuess: [],
-        life: 2
+        life: 12
     }
 
     const select = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel("Commencer a choisir")
+        .setLabel(i18n.__("discord.mastermind.startToSelect"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_select`)
 
     const row = new MessageActionRow().addComponents(select) 
 
-    const text = () => `${i18n.__("discord.mastermind.chooseColor")}${opponentData.color.length === 5 ? i18n.__("discord.mastermind.asChoose", { username: userData.username }) : i18n.__("discord.mastermind.asNotChoose", { username: userData.username })}\n${userData.color.length === 5 ? i18n.__("discord.mastermind.asChoose", { username: opponentData.username }) : i18n.__("discord.mastermind.asChoose", { username: opponentData.username })}`
+    const text = () => `${i18n.__("discord.mastermind.chooseColor")}${opponentData.color.length === 5 ? i18n.__("discord.mastermind.asChoose", { username: userData.username }) : i18n.__("discord.mastermind.asNotChoose", { username: userData.username })}\n${userData.color.length === 5 ? i18n.__("discord.mastermind.asChoose", { username: opponentData.username }) : i18n.__("discord.mastermind.asNotChoose", { username: opponentData.username })}`
     
-
     const colorsEmote = {
         "red": "🟥", 
         "green": "🟩", 
