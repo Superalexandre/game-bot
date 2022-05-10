@@ -101,7 +101,7 @@ export default class Tetris extends Command {
         topBoard = placed.board
 
         //* Preview
-        const yPreview = await calcBottom(playerData.x, playerData.y, playerData.piece, board)
+        const yPreview = calcBottom(playerData.x, playerData.y, playerData.piece, board)
 
         const preview = place(playerData.x, yPreview, playerData.piece, board, true)
         board = preview.board
