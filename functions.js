@@ -66,7 +66,7 @@ async function mergeAccount({ data, id1, id2 }) {
 }
 
 async function gameStats({ data, plateform, user1, user2, gameName, winnerId, gameId, guildOrChat }) {
-    if (!user1.id || (user2 && !user2.id)) return { success: false, error: true, message: "No id provided in user object" }
+    if (!user1.id || (!user2.id && user2)) return { success: false, error: true, message: "No id provided in user object" }
 
     const user1Data = await data.users.find(user => user.plateformData.find(data => data.plateform === plateform && data.data.id === user1.id))
     
