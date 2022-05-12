@@ -6,7 +6,6 @@ export default class Mastermind extends Command {
         super(client, {
             name: "mastermind",
             description: "Jouez au mastermind facilement !",
-            debug: true,
             options: [
                 {
                     type: "USER",
