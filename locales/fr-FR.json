@@ -565,7 +565,8 @@
 			"loginSuccess": "Connecté avec succès",
 			"relogin": "Votre profile n'a pas été trouver (ou a expirer), veuillez vous reconnecter",
 			"logoutSucces": "Deconnecté avec succès",
-			"pageNotFound": "La page n'a pas été trouvé, nous vous avons redirigez ici"
+			"pageNotFound": "La page n'a pas été trouvé, nous vous avons redirigez ici",
+			"noGameFound": "Aucune partie trouvé"
 		},
 		"plateform": {
 			"insta": "Instagram",
@@ -679,7 +680,6 @@
 		},
 		"connect4": {
 			"title": "Puissance 4",
-			"noGameFound": "Aucune partie trouvé",
 			"gameFull": "La partie est pleine",
 			"alreadyInGame": "Vous êtes déjà dans une partie",
 			"notInThisGame": "Vous n'êtes pas dans cette partie",
