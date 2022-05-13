@@ -12,10 +12,19 @@ export default class Pendu extends Command {
                     description: "Longueur du mot",
                     required: true,
                     choices: [
-                        [ "Facile (5 caractères)", "5" ], 
-                        [ "Normal (10 caractères)", "10" ], 
-                        [ "Difficile (15 caractères)", "15" ], 
-                        [ "Aléatoire", "random" ]
+                        {
+                            name: "Aléatoire",
+                            value: "random"
+                        }, {
+                            name: "Facile (5 lettres)",
+                            value: "5"
+                        }, {
+                            name: "Moyen (10 lettres)",
+                            value: "10"
+                        }, {
+                            name: "Difficile (15 lettres)",
+                            value: "15"
+                        }
                     ]
                 }
             ],
@@ -42,6 +51,8 @@ async function startGame({ client, interaction, i18n, word }) {
         content: i18n.__("discord.hangman.error.noWordFound"),
         ephemeral: true
     })
+
+    console.log(word)
 
     let lettersSaid = []
     let error = 0
@@ -151,7 +162,7 @@ async function startGame({ client, interaction, i18n, word }) {
 
         if (m.content === "stop") {
             await collector.stop()
-            await m.delete().catch(() => {
+            m.delete().catch(() => {
                 return
             })
 
@@ -169,7 +180,7 @@ async function startGame({ client, interaction, i18n, word }) {
         }
 
         if (lettersSaid.includes(m.content)) {
-            await m.delete().catch(() => {
+            m.delete().catch(() => {
                 return
             })
             errorText = i18n.__("discord.hangman.error.alreadySaid")
@@ -181,15 +192,12 @@ async function startGame({ client, interaction, i18n, word }) {
 
         errorText = ""
         lettersSaid.push(m.content)
-        await m.delete().catch(() => {
+        m.delete().catch(() => {
             return
         })
 
         if (genWord(word, lettersSaid) === word) {
             await collector.stop()
-            await m.delete().catch(() => {
-                return
-            })
 
             const gameId = await client.functions.genGameId({ gameName: "pendu", length: 30 })
             const guild = await interaction.guild.fetch()
@@ -200,10 +208,10 @@ async function startGame({ client, interaction, i18n, word }) {
                 gameId,
                 guildOrChat: {
                     type: "guild",
-                    data: guild
+                    data: guild.toJSON()
                 },
                 plateform: "discord", 
-                user1: user,
+                user1: user.toJSON(),
                 gameName: "pendu", 
                 winnerId: user.id
             })
@@ -217,9 +225,6 @@ async function startGame({ client, interaction, i18n, word }) {
 
         if (!pendu[error] && error >= 1) {
             await collector.stop()
-            await m.delete().catch(() => {
-                return
-            })
 
             const gameId = await client.functions.genGameId({ gameName: "pendu", length: 30 })
             const guild = await interaction.guild.fetch()
@@ -230,10 +235,10 @@ async function startGame({ client, interaction, i18n, word }) {
                 gameId,
                 guildOrChat: {
                     type: "guild",
-                    data: guild
+                    data: guild.toJSON()
                 },
                 plateform: "discord", 
-                user1: user,
+                user1: user.toJSON(),
                 gameName: "pendu", 
                 winnerId: "loose"
             })
