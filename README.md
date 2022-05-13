@@ -15,6 +15,7 @@
 
 ## Global
 
+- [ ] GameStats toujours l'erreur (edit le message avant)
 - [ ] Traduire mastermind
 - [ ] Echec
 - [ ] Page profile
