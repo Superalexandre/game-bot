@@ -116,25 +116,33 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId, ga
     }
 
     if (user2 && user2Data) { 
-        data.users.push(user2Data.accountId, {
-            gameName: gameName,
-            guildOrChat: guildOrChat,
-            gameId: gameId,
-            date: Date.now(),
-            plateform: plateform,
-            versus: user1,
-            result: winnerId === user1.id ? "loose" : winnerId === user2.id ? "win" : "equality"
-        }, "statistics")
+        try {
+            data.users.push(user2Data.accountId, {
+                gameName: gameName,
+                guildOrChat: guildOrChat,
+                gameId: gameId,
+                date: Date.now(),
+                plateform: plateform,
+                versus: user1,
+                result: winnerId === user1.id ? "loose" : winnerId === user2.id ? "win" : "equality"
+            }, "statistics")
+        } catch (error) {
+            await logger.error(error)
+        }
     }
 
-    data.games.set(gameId, {
-        gameName: gameName,
-        guildOrChat: guildOrChat,
-        date: Date.now(),
-        plateform: plateform,
-        beetween: user2 ? [user1, user2] : [user1],
-        result: winnerId
-    })
+    try {
+        data.games.set(gameId, {
+            gameName: gameName,
+            guildOrChat: guildOrChat,
+            date: Date.now(),
+            plateform: plateform,
+            beetween: user2 ? [user1, user2] : [user1],
+            result: winnerId
+        })
+    } catch (error) {
+        await logger.error(error)
+    }
 
     await logger.log(`Statistiques ${plateform} enregistrer (${gameId})`)
 
