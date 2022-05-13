@@ -96,10 +96,10 @@ async function checkCommand({ client }) {
                         }
 
                         for (let i = 0; i < choices.length; i++) {
-                            const name = choices[i][0]
-                            const value = choices[i][1]
+                            const name = choices[i].name
+                            const value = choices[i].value
 
-                            if (!commandChoices.some(choice => choice.name === name && choice.value === value)) sameOptions = false
+                            if (name !== commandChoices[i].name || value !== commandChoices[i].value) sameOptions = false
                         }
                     }
 
