@@ -167,27 +167,27 @@ async function selectColor({ i18n, interaction, msg, opponent, client }) {
 
     const red = new MessageButton()
         .setStyle("DANGER")
-        .setLabel("Rouge")
+        .setLabel(i18n.__("discord.mastermind.colors.red"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_red`)
 
     const blue = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel("Bleu")
+        .setLabel(i18n.__("discord.mastermind.colors.blue"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_blue`)
 
     const green = new MessageButton()
         .setStyle("SUCCESS")
-        .setLabel("Vert")
+        .setLabel(i18n.__("discord.mastermind.colors.green"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_green`)
 
     const gray = new MessageButton()
         .setStyle("SECONDARY")
-        .setLabel("Gris")
+        .setLabel(i18n.__("discord.mastermind.colors.gray"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_gray`)
         
     const back = new MessageButton()
         .setStyle("DANGER")
-        .setLabel("Supprimer")
+        .setLabel(i18n.__("discord.mastermind.delete"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_back`)
 
     const colors = new MessageActionRow().addComponents(red, blue, green, gray)
@@ -306,8 +306,12 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
         "gray": "⬜"
     }
 
-    // !
-    const personalText = (data) => `${data.asGuess.map(guess => `${guess.guess.map(color => colorsEmote[color]).join("")} - ${guess.correct}/4`).join("\n")}\nVous devez devenier la suite de 4 couleurs que votre adversaire vous a imposer, vous avez choisi ${data.guess.map(color => colorsEmote[color]).join("")} (Reste ${4 - data.guess.length} couleurs) vous avez encore ${data.life} vies`
+    const personalText = (data) => i18n.__("discord.mastermind.personalText", { 
+        guessList: data.asGuess.map(guess => `${guess.guess.map(color => colorsEmote[color]).join("")} - ${guess.correct}/4`).join("\n"), 
+        guess: data.guess.map(color => colorsEmote[color]).join(""),
+        guessLeft: 4 - data.guess.length, 
+        life: data.life 
+    })
 
     const guessMessage = await msg.edit({
         content: i18n.__("discord.mastermind.partyStart"),
@@ -316,27 +320,27 @@ async function startGame({ i18n, interaction, msg, opponent, client, userData, o
 
     const red = new MessageButton()
         .setStyle("DANGER")
-        .setLabel("Rouge")
+        .setLabel(i18n.__("discord.mastermind.colors.red"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_guess_red`)
 
     const blue = new MessageButton()
         .setStyle("PRIMARY")
-        .setLabel("Bleu")
+        .setLabel(i18n.__("discord.mastermind.colors.blue"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_guess_blue`)
 
     const green = new MessageButton()
         .setStyle("SUCCESS")
-        .setLabel("Vert")
+        .setLabel(i18n.__("discord.mastermind.colors.green"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_guess_green`)
 
     const gray = new MessageButton()
         .setStyle("SECONDARY")
-        .setLabel("Gris")
+        .setLabel(i18n.__("discord.mastermind.colors.gray"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_guess_gray`)
         
     const back = new MessageButton()
         .setStyle("DANGER")
-        .setLabel("Supprimer")
+        .setLabel(i18n.__("discord.mastermind.delete"))
         .setCustomId(`game_mastermind_${interaction.user.id}_${opponent.id}_${uniqueId}_guess_back`)
 
     const colors = new MessageActionRow().addComponents(red, blue, green, gray)
