@@ -53,11 +53,7 @@
                                 const gameDay = gameDate.getDate()
                                 const todayDay = new Date().getDate()
 
-                                if (gameDay - todayDay <= 6 && gameDay - todayDay >= 0) {
-                                    console.log(gameDay - todayDay)
-                                 
-                                    lastPlayedGames[todayDay - gameDay].push(game)
-                                }
+                                if (gameDay - todayDay <= 6 && gameDay - todayDay >= 0) lastPlayedGames[todayDay - gameDay].push(game)
 
                                 playedGame[game.gameName] = (playedGame[game.gameName] || 0) + 1
                                 

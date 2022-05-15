@@ -312,11 +312,11 @@ async function genInfo({ grid, emotes, interaction, highlightedLine, highlighted
             }
 
             let [value, type] = grid[i][j].split("-")
-
+            
             color = type === "placed" ? "yellow" : type === "false" ? "red" : color
-
-            if (!Number.isNaN(value)) value = parseInt(value)
-
+            
+            if (Number.isNaN(value)) value = parseInt(value)
+            
             if (allFilled) allFilled = value !== "."
 
             string += emotes[color][value]
