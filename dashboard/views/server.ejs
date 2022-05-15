@@ -16,11 +16,13 @@
 
             <%- include("utils/notif") %>
 
+            <% const games = req.data.games.filter(game => game && game.guildOrChat && game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id) %>
+
             <div>
                 <div class="text-center">
                     <div>
                         <p class="textTheme"><%= res.__("dashboard.server.infoServer") %> <%= server.name %> (<%= server.id %>)</p>
-                        <p class="textTheme"><%= req.data.games.filter(game => game && game.guildOrChat && game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id).size %> <%= res.__("dashboard.server.partyPlayed") %></p>
+                        <p class="textTheme"><%= games.size %> <%= res.__("dashboard.server.partyPlayed") %></p>
                     </div>
                     <div class="flex items-center justify-center m-5">
                         <div class="bgSepTheme h-0.5 w-11/12"></div>
@@ -41,8 +43,6 @@
                         let firstPlayedGame, lastPlayedGame, highestPlayedGame, smallerPlayedGame, highestPlayerGame, smallestPlayerGame
                         let maxParty = 0
 
-                        const games = req.data.games.filter(game => game && game.guildOrChat && game.guildOrChat.type === "guild" && game.guildOrChat.data.id === server.id)
-                        
                         if (games.size > 0) {
                             games.forEach(game => {
                                 if (firstPlayedGame > game.date || !firstPlayedGame) firstPlayedGame = game.date
@@ -53,14 +53,16 @@
                                 const gameDay = gameDate.getDate()
                                 const todayDay = new Date().getDate()
 
-                                if (gameDay - todayDay <= 6) lastPlayedGames[todayDay - gameDay].push(game)
+                                if (gameDay - todayDay <= 6 && gameDay - todayDay >= 0) {
+                                    console.log(gameDay - todayDay)
+                                 
+                                    lastPlayedGames[todayDay - gameDay].push(game)
+                                }
 
                                 playedGame[game.gameName] = (playedGame[game.gameName] || 0) + 1
                                 
                                 for (let i = 0; i < game.beetween.length; i++) {
                                     const { id, username } = game.beetween[i]
-
-
 
                                     if (!countPlayerGame[id]) countPlayerGame[id] = {}
                                     countPlayerGame[id].count = (countPlayerGame[id].count || 0) + 1
