@@ -48,6 +48,18 @@ export default class interactionCreate {
             ephemeral: true
         })
 
+        // Check permissions
+        const permissions = ["SEND_MESSAGES", "EMBED_LINKS", "ATTACH_FILES", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"]
+        let missingPermissions = []
+        for (const permission of permissions) {
+            if (!interaction.channel.permissionsFor(interaction.guild.me).has(permission)) missingPermissions.push(permission)
+        }
+
+        if (missingPermissions.length > 0) return interaction.reply({
+            content: `Je n'est pas les permissions : ${missingPermissions.join(", ")}`,
+            ephemeral: true
+        })
+
         await interaction.reply({
             content: i18n.__("discord.partyLaunched"),
             ephemeral: true
