@@ -37,15 +37,23 @@ import Canvas from "canvas"
 import { resolve } from "path"
 
 const players = [
-    { color: "yellow" }, 
-    { color: "pink" }, 
-    { color: "purple" }, 
-    { color: "black" }
+    { color: "#A4161A" }, 
+    { color: "#8AC926" }, 
+    { color: "#FFCA3A" }, 
+    { color: "#1982C4" }
 ]
+
+const cities = {
+    "USA": {
+        "Washington": {
+            prices: []
+        }
+    }
+}
 
 const board = [
     [{ caseNumber: 20, players: [], isCorner: true }, { caseNumber: 21, players: [] }, { caseNumber: 22, players: [] }, { caseNumber: 23, players: [] }, { caseNumber: 24, players: [] }, { caseNumber: 25, players: [] }, { caseNumber: 26, players: [] }, { caseNumber: 27, players: [] }, { caseNumber: 28, players: players, type: "city", cityData: { name: "New York" }, price: "250K" }, { caseNumber: 29, players: [], type: "city", cityData: { name: "Washington" }, price: "250K" }, { caseNumber: 30, players: [], isCorner: true }], // 1
-    [{ caseNumber: 19, players: players, type: "city", cityData: { name: "Mexico" }, price: "200K" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 31, players: [] }], // 2
+    [{ caseNumber: 19, players: [], type: "city", cityData: { name: "Mexico" }, price: "200K" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 31, players: [] }], // 2
     [{ caseNumber: 18, players: [], type: "luck" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 32, players: [] }], // 3
     [{ caseNumber: 17, players: [], type: "city", cityData: { name: "Cancun", price: "150K" } }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 33, players: [] }], // 4
     [{ caseNumber: 16, players: [] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 34, players: [], type: "city", cityData: { name: "Montreal" }, price: "300K" }], // 5
