@@ -18,6 +18,8 @@ export default class interactionCreate {
         let userData = await data.users.find(user => user.plateformData.find(data => data.plateform === "discord" && data.data.id === interaction.user.id))
 
         if (!userData) {
+            const user = interaction.user
+
             const newAccount = await client.functions.createAccount({
                 data,
                 lang: "fr-FR",
@@ -25,7 +27,7 @@ export default class interactionCreate {
                     {
                         plateform: "discord",
                         lastUpdate: Date.now(),
-                        data: interaction.user
+                        data: user.toJSON()
                     }
                 ]
             })
