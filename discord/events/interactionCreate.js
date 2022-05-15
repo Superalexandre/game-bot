@@ -18,6 +18,8 @@ export default class interactionCreate {
         let userData = await data.users.find(user => user.plateformData.find(data => data.plateform === "discord" && data.data.id === interaction.user.id))
 
         if (!userData) {
+            const user = interaction.user
+
             const newAccount = await client.functions.createAccount({
                 data,
                 lang: "fr-FR",
@@ -25,7 +27,7 @@ export default class interactionCreate {
                     {
                         plateform: "discord",
                         lastUpdate: Date.now(),
-                        data: interaction.user
+                        data: user.toJSON()
                     }
                 ]
             })
@@ -43,6 +45,18 @@ export default class interactionCreate {
 
         if (!cmd) return interaction.reply({
             content: i18n.__("error.unknowCommand"),
+            ephemeral: true
+        })
+
+        // Check permissions
+        const permissions = ["SEND_MESSAGES", "EMBED_LINKS", "ATTACH_FILES", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"]
+        let missingPermissions = []
+        for (const permission of permissions) {
+            if (!interaction.channel.permissionsFor(interaction.guild.me).has(permission)) missingPermissions.push(permission)
+        }
+
+        if (missingPermissions.length > 0) return interaction.reply({
+            content: `Je n'est pas les permissions : ${missingPermissions.join(", ")}`,
             ephemeral: true
         })
 

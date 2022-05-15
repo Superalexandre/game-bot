@@ -489,7 +489,15 @@
 			"allLoose": "Vous avez tout les deux perdu",
 			"oneLoose": "{{username}} a perdu avec la suite {{colors}}\nEn attente de {{opponentUsername}}",
 			"oneWin": "{{username}} a gagné avec la suite {{colors}}\n{{opponentUsername}} avait {{opponentColors}}",
-			"startToSelect": "Commencer à choisir"
+			"startToSelect": "Commencer à choisir",
+			"personalText": "{{guessList}}\nVous devez deviner la suite de 4 couleurs que votre adversaire vous a imposer, vous avez choisi {{guess}} (Reste {{guessLeft}} couleurs) vous avez encore {{life}} vies",
+			"delete": "Supprimer",
+			"colors": {
+				"red": "Rouge",
+				"green": "Vert",
+				"blue": "Bleu",
+				"gray": "Gris"
+			}
 		}
 	},
 	"insta": {

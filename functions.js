@@ -21,7 +21,7 @@ async function createAccount({ data, lang = "fr-FR", plateformData = {} }) {
 
     if (data.users.has(id)) return { success: false, error: true, message: `${id} already exists` }
 
-    await data.users.set(id, {
+    data.users.set(id, {
         accountId: id,
         createdTimestamp: Date.now(),
         lang,
@@ -40,6 +40,7 @@ async function createAccount({ data, lang = "fr-FR", plateformData = {} }) {
 }
 
 async function mergeAccount({ data, id1, id2 }) {
+    if (!id1 || !id2) return { success: false, error: true, message: "No id provided" }
     if (!data.users.has(id1) || !data.users.has(id2)) return { success: false, error: true, message: "Provided id is not in database" }
 
     const account1 = await data.users.get(id1)
@@ -54,11 +55,11 @@ async function mergeAccount({ data, id1, id2 }) {
     const newAccount = account1.createdTimestamp < account2.createdTimestamp ? account1 : account2
     const deletedAccount = account1.createdTimestamp < account2.createdTimestamp ? account2 : account1
     
-    if (deletedAccount.plateformData.length > 0) await data.users.push(newAccount.accountId, ...deletedAccount.plateformData, "plateformData")
-    if (deletedAccount.achievement.length > 0) await data.users.push(newAccount.accountId, ...deletedAccount.achievement, "achievement")
-    if (deletedAccount.statistics.length > 0) await data.users.push(newAccount.accountId, ...deletedAccount.statistics, "statistics")
+    if (deletedAccount.plateformData.length > 0) data.users.push(newAccount.accountId, ...deletedAccount.plateformData, "plateformData")
+    if (deletedAccount.achievement.length > 0) data.users.push(newAccount.accountId, ...deletedAccount.achievement, "achievement")
+    if (deletedAccount.statistics.length > 0) data.users.push(newAccount.accountId, ...deletedAccount.statistics, "statistics")
 
-    await data.users.delete(deletedAccount.accountId)
+    data.users.delete(deletedAccount.accountId)
 
     await logger.log(`Merge account ${id1} + ${id2}`)
 
@@ -66,14 +67,28 @@ async function mergeAccount({ data, id1, id2 }) {
 }
 
 async function gameStats({ data, plateform, user1, user2, gameName, winnerId, gameId, guildOrChat }) {
-    if (!user1.id || (user2 && !user2.id)) return { success: false, error: true, message: "No id provided in user object" }
+    if (!user1 && !user2) {
+        await logger.log(`Game stats failed: ${user1} or ${user2} not found`)
+        
+        return { success: false, error: true, message: "No user provided" }
+    }
+    
+    if (!user1.id || (user2 && !user2.id)) {
+        await logger.log(`Game stats failed (id): ${user1.id} or ${user2.id} not found`)
 
-    const user1Data = await data.users.find(user => user.plateformData.find(data => data.plateform === plateform && data.data.id === user1.id))
+        return { success: false, error: true, message: "No id provided in user object" }
+    }
+
+    const user1Data = await data.users.find(user => user.plateformData.find(userData => userData.plateform === plateform && userData.data.id === user1.id))
     
     let user2Data
-    if (user2) user2Data = await data.users.find(user => user.plateformData.find(data => data.plateform === plateform && data.data.id === user2.id))
+    if (user2) user2Data = await data.users.find(user => user.plateformData.find(userData => userData.plateform === plateform && userData.data.id === user2.id))
 
-    if (!user1Data || (!user2Data && user2)) return { success: false, error: true, message: "No account found" }
+    // if (!user1Data || !(!user2Data && user2)) {
+    //     await logger.log(`Statistiques sur ${plateform} (user 1 : ${user1.id} (${!user1Data}) user 2 : ${user2.id} (${(!user2Data && user2)})) non trouvées`)   
+        
+    //     return { success: false, error: true, message: "No account found" }
+    // }
 
     let user1Result 
     if (winnerId === "loose" || winnerId === user1.id) {
@@ -86,36 +101,50 @@ async function gameStats({ data, plateform, user1, user2, gameName, winnerId, ga
         user1Result = "equality"
     } else user1Result = "error"
 
-    await data.users.push(user1Data.accountId, {
-        gameName,
-        guildOrChat,
-        gameId,
-        date: Date.now(),
-        plateform,
-        versus: user2 ? user2 : "solo",
-        result: user1Result
-    }, "statistics")
-
-    if (user2 && user2Data) { 
-        await data.users.push(user2Data.accountId, {
-            gameName,
-            guildOrChat,
-            gameId,
+    try {
+        data.users.push(user1Data.accountId, {
+            gameName: gameName,
+            guildOrChat: guildOrChat,
+            gameId: gameId,
             date: Date.now(),
-            plateform,
-            versus: user1,
-            result: winnerId === user1.id ? "loose" : winnerId === user2.id ? "win" : "equality"
+            plateform: plateform,
+            versus: user2 ?? "solo",
+            result: user1Result
         }, "statistics")
+    } catch (error) {
+        await logger.error(error)
     }
 
-    await data.games.set(gameId, {
-        gameName,
-        guildOrChat,
-        date: Date.now(),
-        plateform,
-        beetween: user2 ? [user1, user2] : [user1],
-        result: winnerId
-    })
+    if (user2 && user2Data) { 
+        try {
+            data.users.push(user2Data.accountId, {
+                gameName: gameName,
+                guildOrChat: guildOrChat,
+                gameId: gameId,
+                date: Date.now(),
+                plateform: plateform,
+                versus: user1,
+                result: winnerId === user1.id ? "loose" : winnerId === user2.id ? "win" : "equality"
+            }, "statistics")
+        } catch (error) {
+            await logger.error(error)
+        }
+    }
+
+    try {
+        data.games.set(gameId, {
+            gameName: gameName,
+            guildOrChat: guildOrChat,
+            date: Date.now(),
+            plateform: plateform,
+            beetween: user2 ? [user1, user2] : [user1],
+            result: winnerId
+        })
+    } catch (error) {
+        await logger.error(error)
+    }
+
+    await logger.log(`Statistiques ${plateform} enregistrer (${gameId})`)
 
     return { success: true, error: false, user1Data, user2Data: user2Data ? user2Data : "" }
 }

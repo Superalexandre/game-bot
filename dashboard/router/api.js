@@ -8,9 +8,8 @@ const router = express.Router()
 
 export default router
     .get("/discord/invite", (req, res) => {
-        res.redirect("https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=http://localhost:3000/api/discord/callback")
+        res.redirect(`https://discord.com/oauth2/authorize?client_id=848272310557343795&scope=bot%20applications.commands&permissions=8&response_type=code&redirect_uri=${config.discord.callBackURL}`)
     })
-        
     .get("/discord/login", (req, res) => {
         res.redirect(config.discord.loginURL)
     })

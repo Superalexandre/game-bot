@@ -1,6 +1,6 @@
 import { Client } from "./structures/Client.js" 
 import { Intents } from "discord.js"
-import { readdir } from "fs"
+import { readdirSync } from "fs"
 import Logger from "../logger.js"
 
 const client = new Client({ 
@@ -16,42 +16,40 @@ export default async function init({ data }) {
     client.data = data
     client.logger = logger
 
-    readdir("./discord/events", async(err, files) => {
-        if (err) return client.logger.error(err)
-        if (files.length <= 0) return client.logger.error("Aucun evenement n'a été trouvé")
+    await client.logger.log("Connexion en cours...")
 
-        const events = files.filter((ext) => ext.split(".").pop() === "js")
+    const eventFiles = readdirSync("./discord/events")
+    for (const file of eventFiles) {
+        const isValidName = file.split(".").pop() === "js"
 
-        for (let i = 0; i < events.length; i++) {
-            const eventClass = await import("./events/" + events[i])
-            const event = await new eventClass.default(client)
-            const eventName = events[i].split(".")[0]
+        if (!isValidName) continue
 
-            await client.logger.log(`Event ${eventName} chargé`)
+        const eventClass = await import("./events/" + file)
+        const event = await new eventClass.default(client)
+        const eventName = file.split(".")[0]
 
-            client.on(eventName, (...args) => event.run(...args))
-        }
-    })
+        await client.logger.log(`Event ${eventName} chargé`)
 
-    readdir("./discord/commands", async(err, commands) => {
-        if (err) return client.logger.error(err)
+        client.on(eventName, (...args) => event.run(...args))
+    }
 
-        if (commands.length <= 0) return client.logger.error("Aucune commande n'a été trouvé")
+    const commandFiles = readdirSync("./discord/commands")
+    for (const file of commandFiles) {
+        const isValidName = file.split(".").pop() === "js"
 
-        for (let i = 0; i < commands.length; i++) {
-            const commandClass = await import("./commands/" + commands[i])
-            const command = await new commandClass.default(client)
+        if (!isValidName) continue
 
-            await client.logger.log(`Commande ${command.help.name} chargée`)
+        const commandClass = await import("./commands/" + file)
+        const command = await new commandClass.default(client)
 
-            client.commands.set(command.help.name, command)
-        }
-    })
+        await client.logger.log(`Commande ${command.help.name} chargée`)
+
+        client.commands.set(command.help.name, command)
+    }
 
     client.on("warn", async(message) => await client.logger.warn(message))
     client.on("error", async(message) => await client.logger.error(message))
 
-    await client.logger.log("Connexion en cours...")
     await client.login(client.config.discord.token)
     await client.logger.log("Connexion effectué")
 
