@@ -8,7 +8,7 @@ export default class Chess extends Command {
         super(client, {
             name: "chess",
             directory: import.meta.url,
-            enabled: false
+            debug: true
         })
     }
 
