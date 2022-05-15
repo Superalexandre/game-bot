@@ -15,8 +15,8 @@
 
 ## Global
 
-- [ ] GameStats toujours l'erreur (edit le message avant)
-- [ ] Traduire mastermind
+- [X] GameStats toujours l'erreur (edit le message avant)
+- [X] Traduire mastermind
 - [ ] Echec
 - [ ] Page profile
 - [ ] Monopoly
