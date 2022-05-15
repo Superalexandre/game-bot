@@ -15,6 +15,10 @@
 
 ## Global
 
+- [ ] Arreter les parties au bout de x temps
+    => Stocker le temps de la derniere interaction ?
+    => Stoper tout seul au bout de 1h ?
+- [ ] game-bot.tk/rules/GAME_NAME
 - [X] GameStats toujours l'erreur (edit le message avant)
 - [X] Traduire mastermind
 - [ ] Echec
