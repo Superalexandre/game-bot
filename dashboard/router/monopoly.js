@@ -2,23 +2,35 @@ import fs from "fs"
 import Canvas from "canvas"
 import { resolve } from "path"
 
-const players = [
+let players = [
     {
+        id: 1,
         username: "Player 1",
         money: 1000,
-        color: "#A4161A"
+        color: "#A4161A",
+        caseNumber: 0,
+        isTurn: true
     }, {
+        id: 2,
         username: "Player 2",
         money: 1000,
-        color: "#8AC926"
+        color: "#8AC926",
+        caseNumber: 0,
+        isTurn: false
     }, {
+        id: 3,
         username: "Player 3",
         money: 1000,
-        color: "#FFCA3A"
+        color: "#FFCA3A",
+        caseNumber: 0,
+        isTurn: false
     }, {
+        id: 4,
         username: "Player 4",
         money: 1000,
-        color: "#1982C4"
+        color: "#1982C4",
+        caseNumber: 0,
+        isTurn: false
     }
 ]
 
@@ -71,14 +83,14 @@ const cities = {
         name: "LasVegas",
         price: 0,
         prices: [],
-        houses: 0,
+        houses: 1,
         hotels: 0,
         owner: null
     }, {
         name: "Washington",
         price: 0,
         prices: [],
-        houses: 0,
+        houses: 2,
         hotels: 0,
         owner: null
     }],
@@ -136,11 +148,7 @@ const cities = {
     }, {
         name: "Paris",
         price: 0,
-        prices: [
-            "100000000 Milliards",
-            "2M",
-            "4M"
-        ],
+        prices: [],
         houses: 0,
         hotels: 0,
         owner: null
@@ -149,7 +157,7 @@ const cities = {
         name: "Mexico",
         price: 0,
         prices: [],
-        houses: 0,
+        houses: 2,
         hotels: 0,
         owner: null
     }, {
@@ -178,7 +186,7 @@ const cities = {
         name: "Salta",
         price: 0,
         prices: [],
-        houses: 0,
+        houses: 1,
         hotels: 0,
         owner: null
     }],
@@ -186,14 +194,14 @@ const cities = {
         name: "Montreal",
         price: 0,
         prices: [],
-        houses: 0,
+        houses: 1,
         hotels: 0,
         owner: null
     }, {
         name: "Quebec",
         price: 0,
         prices: [],
-        houses: 0,
+        houses: 2,
         hotels: 0,
         owner: null
     }],
@@ -214,24 +222,19 @@ const cities = {
     }]
 }
 
-const board = [
-    [{ caseNumber: 20, isCorner: true }, { caseNumber: 21 }, { caseNumber: 22 }, { caseNumber: 23, type: "city", cityData: cities["Portugal"][0] }, { caseNumber: 24, type: "luck" }, { caseNumber: 25, type: "city", cityData: cities["Portugal"][1] }, { caseNumber: 26, type: "montain", cityData: cities["Montain"][2] }, { caseNumber: 27, type: "city", cityData: cities["USA"][0] }, { caseNumber: 28, type: "city", cityData: cities["USA"][1] }, { caseNumber: 29, type: "city", cityData: cities["USA"][2] }, { caseNumber: 30, isCorner: true }], // 1
-    [{ caseNumber: 19, type: "city", cityData: cities["Mexico"][1] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 31 }], // 2
-    [{ caseNumber: 18, type: "luck" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 32 }], // 3
-    [{ caseNumber: 17, type: "city", cityData: cities["Mexico"][0] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 33, type: "montain", cityData: cities["Montain"][3] }], // 4
-    [{ caseNumber: 16, type: "montain", cityData: cities["Montain"][1] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 34, type: "city", cityData: cities["Canada"][0] }], // 5
-    [{ caseNumber: 15, type: "city", cityData: cities["Argentine"][2] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 35, type: "city", cityData: cities["Canada"][1] }], // 6
-    [{ caseNumber: 14, type: "city", cityData: cities["Argentine"][1] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 36, type: "luck" }], // 7
-    [{ caseNumber: 13, type: "city", cityData: cities["Argentine"][0] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 38, type: "city", cityData: cities["France"][0] }], // 8
-    [{ caseNumber: 12 }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 39, type: "tax" }], // 9
-    [{ caseNumber: 11 }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 40, type: "city", cityData: cities["France"][1] }], // 10
-    [{ type: "jail", caseNumber: 10, isCorner: true }, { caseNumber: 9 }, { caseNumber: 8 }, { caseNumber: 7, cityData: cities["Greece"][2], type: "city" }, { caseNumber: 6, cityData: cities["Greece"][1], type: "city" }, { caseNumber: 5, cityData: cities["Greece"][0], type: "city" }, { type: "montain", cityData: cities["Montain"][0], caseNumber: 4 }, { type: "city", cityData: cities["Italy"][2], caseNumber: 3 }, { type: "city", cityData: cities["Italy"][1], caseNumber: 2 }, { type: "city", cityData: cities["Italy"][0], caseNumber: 1 }, { type: "start", caseNumber: 0, isCorner: true, players: players }] // 11
+let board = [
+    [{ caseNumber: 16, isCorner: true }, { type: "empty" }, { type: "empty" }, { caseNumber: 17, type: "city", cityData: cities["Portugal"][0] }, { caseNumber: 18, type: "luck" }, { caseNumber: 19, type: "city", cityData: cities["Portugal"][1] }, { caseNumber: 20, type: "montain", cityData: cities["Montain"][2] }, { caseNumber: 21, type: "city", cityData: cities["USA"][0] }, { caseNumber: 22, type: "city", cityData: cities["USA"][1] }, { caseNumber: 23, type: "city", cityData: cities["USA"][2] }, { caseNumber: 24, isCorner: true }], // 1
+    [{ caseNumber: 15, type: "city", cityData: cities["Mexico"][1] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }], // 2
+    [{ caseNumber: 14, type: "luck" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }], // 3
+    [{ caseNumber: 13, type: "city", cityData: cities["Mexico"][0] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 25, type: "montain", cityData: cities["Montain"][3] }], // 4
+    [{ caseNumber: 12, type: "montain", cityData: cities["Montain"][1] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 26, type: "city", cityData: cities["Canada"][0] }], // 5
+    [{ caseNumber: 11, type: "city", cityData: cities["Argentine"][2] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 27, type: "city", cityData: cities["Canada"][1] }], // 6
+    [{ caseNumber: 10, type: "city", cityData: cities["Argentine"][1] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 28, type: "luck" }], // 7
+    [{ caseNumber: 9, type: "city", cityData: cities["Argentine"][0] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 29, type: "city", cityData: cities["France"][0] }], // 8
+    [{ type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 30, type: "tax" }], // 9
+    [{ type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 31, type: "city", cityData: cities["France"][1] }], // 10
+    [{ type: "jail", caseNumber: 8, isCorner: true }, { type: "empty" }, { type: "empty" }, { caseNumber: 7, cityData: cities["Greece"][2], type: "city" }, { caseNumber: 6, cityData: cities["Greece"][1], type: "city" }, { caseNumber: 5, cityData: cities["Greece"][0], type: "city" }, { type: "montain", cityData: cities["Montain"][0], caseNumber: 4 }, { type: "city", cityData: cities["Italy"][2], caseNumber: 3 }, { type: "city", cityData: cities["Italy"][1], caseNumber: 2 }, { type: "city", cityData: cities["Italy"][0], caseNumber: 1 }, { type: "start", caseNumber: 0, isCorner: true }] // 11
 ]
-
-/*
-- TODO :
-    - Ajouter les hotels/maisons
-*/
 
 async function genBoard(board) {
     const width = 440 * 10
@@ -247,8 +250,6 @@ async function genBoard(board) {
 
     // Quality
     ctx.imageSmoothingEnabled = false
-    // ctx.quality = "best"
-    // ctx.patternQuality = "best"
 
     // Background
     const background = await Canvas.loadImage("../../assets/board.svg")
@@ -271,7 +272,7 @@ async function genBoard(board) {
         for (let j = 0; j < row.length; j++) {
             const caseData = row[j]
 
-            if (["montain", "city"].includes(caseData.type)) {
+            if (!(caseData.isCorner && j === 10 && i === 10)) {
                 // Center text
                 if (i === 0) y += size + addTop
                 if (i === 10) x -= size, y -= addTop
@@ -283,7 +284,7 @@ async function genBoard(board) {
                 if (i === 0) x -= size / 2
                 if (j === 0) y += size / 2
                 if (i === 10) x += size / 2
-                if (j === 10) y -= size / 2
+                if (j === 10) y -= size / 2            
             }
 
             if (["montain", "city"].includes(caseData.type)) {
@@ -332,11 +333,15 @@ async function genBoard(board) {
                 ctx.restore()
 
                 // Check houses and hotels
-                if (caseData.cityData.houses > 0) {
-                    for (let k = 0; k < caseData.cityData.houses; k++) {
+                if (caseData.cityData.houses > 0 || caseData.cityData.hotels > 0) {
+                    let number = caseData.cityData.houses + caseData.cityData.hotels
+                    for (let k = 0; k < number; k++) {
                         if (caseData.cityData.houses === 4 && k !== 3) continue
 
-                        const path = caseData.cityData.houses === 4 ? "../../assets/house-3.svg" : "../../assets/house.svg"
+                        const path = 
+                            caseData.cityData.houses === 4 ? "../../assets/house-3.svg" : 
+                            caseData.cityData.houses >= 1 ? "../../assets/house.svg" : "../../assets/hotel.svg"
+                        
                         const image = fs.readFileSync(path, "utf8")
 
                         const img = new Canvas.Image()
@@ -345,28 +350,22 @@ async function genBoard(board) {
 
                         const imageSize = size / 4
 
-                        let copyX = x
-                        let copyY = y
+                        let copyX = x, copyY = y, center = 0
 
-                        if (i === 0) copyX += k * imageSize, copyY += addTop + imageSize
-                        if (i === 10) copyX -= k * imageSize, copyY -= addTop + imageSize
-                        if (j === 0) copyY -= k * imageSize, copyX += addTop + imageSize
-                        if (j === 10) copyY += k * imageSize, copyX -= addTop + imageSize
+                        if (caseData.cityData.houses === 1 || caseData.cityData.hotels === 1) center += imageSize / 2
+                        if (caseData.cityData.houses === 3) center -= imageSize / 2
+                        if (caseData.cityData.houses === 4) center -= imageSize * 2.5
+
+                        if (i === 0) copyX += k * imageSize + center, copyY += addTop + imageSize
+                        if (i === 10) copyX -= k * imageSize + center, copyY -= addTop + imageSize
+                        if (j === 0) copyY -= k * imageSize + center, copyX += addTop + imageSize
+                        if (j === 10) copyY += k * imageSize + center, copyX -= addTop + imageSize
 
                         ctx.save()
                         ctx.translate(copyX, copyY)
                         ctx.rotate(i === 0 ? Math.PI : j === 0 ? Math.PI / 2 : j === row.length - 1 ? -Math.PI / 2 : 0)
                         ctx.drawImage(img, 0, 0, imageSize, imageSize)
                         ctx.restore()
-
-                    }
-                }
-
-                if (caseData.cityData.hotels > 0) {
-                    for (let k = 0; k < caseData.cityData.hotels; k++) {
-                        const image = await Canvas.loadImage("../../assets/hotel.svg")
-
-                        ctx.drawImage(image, x - size / 2, y - size / 2, size, size)
                     }
                 }
             }
@@ -374,7 +373,10 @@ async function genBoard(board) {
             // Player
             const playersData = caseData.players || 0
 
-            if (caseData.isCorner) x -= size / 4, y -= size / 4
+            if (caseData.isCorner && i === 10 && j === 10) x -= size / 4, y -= size / 4
+            if (caseData.isCorner && i === 10 && j === 0) x -= size, y -= size + addTop 
+            if (caseData.isCorner && i === 0 && j === 0) y -= size * 3
+            if (caseData.isCorner && i === 0 && j === 10) x += size / 2
             if (!caseData.isCorner && i === 0) x -= size / 4, y -= size - addTop + 10
             if (!caseData.isCorner && j === 0) x -= size - addTop + 10, y -= size / 4
             if (!caseData.isCorner && i === 10) x -= size / 4, y += size / 4
@@ -405,4 +407,75 @@ async function genBoard(board) {
     fs.writeFileSync("../../assets/board-result.png", buffer)
 }
 
-genBoard(board)
+function randomNumber(min = 1, max = 6) {
+    return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function movePlayer({ player, board, number, strict = false }) {
+    let actualCase = player.caseNumber
+
+    // Remove from the old case
+    let oldCase = findCase(board, actualCase)
+    if (!oldCase.players) oldCase.players = []
+    oldCase.players = oldCase.players.filter(p => p.id !== player.id)
+
+    for (let i = 0; i < number; i++) {
+        actualCase += 1
+
+        if (actualCase > 31) actualCase = 0
+    }
+
+    if (strict) actualCase = number
+
+    // Add to the new case
+    let newCase = findCase(board, actualCase)
+
+    if (!newCase.players) newCase.players = []
+    newCase.players.push(player)
+
+    player.caseNumber = actualCase
+
+    return player
+}
+
+function findCase(board, number) {
+    let findedCase = null
+
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board[i].length; j++) {
+            if (board[i][j].caseNumber === number) {
+                findedCase = board[i][j]
+                break
+            }
+        }
+    }
+
+    if (!findedCase) {
+        console.log(`CaseNumber ${number} not found`)
+        
+        return board[10][10]
+    }
+
+    return findedCase
+}
+
+async function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function main() {
+    // Place the players
+    for (let i = 0; i < players.length; i++) movePlayer({ player: players[i], board, number: players[i].caseNumber, strict: true })
+
+    // Draw the board
+    genBoard(board)
+
+    for (let i = 1; i < 41; i++) {
+        await wait(3000)
+        console.log(`${i} / 41`)
+        movePlayer({ player: players[0], board, number: 1 })
+        genBoard(board)
+    }
+}
+
+main()
