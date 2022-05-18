@@ -22,7 +22,7 @@ export default class interactionCreate {
 
             const newAccount = await client.functions.createAccount({
                 data,
-                lang: "fr-FR",
+                lang: user.locale || "fr",
                 plateformData: [
                     {
                         plateform: "discord",
@@ -39,7 +39,7 @@ export default class interactionCreate {
 
         interaction.user.account = userData
 
-        i18n.setLocale(userData.lang ?? "fr-FR")
+        i18n.setLocale(interaction.locale ?? "fr-FR")
 
         const cmd = client.commands.get(interaction.commandName) || client.commands.get(client.aliases.get(interaction.commandName))
 
