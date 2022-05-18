@@ -16,6 +16,7 @@
 ## Global
 
 - [ ] Arreter les parties au bout de x temps
+    => **setTimeout**
     => Stocker le temps de la derniere interaction ?
     => Stoper tout seul au bout de 1h ?
 - [ ] game-bot.tk/rules/GAME_NAME
