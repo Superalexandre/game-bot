@@ -574,7 +574,8 @@
 			"relogin": "Votre profile n'a pas été trouver (ou a expirer), veuillez vous reconnecter",
 			"logoutSucces": "Deconnecté avec succès",
 			"pageNotFound": "La page n'a pas été trouvé, nous vous avons redirigez ici",
-			"noGameFound": "Aucune partie trouvé"
+			"noGameFound": "Aucune partie trouvé",
+			"thisGameIsNotSupported": "Ce jeu n'est pas supporté"
 		},
 		"plateform": {
 			"insta": "Instagram",
@@ -726,6 +727,11 @@
 		"play": {
 			"noGameFoundCreate": "Aucune partie trouvé, essayez d'en créer une",
 			"thisGameNotSupported": "Ce jeu n'est pas disponible"
+		},
+		"monopoly": {
+			"title": "Monopoly",
+			"gameFull": "La partie est pleine",
+			"alreadyInGame": "Vous êtes déjà dans une partie"
 		}
 	}
 }
