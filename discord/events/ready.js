@@ -171,7 +171,7 @@ async function checkValid({ client, botData, commands, commandName, commandData 
         command,
         commandName,
         commandData,
-        debug: sameDebug
+        debug: !sameDebug
     })
 }
 
