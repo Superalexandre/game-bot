@@ -67,7 +67,7 @@
                 </div>
                 <div class="group flex items-center justify-center">
                     <div class="grid grid-cols-1 bgTheme h-40 w-10/12 m-10 rounded-3xl group-hover:transition duration-500 ease-in-out group-hover:rounded-md dark:group-hover:bg-gray-third group-hover:bg-white-third">
-                        <a id="morpion" class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white hover:cursor-pointer"></a>
+                        <a class="createGame flex items-center justify-center dark:text-white hover:dark:text-black hover:text-white hover:cursor-pointer"></a>
                     </div>
                 </div>
                 <div class="flex items-center justify-center lg:col-span-3 col-span-1">
@@ -176,7 +176,7 @@
                 // Fetch post api
                 const data = { type, username, game }
 
-                const response = await fetch("/api/createGame", {
+                const response = await fetch(`/api/createGame/${game}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
