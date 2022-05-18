@@ -35,6 +35,8 @@ export default class Eval extends Command {
 
             if (output.includes(client.token)) output = output.replace(client.token, "Token is contain")
 
+            if (output.length > 1900) output = output.substring(0, 1900)
+
             interaction.editReply({
                 content: output,
                 code: "js",
