@@ -5,33 +5,53 @@ export default class Memory extends Command {
     constructor(client) {
         super(client, {
             name: "memory",
-            description: "Testez votre mémoire !",
+            name_localizations: {
+                "fr": "memory"
+            },
+            description: "Test your memory!",
+            description_localizations: {
+                "fr": "Testez votre mémoire !",
+                "en-GB": "Test your memory!"
+            },
             options: [
                 {
                     type: "STRING",
-                    name: "difficulte",
-                    description: "Saisissez la difficulté",
+                    name: "difficulty",
+                    name_localizations: {
+                        "fr": "difficulte",
+                        "en-GB": "difficulty"
+                    },
+                    description: "The difficulty of the memory test",
+                    description_localizations: {
+                        "fr": "La difficulté du test de mémoire",
+                        "en-GB": "The difficulty of the memory test"
+                    },
                     required: true,
                     choices: [
                         {
-                            name: "Facile",
+                            name: "Easy",
+                            name_localizations: {
+                                "fr": "Facile"
+                            },
                             value: "easy"
                         }, {
-                            name: "Moyen",
+                            name: "Medium",
+                            name_localizations: {
+                                "fr": "Moyen"
+                            },
                             value: "medium"
                         }, {
-                            name: "Difficile",
+                            name: "Hard",
+                            name_localizations: {
+                                "fr": "Difficile"
+                            },
                             value: "hard"
                         }
-                        /*
-                        [ "Facile", "easy" ],
-                        [ "Moyen", "medium" ],
-                        [ "Difficile", "hard" ]
-                        */
                     ]
                 }
             ],
-            directory: import.meta.url
+            directory: import.meta.url,
+            debug: true
         })
     }
 
@@ -59,7 +79,7 @@ export default class Memory extends Command {
             }
         }
 
-        const difficulty = options.getString("difficulte")
+        const difficulty = options.getString("difficulty")
 
         const row = difficultyType[difficulty].row
         const line = difficultyType[difficulty].line
