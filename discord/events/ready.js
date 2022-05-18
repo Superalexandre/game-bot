@@ -1,3 +1,5 @@
+import { ApplicationCommand } from "discord.js"
+
 export default class Ready {
     constructor(client) {
         this.client = client
@@ -130,33 +132,7 @@ async function checkValid({ client, botData, commands, commandName, commandData 
 
     // Check options
     let sameOptions = true
-    if (commandData.config.options) {
-        for (let i = 0; i < commandData.config.options.length; i++) {
-            const option = commandData.config.options[i]
-            const { name, description, required, choices } = option
-            const commandChoices = command.options[i]?.choices
-
-            if (commandChoices && choices) {
-                if (choices.length !== commandChoices.length) {
-                    sameOptions = false
-                    continue
-                }
-
-                for (let i = 0; i < choices.length; i++) {
-                    const name = choices[i].name
-                    const value = choices[i].value
-
-                    if (name !== commandChoices[i].name || value !== commandChoices[i].value) sameOptions = false
-                }
-            }
-
-            if (command.options[i].name === name && command.options[i].description === description && command.options[i].required === required) continue
-        
-            sameOptions = false
-            await client.logger.warn(`Commande ${commandName} : option non identique`)
-        }
-    }
-
+    if (!ApplicationCommand.optionsEqual(commandData.config.options ?? [], command.options ?? [])) sameOptions = false
     
     let { description, name } = command
     // Check if the command has same data
