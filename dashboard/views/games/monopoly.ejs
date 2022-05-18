@@ -10,165 +10,90 @@
     <body>
 
         <%- include("../utils/notif") %>
-
-        <button class="rotate">Tourner</button>
         <div class="flex h-screen flex-grow">
             <div class="board grid justify-center content-center m-auto">
-
+                <img alt="Plateau" class="hidden board-image h-[500px]">
             </div>
         </div>
             
+        <script src="/socket.io/socket.io.js"></script>
         <script>
-            let mainBoard = [
-                [{ caseNumber: 20, players: [], isCorner: true }, { caseNumber: 21, players: [] }, { caseNumber: 22, players: [] }, { caseNumber: 23, players: [], price: "100K" }, { caseNumber: 24, players: [] }, { caseNumber: 25, players: [] }, { caseNumber: 26, players: [] }, { caseNumber: 27, players: [] }, { caseNumber: 28, players: [] }, { caseNumber: 29, players: [] }, { caseNumber: 30, players: [], isCorner: true }], // 1
-                [{ caseNumber: 19, players: [], price: "100K" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 31, players: [] }], // 2
-                [{ caseNumber: 18, players: [] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 32, players: [] }], // 3
-                [{ caseNumber: 17, players: [] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 33, players: [] }], // 4
-                [{ caseNumber: 16, players: [] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 34, players: [], price: "100K" }], // 5
-                [{ caseNumber: 15, players: [] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 35, players: [] }], // 6
-                [{ caseNumber: 14, players: [] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 36, players: [] }], // 7
-                [{ caseNumber: 13, players: [] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 38, players: [] }], // 8
-                [{ caseNumber: 12, players: [] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 39, players: [] }], // 9
-                [{ caseNumber: 11, players: [] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { caseNumber: 40, players: [] }], // 10
-                [{ type: "jail", caseNumber: 10, players: [], isCorner: true }, { caseNumber: 9, players: [] }, { caseNumber: 8, players: [], type: "montain" }, { caseNumber: 7, players: [] }, { caseNumber: 6, players: [] }, { caseNumber: 5, players: [] }, { caseNumber: 4, players: [] }, { caseNumber: 3, players: [] }, { caseNumber: 2, players: [] }, { caseNumber: 1, players: [{ color: "yellow" }, { color: "pink" }, { color: "purple" }, { color: "black" }], price: 1000 }, { type: "start", caseNumber: 0, players: [{ color: "yellow" }, { color: "pink" }, { color: "purple" }, { color: "black" }], isCorner: true }] // 11
-            ]
+            // http://localhost:3000/play/27319
 
-            document.querySelector(".rotate").addEventListener("click", () => {
-                newBoard = rotate(mainBoard)
-                mainBoard = newBoard
-                refreshBoard(newBoard)
+            // Get the gameId from the url
+            const gameId = window.location.pathname.split("/")[2]
+            const socket = io()
+            let texts
+
+            socket.on("connect", () => {
+                socket.emit("join", { 
+                    gameId,
+                    username: "<%= req.session.username %>"
+                })
+            })
+            
+            socket.on("joined", (data) => {
+                if (!texts) texts = data.texts
+
+                // Add a notification
+                document.querySelector(".all-notif")
+                    .insertAdjacentHTML("beforeend", `
+                        <div class="notif notif-0 text-center ml-auto animate-rightToLeft">
+                            <div class="p-2 bg-green items-center text-white leading-none flex lg:inline-flex">
+                                <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span class="font-semibold mr-2 text-left flex-auto">
+                                    Quelqu'un a rejoint la partie    
+                                </span>
+                            </div>
+                        </div>
+                    `)
+                
+                refreshNotif()
+
+                // Add the board
+                document.querySelector(".board-image").classList.remove("hidden")
+                document.querySelector(".board-image").src = data.canvas
+
+                // console.log(data)
             })
 
-            refreshBoard(mainBoard)
+            socket.on("error", (data) => {
+                document.querySelector(".all-notif")
+                    .insertAdjacentHTML("beforeend", `
+                        <div class="notif notif-0 text-center ml-auto animate-rightToLeft">
+                            <div class="p-2 bg-red items-center text-white leading-none flex lg:inline-flex">
+                                <span class="flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </span>
+                                <span class="font-semibold mr-2 text-left flex-auto">
+                                    ${data.errorType === "notTurn" && data.finish ? texts["gameOver"] : data.message}
+                                </span>
+                            </div>
+                        </div>
+                    `)
 
-            function refreshBoard(board) {
-                // Reset board
-                document.querySelector(".board").innerHTML = ""
+                refreshNotif()
+            })
 
-                for (let i = 0; i < board.length; i++) {
-                    const row = board[i]
-
-                    const boardElement = document.querySelector(".board")
-                    const rowElement = document.createElement("div")
-                    rowElement.classList.add("row", "flex", i === 0 ? "h-20" : "h-10")
-
-                    for (let j = 0; j < board[i].length; j++) {
-                        const caseData = board[i][j]
-
-                        // Add case to the board
-                        const caseElement = document.createElement("div")
-                        caseElement.classList.add("caseElement")
-                        
-                        const caseContent = document.createElement("div")
-                        caseContent.classList.add("caseContent")
-
-                        if (i === 0 || j === 0 || j === 10) caseContent.classList.add("flex")
-                        if (j === 0) {
-                            caseContent.classList.add("flex-row-reverse")
-                        } else if (i === 0) {
-                            caseContent.classList.add("flex-col-reverse")
-                        } else {
-                            caseContent.classList.add("flex-row")
-                        }
-
-                        const caseContentBottom = document.createElement("div")
-                        caseContentBottom.classList.add("caseContentBottom", "flex")
-                        
-                        const caseContentTop = document.createElement("div")
-                        caseContentTop.classList.add("caseContentTop")
-
-                        const playersElement = document.createElement("div")
-                        playersElement.classList.add("playersElement", "grid", "grid-cols-2", "content-center")
-
-                        const casePrice = document.createElement("p")
-                        casePrice.classList.add("casePrice")
-
-                        if (caseData.isCorner) {
-                            // 
-                            // caseElement.classList.add(caseData.type === "start" ? "bg-green" : "bg-red")
-                            // caseElement.classList.add("h-20", "w-20")
-                            caseContentBottom.classList.add(caseData.type === "start" ? "bg-green" : "bg-red")
-                            caseContentBottom.classList.add("h-20", "w-20")
-                        } else if (caseData.type === "empty") {
-                            caseContentBottom.classList.add("bg-gray")
-                            caseContentBottom.classList.add("h-10", "w-10")
-                        } else {
-                            caseContentBottom.classList.add("bg-blue")
-                            caseContentBottom.classList.add(i === 0 || i === 10 ? "h-16" : "h-10")
-                            caseContentBottom.classList.add(j === 0 || j === 10 ? "w-16" : "w-10")
-
-                            caseContentTop.classList.add("bg-yellow")
-                            caseContentTop.classList.add(i === 0 || i === 10 ? "h-4" : "h-10")
-                            caseContentTop.classList.add(j === 0 || j === 10 ? "w-4" : "w-10")
-
-                            if (j === 0 || j === 10) {
-                                caseContentTop.classList.add("inline-block")
-                                caseContentBottom.classList.add("inline-block")
-                            }
-                        }
-
-                        if (caseData.price) {
-                            if (i === 0) {
-                                // -2.5rem = h-16
-                                casePrice.classList.add("rotate-180", "translate-y-[-2.5rem]", "translate-x-0")
-                            } else if (j === 0) {
-                                // 1rem = h-10
-                                casePrice.classList.add("rotate-90", "translate-y-0", "translate-x-[-1rem]")
-                            } else if (j === 10) {
-                                casePrice.classList.add("rotate-[270deg]", "translate-y-0", "translate-x-10")
-                            } else {
-                                casePrice.classList.add("mt-auto")
-                            }
-
-                            casePrice.innerHTML = caseData.price
-                        }
-
-                        // Add players to the case
-                        if (caseData.players && caseData.players.length > 0) {
-                            for (let k = 0; k < caseData.players.length; k++) {
-                                const player = caseData.players[k]
-
-                                const playerElement = document.createElement("div")
-                                playerElement.classList.add("playerElement", "h-4", "w-4", "rounded-full", "m-1")
-
-                                playerElement.style.backgroundColor = player.color
-                                // Set player position
-                                // playerElement.style.margin = `${k * 10}px 0 0 ${k * 10}px`
-
-                                playersElement.appendChild(playerElement)
-                            }
-                        }
-
-                        caseContent.appendChild(caseContentTop)
-                        caseContent.appendChild(caseContentBottom)
-                        caseContentBottom.appendChild(playersElement)
-                        caseContentBottom.appendChild(casePrice)
-                        caseElement.appendChild(caseContent)
-
-                        rowElement.appendChild(caseElement)
-                    }
-
-                    boardElement.appendChild(rowElement)
-                }
+            // Recieve when play
+            socket.on("play", (data) => {
+                console.log("Sa joue ici")
+            })
+            
+            async function refreshNotif() {
+                document.querySelectorAll(".notif").forEach(async(div, index) => {
+                    await sleep(5000 + index * 400)
+                    div.classList.add("animate-leftToRight")
+                    await sleep(2000)
+                    div.remove()
+                })
             }
 
-            function rotate(board) {
-                let result = Array.from(board[0], () => Array.from(board, () => false))
-                let newRow, newCol
-
-                for (let col = 0; col < board[0].length; col++) {
-                    for (let row = 0; row < board.length; row++) {
-                        newRow = board.length - row - 1
-                        newCol = col
-                    
-                        result[col][row] = board[newRow][newCol]
-                    }
-                }
-                
-                return result
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms))
             }
-
         </script>
-
     </body>
 </html>

@@ -1,6 +1,11 @@
 import fs from "fs"
 import Canvas from "canvas"
 import { resolve } from "path"
+import Logger from "../../logger.js"
+
+const logger = new Logger({
+    plateform: "Dashboard"
+})
 
 let players = [
     {
@@ -222,7 +227,7 @@ const cities = {
     }]
 }
 
-let board = [
+const board = [
     [{ caseNumber: 16, isCorner: true }, { type: "empty" }, { type: "empty" }, { caseNumber: 17, type: "city", cityData: cities["Portugal"][0] }, { caseNumber: 18, type: "luck" }, { caseNumber: 19, type: "city", cityData: cities["Portugal"][1] }, { caseNumber: 20, type: "montain", cityData: cities["Montain"][2] }, { caseNumber: 21, type: "city", cityData: cities["USA"][0] }, { caseNumber: 22, type: "city", cityData: cities["USA"][1] }, { caseNumber: 23, type: "city", cityData: cities["USA"][2] }, { caseNumber: 24, isCorner: true }], // 1
     [{ caseNumber: 15, type: "city", cityData: cities["Mexico"][1] }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }], // 2
     [{ caseNumber: 14, type: "luck" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }, { type: "empty" }], // 3
@@ -243,7 +248,7 @@ async function genBoard(board) {
     const fontSize = size * 2 / 10
     const addTop = fontSize + fontSize / 2
 
-    Canvas.registerFont(resolve("../../assets/fonts/Roboto/Roboto-Bold.ttf"), { family: "Roboto Bold" })
+    Canvas.registerFont(resolve("./assets/fonts/Roboto/Roboto-Bold.ttf"), { family: "Roboto Bold" })
 
     const canvas = Canvas.createCanvas(width, height)
     const ctx = canvas.getContext("2d")
@@ -252,7 +257,7 @@ async function genBoard(board) {
     ctx.imageSmoothingEnabled = false
 
     // Background
-    const background = await Canvas.loadImage("../../assets/board.svg")
+    const background = await Canvas.loadImage("./assets/board.svg")
     ctx.drawImage(background, 0, 0, width, height)
 
     // Draw at the center of the board the money of the player
@@ -339,8 +344,8 @@ async function genBoard(board) {
                         if (caseData.cityData.houses === 4 && k !== 3) continue
 
                         const path = 
-                            caseData.cityData.houses === 4 ? "../../assets/house-3.svg" : 
-                            caseData.cityData.houses >= 1 ? "../../assets/house.svg" : "../../assets/hotel.svg"
+                            caseData.cityData.houses === 4 ? "./assets/house-3.svg" : 
+                            caseData.cityData.houses >= 1 ? "./assets/house.svg" : "./assets/hotel.svg"
                         
                         const image = fs.readFileSync(path, "utf8")
 
@@ -402,9 +407,7 @@ async function genBoard(board) {
         }
     }
 
-    // Save the image
-    const buffer = canvas.toBuffer("image/jpeg")
-    fs.writeFileSync("../../assets/board-result.png", buffer)
+    return canvas.toDataURL()
 }
 
 function randomNumber(min = 1, max = 6) {
@@ -463,19 +466,74 @@ async function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-async function main() {
-    // Place the players
-    for (let i = 0; i < players.length; i++) movePlayer({ player: players[i], board, number: players[i].caseNumber, strict: true })
 
-    // Draw the board
-    genBoard(board)
+async function handleMonopoly({ socket, game, socketData, data, io }) {
+    // if (game.users.length >= game.maxPlayers) {
+    //     return socket.emit("error", {
+    //         message: "La partie est pleine"
+    //     })
+    // }
 
-    for (let i = 1; i < 41; i++) {
-        await wait(3000)
-        console.log(`${i} / 41`)
-        movePlayer({ player: players[0], board, number: 1 })
-        genBoard(board)
+    // if (game.users.find(player => player.id === socket.id)) {
+    //     return socket.emit("error", {
+    //         message: "Vous êtes déjà dans la partie"
+    //     })
+    // }
+
+    const texts = socket.i18n.__("dashboard.monopoly")
+
+    const colors = []
+    const index = game.users.length ?? 0
+    const player = {
+        id: socket.id,
+        username: socketData.username,
+        money: 1000,
+        color: colors[index],
+        caseNumber: 0,
+        isTurn: index === 0 ? true : false
     }
+    
+    const copyBoard = JSON.parse(JSON.stringify(board))
+    const copyCities = JSON.parse(JSON.stringify(cities))
+
+    data.games.push(socketData.gameId, player, "users")
+    data.games.set(socketData.gameId, copyBoard, "board")
+    data.games.set(socketData.gameId, copyCities, "cities")
+
+    await socket.join(socketData.gameId)
+
+    const resultCanvas = await genBoard(copyBoard)
+
+    io.in(socketData.gameId).emit("joined", {
+        id: socket.id,   
+        canvas: resultCanvas, 
+        texts
+    })
+
+    socket.on("play", async function(socketPlayData) {
+        if (!socketPlayData || !socketPlayData.gameId) return logger.error("Une erreur est survenue (no socket or gameId)")
+
+        logger.log("Play")
+    })
 }
 
-main()
+export {
+    handleMonopoly
+}
+
+// async function main() {
+//     // Place the players
+//     for (let i = 0; i < players.length; i++) movePlayer({ player: players[i], board, number: players[i].caseNumber, strict: true })
+
+//     // Draw the board
+//     genBoard(board)
+
+//     for (let i = 1; i < 41; i++) {
+//         await wait(3000)
+//         console.log(`${i} / 41`)
+//         movePlayer({ player: players[0], board, number: 1 })
+//         genBoard(board)
+//     }
+// }
+
+// main()
