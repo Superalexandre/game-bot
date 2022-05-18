@@ -22,6 +22,7 @@ import { Server } from "socket.io"
 import rateLimit from 'express-rate-limit'
 
 import { handlePuissance4 } from "./router/puissance4.js"
+import { handleMonopoly } from "./router/monopoly.js"
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -325,6 +326,14 @@ async function init({ data, clients }) {
                     req, res, i18n,
                     game, id: req.params.id
                 })
+            } else if (game.game === "monopoly") {
+                if (!req.session.username) req.session.username = "Player" 
+                // return res.redirect(`/join/${req.params.id}`)
+
+                res.render("games/monopoly", {
+                    req, res, i18n,
+                    game, id: req.params.id
+                })
             } else {
                 req.session.messages.push({
                     type: "error",
@@ -363,11 +372,6 @@ async function init({ data, clients }) {
             res.render("join", {
                 req, res, i18n,
                 game, id: req.params.id
-            })
-        })
-        .get("/monopoly", async(req, res) => {
-            res.render("games/monopoly", {
-                req, res, i18n
             })
         })
         .use("/api", routerApi)
@@ -420,7 +424,7 @@ async function init({ data, clients }) {
         await socket.i18n.setLocale(lang)
 
         socket.on("join", async function(socketData) {
-            if (!socketData || !socketData.gameId) return logger.error("Une erreur est survenue (no socket or gameId)")
+            if (!socketData || !socketData.gameId) return logger.error(`Une erreur est survenue (no socket or gameId)`)
         
             const game = await data.games.get(socketData.gameId)
         
@@ -430,9 +434,13 @@ async function init({ data, clients }) {
                 })
             }
 
+            if (game.game === "monopoly") return handleMonopoly({ socket, game, socketData, data, io })
             if (game.game === "puissance4") return handlePuissance4({ socket, game, socketData, data, io })
-        })
 
+            return socket.emit("error", {
+                message: socket.i18n.__("dashboard.errors.thisGameIsNotSupported")
+            })
+        })
     })
 
     httpServer.listen(config.dashboard.http, async() => {
