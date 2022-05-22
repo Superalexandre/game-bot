@@ -1,4 +1,15 @@
 {
+	"rules": {
+		"mastermind": "Le jeu du Mastermind est un jeu de code. Le but du jeu est de trouver le code secret définis par l'adversaire. Le joueur doit deviner le code secret en essayant de le deviner à l'aide des couleurs proposées.",
+		"memory": "Le jeu de Memory est un jeu de mémoire. Le but du jeu est de retrouver les cartes qui se trouvent dans l'ordre. Le joueur doit retrouver les cartes en les retournant dans le bon ordre.",
+		"tictactoe": "Le jeu de Tic Tac Toe (Morpion) est un jeu de plateau de 3 cases par ligne, où chaque joueur place un pion sur une case vide. Le but du jeu est de remplir une ligne de 3 pions de la même couleur. Le premier joueur à remplir une ligne gagne.",
+		"hangman": "Le jeu du pendu est un jeu de devinette. Le but du jeu est de trouver un mot. Le joueur doit deviner le mot en essayant de le deviner à l'aide des lettres proposées par le programme.",
+		"puissance4": "Le jeu de Puissance 4 est un jeu de plateau de 4 cases par ligne, où chaque joueur place un pion sur une case vide. Le but du jeu est de remplir une ligne de 4 pions de la même couleur. Le premier joueur à remplir une ligne gagne.",
+		"rockpaperscissors": "",
+		"sudoku": "Le jeu de Sudoku est un jeu de résolution de grille. Le but du jeu est de remplir une grille de 9 cases par ligne. Le joueur doit remplir la grille en essayant de la remplir de façon correcte.",
+		"tetris": "",
+		"uno": ""
+	},
 	"error": {
 		"missingTranslation": "Une erreur de traduction est servenue !",
 		"unknownError": "Une erreur inconnue est servenue !",
