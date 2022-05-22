@@ -19,7 +19,8 @@ import https from "https"
 import http from "http"
 import { Server } from "socket.io"
 
-import rateLimit from 'express-rate-limit'
+import rateLimit from "express-rate-limit"
+import csrf from "csurf"
 
 import { handlePuissance4 } from "./router/puissance4.js"
 import { handleMonopoly } from "./router/monopoly.js"
@@ -46,6 +47,7 @@ async function init({ data, clients }) {
         .use("/public", staticExpress(join(__dirname, "/public")))
         .use(limiter)
         .use(cookieParser())
+        .use(csrf({ cookie: true }))
         .use(cors())
         .use(json())
         .use(urlencoded({ extended: false }))
