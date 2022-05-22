@@ -15,7 +15,8 @@ export default class Eval extends Command {
                     required: true
                 }
             ],
-            directory: import.meta.url
+            directory: import.meta.url,
+            type: "utils"
         })
     }
 
