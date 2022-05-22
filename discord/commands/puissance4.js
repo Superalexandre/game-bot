@@ -6,13 +6,29 @@ import Gif from "gifenc"
 export default class Puissance4 extends Command {
     constructor(client) {
         super(client, {
-            name: "puissance4",
-            description: "Jouer au puissance 4 facilement !",
+            name: "connect4",
+            nameLocalizations: {
+                "fr": "puissance4",
+                "de": "puissance4"
+            },
+            description: "Play connect4 easily",
+            descriptionLocalizations: {
+                "fr": "Jouez au puissance 4 facilement !",
+                "de": "Spielen Sie mit einem leichteren Spiel Connect 4"
+            },
             options: [
                 {
                     type: "USER",
-                    name: "adversaire",
-                    description: "Saisissez un utilisateur afin de jouer contre lui ou saisissez le robot pour jouer contre lui",
+                    name: "opponent",
+                    nameLocalizations: {
+                        "fr": "adversaire",
+                        "de": "gegner"
+                    },
+                    description: "The opponent you want to play with",
+                    descriptionLocalizations: {
+                        "fr": "Saisissez un utilisateur afin de jouer contre lui ou saisissez le robot pour jouer contre lui",
+                        "de": "Geben Sie einen Benutzer ein"
+                    },
                     required: true
                 }
             ],
@@ -21,7 +37,7 @@ export default class Puissance4 extends Command {
     }
 
     async run({ client, interaction, options, i18n }) {
-        const opponent = options.getUser("adversaire")
+        const opponent = options.getUser("opponent")
 
         if (!opponent || opponent.id === client.user.id) return playWithBot({ i18n, interaction, client })
 

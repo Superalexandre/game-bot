@@ -5,45 +5,45 @@ export default class Memory extends Command {
     constructor(client) {
         super(client, {
             name: "memory",
-            name_localizations: {
-                "fr": "memory"
-            },
-            description: "Test your memory!",
-            description_localizations: {
+            description: "Test your memory !",
+            descriptionLocalizations: {
                 "fr": "Testez votre mémoire !",
-                "en-GB": "Test your memory!"
+                "de": "Teste deine Speicherkapazitat !"
             },
             options: [
                 {
                     type: "STRING",
                     name: "difficulty",
-                    name_localizations: {
+                    nameLocalizations: {
                         "fr": "difficulte",
-                        "en-GB": "difficulty"
+                        "de": "schwierigkeit"
                     },
                     description: "The difficulty of the memory test",
-                    description_localizations: {
+                    descriptionLocalizations: {
                         "fr": "La difficulté du test de mémoire",
-                        "en-GB": "The difficulty of the memory test"
+                        "de": "Die Schwierigkeit des Speichertests"
                     },
                     required: true,
                     choices: [
                         {
                             name: "Easy",
-                            name_localizations: {
-                                "fr": "Facile"
+                            nameLocalizations: {
+                                "fr": "Facile",
+                                "de": "Leicht"
                             },
                             value: "easy"
                         }, {
                             name: "Medium",
-                            name_localizations: {
-                                "fr": "Moyen"
+                            nameLocalizations: {
+                                "fr": "Moyen",
+                                "de": "Mittel"
                             },
                             value: "medium"
                         }, {
                             name: "Hard",
-                            name_localizations: {
-                                "fr": "Difficile"
+                            nameLocalizations: {
+                                "fr": "Difficile",
+                                "de": "Schwer"
                             },
                             value: "hard"
                         }
