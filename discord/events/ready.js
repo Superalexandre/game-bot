@@ -51,7 +51,6 @@ async function checkCommand({ client }) {
         const type = await commands.map(command => command.name).includes(commandName) ? "update" : "create"
 
         if (type === "create") {
-
             // Check if the bot has a command in the debug guild
             if (guildCommand.map(command => command.name).includes(commandName)) {
                 checkValid({ client, botData, commands: guildCommand, commandName, commandData })
@@ -99,6 +98,7 @@ async function checkValid({ client, botData, commands, commandName, commandData 
     if (!command) return await client.logger.error(`Commande ${commandName} introuvable`)
 
     let sameDebug = true
+    let isDebug = commandData.config.debug
     if ((!command.guildId && commandData.config.debug) || (commandData.config.debug && command.guildId !== client.config.discord.debugGuild)) {
         await client.logger.warn(`Commande ${commandName} en mode debug, création`)
 
@@ -109,7 +109,7 @@ async function checkValid({ client, botData, commands, commandName, commandData 
             botData,
             commandName,
             commandData,
-            debug: true
+            debug: isDebug
         })
     }
 
@@ -118,7 +118,7 @@ async function checkValid({ client, botData, commands, commandName, commandData 
             client,
             command,
             commandName,
-            debug: true
+            debug: isDebug
         })
 
         return createCommand({
@@ -134,11 +134,16 @@ async function checkValid({ client, botData, commands, commandName, commandData 
     let sameOptions = true
     if (!ApplicationCommand.optionsEqual(commandData.config.options ?? [], command.options ?? [])) sameOptions = false
     
-    let { description, name } = command
+    let { description, name, descriptionLocalizations, nameLocalizations } = command
+
+    if (commandData.help.descriptionLocalizations !== descriptionLocalizations) {
+        console.log(command)
+    }
+
     // Check if the command has same data
-    if (sameDebug && sameOptions && description === commandData.help.description && name === commandData.help.name) return
+    if (sameDebug && sameOptions && description === commandData.help.description && name === commandData.help.name && descriptionLocalizations === commandData.help.descriptionLocalizations && nameLocalizations === commandData.help.nameLocalizations) return
     
-    await client.logger.warn(`${commandName} : sameDebug ${sameDebug} sameOptions ${sameOptions} description ${description === commandData.help.description} name ${name === commandData.help.name}`)
+    await client.logger.warn(`${commandName} : sameDebug ${sameDebug} sameOptions ${sameOptions} description ${description === commandData.help.description} name ${name === commandData.help.name} descriptionLocalizations ${descriptionLocalizations === commandData.help.descriptionLocalizations} nameLocalizations ${nameLocalizations === commandData.help.nameLocalizations}`)
 
     // Update the command
     updateCommand({
@@ -147,7 +152,7 @@ async function checkValid({ client, botData, commands, commandName, commandData 
         command,
         commandName,
         commandData,
-        debug: !sameDebug
+        debug: isDebug
     })
 }
 
@@ -182,13 +187,17 @@ async function createCommand({ client, botData, commandName, commandData, debug 
 }
 
 async function updateCommand({ client, botData, command, commandName, commandData, debug }) {
+    const { description, name, descriptionLocalizations, nameLocalizations } = commandData.help
     const newCommand = {
-        ...command,
-        ...commandData
+        name, nameLocalizations, description, descriptionLocalizations,
+        ...commandData.config
     }
-    
+
     if (debug) {
-        await client.application.commands.edit(command.id, newCommand, client.config.discord.debugGuild)
+        const guildId = client.config.discord.debugGuild
+        const guild = await client.guilds.fetch(guildId)
+
+        await guild.commands.edit(command.id, newCommand)
     } else {
         await client.application.commands.edit(command.id, newCommand)
 
@@ -202,7 +211,7 @@ async function updateCommand({ client, botData, command, commandName, commandDat
         await botData.set("pendingCommands", pendingCommands)    
     } 
 
-    await client.logger.log(`Commande ${commandName} mise à jour`)
+    await client.logger.log(`Commande ${commandName} mise à jour ${debug ? "en mode debug" : ""}`)
 
     return true
 }
