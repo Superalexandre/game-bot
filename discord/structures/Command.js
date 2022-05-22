@@ -5,31 +5,17 @@ import { fileURLToPath } from "url"
 export class Command {
     constructor(client, {
         name = null,
-        //desc = (i18n) => i18n.__("discord.noDescProvided"),
+        nameLocalizations = null,
         description = "Erreur aucune description fournis",
+        descriptionLocalizations = null,
         directory = false,
-        //use = (i18n) => i18n.__("discord.noUseProvided"),
-        //example = (i18n) => i18n.__("discord.noExampleProvided"),
-        //aliases = [],
         enabled = true,
         debug = false,
-        //ownerOnly = false,
-        //slowmode = 3,
-        options = undefined,
-
-        /*
-        {
-            type: null,
-            name: "Aucun nom pour cette option",
-            description: "Aucune description fournis pour cette option",
-            required: false,
-            choices: []
-        }
-        */
-
+        forceCheck = false,
+        options = null,
         botPerms = [],
-        memberPerms = []
-        //privateMessage = false
+        memberPerms = [],
+        type = "game"
     }) {
         this.client = client
 
@@ -38,23 +24,20 @@ export class Command {
 
         this.help = {
             name,
-            //desc,
+            nameLocalizations,
             description,
+            descriptionLocalizations,
             category
-            //use,
-            //example,
-            //aliases
         }
 
         this.config = {
             enabled,
             options,
             debug,
-            //ownerOnly,
-            //slowmode,
+            forceCheck,
             botPerms,
-            memberPerms
-            //privateMessage
+            memberPerms,
+            type
         }
     }
 }
