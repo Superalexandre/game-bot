@@ -141,9 +141,9 @@ async function checkValid({ client, botData, commands, commandName, commandData 
     }
 
     // Check if the command has same data
-    if (sameDebug && sameOptions && description === commandData.help.description && name === commandData.help.name && descriptionLocalizations === commandData.help.descriptionLocalizations && nameLocalizations === commandData.help.nameLocalizations) return
+    if (!commandData.config.forceCheck && sameDebug && sameOptions && description === commandData.help.description && name === commandData.help.name && descriptionLocalizations === commandData.help.descriptionLocalizations && nameLocalizations === commandData.help.nameLocalizations) return
     
-    await client.logger.warn(`${commandName} : sameDebug ${sameDebug} sameOptions ${sameOptions} description ${description === commandData.help.description} name ${name === commandData.help.name} descriptionLocalizations ${descriptionLocalizations === commandData.help.descriptionLocalizations} nameLocalizations ${nameLocalizations === commandData.help.nameLocalizations}`)
+    await client.logger.warn(`${commandName} : sameDebug ${sameDebug} sameOptions ${sameOptions} description ${description === commandData.help.description} name ${name === commandData.help.name} descriptionLocalizations ${descriptionLocalizations === commandData.help.descriptionLocalizations} nameLocalizations ${nameLocalizations === commandData.help.nameLocalizations} forceCheck ${commandData.config.forceCheck}`)
 
     // Update the command
     updateCommand({
@@ -188,9 +188,24 @@ async function createCommand({ client, botData, commandName, commandData, debug 
 
 async function updateCommand({ client, botData, command, commandName, commandData, debug }) {
     const { description, name, descriptionLocalizations, nameLocalizations } = commandData.help
-    const newCommand = {
+    let newCommand = {
         name, nameLocalizations, description, descriptionLocalizations,
         ...commandData.config
+    }
+
+    if (commandName === "rules") {
+        const commandsList = client.commands
+            .filter(command => command.config.type === "game")
+            .map(command => {
+                return {
+                    name: command.help.name,
+                    value: command.help.name
+                }
+            })
+
+        newCommand.options[0].choices = commandsList
+        
+        if (ApplicationCommand.optionsEqual(command.options, newCommand.options)) return await client.logger.log(`Commande ${commandName} mise à jour (Même options)`)	
     }
 
     if (debug) {
